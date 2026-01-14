@@ -1,0 +1,5 @@
+{
+  "name": "Taiwan and USA Stock AI Analyst V4",
+  "description": "A professional-grade technical analysis dashboard for Taiwan stocks. Integrates real-time data fetching, advanced technical indicators (MA, RSI, MACD, KDJ), and AI-powered investment strategies using Gemini Pro.",
+  "requestFramePermissions": []
+}
