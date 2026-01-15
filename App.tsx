@@ -4,12 +4,12 @@ import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
 import { getStockData } from './services/yahoo';
 import { analyzeStockWithGemini } from './services/gemini';
-import { StockDataPoint, TimeRange, StockInfo } from './types';
+import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings } from './types';
 import { Search, AlertCircle, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit } from 'lucide-react';
 
 const App: React.FC = () => {
   const [symbol, setSymbol] = useState<string>('2330'); // Default TSMC
-  const [range, setRange] = useState<TimeRange>('6mo');
+  const [interval, setInterval] = useState<TimeInterval>('1d'); // Typed Interval
   const [data, setData] = useState<StockDataPoint[]>([]);
   const [info, setInfo] = useState<StockInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -17,20 +17,34 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string>('');
 
+  // Indicator Settings State
+  const [indicatorSettings, setIndicatorSettings] = useState<IndicatorSettings>({
+    showMA5: true,
+    showMA10: true,
+    showMA20: true,
+    showMA60: true,
+    showRSI: true,
+    showK: true,
+    showD: true,
+    showJ: true,
+    useAdjusted: true, 
+  });
+
   // Modal State
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [hasHolding, setHasHolding] = useState<boolean | null>(null);
   const [costPrice, setCostPrice] = useState<string>('');
   const [analysisMode, setAnalysisMode] = useState<'fast' | 'thinking'>('fast');
 
-  const fetchData = async (sym: string, rng: TimeRange) => {
+  const fetchData = async (sym: string, intvl: TimeInterval) => {
     setLoading(true);
     setError(null);
     try {
-      const { info, data } = await getStockData(sym, rng);
+      // Pass interval directly
+      const { info, data } = await getStockData(sym, intvl);
       setData(data);
       setInfo(info);
-      setAnalysis(''); // Clear previous analysis when data changes
+      setAnalysis(''); 
     } catch (err: any) {
       setError(err.message || 'Failed to fetch stock data. Please check the symbol.');
       setData([]);
@@ -42,28 +56,27 @@ const App: React.FC = () => {
 
   // Initial fetch
   useEffect(() => {
-    fetchData(symbol, range);
+    fetchData(symbol, interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [range]); // Don't add symbol here, triggered manually
+  }, [interval]); 
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchData(symbol, range);
+    fetchData(symbol, interval);
   };
 
   const handleOpenAnalysisModal = () => {
       if (data.length === 0) return;
       setHasHolding(null);
       setCostPrice('');
-      setAnalysisMode('fast'); // Default to fast
+      setAnalysisMode('fast');
       setShowAnalysisModal(true);
   }
 
   const handleRunAnalysis = async () => {
-    setShowAnalysisModal(false); // Close modal
+    setShowAnalysisModal(false);
     setAnalyzing(true);
     
-    // Prepare User Position Data
     const userPosition = {
         hasHolding: hasHolding === true,
         costPrice: hasHolding && costPrice ? parseFloat(costPrice) : undefined
@@ -73,14 +86,12 @@ const App: React.FC = () => {
       const result = await analyzeStockWithGemini(info?.symbol || symbol, data, userPosition, analysisMode);
       setAnalysis(result);
       
-      // Smooth scroll to analysis result
       setTimeout(() => {
           const element = document.getElementById('ai-analysis-section');
           if (element) element.scrollIntoView({ behavior: 'smooth' });
       }, 100);
 
     } catch (err: any) {
-        // Fallback for demo if no API key
         if(err.message.includes("API Key is missing")) {
             setAnalysis("### System Error \n\n **API Key Missing.** \nPlease set `REACT_APP_GEMINI_API_KEY` in your environment to enable AI analysis.");
         } else {
@@ -91,8 +102,10 @@ const App: React.FC = () => {
     }
   };
 
-  // Helper to detect if current data is likely Taiwan stock (has chip data)
-  const isTaiwanStock = data.length > 0 && (data[0].foreignBuySell !== 0 || data[data.length-1].foreignBuySell !== 0);
+  // Determine if it is a Taiwan stock based on symbol info, not just chip data
+  const isTaiwanStock = info 
+      ? (info.symbol.endsWith('.TW') || info.symbol.endsWith('.TWO')) 
+      : (symbol.endsWith('.TW') || symbol.endsWith('.TWO') || /^\d{4}$/.test(symbol));
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-slate-900 text-slate-100 relative">
@@ -111,7 +124,6 @@ const App: React.FC = () => {
                 </div>
                 
                 <div className="p-6 space-y-6">
-                    {/* Step 0: Analysis Mode Selection */}
                     <div className="space-y-3">
                         <p className="text-slate-300 font-medium text-sm">選擇分析模式</p>
                         <div className="grid grid-cols-2 gap-3">
@@ -140,7 +152,6 @@ const App: React.FC = () => {
 
                     <div className="border-t border-slate-700/50" />
 
-                    {/* Step 1: Do you hold this stock? */}
                     <div className="space-y-3">
                         <p className="text-slate-300 font-medium text-sm">您目前是否持有 <span className="text-white font-bold">{info?.symbol}</span> 這檔股票？</p>
                         <div className="grid grid-cols-2 gap-3">
@@ -167,7 +178,6 @@ const App: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Step 2: Cost Price (Conditional) */}
                     {hasHolding === true && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <label className="text-slate-300 font-medium text-sm block">您的平均成本價位 (元/美元)</label>
@@ -197,7 +207,13 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <Sidebar range={range} setRange={setRange} />
+      {/* Updated Sidebar with new props */}
+      <Sidebar 
+        interval={interval} 
+        setInterval={setInterval} 
+        settings={indicatorSettings}
+        setSettings={setIndicatorSettings}
+      />
       
       <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto space-y-6">
@@ -240,7 +256,7 @@ const App: React.FC = () => {
             {info && (
                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">Symbol</p>
+                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">股票代號</p>
                         <div className="flex flex-col">
                             <p className="text-2xl font-bold text-white leading-none">{info.symbol}</p>
                             <p className="text-sm text-slate-400 mt-1 font-medium truncate">{info.name}</p>
@@ -253,9 +269,8 @@ const App: React.FC = () => {
                         </p>
                     </div>
                      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">Volume</p>
+                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">成交量</p>
                         <p className="text-2xl font-bold text-white">
-                             {/* Convert shares to lots (divide by 1000) ONLY for Taiwan stocks */}
                              {data.length > 0 
                                 ? isTaiwanStock 
                                     ? Math.round(data[data.length-1].volume / 1000).toLocaleString() + ' 張' 
@@ -276,13 +291,11 @@ const App: React.FC = () => {
                  </div>
             )}
 
-            {/* Main Content Area: Vertical Stack */}
             {data.length > 0 && (
                 <div className="flex flex-col gap-6">
-                    {/* All Charts Section */}
-                    <StockChart data={data} />
+                    {/* Pass settings and isTaiwanStock to Chart */}
+                    <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} />
 
-                    {/* AI Report Section (Full Width at Bottom) */}
                     <div id="ai-analysis-section" className="pt-4">
                         {analysis || analyzing ? (
                              <AnalysisResult content={analysis} loading={analyzing} />
@@ -306,14 +319,13 @@ const App: React.FC = () => {
   );
 };
 
-// Simple Icon Component for reuse
 const BotIcon = ({ className = "" }: { className?: string }) => (
     <svg 
     xmlns="http://www.w3.org/2000/svg" 
     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
     className={className}
     >
-        <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
+        <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
         <path d="M4 11h16a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z"/>
         <path d="M9 16v1"/>
         <path d="M15 16v1"/>
