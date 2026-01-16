@@ -110,7 +110,64 @@ const getExchangeTime = (timestamp: number, timezone: string, isTaiwan: boolean)
     }
 };
 
-// Calculate the Start Date of the period (Week: Mon, Month: 1st)
+// Calculate the End Date of the period (Week: Friday/Today, Month: End/Today)
+const getPeriodEndDate = (timestamp: number, interval: string, timezone: string): string => {
+    const date = new Date(timestamp * 1000);
+    const now = new Date();
+    
+    // Get Start Date parts in Exchange Timezone
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        weekday: 'short',
+        hour12: false
+    });
+    
+    const parts = formatter.formatToParts(date);
+    const p: any = {};
+    parts.forEach(({type, value}) => p[type] = value);
+    
+    // Construct a "Working Date" that represents the Start Date
+    // Using local date construction for simple arithmetic
+    let d = new Date(parseInt(p.year), parseInt(p.month) - 1, parseInt(p.day));
+    
+    if (interval === '1wk') {
+        // Move to Friday
+        // d.getDay(): 0(Sun) - 6(Sat). We want 5(Fri).
+        const day = d.getDay();
+        const diff = 5 - day; 
+        d.setDate(d.getDate() + diff);
+    } else if (interval === '1mo') {
+        // Move to End of Month (Day 0 of next month)
+        d = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    }
+    
+    // Format Calculated Date to YYYY-MM-DD
+    const targetY = d.getFullYear();
+    const targetM = String(d.getMonth() + 1).padStart(2, '0');
+    const targetD = String(d.getDate()).padStart(2, '0');
+    const targetDateStr = `${targetY}-${targetM}-${targetD}`;
+    
+    // Get Today's date string in Exchange Timezone
+    const nowFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour12: false
+    });
+    const nowParts = nowFormatter.formatToParts(now);
+    const np: any = {};
+    nowParts.forEach(({type, value}) => np[type] = value);
+    const todayStr = `${np.year}-${np.month}-${np.day}`;
+    
+    // If calculated end date is in the future, return Today
+    return targetDateStr > todayStr ? todayStr : targetDateStr;
+};
+
+// Calculate the Start Date of the period (Week: Mon, Month: 1st) - Used for deduplication key
 const getPeriodStartDate = (timestamp: number, interval: string, timezone: string): string => {
     const date = new Date(timestamp * 1000);
     
@@ -291,25 +348,26 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   // Initial Processing
   let processedData = processYahooResult(mainResponse, mainInterval);
 
-  // 1.5 Special Logic for Weekly/Monthly (Deduplication)
+  // 1.5 Special Logic for Weekly/Monthly (Deduplication & Merge)
   if (interval === '1wk' || interval === '1mo') {
       const periodMap = new Map<string, any>();
       const timezone = resultMeta.exchangeTimezoneName || 'Asia/Taipei';
 
       processedData.forEach(item => {
-          const dateStr = getPeriodStartDate(item.timestamp, interval, timezone);
+          // Use Start Date as Key for aggregation
+          const keyDateStr = getPeriodStartDate(item.timestamp, interval, timezone);
           
-          if (!periodMap.has(dateStr)) {
-              periodMap.set(dateStr, { ...item, date: dateStr });
+          if (!periodMap.has(keyDateStr)) {
+              periodMap.set(keyDateStr, { ...item, date: keyDateStr });
           } else {
-              const existing = periodMap.get(dateStr);
-              // Merge logic for weekly fragments
+              const existing = periodMap.get(keyDateStr);
+              // Merge logic
               const ratio = item.close !== 0 ? (item.closeAdj / item.close) : 1;
               const isSeparateFragment = Math.abs(item.open - existing.open) > 0.0001;
               
               const merged = {
                   ...item, 
-                  date: dateStr, 
+                  date: keyDateStr, 
                   open: existing.open, 
                   high: Math.max(existing.high, item.high),
                   low: Math.min(existing.low, item.low),
@@ -320,10 +378,15 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
                   lowAdj: Math.min(existing.low, item.low) * ratio,
                   closeAdj: item.closeAdj 
               };
-              periodMap.set(dateStr, merged);
+              periodMap.set(keyDateStr, merged);
           }
       });
       processedData = Array.from(periodMap.values()).sort((a, b) => a.timestamp - b.timestamp);
+
+      // DATE CORRECTION: Update display date to "Last Trading Day" (Friday or End of Month)
+      processedData.forEach(d => {
+          d.date = getPeriodEndDate(d.timestamp, interval, timezone);
+      });
   }
 
   // 2a. 60m Logic for Taiwan Stocks
@@ -354,9 +417,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
 
               const formattedDate = formatExchangeDate(shiftedTs, d.exchangeTimezone, '60m');
               
-              // First-Win Logic: If we already have a candle for this slot (e.g., 13:30), 
-              // keep the first one. We assume the first one is the "13:00" start candle shifted.
-              // Later we will fix the Close price using Daily data.
+              // First-Win Logic
               if (!uniqueMap.has(formattedDate)) {
                   uniqueMap.set(formattedDate, {
                       ...d,
@@ -383,10 +444,6 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
              let shiftedTs = d.timestamp + (15 * 60);
 
              // Special handling for the last candle (13:15 -> 13:30)
-             // If raw is 13:00 -> 13:15
-             // If raw is 13:15 -> 13:30
-             // If raw is 13:30 -> 13:30 (Edge case, but handle it)
-             
              if (d.rawHour === 13) {
                  if (d.rawMinute >= 30) {
                      // Already past close, map to 13:30
@@ -398,11 +455,9 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
              }
 
              // Time Filter: Only allow up to 13:30
-             // Get the shifted time HHMM
              const tTime = getExchangeTime(shiftedTs, d.exchangeTimezone, true);
              const tVal = tTime.hour * 100 + tTime.minute;
              
-             // Allow 09:15 to 13:30
              if (tVal < 915 || tVal > 1330) return;
 
              const formattedDate = formatExchangeDate(shiftedTs, d.exchangeTimezone, '15m');
@@ -442,10 +497,6 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
                   const correctClose = dailyCloseMap.get(candle.rawDateStr);
                   
                   if (correctClose !== undefined && correctClose !== 0) {
-                       // Rule: Modify Close. 
-                       // Modify High/Low ONLY if Close is outside current range.
-                       // Maintain real High/Low fluctuation otherwise.
-                       
                        const oldClose = candle.close;
                        const oldHigh = candle.high;
                        const oldLow = candle.low;
@@ -460,13 +511,8 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
                        // 3. Recalculate Adjusted Close based on ratio
                        if (oldClose !== 0) {
                            const ratio = candle.closeAdj / oldClose; 
-                           // Note: Using old ratio is approximate. 
-                           // Better to re-derive from daily adj close if possible, 
-                           // but intraday adjClose is usually just Close. 
-                           // Let's assume Intraday AdjClose = Close for simplicity unless ratio exists.
                            candle.closeAdj = candle.close * ratio;
                            
-                           // Also adjust highAdj/lowAdj if high/low changed
                            if (candle.high !== oldHigh) candle.highAdj = candle.high * ratio;
                            if (candle.low !== oldLow) candle.lowAdj = candle.low * ratio;
                        }

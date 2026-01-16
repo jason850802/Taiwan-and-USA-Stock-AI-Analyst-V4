@@ -1,5 +1,6 @@
 export interface StockDataPoint {
   date: string; // YYYY-MM-DD or MM-DD HH:mm
+  timestamp?: number; // Unix timestamp in seconds
   open: number;
   high: number;
   low: number;
