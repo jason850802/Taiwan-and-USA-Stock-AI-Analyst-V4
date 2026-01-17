@@ -30,7 +30,18 @@ const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boolean, int
     
     // Check if the latest data point is from today
     const isToday = latest.date === todayStr;
-    if (!isToday) return null;
+    
+    // Logic update: If NOT today (e.g., weekend, holiday), return historical change
+    if (!isToday) {
+        const changePercent = prev.volume > 0 ? ((latest.volume - prev.volume) / prev.volume) * 100 : 0;
+        return {
+            currentVolume: latest.volume,
+            projectedVolume: latest.volume,
+            yesterdayVolume: prev.volume,
+            changePercent,
+            status: 'Closed'
+        };
+    }
 
     const currentHour = twTime.getHours();
     const currentMinute = twTime.getMinutes();
@@ -348,10 +359,10 @@ const App: React.FC = () => {
                     {/* Volume Card with Advanced Projection */}
                      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 relative overflow-hidden">
                         <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1 flex items-center justify-between">
-                            <span>成交量 (Volume)</span>
+                            <span>成交量</span>
                         </p>
                         
-                        <div className="flex flex-col h-full justify-center">
+                        <div className="flex flex-col">
                             <div className="flex items-baseline gap-2 mb-0.5">
                                 <p className="text-2xl font-bold text-white">
                                     {data.length > 0 
