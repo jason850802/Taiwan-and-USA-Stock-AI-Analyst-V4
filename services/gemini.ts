@@ -63,10 +63,10 @@ const formatPromptData = (
   return `
 Target Stock: ${symbol}
 
-*** SYSTEM REFERENCE DATA ***
-- Price Condition (>2% & Red Candle): ${passPriceCheck ? "PASS" : "FAIL"} (Actual: ${priceChangePct.toFixed(2)}%)
-- Volume Ratio: ${volumeRatio.toFixed(2)}x
-- Stand on 5MA & > Prev High: ${passBreakoutCheck ? "PASS" : "FAIL"}
+*** SYSTEM REFERENCE DATA (Strict Criteria) ***
+1. PRICE Criteria (>2% Up & Red Candle): ${passPriceCheck ? "PASS" : "FAIL"} (Actual: ${priceChangePct.toFixed(2)}%)
+2. VOLUME Criteria (Vol > 1.3x Yesterday): ${passVolumeCheck ? "PASS" : "FAIL"} (Ratio: ${volumeRatio.toFixed(2)}x)
+3. PATTERN Criteria (Stand on 5MA & Break Prev High): ${passBreakoutCheck ? "PASS" : "FAIL"}
 -> IS GOLDEN BUY POINT MET? : ${isGoldenBuyPoint ? "YES" : "NO"}
 
 *** LATEST DATA POINTS ***
@@ -122,8 +122,10 @@ export const analyzeStockWithGemini = async (
     * **外資與投信**：[解析籌碼安定度與法人態度]
 
 2.  **訊號檢核表**：
-    * 若符合條件，請將 [ ] 改為 ✅ 表示打勾；不符合則保持 [ ]。
-    * [ ] **進場條件**：是否符合突破型態與黃金買點？
+    * **規定**：符合條件請用 ✅，不符合請用 [ ]。
+    * [ ] **進場條件**：
+        * [ ] 盤整突破 or 回後買上漲？ [說明：請明確指出是「盤整突破」或「回後買上漲」，若不符合請列出原因]
+        * [ ] 三大黃金買點？ [說明：請條列 1.價(漲幅>2%且收紅)、2.量(量增)、3.型(過前高) 之符合狀況]
     * [ ] **加碼訊號**：
     * [ ] **減碼警訊**：
     * [ ] **出場訊號**：
