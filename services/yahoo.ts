@@ -1,8 +1,16 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ } from '../utils/math';
 
-const CORS_PROXY = 'https://corsproxy.io/?';
-const YAHOO_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+// PROXY ROTATION STRATEGY
+// 1. CorsProxy: Fast, usually reliable.
+// 2. AllOrigins: Good fallback, reliable uptime.
+const PROXIES = [
+    'https://corsproxy.io/?',
+    'https://api.allorigins.win/raw?url='
+];
+
+// Switch to query2 as it is often more stable/updated
+const YAHOO_BASE = 'https://query2.finance.yahoo.com/v8/finance/chart/';
 const FINMIND_BASE = 'https://api.finmindtrade.com/api/v4/data';
 
 interface YahooChartResponse {
@@ -37,7 +45,6 @@ interface YahooChartResponse {
 
 // --- Helper Functions ---
 
-// Format date based on Exchange Timezone
 const formatExchangeDate = (timestamp: number, timezone: string, interval: string) => {
     const date = new Date(timestamp * 1000);
     const isIntraday = interval === '15m' || interval === '60m';
@@ -59,7 +66,6 @@ const formatExchangeDate = (timestamp: number, timezone: string, interval: strin
         parts.forEach(({type, value}) => p[type] = value);
         
         if (isIntraday) {
-            // Ensure 2 digits for consistency
             const h = p.hour ? p.hour.padStart(2, '0') : '00';
             const m = p.minute ? p.minute.padStart(2, '0') : '00';
             return `${p.month}-${p.day} ${h}:${m}`;
@@ -73,7 +79,6 @@ const formatExchangeDate = (timestamp: number, timezone: string, interval: strin
     }
 };
 
-// Retrieve specific time parts in Exchange Timezone
 const getExchangeTime = (timestamp: number, timezone: string, isTaiwan: boolean): { hour: number, minute: number, dateStr: string } => {
     try {
         const effectiveTimezone = isTaiwan ? 'Asia/Taipei' : timezone;
@@ -110,12 +115,10 @@ const getExchangeTime = (timestamp: number, timezone: string, isTaiwan: boolean)
     }
 };
 
-// Calculate the End Date of the period (Week: Friday/Today, Month: End/Today)
 const getPeriodEndDate = (timestamp: number, interval: string, timezone: string): string => {
     const date = new Date(timestamp * 1000);
     const now = new Date();
     
-    // Get Start Date parts in Exchange Timezone
     const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
         year: 'numeric',
@@ -129,28 +132,21 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
     const p: any = {};
     parts.forEach(({type, value}) => p[type] = value);
     
-    // Construct a "Working Date" that represents the Start Date
-    // Using local date construction for simple arithmetic
     let d = new Date(parseInt(p.year), parseInt(p.month) - 1, parseInt(p.day));
     
     if (interval === '1wk') {
-        // Move to Friday
-        // d.getDay(): 0(Sun) - 6(Sat). We want 5(Fri).
         const day = d.getDay();
         const diff = 5 - day; 
         d.setDate(d.getDate() + diff);
     } else if (interval === '1mo') {
-        // Move to End of Month (Day 0 of next month)
         d = new Date(d.getFullYear(), d.getMonth() + 1, 0);
     }
     
-    // Format Calculated Date to YYYY-MM-DD
     const targetY = d.getFullYear();
     const targetM = String(d.getMonth() + 1).padStart(2, '0');
     const targetD = String(d.getDate()).padStart(2, '0');
     const targetDateStr = `${targetY}-${targetM}-${targetD}`;
     
-    // Get Today's date string in Exchange Timezone
     const nowFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
         year: 'numeric',
@@ -163,11 +159,9 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
     nowParts.forEach(({type, value}) => np[type] = value);
     const todayStr = `${np.year}-${np.month}-${np.day}`;
     
-    // If calculated end date is in the future, return Today
     return targetDateStr > todayStr ? todayStr : targetDateStr;
 };
 
-// Calculate the Start Date of the period (Week: Mon, Month: 1st) - Used for deduplication key
 const getPeriodStartDate = (timestamp: number, interval: string, timezone: string): string => {
     const date = new Date(timestamp * 1000);
     
@@ -235,41 +229,136 @@ const fetchFinMindStockInfo = async (stockId: string) => {
     }
 };
 
-const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
-    const url = `${CORS_PROXY}${encodeURIComponent(`${YAHOO_BASE}${symbol}?interval=${interval}&range=${range}&includeAdjustedClose=true&includePrePost=false&lang=zh-Hant-TW&region=TW`)}`;
+// Fallback: Fetch OHLC from FinMind when Yahoo fails
+const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]> => {
+    const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
+    // Fetch last 5 years
+    const startDate = new Date();
+    startDate.setFullYear(startDate.getFullYear() - 5);
+    const dateStr = startDate.toISOString().split('T')[0];
+    
+    const url = `${FINMIND_BASE}?dataset=TaiwanStockPrice&data_id=${cleanId}&start_date=${dateStr}`;
+    
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`Fetch error: ${res.statusText}`);
     const json = await res.json();
-    if (json.chart.error) throw new Error(JSON.stringify(json.chart.error));
-    if (!json.chart.result || json.chart.result.length === 0) throw new Error('No data found');
-    return json as YahooChartResponse;
+    
+    if (json.msg === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+        return json.data.map((d: any) => ({
+            date: d.date,
+            timestamp: new Date(d.date).getTime() / 1000,
+            open: d.open,
+            high: d.max,
+            low: d.min,
+            close: d.close,
+            volume: d.Trading_Volume,
+            // FinMind doesn't give Adj Close easily, use Close
+            openAdj: d.open,
+            highAdj: d.max,
+            lowAdj: d.min,
+            closeAdj: d.close, 
+            exchangeTimezone: 'Asia/Taipei',
+            rawDateStr: d.date
+        }));
+    }
+    throw new Error('FinMind data not found');
+};
+
+const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
+    // Add random param to prevent Proxy Caching
+    const targetUrl = `${YAHOO_BASE}${symbol}?interval=${interval}&range=${range}&includeAdjustedClose=true&includePrePost=false&lang=zh-Hant-TW&region=TW&_rand=${new Date().getTime()}`;
+    
+    let lastError: any;
+    
+    // Try each proxy in order
+    for (const proxy of PROXIES) {
+        try {
+            const isAllOrigins = proxy.includes('allorigins');
+            const cacheBuster = isAllOrigins ? `&_t=${Date.now()}` : '';
+            
+            const url = `${proxy}${encodeURIComponent(targetUrl)}${cacheBuster}`;
+            
+            const res = await fetch(url);
+            
+            if (!res.ok) {
+                // If 429 (Too Many Requests), definitely try next proxy
+                if (res.status === 429) {
+                    console.warn(`Proxy ${proxy} hit rate limit (429). Switching...`);
+                    continue; 
+                }
+                throw new Error(`Fetch error (${res.status}): ${res.statusText}`);
+            }
+            
+            // Check Content-Type to ensure it's JSON
+            const contentType = res.headers.get('content-type');
+            if (contentType && !contentType.includes('application/json')) {
+                // Try to consume text so we don't leak
+                try { await res.text(); } catch {}
+                throw new Error(`Invalid response (not JSON) from ${proxy}`);
+            }
+
+            const json = await res.json();
+            
+            // Handle Proxy-wrapped errors or Yahoo-specific errors
+            if (json.chart && json.chart.error) {
+                const code = json.chart.error.code;
+                if (code === 'Not Found') {
+                    throw new Error(`Symbol ${symbol} not found.`);
+                }
+                throw new Error(JSON.stringify(json.chart.error)); 
+            }
+            
+            if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
+                 throw new Error('No data found in response');
+            }
+
+            return json as YahooChartResponse;
+
+        } catch (e: any) {
+            console.warn(`Proxy ${proxy} failed for ${symbol}:`, e.message);
+            lastError = e;
+            
+            // Don't retry if it's definitely a "Symbol Not Found" error
+            if (e.message && e.message.includes('not found')) {
+                break;
+            }
+        }
+    }
+    
+    throw lastError || new Error('All Yahoo proxies failed.');
 };
 
 const fetchRawData = async (symbol: string, interval: string, range: string) => {
-  const cleanSymbol = symbol.trim().toUpperCase();
-  const looksLikeTaiwanStock = /[0-9]/.test(cleanSymbol);
-
+  const clean = symbol.trim().toUpperCase();
   const performQuery = async (s: string) => queryYahoo(s, interval, range);
 
-  if (looksLikeTaiwanStock) {
-      const target = cleanSymbol.replace('.TW', '').replace('.TWO', '');
-      try {
-          const res = await performQuery(`${target}.TW`);
-          return res;
-      } catch (e) {
-          console.log(`Failed to fetch ${target}.TW, trying .TWO`);
-          return await performQuery(`${target}.TWO`);
+  // 1. Check for Explicit Numeric Code (e.g. "2330", "0050")
+  const codeMatch = clean.match(/^(\d{3,6})/);
+
+  if (codeMatch) {
+      const coreCode = codeMatch[1];
+      
+      if (clean.includes('.TW') || clean.includes('.TWO')) {
+          return await performQuery(clean);
       }
-  } else {
+
+      // Implicit Code "2330" -> Try .TW then .TWO
       try {
-          return await performQuery(cleanSymbol);
-      } catch (e) {
+          return await performQuery(`${coreCode}.TW`);
+      } catch (e: any) {
           try {
-             return await performQuery(`${cleanSymbol}.TW`);
-          } catch {
-             return await performQuery(`${cleanSymbol}.TWO`);
+              // Fallback to OTC (TWO)
+              return await performQuery(`${coreCode}.TWO`);
+          } catch (e2) {
+             throw new Error(`找不到台股代號: ${coreCode}`);
           }
       }
+  }
+
+  // 2. US Stocks or others
+  try {
+      return await performQuery(clean);
+  } catch (e) {
+      throw e;
   }
 };
 
@@ -340,18 +429,56 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       mainRange = '60d';
   }
 
-  // 1. Fetch Main Data
-  const mainResponse = await fetchRawData(symbol, mainInterval, mainRange);
-  const resultMeta = mainResponse.chart.result![0].meta;
-  const isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
-  
-  // Initial Processing
-  let processedData = processYahooResult(mainResponse, mainInterval);
+  let processedData: any[] = [];
+  let symbolInfo: any = {};
+  let isTaiwanStock = false;
+  let usedFallback = false;
+
+  // 1. Try Fetching Data (Primary: Yahoo, Fallback: FinMind)
+  try {
+      // Attempt Yahoo First
+      const mainResponse = await fetchRawData(symbol, mainInterval, mainRange);
+      const resultMeta = mainResponse.chart.result![0].meta;
+      isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+      
+      processedData = processYahooResult(mainResponse, mainInterval);
+      symbolInfo = {
+          symbol: resultMeta.symbol,
+          name: resultMeta.longName || resultMeta.shortName || resultMeta.symbol,
+          currency: resultMeta.currency,
+          exchangeTimezoneName: resultMeta.exchangeTimezoneName
+      };
+  } catch (err: any) {
+      // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
+      const cleanSymbol = symbol.toUpperCase().replace('.TW', '').replace('.TWO', '');
+      const isPotentialTaiwanStock = /^\d{3,6}$/.test(cleanSymbol);
+      
+      if (isPotentialTaiwanStock && interval === '1d') {
+          console.log(`Yahoo failed (${err.message}). Attempting FinMind fallback for ${cleanSymbol}...`);
+          try {
+              processedData = await fetchFinMindDailyData(cleanSymbol);
+              const name = await fetchFinMindStockInfo(cleanSymbol);
+              isTaiwanStock = true;
+              usedFallback = true;
+              symbolInfo = {
+                  symbol: `${cleanSymbol}.TW`, 
+                  name: name || cleanSymbol,
+                  currency: 'TWD',
+                  exchangeTimezoneName: 'Asia/Taipei'
+              };
+          } catch (finErr) {
+              // If FinMind also fails, revert to original error
+              throw new Error(`Data Fetch Failed: ${err.message}`);
+          }
+      } else {
+          throw err;
+      }
+  }
 
   // 1.5 Special Logic for Weekly/Monthly (Deduplication & Merge)
   if (interval === '1wk' || interval === '1mo') {
       const periodMap = new Map<string, any>();
-      const timezone = resultMeta.exchangeTimezoneName || 'Asia/Taipei';
+      const timezone = symbolInfo.exchangeTimezoneName || 'Asia/Taipei';
 
       processedData.forEach(item => {
           // Use Start Date as Key for aggregation
@@ -389,35 +516,35 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       });
   }
 
-  // 2a. 60m Logic for Taiwan Stocks
-  if (interval === '60m' && isTaiwanStock) {
+  // 2a. Intraday Logic (Only relevant if data came from Yahoo, as FinMind fallback is Daily only)
+  if ((interval === '60m' || interval === '15m') && isTaiwanStock && !usedFallback) {
       try {
-          const uniqueMap = new Map<string, any>(); // Map for "First-Win" deduplication
+          const uniqueMap = new Map<string, any>(); 
           
           processedData.forEach(d => {
               let shiftedTs = d.timestamp;
-
-              // Logic 1: 09:00 - 12:00 -> +60 mins
-              if (d.rawHour >= 9 && d.rawHour <= 12) {
-                  shiftedTs = d.timestamp + 3600;
-              } 
-              // Logic 2: 13:00 -> 13:30 (Force specific time)
-              else if (d.rawHour === 13) {
-                  // To strictly set it to 13:30 for the current day, we find 13:00 timestamp and add 30 mins (1800s)
-                  // Assuming d.timestamp is the start of the 13:00 candle.
-                  // Note: Yahoo sometimes sends 13:25 or 13:30 data points.
-                  // We treat ANY 13:xx data as the "Close" candle and map it to 13:30.
-                  const dateObj = new Date(d.timestamp * 1000);
-                  dateObj.setMinutes(30);
-                  dateObj.setSeconds(0);
-                  shiftedTs = dateObj.getTime() / 1000;
-              } else {
-                  return; // Skip pre-market/after-hours
+              if (interval === '60m') {
+                if (d.rawHour >= 9 && d.rawHour <= 12) shiftedTs = d.timestamp + 3600;
+                else if (d.rawHour === 13) {
+                    const dateObj = new Date(d.timestamp * 1000);
+                    dateObj.setMinutes(30);
+                    dateObj.setSeconds(0);
+                    shiftedTs = dateObj.getTime() / 1000;
+                }
+              } else if (interval === '15m') {
+                 shiftedTs = d.timestamp + (15 * 60);
+                 if (d.rawHour === 13 && d.rawMinute >= 30) {
+                     const dateObj = new Date(d.timestamp * 1000);
+                     dateObj.setMinutes(30);
+                     dateObj.setSeconds(0);
+                     shiftedTs = dateObj.getTime() / 1000;
+                 }
+                 const tTime = getExchangeTime(shiftedTs, d.exchangeTimezone, true);
+                 const tVal = tTime.hour * 100 + tTime.minute;
+                 if (tVal < 915 || tVal > 1330) return;
               }
 
-              const formattedDate = formatExchangeDate(shiftedTs, d.exchangeTimezone, '60m');
-              
-              // First-Win Logic
+              const formattedDate = formatExchangeDate(shiftedTs, d.exchangeTimezone, interval);
               if (!uniqueMap.has(formattedDate)) {
                   uniqueMap.set(formattedDate, {
                       ...d,
@@ -426,111 +553,20 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
                   });
               }
           });
-
           processedData = Array.from(uniqueMap.values()).sort((a, b) => a.timestamp - b.timestamp);
-
       } catch (e) {
-          console.warn("Error in 60m shift logic", e);
+          console.warn("Error in intraday shift logic", e);
       }
   }
 
-  // 2b. 15m Logic for Taiwan Stocks
-  if (interval === '15m' && isTaiwanStock) {
-      try {
-          const uniqueMap = new Map<string, any>();
-
-          processedData.forEach(d => {
-             // Basic shift: Candle at 09:00 represents 09:00-09:15, so display 09:15
-             let shiftedTs = d.timestamp + (15 * 60);
-
-             // Special handling for the last candle (13:15 -> 13:30)
-             if (d.rawHour === 13) {
-                 if (d.rawMinute >= 30) {
-                     // Already past close, map to 13:30
-                     const dateObj = new Date(d.timestamp * 1000);
-                     dateObj.setMinutes(30);
-                     dateObj.setSeconds(0);
-                     shiftedTs = dateObj.getTime() / 1000;
-                 }
-             }
-
-             // Time Filter: Only allow up to 13:30
-             const tTime = getExchangeTime(shiftedTs, d.exchangeTimezone, true);
-             const tVal = tTime.hour * 100 + tTime.minute;
-             
-             if (tVal < 915 || tVal > 1330) return;
-
-             const formattedDate = formatExchangeDate(shiftedTs, d.exchangeTimezone, '15m');
-
-             // First-Win Deduplication
-             if (!uniqueMap.has(formattedDate)) {
-                 uniqueMap.set(formattedDate, {
-                     ...d,
-                     timestamp: shiftedTs,
-                     date: formattedDate
-                 });
-             }
-          });
-
-          processedData = Array.from(uniqueMap.values()).sort((a, b) => a.timestamp - b.timestamp);
-
-      } catch (e) {
-          console.warn("Error in 15m shift logic", e);
-      }
-  }
-
-  // 2c. Daily Close Correction (Universal for Intraday 60m/15m)
-  if ((interval === '60m' || interval === '15m') && isTaiwanStock) {
-      try {
-          // Fetch Daily Data for comparison
-          const dailyRes = await fetchRawData(symbol, '1d', '1y');
-          const dailyData = processYahooResult(dailyRes, '1d');
-          const dailyCloseMap = new Map<string, number>();
-          // Map: YYYY-MM-DD -> Close Price
-          dailyData.forEach(d => dailyCloseMap.set(d.rawDateStr, d.close));
-          
-          processedData.forEach(candle => {
-              const t = getExchangeTime(candle.timestamp, candle.exchangeTimezone, true);
-              
-              // Identify the LAST candle of the day: 13:30
-              if (t.hour === 13 && t.minute === 30) {
-                  const correctClose = dailyCloseMap.get(candle.rawDateStr);
-                  
-                  if (correctClose !== undefined && correctClose !== 0) {
-                       const oldClose = candle.close;
-                       const oldHigh = candle.high;
-                       const oldLow = candle.low;
-
-                       // 1. Force Close
-                       candle.close = correctClose;
-
-                       // 2. Adjust High/Low if needed
-                       if (candle.close > candle.high) candle.high = candle.close;
-                       if (candle.close < candle.low) candle.low = candle.close;
-
-                       // 3. Recalculate Adjusted Close based on ratio
-                       if (oldClose !== 0) {
-                           const ratio = candle.closeAdj / oldClose; 
-                           candle.closeAdj = candle.close * ratio;
-                           
-                           if (candle.high !== oldHigh) candle.highAdj = candle.high * ratio;
-                           if (candle.low !== oldLow) candle.lowAdj = candle.low * ratio;
-                       }
-                  }
-              }
-          });
-      } catch (e) {
-          console.warn("Daily Close Correction failed", e);
-      }
-  }
-
-  // 3. Stock Info & Chips
+  // 3. Stock Info & Chips (Always enrich Taiwan stocks with FinMind Chips if possible)
   let taiwanStockName: string | null = null;
   const chipMap = new Map<string, { foreign: number, trust: number }>();
   const volumeMap = new Map<string, number>();
 
-  if (isTaiwanStock) {
-      const fetchedName = await fetchFinMindStockInfo(resultMeta.symbol);
+  if (isTaiwanStock && !usedFallback) {
+      // Always try to fetch FinMind name to ensure Traditional Chinese for TW stocks
+      const fetchedName = await fetchFinMindStockInfo(symbolInfo.symbol);
       if (fetchedName) taiwanStockName = fetchedName;
   }
 
@@ -540,9 +576,12 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5); 
       const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
       
+      // We need clean ID for FinMind
+      const cleanId = symbolInfo.symbol.replace('.TW', '').replace('.TWO', '');
+
       const [institutionalData, finMindPriceData] = await Promise.all([
-          fetchInstitutionalData(resultMeta.symbol, fetchStartDateStr),
-          fetchFinMindPriceVolume(resultMeta.symbol, fetchStartDateStr),
+          fetchInstitutionalData(cleanId, fetchStartDateStr),
+          fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
       
       institutionalData.forEach((item: any) => {
@@ -561,10 +600,13 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
 
   // 4. Final Enriching
   const finalData = processedData.map(d => {
-      if (shouldFetchFinMindChips && volumeMap.has(d.date)) {
-          d.volume = volumeMap.get(d.date)!;
+      // If we have accurate volume from FinMind (even if we used Yahoo for price), overwrite it
+      // FinMind volume is usually more reliable for TW stocks
+      if (shouldFetchFinMindChips && volumeMap.has(d.rawDateStr || d.date)) {
+          d.volume = volumeMap.get(d.rawDateStr || d.date)!;
       }
-      const chips = chipMap.get(d.date) || { foreign: 0, trust: 0 };
+      
+      const chips = chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
       return {
           ...d,
           foreignBuySell: chips.foreign,
@@ -603,7 +645,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       
       const prevClose = i > 0 ? finalData[i-1].close : d.open;
       const priceChange = d.close - prevClose;
-      const priceChangePercent = (priceChange / prevClose) * 100;
+      const priceChangePercent = prevClose !== 0 ? (priceChange / prevClose) * 100 : 0;
 
       return {
           ...d,
@@ -635,18 +677,12 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       };
   });
 
-  let displayName = resultMeta.longName || resultMeta.shortName || resultMeta.symbol;
-  if (isTaiwanStock && taiwanStockName) {
-      displayName = taiwanStockName;
+  if (taiwanStockName) {
+      symbolInfo.name = taiwanStockName;
   }
 
   return {
-      info: {
-          symbol: resultMeta.symbol,
-          name: displayName,
-          currency: resultMeta.currency,
-          exchangeTimezoneName: resultMeta.exchangeTimezoneName
-      },
+      info: symbolInfo,
       data: fullProcessedData
   };
 };
