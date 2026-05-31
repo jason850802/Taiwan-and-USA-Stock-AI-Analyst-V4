@@ -45,6 +45,14 @@ export interface StockDataPoint {
   macdSignalAdj?: number;
   macdHistAdj?: number;
 
+  // Bollinger Bands (20, 2)
+  bbUpper?: number;
+  bbMiddle?: number;
+  bbLower?: number;
+  bbUpperAdj?: number;
+  bbMiddleAdj?: number;
+  bbLowerAdj?: number;
+
   // Institutional Investors (Real Data from FinMind/TWSE)
   foreignBuySell?: number;
   investmentTrustBuySell?: number;
@@ -88,14 +96,34 @@ export interface AIAnalysisResult {
 
 export type TimeInterval = '15m' | '60m' | '1d' | '1wk' | '1mo';
 
+export interface PortfolioItem {
+  id: string;
+  symbol: string;
+  avgCostPrice: number;       // 成本均價（購入幣別）
+  totalShares: number;        // 總股數
+  totalCost: number;          // 總成本 TWD（台股 / 美股以TWD購入時使用；美股USD購入時為0）
+  brokerDiscount: number;     // 券商折扣（台股專用，e.g. 2.8 = 2.8折）
+  cashDividends: number;      // 已領現金股利
+  stockDividends: number;     // 已領股票股利（股）
+  // ── 美股專用 ───────────────────────────────────────────
+  purchaseCurrency?: 'TWD' | 'USD'; // 購入幣別（undefined = TWD 向下相容）
+  totalCostUSD?: number;            // 總成本 USD（美股以USD購入時，固定值）
+  isUsEtf?: boolean;                // true = 美股ETF（$3固定費）；false = 個股（0.008%）
+}
+
+export interface MALineConfig {
+  period: number;
+  enabled: boolean;
+  color: string;
+}
+
 export interface IndicatorSettings {
-  showMA5: boolean;
-  showMA10: boolean;
-  showMA20: boolean;
-  showMA60: boolean;
+  maLines: MALineConfig[];
   showRSI: boolean;
   showK: boolean;
   showD: boolean;
   showJ: boolean;
-  useAdjusted: boolean; // New Toggle
+  showMACD: boolean;
+  showBB: boolean;
+  useAdjusted: boolean;
 }

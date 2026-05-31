@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   ComposedChart,
   Line,
   Bar,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,50 +14,77 @@ import {
   ReferenceLine,
   Label
 } from 'recharts';
-import { StockDataPoint, IndicatorSettings } from '../types';
+import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
+import { calculateSMA } from '../utils/math';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 
 interface StockChartProps {
   data: StockDataPoint[];
   settings: IndicatorSettings;
   isTaiwanStock: boolean;
+  onToggleSetting?: (key: keyof IndicatorSettings) => void;
 }
 
 // ----------------------------------------------------------------------
 // 1. Custom Shapes & Tooltips
 // ----------------------------------------------------------------------
 
+// Custom crosshair cursor — vertical line centered on the active bar
+const CrosshairCursor = (props: any) => {
+  const { points, width, height, top, left } = props;
+  if (!points || points.length === 0) return null;
+  const x = points[0].x;
+  return (
+    <line x1={x} y1={top} x2={x} y2={top + height} stroke="#94a3b8" strokeDasharray="4 4" strokeWidth={1} />
+  );
+};
+
 const CandleStickShape = (props: any) => {
   const { x, y, width, height, payload } = props;
   const { open, close, high, low } = payload;
-  
-  // Guard against null/zero width
-  if (!open || !close) return null;
 
-  const isUp = close > open;
+  // Guard
+  if (!open || !close || width <= 0 || height <= 0) return null;
+
+  const isUp   = close > open;
   const isDown = close < open;
-  const color = isUp ? '#ef4444' : isDown ? '#10b981' : '#94a3b8';
-
-  const bodyMin = Math.min(open, close);
-  const bodyMax = Math.max(open, close);
-  const diff = bodyMax - bodyMin;
-  
-  let ratio = 0;
-  if (diff > 0) {
-      ratio = height / diff;
-  } else if (height > 0 && (high-low) > 0) {
-      // Fallback for doji/flat body but with high/low
-      ratio = height / (high - low);
-  }
-  
-  const yHigh = y - (high - bodyMax) * ratio;
-  const yLow = (y + height) + (bodyMin - low) * ratio;
+  const color  = isUp ? '#ef4444' : isDown ? '#10b981' : '#94a3b8';
   const centerX = x + width / 2;
+
+  // candleBody is now [low, high], so:
+  //   y           = pixel position of high  (top)
+  //   y + height  = pixel position of low   (bottom)
+  const ratio = (high !== low) ? height / (high - low) : 0;
+
+  // Pixel positions of open / close
+  const yOpen  = y + (high - open)  * ratio;
+  const yClose = y + (high - close) * ratio;
+
+  const yBodyTop    = Math.min(yOpen, yClose);
+  const yBodyBottom = Math.max(yOpen, yClose);
+  const bodyHeight  = yBodyBottom - yBodyTop;
+
+  // Doji: open ≈ close → draw a cross (十字線)
+  if (bodyHeight < 1) {
+    const yMid = (yBodyTop + yBodyBottom) / 2;
+    return (
+      <g>
+        {/* 上下引線 */}
+        <line x1={centerX} y1={y}          x2={centerX} y2={y + height} stroke={color} strokeWidth={1} />
+        {/* 橫線（實體） */}
+        <line x1={x} y1={yMid} x2={x + width} y2={yMid} stroke={color} strokeWidth={1.5} />
+      </g>
+    );
+  }
 
   return (
     <g>
-      <line x1={centerX} y1={yHigh} x2={centerX} y2={yLow} stroke={color} strokeWidth={1} />
-      <rect x={x} y={y} width={width} height={Math.max(1, height)} fill={color} stroke="none" />
+      {/* 上引線 */}
+      <line x1={centerX} y1={y}          x2={centerX} y2={yBodyTop}    stroke={color} strokeWidth={1} />
+      {/* 下引線 */}
+      <line x1={centerX} y1={yBodyBottom} x2={centerX} y2={y + height} stroke={color} strokeWidth={1} />
+      {/* 實體 */}
+      <rect x={x} y={yBodyTop} width={width} height={bodyHeight} fill={color} stroke="none" />
     </g>
   );
 };
@@ -67,15 +95,15 @@ const MainTooltip = ({ active, payload, label, isTaiwanStock }: any) => {
     const data = payload[0].payload;
     const isUp = data.close > data.open;
     const colorClass = isUp ? "text-red-400" : data.close < data.open ? "text-emerald-400" : "text-slate-400";
-    
+
     // Display Volume in Lots for Taiwan Stocks
-    const volDisplay = isTaiwanStock 
+    const volDisplay = isTaiwanStock
         ? `${Math.round(data.volume / 1000).toLocaleString()} 張`
-        : `${(data.volume).toLocaleString()}`; 
+        : `${(data.volume).toLocaleString()}`;
 
     const priceChange = data.priceChange;
     const priceChangePercent = data.priceChangePercent;
-    
+
     const isChangeUp = priceChange > 0;
     const isChangeDown = priceChange < 0;
     const changeColor = isChangeUp ? "text-red-400" : isChangeDown ? "text-emerald-400" : "text-slate-400";
@@ -87,16 +115,25 @@ const MainTooltip = ({ active, payload, label, isTaiwanStock }: any) => {
       <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-xs backdrop-blur-md bg-opacity-90 z-50 min-w-[150px]">
         <p className="text-slate-400 mb-2 font-medium border-b border-slate-700 pb-1">{data.date}</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            <span className="text-slate-500">Open</span><span className={colorClass}>{data.open.toFixed(2)}</span>
-            <span className="text-slate-500">High</span><span className={colorClass}>{data.high.toFixed(2)}</span>
-            <span className="text-slate-500">Low</span><span className={colorClass}>{data.low.toFixed(2)}</span>
-            <span className="text-slate-500">Close</span><span className={colorClass}>{data.close.toFixed(2)}</span>
-            
-            <span className="text-slate-500">Chg</span><span className={changeColor}>{changeTxt}</span>
-            <span className="text-slate-500">Chg%</span><span className={changeColor}>{percentTxt}</span>
+            <span className="text-slate-500">開</span><span className={colorClass}>{data.open.toFixed(2)}</span>
+            <span className="text-slate-500">高</span><span className={colorClass}>{data.high.toFixed(2)}</span>
+            <span className="text-slate-500">低</span><span className={colorClass}>{data.low.toFixed(2)}</span>
+            <span className="text-slate-500">收</span><span className={colorClass}>{data.close.toFixed(2)}</span>
+
+            <span className="text-slate-500">漲跌</span><span className={changeColor}>{changeTxt}</span>
+            <span className="text-slate-500">漲跌%</span><span className={changeColor}>{percentTxt}</span>
 
             <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
-            <span className="text-slate-500">Volume</span><span className="text-slate-200">{volDisplay}</span>
+            <span className="text-slate-500">量</span><span className="text-slate-200">{volDisplay}</span>
+
+            {data.bbUpper != null && (
+              <>
+                <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
+                <span className="text-purple-400">BB上</span><span className="text-slate-200">{data.bbUpper.toFixed(2)}</span>
+                <span className="text-purple-400">BB中</span><span className="text-slate-200">{data.bbMiddle?.toFixed(2)}</span>
+                <span className="text-purple-400">BB下</span><span className="text-slate-200">{data.bbLower?.toFixed(2)}</span>
+              </>
+            )}
         </div>
       </div>
     );
@@ -147,21 +184,21 @@ const IndicatorTooltip = ({ active, payload, settings }: { active?: boolean, pay
 
                     {settings.showK && (
                         <>
-                        <span className="text-yellow-400 font-bold">K (9)</span>
+                        <span className="text-yellow-400 font-bold">K (5)</span>
                         <span className="text-slate-200">{data.k?.toFixed(2)}</span>
                         </>
                     )}
                     
                     {settings.showD && (
                         <>
-                        <span className="text-pink-400 font-bold">D (9)</span>
+                        <span className="text-pink-400 font-bold">D (3)</span>
                         <span className="text-slate-200">{data.d?.toFixed(2)}</span>
                         </>
                     )}
                     
                     {settings.showJ && (
                         <>
-                        <span className="text-purple-400 font-bold">J (9)</span>
+                        <span className="text-purple-400 font-bold">J (3)</span>
                         <span className="text-slate-200">{data.j?.toFixed(2)}</span>
                         </>
                     )}
@@ -198,29 +235,27 @@ const MACDTooltip = ({ active, payload }: any) => {
 // 2. Info Overlay Component
 // ----------------------------------------------------------------------
 
-const MALegend = ({ currentData, settings }: { currentData: StockDataPoint, settings: IndicatorSettings }) => {
+const MALegend = ({ currentData, settings }: { currentData: any, settings: IndicatorSettings }) => {
     if (!currentData) return null;
-
-    const renderItem = (label: string, value: number | undefined, dir: string | undefined, color: string) => {
-        if (value === undefined) return null;
-        const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : ''; 
-        const dirColor = dir === 'up' ? 'text-red-400' : dir === 'down' ? 'text-emerald-400' : 'text-slate-500';
-        
-        return (
-            <div className="flex items-center gap-1.5 text-xs font-mono bg-slate-900/50 px-2 py-1 rounded border border-slate-800">
-                <span style={{ color: color }} className="font-bold">{label}</span>
-                <span className="text-slate-200">{value.toFixed(2)}</span>
-                <span className={`${dirColor} text-[10px]`}>{arrow}</span>
-            </div>
-        );
-    };
 
     return (
         <div className="flex flex-wrap gap-2 items-center">
-            {settings.showMA5 && renderItem("MA5", currentData.ma5, currentData.ma5Dir, "#fbbf24")}
-            {settings.showMA10 && renderItem("MA10", currentData.ma10, currentData.ma10Dir, "#38bdf8")}
-            {settings.showMA20 && renderItem("MA20", currentData.ma20, currentData.ma20Dir, "#a78bfa")}
-            {settings.showMA60 && renderItem("MA60", currentData.ma60, currentData.ma60Dir, "#34d399")}
+            {settings.maLines.filter(l => l.enabled).map((line) => {
+                const key = `ma_${line.period}`;
+                const dirKey = `ma_${line.period}_dir`;
+                const value = currentData[key] as number | undefined;
+                const dir = currentData[dirKey] as string | undefined;
+                if (value === undefined) return null;
+                const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
+                const dirColor = dir === 'up' ? 'text-red-400' : dir === 'down' ? 'text-emerald-400' : 'text-slate-500';
+                return (
+                    <div key={key} className="flex items-center gap-1.5 text-xs font-mono bg-slate-900/50 px-2 py-1 rounded border border-slate-800">
+                        <span style={{ color: line.color }} className="font-bold">MA{line.period}</span>
+                        <span className="text-slate-200">{value.toFixed(2)}</span>
+                        <span className={`${dirColor} text-[10px]`}>{arrow}</span>
+                    </div>
+                );
+            })}
         </div>
     );
 };
@@ -229,55 +264,70 @@ const MALegend = ({ currentData, settings }: { currentData: StockDataPoint, sett
 // 3. Main Chart Component
 // ----------------------------------------------------------------------
 
-const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }) => {
+type PanelView = 'foreign' | 'trust' | 'macd' | 'kdj' | 'rsi';
+
+const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, onToggleSetting }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  
-  // Controls how many bars to show initially to avoid clutter
-  // Default to 100 or less
+  const [panel1View, setPanel1View] = useState<PanelView>('foreign');
+  const [panel2View, setPanel2View] = useState<PanelView>('trust');
+
   const [barsToShow, setBarsToShow] = useState(100);
-  
+
   useEffect(() => {
      setBarsToShow(Math.min(100, data.length));
   }, [data.length]);
 
-  const handleZoom = (direction: 'in' | 'out') => {
+  const handleZoom = useCallback((direction: 'in' | 'out') => {
       setBarsToShow(prev => {
-          const step = Math.ceil(prev * 0.2); 
+          const step = Math.ceil(prev * 0.2);
           if (direction === 'in') return Math.max(20, prev - step);
-          else return Math.min(data.length, prev + step); 
+          else return Math.min(data.length, prev + step);
       });
-  };
+  }, [data.length]);
+
+  // Keyboard shortcuts: +/- for zoom
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === '+' || e.key === '=') { e.preventDefault(); handleZoom('in'); }
+      else if (e.key === '-') { e.preventDefault(); handleZoom('out'); }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleZoom]);
 
   const hasChipData = useMemo(() => {
       if (!data || data.length === 0) return false;
       return data.some(d => (d.foreignBuySell !== undefined && d.foreignBuySell !== 0) || (d.investmentTrustBuySell !== undefined && d.investmentTrustBuySell !== 0));
   }, [data]);
 
-  // Transform Data based on Settings (Adj vs Raw)
-  // This ensures the Chart sees the correct "close", "open", "ma5" keys
+  // Pre-compute MAs on full dataset (only recalc when data/settings change, NOT on zoom)
+  const maResultsCache = useMemo(() => {
+    const useAdj = settings.useAdjusted;
+    const allCloses = data.map(d => useAdj && d.closeAdj ? d.closeAdj : d.close);
+    const results: Record<number, (number | null)[]> = {};
+    for (const line of settings.maLines) {
+      results[line.period] = calculateSMA(allCloses, line.period);
+    }
+    return results;
+  }, [data, settings.useAdjusted, settings.maLines]);
+
+  // Transform Data based on Settings (Adj vs Raw) — zoom only re-slices, no SMA recalc
   const displayData = useMemo(() => {
+    const useAdj = settings.useAdjusted;
     const startIndex = Math.max(0, data.length - barsToShow);
     const sliced = data.slice(startIndex, data.length);
 
     return sliced.map((d, i) => {
-        // Switch between Raw and Adj
-        const useAdj = settings.useAdjusted;
-        
+        const originalIndex = startIndex + i;
+
         const openVal = useAdj && d.openAdj ? d.openAdj : d.open;
         const closeVal = useAdj && d.closeAdj ? d.closeAdj : d.close;
         const highVal = useAdj && d.highAdj ? d.highAdj : d.high;
         const lowVal = useAdj && d.lowAdj ? d.lowAdj : d.low;
 
-        // Min/Max for candle body
-        let minBody = Math.min(openVal, closeVal);
-        let maxBody = Math.max(openVal, closeVal);
-        if (minBody === maxBody) maxBody += 0.000001;
-
         let priceChange = 0;
         let priceChangePercent = 0;
-        
-        // Calculate change based on the visible data stream (approximation for display)
-        const originalIndex = startIndex + i;
         if (originalIndex > 0) {
             const prevD = data[originalIndex - 1];
             const prevClose = useAdj && prevD.closeAdj ? prevD.closeAdj : prevD.close;
@@ -285,42 +335,61 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }
             priceChangePercent = (priceChange / prevClose) * 100;
         }
 
-        return { 
+        // Build dynamic MA fields: ma_5, ma_10, ma_5_dir, etc.
+        const maFields: Record<string, any> = {};
+        for (const line of settings.maLines) {
+          const val = maResultsCache[line.period]?.[originalIndex];
+          maFields[`ma_${line.period}`] = val ?? undefined;
+          if (originalIndex > 0) {
+            const prev = maResultsCache[line.period]?.[originalIndex - 1];
+            maFields[`ma_${line.period}_dir`] = (val != null && prev != null)
+              ? (val > prev ? 'up' : val < prev ? 'down' : 'flat')
+              : 'flat';
+          } else {
+            maFields[`ma_${line.period}_dir`] = 'flat';
+          }
+        }
+
+        return {
             ...d,
-            // Override basic keys for Recharts
             open: openVal,
             close: closeVal,
             high: highVal,
             low: lowVal,
-            candleBody: [minBody, maxBody],
-            
-            // Map MAs
-            ma5: useAdj ? d.ma5Adj : d.ma5,
-            ma10: useAdj ? d.ma10Adj : d.ma10,
-            ma20: useAdj ? d.ma20Adj : d.ma20,
-            ma60: useAdj ? d.ma60Adj : d.ma60,
-            
-            // Map Indicators
+            candleBody: [lowVal, highVal],
+            ...maFields,
             rsi: useAdj ? d.rsiAdj : d.rsi,
             macd: useAdj ? d.macdAdj : d.macd,
             macdSignal: useAdj ? d.macdSignalAdj : d.macdSignal,
             macdHist: useAdj ? d.macdHistAdj : d.macdHist,
-            
+            bbUpper: useAdj ? d.bbUpperAdj : d.bbUpper,
+            bbMiddle: useAdj ? d.bbMiddleAdj : d.bbMiddle,
+            bbLower: useAdj ? d.bbLowerAdj : d.bbLower,
+            bbBand: (useAdj ? d.bbLowerAdj : d.bbLower) != null && (useAdj ? d.bbUpperAdj : d.bbUpper) != null
+              ? [(useAdj ? d.bbLowerAdj : d.bbLower), (useAdj ? d.bbUpperAdj : d.bbUpper)]
+              : undefined,
             priceChange,
             priceChangePercent
         };
     });
-  }, [data, barsToShow, settings.useAdjusted]);
+  }, [data, barsToShow, settings.useAdjusted, maResultsCache]);
 
   const activeData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : displayData[displayData.length - 1];
   const cursorData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : null;
 
+  // Throttle mouse move to reduce re-renders (~60fps max)
+  const rafRef = useRef<number | null>(null);
+  const pendingIndex = useRef<number | null>(null);
+
   const handleMouseMove = useCallback((state: any) => {
-      if (state && state.activeTooltipIndex !== undefined) {
-          setActiveIndex(state.activeTooltipIndex);
-      } else {
-          setActiveIndex(null);
-      }
+      const newIndex = state?.activeTooltipIndex ?? null;
+      if (newIndex === pendingIndex.current) return; // skip if same
+      pendingIndex.current = newIndex;
+      if (rafRef.current) return; // already scheduled
+      rafRef.current = requestAnimationFrame(() => {
+          rafRef.current = null;
+          setActiveIndex(pendingIndex.current);
+      });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -346,6 +415,23 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }
     tickMargin: 5,
   };
 
+  // Pre-compute Cell arrays to avoid recreating on every render
+  const volumeCells = useMemo(() => displayData.map((entry, index) => (
+    <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#ef4444' : '#10b981'} fillOpacity={0.15} />
+  )), [displayData]);
+
+  const macdHistCells = useMemo(() => displayData.map((entry, index) => (
+    <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#ef4444' : '#10b981'} />
+  )), [displayData]);
+
+  const foreignCells = useMemo(() => displayData.map((entry, index) => (
+    <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
+  )), [displayData]);
+
+  const trustCells = useMemo(() => displayData.map((entry, index) => (
+    <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
+  )), [displayData]);
+
   if (!data || data.length === 0) return <div className="text-gray-400">No data available for chart</div>;
 
   return (
@@ -355,7 +441,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }
       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg relative outline-none">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2 pr-20">
             <div className="flex items-center gap-2">
-                <h3 className="text-slate-200 font-semibold text-lg">Price Action</h3>
+                <h3 className="text-slate-200 font-semibold text-lg">K線圖</h3>
                 <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">
                     {settings.useAdjusted ? 'Adj (還原)' : 'Raw (原始)'}
                 </span>
@@ -364,54 +450,69 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }
         </div>
 
         <div className="absolute top-4 right-4 flex gap-1 z-10">
-            <button onClick={() => handleZoom('out')} className="p-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-l border border-slate-600 transition-colors" title="Zoom Out (-)">
+            <button onClick={() => handleZoom('out')} className="p-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-l border border-slate-600 transition-colors" title="縮小 (-)">
                 <ZoomOut size={16} />
             </button>
-            <button onClick={() => handleZoom('in')} className="p-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-r border border-slate-600 transition-colors" title="Zoom In (+)">
+            <button onClick={() => handleZoom('in')} className="p-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-r border border-slate-600 transition-colors" title="放大 (+)">
                 <ZoomIn size={16} />
             </button>
         </div>
         
-        <div className="h-[400px] w-full">
+        <div className="h-[450px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart {...sharedChartProps}>
+            <ComposedChart {...sharedChartProps} barCategoryGap="20%" barGap="-100%">
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-              <XAxis 
-                dataKey="date" 
-                stroke="#94a3b8" 
-                tick={{fill: '#94a3b8', fontSize: 11}} 
-                minTickGap={40} 
-                tickLine={false} 
-                axisLine={{stroke: '#475569'}} 
+              <XAxis
+                dataKey="date"
+                stroke="#94a3b8"
+                tick={{fill: '#94a3b8', fontSize: 11}}
+                minTickGap={40}
+                tickLine={false}
+                axisLine={{stroke: '#475569'}}
               />
-              <YAxis 
+              <YAxis
                 {...commonYAxisProps}
                 yAxisId="right"
-                domain={['dataMin', 'dataMax']} 
-                tickFormatter={(val) => val.toFixed(0)} 
-                textAnchor="start" 
+                domain={['dataMin', 'dataMax']}
+                tickFormatter={(val) => val.toFixed(0)}
+                textAnchor="start"
               />
-              <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={{ stroke: '#475569', strokeDasharray: '4 4' }} />
+              {/* Hidden volume axis — domain inflated so bars occupy bottom ~20% */}
+              <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
+              <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
 
-              {settings.showMA5 && <Line yAxisId="right" type="monotone" dataKey="ma5" stroke="#fbbf24" strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />}
-              {settings.showMA10 && <Line yAxisId="right" type="monotone" dataKey="ma10" stroke="#38bdf8" strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />}
-              {settings.showMA20 && <Line yAxisId="right" type="monotone" dataKey="ma20" stroke="#a78bfa" strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />}
-              {settings.showMA60 && <Line yAxisId="right" type="monotone" dataKey="ma60" stroke="#34d399" strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />}
-              
-              <Bar yAxisId="right" dataKey="candleBody" shape={<CandleStickShape />} name="Price" isAnimationActive={false} maxBarSize={15} />
+              {/* Volume overlay — behind candlesticks, same position via barGap=-100% */}
+              <Bar yAxisId="volume" dataKey="volume" isAnimationActive={false}>
+                {volumeCells}
+              </Bar>
+
+              {settings.maLines.filter(l => l.enabled).map((line) => (
+                <Line key={`ma-${line.period}`} yAxisId="right" type="monotone" dataKey={`ma_${line.period}`} stroke={line.color} strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />
+              ))}
+
+              {/* Bollinger Bands */}
+              {settings.showBB && (
+                <>
+                  <Area yAxisId="right" type="monotone" dataKey="bbBand" stroke="none" fill="#8b5cf6" fillOpacity={0.06} isAnimationActive={false} dot={false} activeDot={false} />
+                  <Line yAxisId="right" type="monotone" dataKey="bbUpper" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
+                  <Line yAxisId="right" type="monotone" dataKey="bbLower" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
+                </>
+              )}
+
+              <Bar yAxisId="right" dataKey="candleBody" shape={<CandleStickShape />} name="Price" isAnimationActive={false} />
 
               {cursorData && (
-                <ReferenceLine 
-                    yAxisId="right" 
-                    y={cursorData.close} 
-                    stroke="#94a3b8" 
-                    strokeDasharray="3 3" 
+                <ReferenceLine
+                    yAxisId="right"
+                    y={cursorData.close}
+                    stroke="#94a3b8"
+                    strokeDasharray="3 3"
                     opacity={0.8}
                 >
-                    <Label 
-                        value={cursorData.close.toFixed(2)} 
-                        position="right" 
-                        fill="#e2e8f0" 
+                    <Label
+                        value={cursorData.close.toFixed(2)}
+                        position="right"
+                        fill="#e2e8f0"
                         fontSize={11}
                         className="bg-slate-800"
                         offset={5}
@@ -423,132 +524,112 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock }
         </div>
       </div>
 
-       {/* 2. Volume Chart */}
-       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg h-[250px] outline-none">
-           <h3 className="text-slate-200 mb-2 font-medium text-sm">{isTaiwanStock ? "成交張數 (Lots)" : "Volume"}</h3>
-           <div className="h-[200px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart {...sharedChartProps}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                <XAxis dataKey="date" hide />
-                <YAxis 
-                    {...commonYAxisProps}
-                    stroke="#94a3b8" 
-                    tickFormatter={(val) => isTaiwanStock ? (val/1000).toFixed(0) : (val/1000000).toFixed(1) + 'M'} 
-                />
-                <Tooltip cursor={{fill: '#334155', opacity: 0.4}} content={<MainTooltip isTaiwanStock={isTaiwanStock} />} />
-                <Bar dataKey="volume" isAnimationActive={false}>
-                    {displayData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.close >= entry.open ? '#ef4444' : '#10b981'} opacity={0.6} />
-                    ))}
-                </Bar>
-                </BarChart>
-            </ResponsiveContainer>
+       {/* 2. Sub-panels: two full-width windows with toggle buttons */}
+       {[
+         { view: panel1View, setView: setPanel1View, id: 1 },
+         { view: panel2View, setView: setPanel2View, id: 2 },
+       ].map(({ view, setView, id }) => {
+         const viewOptions: { key: PanelView; label: string; show: boolean }[] = [
+           { key: 'foreign', label: '外資', show: hasChipData },
+           { key: 'trust', label: '投信', show: hasChipData },
+           { key: 'macd', label: 'MACD', show: settings.showMACD !== false },
+           { key: 'kdj', label: 'KDJ', show: settings.showK || settings.showD || settings.showJ },
+           { key: 'rsi', label: 'RSI', show: settings.showRSI },
+         ];
+
+         const titleMap: Record<PanelView, string> = {
+           foreign: '外資買賣超 (Foreign Net Buy/Sell)',
+           trust: '投信買賣超 (Trust Net Buy/Sell)',
+           macd: 'MACD (10, 20, 10)',
+           kdj: 'KDJ (5, 3, 3)',
+           rsi: 'RSI (14)',
+         };
+
+         return (
+           <div key={`panel-${id}`} className="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-lg outline-none">
+             <div className="flex items-center justify-between mb-2">
+               <h3 className="text-slate-200 font-medium text-sm">{titleMap[view]}</h3>
+               <div className="flex gap-1">
+                 {viewOptions.filter(o => o.show).map(o => (
+                   <button
+                     key={o.key}
+                     onClick={() => setView(o.key)}
+                     className={`px-2.5 py-1 text-xs rounded transition-colors ${
+                       view === o.key
+                         ? 'bg-blue-600 text-white'
+                         : 'bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-slate-200'
+                     }`}
+                   >
+                     {o.label}
+                   </button>
+                 ))}
+               </div>
+             </div>
+             <div className="h-[180px] w-full">
+               <ResponsiveContainer width="100%" height="100%">
+                 {view === 'foreign' ? (
+                   <BarChart {...sharedChartProps} barCategoryGap="20%">
+                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                     <XAxis dataKey="date" hide />
+                     <YAxis {...commonYAxisProps} stroke="#94a3b8" tickFormatter={(val) => (val/1000).toFixed(0)} />
+                     <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Foreign" />} />
+                     <ReferenceLine y={0} stroke="#475569" />
+                     <Bar dataKey="foreignBuySell" isAnimationActive={false}>
+                       {foreignCells}
+                     </Bar>
+                   </BarChart>
+                 ) : view === 'trust' ? (
+                   <BarChart {...sharedChartProps} barCategoryGap="20%">
+                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                     <XAxis dataKey="date" hide />
+                     <YAxis {...commonYAxisProps} stroke="#94a3b8" tickFormatter={(val) => (val/1000).toFixed(0)} />
+                     <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Trust" />} />
+                     <ReferenceLine y={0} stroke="#475569" />
+                     <Bar dataKey="investmentTrustBuySell" isAnimationActive={false}>
+                       {trustCells}
+                     </Bar>
+                   </BarChart>
+                 ) : view === 'macd' ? (
+                   <ComposedChart {...sharedChartProps} barCategoryGap="20%">
+                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                     <XAxis dataKey="date" hide />
+                     <YAxis {...commonYAxisProps} stroke="#94a3b8" />
+                     <Tooltip content={<MACDTooltip />} />
+                     <ReferenceLine y={0} stroke="#475569" />
+                     <Bar dataKey="macdHist" isAnimationActive={false}>
+                       {macdHistCells}
+                     </Bar>
+                     <Line type="monotone" dataKey="macd" stroke="#fb923c" dot={false} strokeWidth={1.5} name="DIF" isAnimationActive={false} />
+                     <Line type="monotone" dataKey="macdSignal" stroke="#22d3ee" dot={false} strokeWidth={1.5} name="DEA" isAnimationActive={false} />
+                   </ComposedChart>
+                 ) : view === 'kdj' ? (
+                   <ComposedChart {...sharedChartProps}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                     <XAxis dataKey="date" hide />
+                     <YAxis {...commonYAxisProps} domain={[0, 100]} stroke="#94a3b8" />
+                     <Tooltip content={<IndicatorTooltip settings={settings} />} />
+                     <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
+                     <ReferenceLine y={20} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
+                     {settings.showK && <Line type="monotone" dataKey="k" stroke="#facc15" dot={false} strokeWidth={1.5} name="K" isAnimationActive={false} />}
+                     {settings.showD && <Line type="monotone" dataKey="d" stroke="#f472b6" dot={false} strokeWidth={1.5} name="D" isAnimationActive={false} />}
+                     {settings.showJ && <Line type="monotone" dataKey="j" stroke="#c084fc" dot={false} strokeWidth={1.5} name="J" isAnimationActive={false} />}
+                   </ComposedChart>
+                 ) : (
+                   <ComposedChart {...sharedChartProps}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                     <XAxis dataKey="date" hide />
+                     <YAxis {...commonYAxisProps} domain={[0, 100]} stroke="#94a3b8" />
+                     <Tooltip content={<IndicatorTooltip settings={settings} />} />
+                     <ReferenceLine y={70} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
+                     <ReferenceLine y={30} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
+                     <Line type="monotone" dataKey="rsi" stroke="#38bdf8" dot={false} strokeWidth={2} name="RSI" isAnimationActive={false} />
+                   </ComposedChart>
+                 )}
+               </ResponsiveContainer>
+             </div>
            </div>
-       </div>
-
-       {/* 3. Chip Analysis (Synchronized Zoom) */}
-       {hasChipData && (
-        <>
-            <div className="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-lg h-[180px] outline-none">
-                    <h3 className="text-slate-200 mb-1 font-medium text-xs flex items-center justify-between">
-                        <span>外資買賣超 (Foreign Net Buy/Sell)</span>
-                    </h3>
-                    <div className="h-[140px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart {...sharedChartProps}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                            <XAxis dataKey="date" hide />
-                            <YAxis 
-                                {...commonYAxisProps}
-                                stroke="#94a3b8" 
-                                tickFormatter={(val) => (val/1000).toFixed(0)} 
-                            />
-                            <Tooltip cursor={{fill: '#334155', opacity: 0.4}} content={<ChipTooltip title="Foreign" />} />
-                            <ReferenceLine y={0} stroke="#475569" />
-                            <Bar dataKey="foreignBuySell" isAnimationActive={false}>
-                                {displayData.map((entry, index) => (
-                                    <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
-                                ))}
-                            </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-            </div>
-            
-            <div className="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-lg h-[180px] outline-none">
-                    <h3 className="text-slate-200 mb-1 font-medium text-xs flex items-center justify-between">
-                        <span>投信買賣超 (Trust Net Buy/Sell)</span>
-                    </h3>
-                    <div className="h-[140px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart {...sharedChartProps}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                            <XAxis dataKey="date" hide />
-                            <YAxis 
-                                {...commonYAxisProps}
-                                stroke="#94a3b8" 
-                                tickFormatter={(val) => (val/1000).toFixed(0)} 
-                            />
-                            <Tooltip cursor={{fill: '#334155', opacity: 0.4}} content={<ChipTooltip title="Trust" />} />
-                            <ReferenceLine y={0} stroke="#475569" />
-                            <Bar dataKey="investmentTrustBuySell" isAnimationActive={false}>
-                                {displayData.map((entry, index) => (
-                                    <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
-                                ))}
-                            </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-            </div>
-        </>
-       )}
-
-       {/* 4. Technical Indicators Row */}
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg h-[250px] outline-none">
-                <h3 className="text-slate-200 mb-2 font-medium text-sm">MACD (12, 26, 9)</h3>
-                <div className="h-[200px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart {...sharedChartProps}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                        <XAxis dataKey="date" hide />
-                        <YAxis {...commonYAxisProps} stroke="#94a3b8" />
-                        <Tooltip content={<MACDTooltip />} />
-                        <ReferenceLine y={0} stroke="#475569" />
-                        
-                        <Bar dataKey="macdHist" isAnimationActive={false}>
-                            {displayData.map((entry, index) => (
-                                <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#ef4444' : '#10b981'} />
-                            ))}
-                        </Bar>
-                        
-                        <Line type="monotone" dataKey="macd" stroke="#fb923c" dot={false} strokeWidth={1.5} name="DIF" isAnimationActive={false} />
-                        <Line type="monotone" dataKey="macdSignal" stroke="#22d3ee" dot={false} strokeWidth={1.5} name="DEA" isAnimationActive={false} />
-                        </ComposedChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg h-[250px] outline-none">
-                <h3 className="text-slate-200 mb-2 font-medium text-sm">RSI & KDJ</h3>
-                <div className="h-[200px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart {...sharedChartProps}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                        <XAxis dataKey="date" hide />
-                        <YAxis {...commonYAxisProps} domain={[0, 100]} stroke="#94a3b8" />
-                        <Tooltip content={<IndicatorTooltip settings={settings} />} />
-                        {settings.showRSI && <Line type="monotone" dataKey="rsi" stroke="#38bdf8" dot={false} strokeWidth={2} name="RSI" isAnimationActive={false} />}
-                        {settings.showK && <Line type="monotone" dataKey="k" stroke="#facc15" dot={false} strokeWidth={1} name="K" isAnimationActive={false} />}
-                        {settings.showD && <Line type="monotone" dataKey="d" stroke="#f472b6" dot={false} strokeWidth={1} name="D" isAnimationActive={false} />}
-                        {settings.showJ && <Line type="monotone" dataKey="j" stroke="#c084fc" dot={false} strokeWidth={1} name="J" isAnimationActive={false} />}
-                        </ComposedChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-       </div>
+         );
+       })}
     </div>
   );
 };

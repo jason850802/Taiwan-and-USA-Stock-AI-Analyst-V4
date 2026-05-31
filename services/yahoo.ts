@@ -1,5 +1,5 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
-import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ } from '../utils/math';
+import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 
 // PROXY ROTATION STRATEGY
 // 1. CorsProxy: Fast, usually reliable.
@@ -190,9 +190,10 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
     return d.toISOString().split('T')[0];
 };
 
-const fetchInstitutionalData = async (stockId: string, startDate: string) => {
+const fetchInstitutionalData = async (stockId: string, startDate: string, isOTC = false) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    const url = `${FINMIND_BASE}?dataset=TaiwanStockInstitutionalInvestorsBuySell&data_id=${cleanId}&start_date=${startDate}`;
+    const dataset = isOTC ? 'TaiwanOTCStockInstitutionalInvestorsBuySell' : 'TaiwanStockInstitutionalInvestorsBuySell';
+    const url = `${FINMIND_BASE}?dataset=${dataset}&data_id=${cleanId}&start_date=${startDate}`;
     try {
         const res = await fetch(url);
         const json = await res.json();
@@ -218,15 +219,20 @@ const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
 
 const fetchFinMindStockInfo = async (stockId: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    const url = `${FINMIND_BASE}?dataset=TaiwanStockInfo&data_id=${cleanId}`;
-    try {
-        const res = await fetch(url);
-        const json = await res.json();
-        return (json.msg === 'success' && Array.isArray(json.data) && json.data.length > 0) ? json.data[0].stock_name : null;
-    } catch (e) {
-        console.warn("Failed to fetch stock info from FinMind", e);
-        return null;
+    // Try listed (上市) first, then OTC (上櫃) if not found
+    for (const dataset of ['TaiwanStockInfo', 'TaiwanOTCStockInfo']) {
+        const url = `${FINMIND_BASE}?dataset=${dataset}&data_id=${cleanId}`;
+        try {
+            const res = await fetch(url);
+            const json = await res.json();
+            if (json.msg === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+                return json.data[0].stock_name as string;
+            }
+        } catch (e) {
+            console.warn(`Failed to fetch stock info from FinMind (${dataset})`, e);
+        }
     }
+    return null;
 };
 
 // Fallback: Fetch OHLC from FinMind when Yahoo fails
@@ -331,17 +337,18 @@ const fetchRawData = async (symbol: string, interval: string, range: string) => 
   const clean = symbol.trim().toUpperCase();
   const performQuery = async (s: string) => queryYahoo(s, interval, range);
 
-  // 1. Check for Explicit Numeric Code (e.g. "2330", "0050")
-  const codeMatch = clean.match(/^(\d{3,6})/);
+  // 1. Check for Explicit Numeric Code (e.g. "2330", "0050", "00631L", "00679B", "00981A")
+  // Taiwan ETF codes: digits optionally followed by a single letter (L, R, B, C, U, V, A, D, T, K, M, S...)
+  const codeMatch = clean.match(/^(\d{3,6}[A-Z]?)/);
 
   if (codeMatch) {
       const coreCode = codeMatch[1];
-      
+
       if (clean.includes('.TW') || clean.includes('.TWO')) {
           return await performQuery(clean);
       }
 
-      // Implicit Code "2330" -> Try .TW then .TWO
+      // Implicit Code "2330" / "00981A" -> Try .TW then .TWO
       try {
           return await performQuery(`${coreCode}.TW`);
       } catch (e: any) {
@@ -413,6 +420,25 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
     return cleanData;
 };
 
+export const getLatestPrice = async (symbol: string): Promise<{ price: number; name: string }> => {
+  const response = await fetchRawData(symbol, '1d', '5d');
+  const result = response.chart.result![0];
+  const meta = result.meta;
+  const closes = result.indicators.quote[0].close;
+  const validCloses = (closes as (number | null)[]).filter((c) => c !== null) as number[];
+  const latestPrice = validCloses.length > 0 ? validCloses[validCloses.length - 1] : meta.regularMarketPrice;
+
+  // For TW stocks, fetch Chinese name from FinMind
+  const isTW = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
+  let name = meta.longName || meta.shortName || meta.symbol;
+  if (isTW) {
+    const chineseName = await fetchFinMindStockInfo(meta.symbol);
+    if (chineseName) name = chineseName;
+  }
+
+  return { price: latestPrice, name };
+};
+
 export const getStockData = async (symbol: string, interval: TimeInterval = '1d'): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
   
   let mainInterval = interval as string;
@@ -440,7 +466,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       const mainResponse = await fetchRawData(symbol, mainInterval, mainRange);
       const resultMeta = mainResponse.chart.result![0].meta;
       isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
-      
+
       processedData = processYahooResult(mainResponse, mainInterval);
       symbolInfo = {
           symbol: resultMeta.symbol,
@@ -451,8 +477,8 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   } catch (err: any) {
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
       const cleanSymbol = symbol.toUpperCase().replace('.TW', '').replace('.TWO', '');
-      const isPotentialTaiwanStock = /^\d{3,6}$/.test(cleanSymbol);
-      
+      const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);
+
       if (isPotentialTaiwanStock && interval === '1d') {
           console.log(`Yahoo failed (${err.message}). Attempting FinMind fallback for ${cleanSymbol}...`);
           try {
@@ -461,7 +487,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
               isTaiwanStock = true;
               usedFallback = true;
               symbolInfo = {
-                  symbol: `${cleanSymbol}.TW`, 
+                  symbol: `${cleanSymbol}.TW`,
                   name: name || cleanSymbol,
                   currency: 'TWD',
                   exchangeTimezoneName: 'Asia/Taipei'
@@ -578,9 +604,10 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       
       // We need clean ID for FinMind
       const cleanId = symbolInfo.symbol.replace('.TW', '').replace('.TWO', '');
+      const isOTC = symbolInfo.symbol.endsWith('.TWO');
 
       const [institutionalData, finMindPriceData] = await Promise.all([
-          fetchInstitutionalData(cleanId, fetchStartDateStr),
+          fetchInstitutionalData(cleanId, fetchStartDateStr, isOTC),
           fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
       
@@ -628,6 +655,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   const rsi = calculateRSI(rawCloses, 14);
   const { macdLine, signalLine, histogram } = calculateMACD(rawCloses);
   const { K, D, J } = calculateKDJ(rawHighs, rawLows, rawCloses);
+  const bbRaw = calculateBollingerBands(rawCloses, 20, 2);
 
   // Set B: ADJUSTED
   const ma5Adj = calculateSMA(adjCloses, 5);
@@ -636,7 +664,8 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   const ma60Adj = calculateSMA(adjCloses, 60);
   const rsiAdj = calculateRSI(adjCloses, 14);
   const macdDataAdj = calculateMACD(adjCloses);
-  
+  const bbAdj = calculateBollingerBands(adjCloses, 20, 2);
+
   const fullProcessedData: StockDataPoint[] = finalData.map((d: any, i: number) => {
       const getDir = (current: number | undefined, prev: number | undefined) => {
           if (current === undefined || prev === undefined) return 'flat';
@@ -672,6 +701,12 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
           macdAdj: macdDataAdj.macdLine[i] || undefined,
           macdSignalAdj: macdDataAdj.signalLine[i] || undefined,
           macdHistAdj: macdDataAdj.histogram[i] || undefined,
+          bbUpper: bbRaw.upper[i] ?? undefined,
+          bbMiddle: bbRaw.middle[i] ?? undefined,
+          bbLower: bbRaw.lower[i] ?? undefined,
+          bbUpperAdj: bbAdj.upper[i] ?? undefined,
+          bbMiddleAdj: bbAdj.middle[i] ?? undefined,
+          bbLowerAdj: bbAdj.lower[i] ?? undefined,
           priceChange,
           priceChangePercent
       };

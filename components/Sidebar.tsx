@@ -1,36 +1,48 @@
 import React from 'react';
-import { TimeInterval, IndicatorSettings } from '../types';
-import { Activity, Settings, TrendingUp, Clock, Eye, EyeOff, RefreshCcw } from 'lucide-react';
+import { TimeInterval, IndicatorSettings, MALineConfig } from '../types';
+import { Activity, Settings, TrendingUp, Clock, Eye, EyeOff, RefreshCcw, BarChart2, Wallet } from 'lucide-react';
+
+type AppView = 'dashboard' | 'portfolio';
 
 interface SidebarProps {
   interval: TimeInterval;
   setInterval: (interval: TimeInterval) => void;
   settings: IndicatorSettings;
   setSettings: (settings: IndicatorSettings) => void;
+  currentView: AppView;
+  setView: (view: AppView) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setSettings }) => {
+const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setSettings, currentView, setView }) => {
   const intervals: { label: string, value: TimeInterval }[] = [
-    { label: '15m', value: '15m' },
-    { label: '1H', value: '60m' },
-    { label: 'Day', value: '1d' },
-    { label: 'Week', value: '1wk' },
-    { label: 'Month', value: '1mo' },
+    { label: '15分', value: '15m' },
+    { label: '1時', value: '60m' },
+    { label: '日', value: '1d' },
+    { label: '週', value: '1wk' },
+    { label: '月', value: '1mo' },
   ];
 
   const toggleSetting = (key: keyof IndicatorSettings) => {
+    if (key === 'maLines') return;
     setSettings({
         ...settings,
         [key]: !settings[key]
     });
   };
 
+  const updateMALine = (index: number, updates: Partial<MALineConfig>) => {
+    const newLines = settings.maLines.map((line, i) =>
+      i === index ? { ...line, ...updates } : line
+    );
+    setSettings({ ...settings, maLines: newLines });
+  };
+
   const ToggleItem = ({ label, sKey, color }: { label: string, sKey: keyof IndicatorSettings, color: string }) => (
-      <button 
+      <button
         onClick={() => toggleSetting(sKey)}
         className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium border transition-all mb-1 ${
             settings[sKey]
-            ? 'bg-slate-800 border-slate-700 text-slate-200' 
+            ? 'bg-slate-800 border-slate-700 text-slate-200'
             : 'bg-slate-900/50 border-slate-800 text-slate-500'
         }`}
       >
@@ -42,6 +54,49 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
       </button>
   );
 
+  const MALineItem = ({ line, index }: { line: MALineConfig, index: number }) => (
+    <div
+      className={`flex items-center gap-2 w-full px-3 py-1.5 rounded-lg text-xs font-medium border transition-all mb-1 ${
+        line.enabled
+          ? 'bg-slate-800 border-slate-700 text-slate-200'
+          : 'bg-slate-900/50 border-slate-800 text-slate-500'
+      }`}
+    >
+      <button
+        onClick={() => updateMALine(index, { enabled: !line.enabled })}
+        className="shrink-0"
+      >
+        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: line.enabled ? line.color : '#334155' }}></div>
+      </button>
+      <span className="shrink-0">MA</span>
+      <input
+        type="number"
+        min={1}
+        max={999}
+        value={line.period}
+        onChange={(e) => {
+          const val = parseInt(e.target.value);
+          if (!isNaN(val) && val >= 1 && val <= 999) {
+            updateMALine(index, { period: val });
+          }
+        }}
+        className="w-12 bg-slate-900 border border-slate-700 text-white text-center text-xs py-0.5 rounded focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+      />
+      <div className="ml-auto flex items-center gap-1.5">
+        <input
+          type="color"
+          value={line.color}
+          onChange={(e) => updateMALine(index, { color: e.target.value })}
+          className="w-4 h-4 rounded cursor-pointer border-0 bg-transparent p-0"
+          title="選擇顏色"
+        />
+        <button onClick={() => updateMALine(index, { enabled: !line.enabled })}>
+          {line.enabled ? <Eye size={14} className="text-slate-400" /> : <EyeOff size={14} />}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full md:w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col h-full shrink-0 overflow-y-auto">
       <div className="flex items-center gap-2 mb-8 text-blue-400">
@@ -49,21 +104,49 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
         <h1 className="text-xl font-bold tracking-tight text-white">Stock AI</h1>
       </div>
 
+      {/* Navigation */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-slate-400 mb-3 uppercase text-xs font-bold tracking-wider">
+          <BarChart2 size={14} />
+          <span>導覽</span>
+        </div>
+        <button
+          onClick={() => setView('dashboard')}
+          className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium border transition-all mb-2 ${
+            currentView === 'dashboard'
+              ? 'bg-blue-600/20 border-blue-500 text-blue-300'
+              : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700'
+          }`}
+        >
+          <BarChart2 size={15} /> 市場分析
+        </button>
+        <button
+          onClick={() => setView('portfolio')}
+          className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
+            currentView === 'portfolio'
+              ? 'bg-emerald-600/20 border-emerald-500 text-emerald-300'
+              : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700'
+          }`}
+        >
+          <Wallet size={15} /> 我的庫存
+        </button>
+      </div>
+
       {/* Interval Selector */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-slate-400 mb-4 uppercase text-xs font-bold tracking-wider">
           <Clock size={14} />
-          <span>Time Interval</span>
+          <span>時間週期</span>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-2">
             {intervals.map((item) => (
                 <button
                     key={item.value}
                     onClick={() => setInterval(item.value)}
                     className={`px-1 py-2 text-xs font-medium rounded-lg transition-colors border ${
-                        interval === item.value 
-                        ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                        interval === item.value
+                        ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20'
                         : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'
                     }`}
                 >
@@ -77,13 +160,13 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
       <div className="mb-6">
          <div className="flex items-center gap-2 text-slate-400 mb-4 uppercase text-xs font-bold tracking-wider">
           <Settings size={14} />
-          <span>Config</span>
+          <span>設定</span>
         </div>
-        <button 
+        <button
             onClick={() => toggleSetting('useAdjusted')}
             className={`flex items-center justify-between w-full px-3 py-3 rounded-lg text-xs font-medium border transition-all mb-1 ${
                 settings.useAdjusted
-                ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300' 
+                ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
                 : 'bg-slate-900/50 border-slate-800 text-slate-400'
             }`}
         >
@@ -96,7 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
             </div>
         </button>
         <p className="text-[10px] text-slate-500 mt-2 px-1 leading-relaxed">
-            Toggle this if Moving Averages don't match your broker/Yahoo web. Daily/Weekly usually use Adj.
+            若均線數值與券商/Yahoo 網頁不同，可切換此選項。日線/週線通常使用還原權值。
         </p>
       </div>
 
@@ -104,24 +187,25 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
       <div className="mb-8">
         <div className="flex items-center gap-2 text-slate-400 mb-4 uppercase text-xs font-bold tracking-wider">
           <Eye size={14} />
-          <span>Visibility</span>
+          <span>指標顯示</span>
         </div>
-        
+
         <div className="space-y-4">
             <div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">Moving Averages</p>
-                <ToggleItem label="MA 5" sKey="showMA5" color="#fbbf24" />
-                <ToggleItem label="MA 10" sKey="showMA10" color="#38bdf8" />
-                <ToggleItem label="MA 20" sKey="showMA20" color="#a78bfa" />
-                <ToggleItem label="MA 60" sKey="showMA60" color="#34d399" />
+                <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">均線（可自訂天數）</p>
+                {settings.maLines.map((line, index) => (
+                  <MALineItem key={index} line={line} index={index} />
+                ))}
             </div>
 
             <div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">Oscillators</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">技術指標</p>
+                <ToggleItem label="MACD" sKey="showMACD" color="#fb923c" />
                 <ToggleItem label="RSI (14)" sKey="showRSI" color="#38bdf8" />
                 <ToggleItem label="KD - K" sKey="showK" color="#facc15" />
                 <ToggleItem label="KD - D" sKey="showD" color="#f472b6" />
                 <ToggleItem label="KD - J" sKey="showJ" color="#c084fc" />
+                <ToggleItem label="布林通道" sKey="showBB" color="#8b5cf6" />
             </div>
         </div>
       </div>
@@ -129,7 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({ interval, setInterval, settings, setS
       <div className="mt-auto pt-6 border-t border-slate-800">
          <div className="flex items-center gap-2 text-emerald-400 text-xs font-medium bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
              <Activity size={14} />
-             <span>System Operational</span>
+             <span>系統運作中</span>
          </div>
       </div>
     </div>

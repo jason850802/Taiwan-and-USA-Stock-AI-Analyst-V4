@@ -77,7 +77,7 @@ export const calculateRSI = (closePrices: number[], period: number = 14): (numbe
   return rsiArray;
 };
 
-export const calculateMACD = (closePrices: number[], fast: number = 12, slow: number = 26, signal: number = 9) => {
+export const calculateMACD = (closePrices: number[], fast: number = 10, slow: number = 20, signal: number = 10) => {
   const emaFast = calculateEMA(closePrices, fast);
   const emaSlow = calculateEMA(closePrices, slow);
   
@@ -117,8 +117,29 @@ export const calculateMACD = (closePrices: number[], fast: number = 12, slow: nu
   return { macdLine, signalLine, histogram };
 };
 
-export const calculateKDJ = (highs: number[], lows: number[], closes: number[], period: number = 9) => {
-  // Standard KDJ (9, 3, 3) initialization
+export const calculateBollingerBands = (data: number[], period: number = 20, multiplier: number = 2): { upper: (number | null)[], middle: (number | null)[], lower: (number | null)[] } => {
+  const upper = new Array(data.length).fill(null);
+  const middle = new Array(data.length).fill(null);
+  const lower = new Array(data.length).fill(null);
+
+  if (data.length < period) return { upper, middle, lower };
+
+  for (let i = period - 1; i < data.length; i++) {
+    const slice = data.slice(i - period + 1, i + 1);
+    const mean = slice.reduce((sum, v) => sum + v, 0) / period;
+    const variance = slice.reduce((sum, v) => sum + (v - mean) ** 2, 0) / period;
+    const stdDev = Math.sqrt(variance);
+
+    middle[i] = mean;
+    upper[i] = mean + multiplier * stdDev;
+    lower[i] = mean - multiplier * stdDev;
+  }
+
+  return { upper, middle, lower };
+};
+
+export const calculateKDJ = (highs: number[], lows: number[], closes: number[], period: number = 5) => {
+  // KDJ (5, 3, 3) initialization
   const K = new Array(closes.length).fill(50);
   const D = new Array(closes.length).fill(50);
   const J = new Array(closes.length).fill(50);

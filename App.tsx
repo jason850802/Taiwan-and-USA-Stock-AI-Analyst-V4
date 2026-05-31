@@ -2,106 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
+import EntryChecklist from './components/EntryChecklist';
+import StockSearch from './components/StockSearch';
+import Portfolio from './components/Portfolio';
 import { getStockData } from './services/yahoo';
-import { analyzeStockWithGemini } from './services/gemini';
-import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings } from './types';
-import { Search, AlertCircle, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, BarChart3, TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
+import { analyzeStockWithGemini, analyzeEntryWithGemini } from './services/gemini';
+import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
+import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
+import { Search, AlertCircle, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
+import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
-// --- Helper: Estimate Volume Trend (U-Shape Weighted) ---
-interface VolumeProjection {
-    currentVolume: number;
-    projectedVolume: number;
-    yesterdayVolume: number;
-    changePercent: number;
-    status: 'Intraday' | 'Insufficient' | 'Closed';
-}
-
-const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boolean, interval: TimeInterval): VolumeProjection | null => {
-    // Only calculate for Daily interval and Taiwan Stocks
-    if (interval !== '1d' || data.length < 2 || !isTaiwanStock) return null;
-
-    const latest = data[data.length - 1];
-    const prev = data[data.length - 2];
-    
-    // Use Taiwan Timezone for market hour logic
-    const now = new Date();
-    const twTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Taipei"}));
-    const todayStr = twTime.toISOString().split('T')[0];
-    
-    // Check if the latest data point is from today
-    const isToday = latest.date === todayStr;
-    
-    // Logic update: If NOT today (e.g., weekend, holiday), return historical change
-    if (!isToday) {
-        const changePercent = prev.volume > 0 ? ((latest.volume - prev.volume) / prev.volume) * 100 : 0;
-        return {
-            currentVolume: latest.volume,
-            projectedVolume: latest.volume,
-            yesterdayVolume: prev.volume,
-            changePercent,
-            status: 'Closed'
-        };
-    }
-
-    const currentHour = twTime.getHours();
-    const currentMinute = twTime.getMinutes();
-    
-    // Taiwan Market: 09:00 - 13:30 (Total 270 minutes)
-    const startHour = 9;
-    const totalMinutes = 270;
-    let minutesElapsed = (currentHour - startHour) * 60 + currentMinute;
-    
-    if (minutesElapsed < 0) return null; // Pre-market
-
-    const isClosed = minutesElapsed >= totalMinutes;
-    if (isClosed) minutesElapsed = totalMinutes;
-
-    /**
-     * U-Shape Weighting AI Logic:
-     * 1. 09:00 - 09:30 (Opening Rush): ~25% of total volume
-     * 2. 09:30 - 13:00 (Mid-day Lull): ~55% of total volume (distributed over 210 mins)
-     * 3. 13:00 - 13:30 (Closing Rush + Auction): ~20% of total volume
-     */
-    const getVolumeWeight = (mins: number): number => {
-        if (mins <= 30) {
-            // Early rush: linear progress towards 25% of the day's total
-            return (mins / 30) * 0.25;
-        } else if (mins <= 240) {
-            // Mid-day: progress from 25% to 80% (55% total)
-            return 0.25 + ((mins - 30) / 210) * 0.55;
-        } else if (mins < 270) {
-            // Final half hour: progress from 80% to ~93% (before the 13:30 auction jump)
-            return 0.80 + ((mins - 240) / 30) * 0.13;
-        } else {
-            // Market closed (100% of volume realized)
-            return 1.0;
-        }
-    };
-
-    const weight = getVolumeWeight(minutesElapsed);
-
-    // Guard: Prevent extreme math during the first few minutes
-    if (!isClosed && minutesElapsed < 5) {
-        return {
-            currentVolume: latest.volume,
-            projectedVolume: 0,
-            yesterdayVolume: prev.volume,
-            changePercent: 0,
-            status: 'Insufficient'
-        };
-    }
-
-    const projectedVolume = isClosed ? latest.volume : Math.round(latest.volume / weight);
-    const changePercent = prev.volume > 0 ? ((projectedVolume - prev.volume) / prev.volume) * 100 : 0;
-
-    return {
-        currentVolume: latest.volume,
-        projectedVolume,
-        yesterdayVolume: prev.volume,
-        changePercent,
-        status: isClosed ? 'Closed' : 'Intraday'
-    };
-};
+type AppView = 'dashboard' | 'portfolio';
 
 const App: React.FC = () => {
   const [symbol, setSymbol] = useState<string>('2330'); 
@@ -112,23 +23,77 @@ const App: React.FC = () => {
   const [analyzing, setAnalyzing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string>('');
+  const [entryResult, setEntryResult] = useState<EntryFilterResult | null>(null);
 
   const [indicatorSettings, setIndicatorSettings] = useState<IndicatorSettings>({
-    showMA5: true,
-    showMA10: true,
-    showMA20: true,
-    showMA60: true,
+    maLines: [
+      { period: 5, enabled: true, color: '#fbbf24' },
+      { period: 10, enabled: true, color: '#38bdf8' },
+      { period: 20, enabled: true, color: '#a78bfa' },
+      { period: 60, enabled: true, color: '#34d399' },
+      { period: 120, enabled: false, color: '#f472b6' },
+      { period: 240, enabled: false, color: '#fb923c' },
+    ],
     showRSI: true,
     showK: true,
     showD: true,
     showJ: true,
-    useAdjusted: true, 
+    showMACD: true,
+    showBB: true,
+    useAdjusted: true,
   });
+
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [hasHolding, setHasHolding] = useState<boolean | null>(null);
   const [costPrice, setCostPrice] = useState<string>('');
   const [analysisMode, setAnalysisMode] = useState<'fast' | 'thinking'>('fast');
+
+  const [currentView, setCurrentView] = useState<AppView>('dashboard');
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_items');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('portfolio_items', JSON.stringify(portfolioItems));
+  }, [portfolioItems]);
+
+  const handlePortfolioAdd = (item: Omit<PortfolioItem, 'id'>) => {
+    setPortfolioItems(prev => [...prev, { ...item, id: Date.now().toString() }]);
+  };
+
+  const handlePortfolioDelete = (id: string) => {
+    setPortfolioItems(prev => prev.filter(i => i.id !== id));
+  };
+
+  const handlePortfolioUpdate = (id: string, field: keyof Omit<PortfolioItem, 'id'>, value: number) => {
+    setPortfolioItems(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      const u = { ...item, [field]: value };
+      // TW stocks: cross-field sync for TWD costs
+      if (!u.purchaseCurrency || u.purchaseCurrency === 'TWD') {
+        if (field === 'totalCost' && u.totalShares > 0)
+          u.avgCostPrice = u.totalCost / u.totalShares;
+        else if (field === 'avgCostPrice')
+          u.totalCost = u.avgCostPrice * u.totalShares;
+        else if (field === 'totalShares' && u.totalShares > 0)
+          u.avgCostPrice = u.totalCost / u.totalShares;
+      } else {
+        // US stocks with USD purchase: cross-field sync for USD costs
+        if (field === 'totalCostUSD' && u.totalShares > 0)
+          u.avgCostPrice = (u.totalCostUSD ?? 0) / u.totalShares;
+        else if (field === 'totalShares' && u.totalShares > 0 && u.totalCostUSD)
+          u.avgCostPrice = u.totalCostUSD / u.totalShares;
+      }
+      return u;
+    }));
+  };
 
   const fetchData = async (sym: string, intvl: TimeInterval) => {
     setLoading(true);
@@ -137,7 +102,8 @@ const App: React.FC = () => {
       const { info, data } = await getStockData(sym, intvl);
       setData(data);
       setInfo(info);
-      setAnalysis(''); 
+      setAnalysis('');
+      setEntryResult(null);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch stock data.');
       setData([]);
@@ -151,11 +117,6 @@ const App: React.FC = () => {
     fetchData(symbol, interval);
   }, [interval]); 
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchData(symbol, interval);
-  };
-
   const handleOpenAnalysisModal = () => {
       if (data.length === 0) return;
       setHasHolding(null);
@@ -167,25 +128,50 @@ const App: React.FC = () => {
   const handleRunAnalysis = async () => {
     setShowAnalysisModal(false);
     setAnalyzing(true);
+    setEntryResult(null);
     const userPosition = {
         hasHolding: hasHolding === true,
         costPrice: hasHolding && costPrice ? parseFloat(costPrice) : undefined
     };
+    const sym = info?.symbol || symbol;
     try {
-      const result = await analyzeStockWithGemini(info?.symbol || symbol, data, userPosition, analysisMode);
-      setAnalysis(result);
+      // ── 方案C：先用程式跑「六六大順」逐步濾網（客觀層）──
+      // 取週線做日/週趨勢交叉比對（失敗則略過，不阻斷流程）
+      let weeklyData: StockDataPoint[] | undefined;
+      if (interval === '1d') {
+        try { weeklyData = (await getStockData(sym, '1wk')).data; } catch { /* ignore */ }
+      }
+      const filter = runEntryFilter(sym, data, weeklyData);
+      setEntryResult(filter);
       setTimeout(() => {
-          const element = document.getElementById('ai-analysis-section');
-          if (element) element.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('ai-analysis-section')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
+
+      // ── AI 解讀層（依濾網客觀結論寫報告，單次呼叫）──
+      const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode);
+      setAnalysis(report);
     } catch (err: any) {
-        if(err.message.includes("API Key is missing")) {
+        if(err.message?.includes("API Key is missing")) {
             setAnalysis("### System Error \n\n **API Key Missing.** \nPlease set `REACT_APP_GEMINI_API_KEY` in your environment.");
         } else {
             setAnalysis("### Analysis Failed \n\n Unable to generate report.");
         }
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleRefreshQuote = async () => {
+    if (data.length === 0 || refreshing || loading) return;
+    setRefreshing(true);
+    try {
+      const result = await getStockData(symbol, interval);
+      setData(result.data);
+      setInfo(result.info);
+    } catch (err: any) {
+      console.warn('Refresh failed:', err.message);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -285,40 +271,35 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <Sidebar 
-        interval={interval} 
-        setInterval={setInterval} 
+      <Sidebar
+        interval={interval}
+        setInterval={setInterval}
         settings={indicatorSettings}
         setSettings={setIndicatorSettings}
+        currentView={currentView}
+        setView={setCurrentView}
       />
-      
+
       <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
-                <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">Market Dashboard</h2>
-                    <p className="text-slate-400 text-sm">Real-time indicators for Taiwan & US Stocks</p>
-                </div>
-                <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
-                    <div className="relative group w-full md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
-                        <input
-                            type="text"
-                            value={symbol}
-                            onChange={(e) => setSymbol(e.target.value)}
-                            placeholder="Code (e.g. 2330, AAPL)"
-                            className="w-full bg-slate-900 border border-slate-700 text-white pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-600"
-                        />
-                    </div>
-                    <button 
-                        type="submit" 
-                        disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
-                    >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Search'}
-                    </button>
-                </form>
-            </div>
+
+        {currentView === 'portfolio' && (
+          <Portfolio
+            items={portfolioItems}
+            onAdd={handlePortfolioAdd}
+            onDelete={handlePortfolioDelete}
+            onUpdate={handlePortfolioUpdate}
+          />
+        )}
+
+        {currentView === 'dashboard' && (<>
+            {/* Search Bar */}
+            <StockSearch
+                value={symbol}
+                onValueChange={setSymbol}
+                onSelect={(sym) => { setSymbol(sym); fetchData(sym, interval); }}
+                loading={loading}
+            />
 
             {error && (
                 <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-4 rounded-xl flex items-center gap-3">
@@ -328,109 +309,97 @@ const App: React.FC = () => {
             )}
 
             {info && (
-                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {/* Symbol Card */}
-                    <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <DollarSign size={40} />
-                        </div>
-                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">股票代號</p>
-                        <div className="flex flex-col z-10 relative">
-                            <p className="text-2xl font-bold text-white leading-none">{info.symbol}</p>
-                            <p className="text-sm text-slate-400 mt-1 font-medium truncate">{info.name}</p>
+                 <div className="flex flex-wrap items-stretch gap-3">
+                    {/* Symbol */}
+                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-3 min-w-0">
+                        <div className="min-w-0">
+                            <p className="text-xl font-bold text-white leading-tight truncate">{info.symbol}</p>
+                            <p className="text-xs text-slate-400 font-medium truncate">{info.name}</p>
                         </div>
                     </div>
 
-                    {/* Price Card */}
-                     <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 relative overflow-hidden">
-                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1">Latest Close</p>
-                        <div className="flex items-baseline gap-2">
-                             <p className={`text-2xl font-bold ${data.length > 1 && data[data.length-1].close > data[data.length-2].close ? 'text-red-400' : 'text-emerald-400'}`}>
-                                {data.length > 0 ? data[data.length-1].close.toFixed(2) : '-'}
-                            </p>
-                            {data.length > 0 && data[data.length-1].priceChangePercent !== undefined && (
-                                <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${data[data.length-1].priceChangePercent! > 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                    {data[data.length-1].priceChangePercent! > 0 ? '+' : ''}{data[data.length-1].priceChangePercent!.toFixed(2)}%
-                                </span>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Volume Card with Advanced Projection */}
-                     <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 relative overflow-hidden">
-                        <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-1 flex items-center justify-between">
-                            <span>成交量</span>
-                        </p>
-                        
-                        <div className="flex flex-col">
-                            <div className="flex items-baseline gap-2 mb-0.5">
-                                <p className="text-2xl font-bold text-white">
-                                    {data.length > 0 
-                                        ? isTaiwanStock 
-                                            ? Math.round(data[data.length-1].volume / 1000).toLocaleString() + ' 張' 
-                                            : data[data.length-1].volume.toLocaleString()
-                                        : '-'}
+                    {/* Price */}
+                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-2">
+                        <div>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">收盤</p>
+                            <div className="flex items-baseline gap-1.5">
+                                <p className={`text-xl font-bold ${data.length > 1 && data[data.length-1].close > data[data.length-2].close ? 'text-red-400' : 'text-emerald-400'}`}>
+                                    {data.length > 0 ? data[data.length-1].close.toFixed(2) : '-'}
                                 </p>
+                                {data.length > 0 && data[data.length-1].priceChangePercent !== undefined && (
+                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${data[data.length-1].priceChangePercent! > 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                                        {data[data.length-1].priceChangePercent! > 0 ? '+' : ''}{data[data.length-1].priceChangePercent!.toFixed(2)}%
+                                    </span>
+                                )}
                             </div>
-
-                            {/* Projection Display Logic */}
-                            {volumeProj && volumeProj.status !== 'Insufficient' && (
-                                <div className={`flex items-center gap-1.5 text-xs font-medium ${volumeProj.changePercent >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                                    {volumeProj.status === 'Intraday' ? (
-                                        <span>
-                                            [預估量] {Math.round(volumeProj.projectedVolume / 1000).toLocaleString()} 
-                                            ({volumeProj.changePercent >= 0 ? '+' : ''}{volumeProj.changePercent.toFixed(1)}%)
-                                        </span>
-                                    ) : (
-                                        <span>
-                                            [量變化] ({volumeProj.changePercent >= 0 ? '+' : ''}{volumeProj.changePercent.toFixed(1)}%)
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-
-                            {volumeProj?.status === 'Insufficient' && (
-                                <p className="text-[10px] text-slate-500 mt-2 flex items-center gap-1">
-                                    <AlertCircle size={10} /> 盤初數據不足以進行預估
-                                </p>
-                            )}
                         </div>
                     </div>
 
-                    {/* AI Button Card */}
-                    <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                         <button 
-                            onClick={handleOpenAnalysisModal}
-                            disabled={analyzing || loading || data.length === 0}
-                            className="w-full h-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg font-bold transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
-                         >
-                            {analyzing ? <Loader2 className="animate-spin" /> : <BotIcon className="group-hover:scale-110 transition-transform" />}
-                            AI分析
-                         </button>
+                    {/* Volume */}
+                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">成交量</p>
+                        <p className="text-xl font-bold text-white leading-tight">
+                            {data.length > 0
+                                ? isTaiwanStock
+                                    ? Math.round(data[data.length-1].volume / 1000).toLocaleString() + ' 張'
+                                    : data[data.length-1].volume.toLocaleString()
+                                : '-'}
+                        </p>
+                        {volumeProj && volumeProj.status !== 'Insufficient' && (
+                            <p className={`text-[10px] font-medium ${volumeProj.changePercent >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                                {volumeProj.status === 'Intraday'
+                                    ? `預估 ${isTaiwanStock
+                                        ? Math.round(volumeProj.projectedVolume / 1000).toLocaleString()
+                                        : volumeProj.projectedVolume.toLocaleString()
+                                      } (${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%)`
+                                    : `量變化 ${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%`}
+                            </p>
+                        )}
                     </div>
+
+                    {/* Refresh Button */}
+                    <button
+                        onClick={handleRefreshQuote}
+                        disabled={refreshing || loading || data.length === 0}
+                        className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl font-medium transition-all border border-slate-600 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
+                        title="更新最新報價、成交量與預估量"
+                    >
+                        <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+                        {refreshing ? '更新中...' : '更新報價'}
+                    </button>
+
+                    {/* AI Button */}
+                    <button
+                        onClick={handleOpenAnalysisModal}
+                        disabled={analyzing || loading || data.length === 0}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    >
+                        {analyzing ? <Loader2 className="animate-spin" /> : <BotIcon className="group-hover:scale-110 transition-transform" />}
+                        AI 分析
+                    </button>
                  </div>
             )}
 
             {data.length > 0 && (
                 <div className="flex flex-col gap-6">
-                    <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} />
-                    <div id="ai-analysis-section" className="pt-4">
+                    <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
+                      if (key === 'maLines') return;
+                      setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
+                    }} />
+                    <div id="ai-analysis-section" className="pt-4 flex flex-col gap-6">
+                        {entryResult && <EntryChecklist result={entryResult} />}
                         {analysis || analyzing ? (
                              <AnalysisResult content={analysis} loading={analyzing} />
-                        ) : (
-                             <div className="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-12 flex flex-col items-center justify-center text-center">
-                                <div className="p-4 bg-slate-800 rounded-full mb-4">
-                                    <BotIcon className="text-slate-500 w-8 h-8" />
-                                </div>
-                                <h3 className="text-slate-300 font-medium mb-2 text-lg">AI Analyst Ready</h3>
-                                <p className="text-slate-500 max-w-md">
-                                    Click the "AI分析" button above to generate a comprehensive professional report.
-                                </p>
+                        ) : !entryResult ? (
+                             <div className="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-5 flex items-center justify-center gap-3 text-center">
+                                <BotIcon className="text-slate-500 w-5 h-5 shrink-0" />
+                                <p className="text-slate-500 text-sm">點擊上方「AI 分析」按鈕，逐步通過六六大順濾網並生成進場分析報告</p>
                              </div>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             )}
+        </>)}
         </div>
       </main>
     </div>
