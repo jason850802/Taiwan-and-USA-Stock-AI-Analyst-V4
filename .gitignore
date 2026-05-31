@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Claude Code / GSD Core: ignore machinery & per-machine state; keep our own skills
+.claude/*
+!.claude/skills/
+.claude/skills/**/__pycache__/
