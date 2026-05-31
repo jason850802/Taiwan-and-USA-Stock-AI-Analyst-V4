@@ -80,34 +80,40 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | TBD | Pending |
-| CORE-02 | TBD | Pending |
-| CORE-03 | TBD | Pending |
-| KEY-01 | TBD | Pending |
-| KEY-02 | TBD | Pending |
-| KEY-03 | TBD | Pending |
-| KEY-04 | TBD | Pending |
-| PROXY-01 | TBD | Pending |
-| PROXY-02 | TBD | Pending |
-| PROXY-03 | TBD | Pending |
-| PROXY-04 | TBD | Pending |
-| PROXY-05 | TBD | Pending |
-| PROXY-06 | TBD | Pending |
-| GUARD-01 | TBD | Pending |
-| GUARD-02 | TBD | Pending |
-| GUARD-03 | TBD | Pending |
-| GUARD-04 | TBD | Pending |
-| FE-01 | TBD | Pending |
-| FE-02 | TBD | Pending |
-| FE-03 | TBD | Pending |
-| DEPLOY-01 | TBD | Pending |
-| DEPLOY-02 | TBD | Pending |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| KEY-01 | Phase 1 | Pending |
+| KEY-02 | Phase 1 | Pending |
+| KEY-03 | Phase 1 | Pending |
+| KEY-04 | Phase 1 | Pending |
+| PROXY-01 | Phase 1 | Pending |
+| PROXY-02 | Phase 1 | Pending |
+| FE-01 | Phase 1 | Pending |
+| PROXY-03 | Phase 2 | Pending |
+| PROXY-06 | Phase 2 | Pending |
+| FE-02 | Phase 2 | Pending |
+| PROXY-04 | Phase 3 | Pending |
+| PROXY-05 | Phase 3 | Pending |
+| FE-03 | Phase 3 | Pending |
+| GUARD-01 | Phase 4 | Pending |
+| GUARD-02 | Phase 4 | Pending |
+| GUARD-03 | Phase 4 | Pending |
+| GUARD-04 | Phase 4 | Pending |
+| DEPLOY-01 | Phase 4 | Pending |
+| DEPLOY-02 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 22 total
-- Mapped to phases: 0（待路線圖填入）
-- Unmapped: 22 ⚠️
+- Mapped to phases: 22 ✓
+- Unmapped: 0
+
+**By Phase:**
+- Phase 1（後端骨架 ＋ Gemini）: 10 — CORE-01/02/03, KEY-01/02/03/04, PROXY-01/02, FE-01
+- Phase 2（Yahoo 代理）: 3 — PROXY-03/06, FE-02
+- Phase 3（FinMind 代理）: 3 — PROXY-04/05, FE-03
+- Phase 4（防濫用 ＋ 部署）: 6 — GUARD-01/02/03/04, DEPLOY-01/02
 
 ---
 *Requirements defined: 2026-06-01*
-*Last updated: 2026-06-01 after initial definition*
+*Last updated: 2026-06-01 after roadmap creation (traceability mapped)*
