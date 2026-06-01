@@ -5,7 +5,7 @@ milestone_name: milestone
 status: planning
 stopped_at: Phase 1 context gathered
 last_updated: "2026-06-01T16:26:32.445Z"
-last_activity: 2026-06-01 — 路線圖建立，22 項 v1 需求全數對應到 4 個階段
+last_activity: 2026-06-01 — Completed quick task 260602-0u1：修正最新一根日線 K 棒 null 補值
 progress:
   total_phases: 4
   completed_phases: 0
@@ -78,6 +78,12 @@ None yet.
 - [Phase 2 研究旗標]: Yahoo 非官方端點的 cookie/crumb 握手行為可能隨時間改變；實作後須在 Vercel 環境（非本機）實測 ≥30 分鐘驗證，不能只靠本機。
 - [Phase 1 待測量]: Gemini thinking/pro 模式實際延遲未知；需以真實技術分析提示測量，確認 `maxDuration=120` 是否足夠。
 - [整合風險]: `vercel dev` 與 Vite 6 整合社群回報有坑；先試單進程，遇問題退回 server.proxy + vercel dev 雙進程。
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260602-0u1 | 修正 services/yahoo.ts 最新一根日線 K 棒 close 為 null 時改用 regularMarketPrice 補上，使儀表板最新日期與盤中即時價正確更新 | 2026-06-01 | 31292c6 | [260602-0u1-services-yahoo-ts-k-close-null-regularma](./quick/260602-0u1-services-yahoo-ts-k-close-null-regularma/) |
 
 ## Deferred Items
 
