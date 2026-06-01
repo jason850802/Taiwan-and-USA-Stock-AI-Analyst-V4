@@ -689,7 +689,28 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       if (shouldFetchFinMindChips && volumeMap.has(d.rawDateStr || d.date)) {
           d.volume = volumeMap.get(d.rawDateStr || d.date)!;
       }
-      
+
+      // 以 FinMind 當日真實 OHLC 取代平盤合成棒：
+      // 僅當這根是步驟前段補的 _synthetic 平盤棒、且 FinMind 該日已有真實 OHLC 時觸發。
+      // 美股 / 台股盤中 FinMind 無當日資料 → ohlcMap.has 為 false → 維持平盤補值（不退化）。
+      // FinMind fallback 路徑 / 非 1d → 無 _synthetic 標記 → 不觸發。
+      if (d._synthetic === true && ohlcMap.has(d.rawDateStr)) {
+          const o = ohlcMap.get(d.rawDateStr)!;
+          d.open = o.open;
+          d.high = o.high;
+          d.low = o.low;
+          d.close = o.close;
+          // FinMind 無還原值、ratio=1，Adj 全等於原值（比照 fetchFinMindDailyData）。
+          d.openAdj = o.open;
+          d.highAdj = o.high;
+          d.lowAdj = o.low;
+          d.closeAdj = o.close;
+          // volume 已由上面既有 volumeMap 機制處理，勿在此重複。
+      }
+
+      // 收尾：移除內部標記，絕不外洩進對外 StockDataPoint（fullProcessedData 以 ...d 展開）。
+      delete d._synthetic;
+
       const chips = chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
       return {
           ...d,
