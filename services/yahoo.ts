@@ -461,6 +461,10 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
                     lowAdj: rmp,
                     closeAdj: rmp,
                     exchangeTimezone: meta.exchangeTimezoneName,
+                    // 內部標記：這根是用 regularMarketPrice 平盤補的，
+                    // 待 getStockData 步驟4 以 FinMind 真實 OHLC 取代。
+                    // 收尾（步驟4 map）必 delete，絕不外洩進 StockDataPoint。
+                    _synthetic: true,
                 });
             }
         }
@@ -638,6 +642,8 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   let taiwanStockName: string | null = null;
   const chipMap = new Map<string, { foreign: number, trust: number }>();
   const volumeMap = new Map<string, number>();
+  // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
+  const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
 
   if (isTaiwanStock && !usedFallback) {
       // Always try to fetch FinMind name to ensure Traditional Chinese for TW stocks
@@ -670,7 +676,9 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       });
 
       finMindPriceData.forEach((item: any) => {
-          volumeMap.set(item.date, item.Trading_Volume); 
+          volumeMap.set(item.date, item.Trading_Volume);
+          // FinMind 欄位：high=max、low=min（比照 fetchFinMindDailyData）。
+          ohlcMap.set(item.date, { open: item.open, high: item.max, low: item.min, close: item.close });
       });
   }
 
