@@ -21,6 +21,7 @@ interface YahooChartResponse {
         symbol: string;
         exchangeTimezoneName: string;
         regularMarketPrice: number;
+        regularMarketTime?: number; // Yahoo 回傳的最新報價/當日收盤 Unix 秒時間戳
         previousClose: number;
         longName?: string;
         shortName?: string;
@@ -416,6 +417,54 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
             });
         }
     });
+
+    // --- 最新一根 null-close 合成補值（僅 1d）---
+    // 盤後 Yahoo 有時尚未把當日收盤填入歷史 quote 陣列（最後一根 close=null），
+    // 但 meta.regularMarketPrice 已是當日最新報價。此時用 regularMarketPrice 合成補上
+    // 序列最後一根，讓 dashboard 顯示最新交易日而非退回前一個完整交易日。
+    // 只處理「序列最後一根」；中間零星 null 維持既有丟棄行為。
+    if (interval === '1d' && timestamps.length > 0) {
+        const lastIdx = timestamps.length - 1;
+        const rmp = meta.regularMarketPrice;
+
+        // 守衛 1：最後一根本來就有效（已進 cleanData）→ 不補值
+        // 守衛 2：regularMarketPrice 不可用 → 不補值（退回既有行為）
+        if (closes[lastIdx] === null && Number.isFinite(rmp) && rmp > 0) {
+            // 決定合成 K 棒時間戳：優先用 meta.regularMarketTime，否則退回 timestamps[lastIdx]
+            const synthTs = (Number.isFinite(meta.regularMarketTime) && (meta.regularMarketTime as number) > 0)
+                ? (meta.regularMarketTime as number)
+                : timestamps[lastIdx];
+
+            // 守衛 3（防重複）：若 cleanData 尾端已有同時間戳則不重複 push
+            const lastClean = cleanData.length > 0 ? cleanData[cleanData.length - 1] : null;
+            if (!lastClean || lastClean.timestamp !== synthTs) {
+                const { hour: rawHour, minute: rawMinute, dateStr: rawDateStr } =
+                    getExchangeTime(synthTs, meta.exchangeTimezoneName, isTaiwanStock);
+                const dateStr = formatExchangeDate(synthTs, meta.exchangeTimezoneName, interval);
+
+                cleanData.push({
+                    date: dateStr,
+                    timestamp: synthTs,
+                    rawHour: rawHour,
+                    rawMinute: rawMinute,
+                    rawDateStr: rawDateStr, // YYYY-MM-DD
+                    open: rmp,
+                    high: rmp,
+                    low: rmp,
+                    close: rmp,
+                    // volume=0 僅為避免量能污染（攻擊量等判斷）；TW 1d 若 FinMind 該日
+                    // 已有真實 Trading_Volume，既有 override 會自動以真實量取代（預期且更正確）。
+                    volume: 0,
+                    // 盤中無調整資訊，ratio=1，故 Adj 全等於 rmp
+                    openAdj: rmp,
+                    highAdj: rmp,
+                    lowAdj: rmp,
+                    closeAdj: rmp,
+                    exchangeTimezone: meta.exchangeTimezoneName,
+                });
+            }
+        }
+    }
 
     return cleanData;
 };
