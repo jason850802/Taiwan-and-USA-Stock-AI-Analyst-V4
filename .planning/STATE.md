@@ -85,6 +85,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260602-0u1 | 修正 services/yahoo.ts 最新一根日線 K 棒 close 為 null 時改用 regularMarketPrice 補上，使儀表板最新日期與盤中即時價正確更新 | 2026-06-01 | 31292c6 | [260602-0u1-services-yahoo-ts-k-close-null-regularma](./quick/260602-0u1-services-yahoo-ts-k-close-null-regularma/) |
 | 260602-13g | 台股最新一根日線 close 為 null 時優先用 FinMind 真實 OHLC 補出 K 棒，FinMind 無資料才退回 regularMarketPrice 平盤補值 | 2026-06-01 | 73467de | [260602-13g-close-null-finmind-ohlc-k-finmind-regula](./quick/260602-13g-close-null-finmind-ohlc-k-finmind-regula/) |
+| 260612-pdz | 修復程式碼審查 7 項 bug：volume.ts 時區日期、健檢決策 regex、盤中攻擊量改用預估全日量、錯誤訊息變數名、yahoo.ts 指標 nullish、切週期/更新報價用已解析 symbol、移除死碼 import | 2026-06-12 | 3251169 | [260612-pdz-fix-code-review-bugs-timezone-date-bug-h](./quick/260612-pdz-fix-code-review-bugs-timezone-date-bug-h/) |
 
 ## Deferred Items
 
