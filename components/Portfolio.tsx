@@ -779,8 +779,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
       const result = await analyzePortfolioHealth([healthItem]);
 
       // 從結果中提取決策
-      const decisionMatch = result.match(/操作決策[：:]\s*(🟢\s*加碼|🔵\s*續抱|🟡\s*減碼|🟠\s*停利|🔴\s*停損)/);
-      const decision = decisionMatch ? decisionMatch[1] : '分析完成';
+      // AI 實際輸出可能含【】包裹（例：**操作決策：【 🟢加碼 】**），允許可選的【/[ 與空白
+      const decisionMatch = result.match(/操作決策[：:]\s*[【\[]?\s*(🟢\s*加碼|🔵\s*續抱|🟡\s*減碼|🟠\s*停利|🔴\s*停損)/);
+      const decision = decisionMatch ? decisionMatch[1].replace(/\s+/g, '') : '分析完成';
 
       setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult: result } }));
     } catch {
