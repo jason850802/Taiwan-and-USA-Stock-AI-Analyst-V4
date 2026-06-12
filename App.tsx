@@ -6,7 +6,7 @@ import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import Portfolio from './components/Portfolio';
 import { getStockData } from './services/yahoo';
-import { analyzeStockWithGemini, analyzeEntryWithGemini } from './services/gemini';
+import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, AlertCircle, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
@@ -114,8 +114,8 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData(symbol, interval);
-  }, [interval]); 
+    fetchData(info?.symbol || symbol, interval);
+  }, [interval]);
 
   const handleOpenAnalysisModal = () => {
       if (data.length === 0) return;
@@ -152,7 +152,7 @@ const App: React.FC = () => {
       setAnalysis(report);
     } catch (err: any) {
         if(err.message?.includes("API Key is missing")) {
-            setAnalysis("### System Error \n\n **API Key Missing.** \nPlease set `REACT_APP_GEMINI_API_KEY` in your environment.");
+            setAnalysis("### System Error \n\n **API Key Missing.** \nPlease set `GEMINI_API_KEY` in your environment.");
         } else {
             setAnalysis("### Analysis Failed \n\n Unable to generate report.");
         }
@@ -165,7 +165,7 @@ const App: React.FC = () => {
     if (data.length === 0 || refreshing || loading) return;
     setRefreshing(true);
     try {
-      const result = await getStockData(symbol, interval);
+      const result = await getStockData(info?.symbol || symbol, interval);
       setData(result.data);
       setInfo(result.info);
     } catch (err: any) {
