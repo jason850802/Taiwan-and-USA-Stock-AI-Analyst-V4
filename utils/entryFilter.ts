@@ -1,6 +1,7 @@
 // entryFilter.ts — 朱家泓「六六大順」做多進場濾網（純程式判定，方案C的客觀層）
 // 直接讀用 StockDataPoint[] 內已計算好的 ma/k/d/macdHist/量 等欄位，不重算指標。
 import { StockDataPoint } from '../types';
+import { VolumeProjection } from './volume';
 
 export type StepStatus = 'pass' | 'warn' | 'fail';
 export type Decision = 'GO' | 'WAIT' | 'NO_GO';
@@ -85,7 +86,8 @@ const fmt = (n?: number) => (n === undefined || n === null || isNaN(n) ? '—' :
 export function runEntryFilter(
   symbol: string,
   data: StockDataPoint[],
-  weeklyData?: StockDataPoint[]
+  weeklyData?: StockDataPoint[],
+  volumeProj?: VolumeProjection | null
 ): EntryFilterResult {
   const n = data.length;
   const last = data[n - 1];
@@ -95,7 +97,12 @@ export function runEntryFilter(
 
   const close = last.close;
   const chgPct = last.priceChangePercent ?? (prev ? ((close - prev.close) / prev.close) * 100 : 0);
-  const volRatio = prev && prev.volume ? last.volume / prev.volume : 0;
+  // 盤中時改用「預估全日量／昨量」計算攻擊量倍數（收盤量比會低估），否則用收盤量比。
+  const dayVolRatio = prev && prev.volume ? last.volume / prev.volume : 0;
+  const usedIntradayProj = !!(volumeProj && volumeProj.status === 'Intraday' && volumeProj.yesterdayVolume > 0);
+  const volRatio = usedIntradayProj
+    ? volumeProj!.projectedVolume / volumeProj!.yesterdayVolume
+    : dayVolRatio;
   const isAttackVol = volRatio >= 1.3;
   const aboveMa20 = last.ma20 !== undefined && close > last.ma20;
   const align3Long = last.ma5 !== undefined && last.ma10 !== undefined && last.ma20 !== undefined
@@ -196,7 +203,7 @@ export function runEntryFilter(
     else if (divergence) { status = 'warn'; verdict = '價漲量縮，量價背離'; }
     else { status = 'warn'; verdict = '量能不足以確認攻擊'; }
     steps.push({ id: 5, key: 'volume', name: '量價關係', status, verdict,
-      details: [`今量/昨量：${volRatio.toFixed(2)}（攻擊量${isAttackVol ? '✓' : '✗'}）`,
+      details: [`今量/昨量：${volRatio.toFixed(2)}（攻擊量${isAttackVol ? '✓' : '✗'}）${usedIntradayProj ? '（盤中依預估量）' : ''}`,
                 `量5MA參考；今K ${chgPct.toFixed(2)}%`] });
   }
 

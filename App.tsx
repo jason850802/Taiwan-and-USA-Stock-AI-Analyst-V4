@@ -141,7 +141,7 @@ const App: React.FC = () => {
       if (interval === '1d') {
         try { weeklyData = (await getStockData(sym, '1wk')).data; } catch { /* ignore */ }
       }
-      const filter = runEntryFilter(sym, data, weeklyData);
+      const filter = runEntryFilter(sym, data, weeklyData, volumeProj);
       setEntryResult(filter);
       setTimeout(() => {
           document.getElementById('ai-analysis-section')?.scrollIntoView({ behavior: 'smooth' });

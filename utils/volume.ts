@@ -19,7 +19,9 @@ export const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boole
     // --- Timezone & market hours config ---
     const timezone = isTaiwanStock ? 'Asia/Taipei' : 'America/New_York';
     const localTime = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
-    const todayStr = localTime.toISOString().split('T')[0];
+    // localTime 已是「掛在本地時鐘」的 Date；用本地 getter 手動組 YYYY-MM-DD，
+    // 避免 toISOString() 再以 UTC 輸出時往回減時區偏移（台北凌晨 0–8 點會變昨天）。
+    const todayStr = `${localTime.getFullYear()}-${String(localTime.getMonth() + 1).padStart(2, '0')}-${String(localTime.getDate()).padStart(2, '0')}`;
 
     const isToday = latest.date === todayStr;
 
