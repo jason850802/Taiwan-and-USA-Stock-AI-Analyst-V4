@@ -32,3 +32,6 @@ dist-ssr
 .claude/*
 !.claude/skills/
 .claude/skills/**/__pycache__/
+
+# Volume calibration scratch cache (not committed)
+scripts/.cache-volume-calib/

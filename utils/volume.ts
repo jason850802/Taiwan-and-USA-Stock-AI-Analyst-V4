@@ -8,6 +8,12 @@ export interface VolumeProjection {
     status: 'Intraday' | 'Insufficient' | 'Closed';
 }
 
+// 台股盤中「累積成交量權重」校準表：50 檔大型權值股（0050 成分股近似）、60 交易日、
+// 校準日期 2026-06-12，2505 個 stock-day 的累積占比中位數（強制單調非遞減、末值=1.0）。
+// index i ↔ 自 09:00 起第 (i+1)*5 分鐘；index 0↔5min … index 53↔270min(13:30)。
+// 校準來源與方法學見 scripts/tw-volume-curve-report.md（tw-volume-curve-report）。
+const TW_CUM_WEIGHT: number[] = [ 0.0346, 0.0650, 0.0936, 0.1186, 0.1411, 0.1654, 0.1856, 0.2067, 0.2255, 0.2455, 0.2637, 0.2821, 0.2988, 0.3150, 0.3316, 0.3457, 0.3609, 0.3758, 0.3893, 0.4031, 0.4163, 0.4285, 0.4427, 0.4538, 0.4669, 0.4803, 0.4910, 0.5022, 0.5149, 0.5267, 0.5380, 0.5490, 0.5598, 0.5698, 0.5802, 0.5921, 0.6041, 0.6148, 0.6265, 0.6380, 0.6494, 0.6624, 0.6742, 0.6875, 0.7001, 0.7135, 0.7283, 0.7459, 0.7652, 0.7838, 0.8055, 0.8348, 0.8348, 1.0000 ];
+
 export const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boolean, interval: TimeInterval): VolumeProjection | null => {
     // Only calculate for Daily interval
     if (interval !== '1d' || data.length < 2) return null;
@@ -41,11 +47,17 @@ export const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boole
     const currentMinute = localTime.getMinutes();
 
     // --- Taiwan Market: 09:00 - 13:30 (270 minutes) ---
+    // 校準表線性內插：grid 點 i 對應第 (i+1)*5 分鐘、權重 TW_CUM_WEIGHT[i]（見 tw-volume-curve-report）。
     const getTaiwanVolumeWeight = (mins: number): number => {
-        if (mins <= 30) return (mins / 30) * 0.25;                     // Opening rush: ~25%
-        else if (mins <= 240) return 0.25 + ((mins - 30) / 210) * 0.55; // Mid-day lull: ~55%
-        else if (mins < 270) return 0.80 + ((mins - 240) / 30) * 0.13;  // Closing rush: ~13%
-        else return 1.0;
+        if (mins <= 0) return 0;
+        if (mins < 5) return (mins / 5) * TW_CUM_WEIGHT[0];   // 由原點線性接到第一格
+        if (mins >= 270) return 1.0;                          // 收盤鉗位（= 末格 1.0）
+        const lowIdx = Math.floor(mins / 5) - 1;              // 下界 grid index
+        const lo = TW_CUM_WEIGHT[lowIdx];
+        const hi = TW_CUM_WEIGHT[Math.min(lowIdx + 1, TW_CUM_WEIGHT.length - 1)];
+        const loMin = (lowIdx + 1) * 5;
+        const frac = (mins - loMin) / 5;                      // 兩格之間的分數位置
+        return lo + (hi - lo) * frac;
     };
 
     const getUSVolumeWeight = (mins: number): number => {
@@ -78,6 +90,10 @@ export const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boole
         getVolumeWeight = getUSVolumeWeight;
     }
 
+    // Insufficient 視窗截止：台股用實證 T*=105 分（投影誤差 p10..p90 ⊆ ±35% 的最早時點，
+    // 見 tw-volume-curve-report）；美股維持 5 分。
+    const insufficientCutoff = isTaiwanStock ? 105 : 5;
+
     if (minutesElapsed < 0) return null; // Pre-market
 
     const isClosed = minutesElapsed >= totalMinutes;
@@ -85,8 +101,8 @@ export const estimateVolumeTrend = (data: StockDataPoint[], isTaiwanStock: boole
 
     const weight = getVolumeWeight(minutesElapsed);
 
-    // Guard: Prevent extreme math during the first few minutes
-    if (!isClosed && minutesElapsed < 5) {
+    // Guard: Prevent extreme math during the early window (market-aware cutoff)
+    if (!isClosed && minutesElapsed < insufficientCutoff) {
         return {
             currentVolume: latest.volume,
             projectedVolume: 0,
