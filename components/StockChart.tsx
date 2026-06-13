@@ -524,6 +524,10 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   // 向右隱藏的 K 棒數（0 = 錨定最新一根 / 右邊緣）；拖曳平移時增減
   const [rightOffset, setRightOffset] = useState(0);
 
+  // 拖曳中旗標（純樣式：grab/grabbing；亦驅動副圖凍結 subPanelData）。
+  // 在此提前宣告，讓下方 displayData 之後的 subPanelData 能引用（避免 TDZ）。
+  const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
      setBarsToShow(Math.min(100, data.length));
      // 切換股票 / 週期 → 快照回最新一根
@@ -632,6 +636,16 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
     });
   }, [data, barsToShow, rightOffset, settings.useAdjusted, maResultsCache]);
 
+  // 副圖凍結（QT-ixg-FREEZE）：拖曳期間餵給兩個 SubPanelChart 一個「參照穩定」的資料，
+  // 讓 React.memo 整段跳過重繪（約 2/3 的省工）；放開後再交回即時最終視窗 → 只重繪一次。
+  // displayDataRef 為即時鏡像：每次 render 都更新（cheap），避免回呼裡抓到舊閉包值。
+  const displayDataRef = useRef(displayData);
+  displayDataRef.current = displayData;
+  // frozenSubDataRef 為 handleDragStart 當下的快照（拖曳全程同一物件參照）。
+  const frozenSubDataRef = useRef<any[]>(displayData);
+  // 拖曳中用凍結快照，閒置/放開後用即時 displayData（isDragging 翻 false 觸發單次正確重繪）。
+  const subPanelData = isDragging ? frozenSubDataRef.current : displayData;
+
   const activeData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : displayData[displayData.length - 1];
 
   // Throttle mouse move to reduce re-renders (~60fps max)
@@ -662,7 +676,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const startClientXRef = useRef(0);
   const startOffsetRef = useRef(0);
   const dragRafRef = useRef<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  // 註：isDragging state 已於元件頂部宣告（供 subPanelData 凍結引用）。
 
   const handleDragMove = useCallback((e: MouseEvent) => {
       if (!draggingRef.current) return;
@@ -670,7 +684,11 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       const deltaX = e.clientX - startClientXRef.current;
       // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
       const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
-      const barsDelta = Math.round(deltaX / barPixelWidth);
+      // 量化平移步幅（QT-ixg-COARSEN）：依目前視窗縮放，視窗越大步幅越粗（重繪越貴），
+      // 讓主圖以「整塊」跳動而非每根 K 棒都 setState，降低重繪頻率。≈2 @ 100 根。
+      const PAN_STEP = Math.max(1, Math.round(barsToShow / 50));
+      const rawDelta = deltaX / barPixelWidth;
+      const barsDelta = Math.round(rawDelta / PAN_STEP) * PAN_STEP;
       // 向右拖（deltaX>0）露出較舊的 K 棒 → rightOffset 增加
       const maxOffset = Math.max(0, data.length - barsToShow);
       const newOffset = Math.min(Math.max(0, startOffsetRef.current + barsDelta), maxOffset);
@@ -699,6 +717,8 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       startClientXRef.current = e.clientX;
       // 以目前實際夾止後的位移為起點（避免縮放後 rightOffset 超出範圍導致跳動）
       startOffsetRef.current = Math.min(Math.max(0, rightOffset), Math.max(0, data.length - barsToShow));
+      // 拖曳起點當下快照副圖資料（從即時鏡像取，避免抓到舊閉包）→ 拖曳全程參照穩定
+      frozenSubDataRef.current = displayDataRef.current;
       setIsDragging(true);
       setActiveIndex(null); // 進入拖曳即清除十字線
       window.addEventListener('mousemove', handleDragMove);
@@ -719,17 +739,18 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
     <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#ef4444' : '#10b981'} fillOpacity={0.15} />
   )), [displayData]);
 
-  const macdHistCells = useMemo(() => displayData.map((entry, index) => (
+  // 副圖 Cell 改吃 subPanelData：拖曳中凍結（與 SubPanelChart 一起跳過重繪），放開後回到即時。
+  const macdHistCells = useMemo(() => subPanelData.map((entry, index) => (
     <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#ef4444' : '#10b981'} />
-  )), [displayData]);
+  )), [subPanelData]);
 
-  const foreignCells = useMemo(() => displayData.map((entry, index) => (
+  const foreignCells = useMemo(() => subPanelData.map((entry, index) => (
     <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
-  )), [displayData]);
+  )), [subPanelData]);
 
-  const trustCells = useMemo(() => displayData.map((entry, index) => (
+  const trustCells = useMemo(() => subPanelData.map((entry, index) => (
     <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
-  )), [displayData]);
+  )), [subPanelData]);
 
   if (!data || data.length === 0) return <div className="text-gray-400">No data available for chart</div>;
 
@@ -821,7 +842,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
              <div className="h-[180px] w-full">
                <SubPanelChart
                  view={view}
-                 displayData={displayData}
+                 displayData={subPanelData}
                  settings={settings}
                  isTaiwanStock={isTaiwanStock}
                  macdHistCells={macdHistCells}
