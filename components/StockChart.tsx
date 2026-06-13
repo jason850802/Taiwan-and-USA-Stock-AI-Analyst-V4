@@ -684,7 +684,11 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       const deltaX = e.clientX - startClientXRef.current;
       // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
       const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
-      const barsDelta = Math.round(deltaX / barPixelWidth);
+      // 量化平移步幅（QT-ixg-COARSEN）：依目前視窗縮放，視窗越大步幅越粗（重繪越貴），
+      // 讓主圖以「整塊」跳動而非每根 K 棒都 setState，降低重繪頻率。≈2 @ 100 根。
+      const PAN_STEP = Math.max(1, Math.round(barsToShow / 50));
+      const rawDelta = deltaX / barPixelWidth;
+      const barsDelta = Math.round(rawDelta / PAN_STEP) * PAN_STEP;
       // 向右拖（deltaX>0）露出較舊的 K 棒 → rightOffset 增加
       const maxOffset = Math.max(0, data.length - barsToShow);
       const newOffset = Math.min(Math.max(0, startOffsetRef.current + barsDelta), maxOffset);
