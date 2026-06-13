@@ -92,57 +92,9 @@ const CandleStickShape = (props: any) => {
   );
 };
 
-// Main Tooltip for Price/Volume
-const MainTooltip = ({ active, payload, label, isTaiwanStock }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const isUp = data.close > data.open;
-    const colorClass = isUp ? "text-red-400" : data.close < data.open ? "text-emerald-400" : "text-slate-400";
-
-    // Display Volume in Lots for Taiwan Stocks
-    const volDisplay = isTaiwanStock
-        ? `${Math.round(data.volume / 1000).toLocaleString()} 張`
-        : `${(data.volume).toLocaleString()}`;
-
-    const priceChange = data.priceChange;
-    const priceChangePercent = data.priceChangePercent;
-
-    const isChangeUp = priceChange > 0;
-    const isChangeDown = priceChange < 0;
-    const changeColor = isChangeUp ? "text-red-400" : isChangeDown ? "text-emerald-400" : "text-slate-400";
-    const arrow = isChangeUp ? "↑" : isChangeDown ? "↓" : "";
-    const changeTxt = priceChange !== undefined ? `${arrow}${Math.abs(priceChange).toFixed(2)}` : '-';
-    const percentTxt = priceChangePercent !== undefined ? `${arrow}${Math.abs(priceChangePercent).toFixed(2)}%` : '-';
-
-    return (
-      <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-xs backdrop-blur-md bg-opacity-90 z-50 min-w-[150px]">
-        <p className="text-slate-400 mb-2 font-medium border-b border-slate-700 pb-1">{data.date}</p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            <span className="text-slate-500">開</span><span className={colorClass}>{data.open.toFixed(2)}</span>
-            <span className="text-slate-500">高</span><span className={colorClass}>{data.high.toFixed(2)}</span>
-            <span className="text-slate-500">低</span><span className={colorClass}>{data.low.toFixed(2)}</span>
-            <span className="text-slate-500">收</span><span className={colorClass}>{data.close.toFixed(2)}</span>
-
-            <span className="text-slate-500">漲跌</span><span className={changeColor}>{changeTxt}</span>
-            <span className="text-slate-500">漲跌%</span><span className={changeColor}>{percentTxt}</span>
-
-            <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
-            <span className="text-slate-500">量</span><span className="text-slate-200">{volDisplay}</span>
-
-            {data.bbUpper != null && (
-              <>
-                <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
-                <span className="text-purple-400">BB上</span><span className="text-slate-200">{data.bbUpper.toFixed(2)}</span>
-                <span className="text-purple-400">BB中</span><span className="text-slate-200">{data.bbMiddle?.toFixed(2)}</span>
-                <span className="text-purple-400">BB下</span><span className="text-slate-200">{data.bbLower?.toFixed(2)}</span>
-              </>
-            )}
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
+// 註：主圖單根 OHLC 浮動框（原 MainTooltip）已移除，改為 header 內固定資訊列
+// （見 StockChart 的 activeData 讀數列）。副圖的 Tooltip（ChipTooltip / MACDTooltip /
+// IndicatorTooltip）維持浮動，不在本次調整範圍。
 
 const ChipTooltip = ({ active, payload, title }: any) => {
     if (active && payload && payload.length) {
@@ -259,6 +211,45 @@ const MALegend = ({ currentData, settings }: { currentData: any, settings: Indic
                     </div>
                 );
             })}
+        </div>
+    );
+};
+
+// 固定 OHLC/量資訊列 —— 取代原浮動 MainTooltip，置於 header 區（非繪圖區），永不遮擋 K 棒。
+// 讀 activeData：idle 顯示最新一根、hover 顯示該根（由 parent 的 activeData 決定）。
+const OHLCInfoBar = ({ activeData, isTaiwanStock }: { activeData: any, isTaiwanStock: boolean }) => {
+    if (!activeData) return null;
+
+    // 顏色沿用原 MainTooltip：close>open 紅、<open 綠、平 灰（台股紅漲綠跌）
+    const priceColor = activeData.close > activeData.open
+        ? 'text-red-400'
+        : activeData.close < activeData.open ? 'text-emerald-400' : 'text-slate-400';
+
+    const priceChange = activeData.priceChange;
+    const priceChangePercent = activeData.priceChangePercent;
+    const isChangeUp = priceChange > 0;
+    const isChangeDown = priceChange < 0;
+    const changeColor = isChangeUp ? 'text-red-400' : isChangeDown ? 'text-emerald-400' : 'text-slate-400';
+    const arrow = isChangeUp ? '↑' : isChangeDown ? '↓' : '';
+    const changeTxt = priceChange !== undefined ? `${arrow}${Math.abs(priceChange).toFixed(2)}` : '-';
+    const percentTxt = priceChangePercent !== undefined ? `${arrow}${Math.abs(priceChangePercent).toFixed(2)}%` : '-';
+
+    // 量：台股 → 張、美股 → 原始股數
+    const volDisplay = activeData.volume == null
+        ? '-'
+        : isTaiwanStock
+            ? `${Math.round(activeData.volume / 1000).toLocaleString()} 張`
+            : `${activeData.volume.toLocaleString()}`;
+
+    return (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono">
+            <span className="text-slate-400">{activeData.date}</span>
+            <span className="flex gap-1"><span className="text-slate-500">開</span><span className={priceColor}>{activeData.open?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">高</span><span className={priceColor}>{activeData.high?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">低</span><span className={priceColor}>{activeData.low?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">收</span><span className={priceColor}>{activeData.close?.toFixed(2)}</span></span>
+            <span className={`flex gap-1 ${changeColor}`}>{changeTxt}<span>({percentTxt})</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">量</span><span className="text-slate-200">{volDisplay}</span></span>
         </div>
     );
 };
@@ -390,7 +381,13 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
         />
         {/* Hidden volume axis — domain inflated so bars occupy bottom ~20% */}
         <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
-        <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
+        {/*
+          浮動框已移除（改為 header 固定資訊列），但 Tooltip 仍須啟用：
+          content 渲染 null（不顯示框），cursor 維持 <CrosshairCursor /> 顯示垂直十字線。
+          啟用中的 Tooltip 仍會填充 active 狀態，故 CursorPriceLine 的
+          useActiveTooltipDataPoints 與水平收盤價線不受影響。
+        */}
+        <Tooltip content={() => null} cursor={<CrosshairCursor />} />
 
         {/* Volume overlay — behind candlesticks, on its own x-axis so it is centered in its band */}
         <Bar xAxisId="volume" yAxisId="volume" dataKey="volume" isAnimationActive={false}>
@@ -524,8 +521,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
   const [barsToShow, setBarsToShow] = useState(100);
 
+  // 向右隱藏的 K 棒數（0 = 錨定最新一根 / 右邊緣）；拖曳平移時增減
+  const [rightOffset, setRightOffset] = useState(0);
+
   useEffect(() => {
      setBarsToShow(Math.min(100, data.length));
+     // 切換股票 / 週期 → 快照回最新一根
+     setRightOffset(0);
   }, [data.length]);
 
   const handleZoom = useCallback((direction: 'in' | 'out') => {
@@ -566,8 +568,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   // Transform Data based on Settings (Adj vs Raw) — zoom only re-slices, no SMA recalc
   const displayData = useMemo(() => {
     const useAdj = settings.useAdjusted;
-    const startIndex = Math.max(0, data.length - barsToShow);
-    const sliced = data.slice(startIndex, data.length);
+    // 平移夾止：clampedOffset 一律即時夾回有效範圍，縮小（barsToShow 變大）時 maxOffset
+    // 變小會自動把位移夾回，毋須額外 effect 校正。
+    const maxOffset = Math.max(0, data.length - barsToShow);
+    const clampedOffset = Math.min(Math.max(0, rightOffset), maxOffset);
+    const endIndex = data.length - clampedOffset;
+    const startIndex = Math.max(0, endIndex - barsToShow);
+    const sliced = data.slice(startIndex, endIndex);
 
     return sliced.map((d, i) => {
         const originalIndex = startIndex + i;
@@ -623,7 +630,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             priceChangePercent
         };
     });
-  }, [data, barsToShow, settings.useAdjusted, maResultsCache]);
+  }, [data, barsToShow, rightOffset, settings.useAdjusted, maResultsCache]);
 
   const activeData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : displayData[displayData.length - 1];
 
@@ -632,6 +639,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const pendingIndex = useRef<number | null>(null);
 
   const handleMouseMove = useCallback((state: any) => {
+      if (draggingRef.current) return; // 拖曳期間不更新十字線，避免亂跳
       const newIndex = state?.activeTooltipIndex ?? null;
       if (newIndex === pendingIndex.current) return; // skip if same
       pendingIndex.current = newIndex;
@@ -645,6 +653,66 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const handleMouseLeave = useCallback(() => {
       setActiveIndex(null);
   }, []);
+
+  // ----- Drag-to-pan（拖曳平移）-----
+  // wrapperRef 量測繪圖區寬度以換算每根 K 棒像素寬；draggingRef 為拖曳閘門（同步、不觸發重繪）。
+  // isDragging state 僅用來切換 grab/grabbing 游標（純樣式，不影響記憶化圖表 props）。
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+  const startClientXRef = useRef(0);
+  const startOffsetRef = useRef(0);
+  const dragRafRef = useRef<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const width = wrapperRef.current?.getBoundingClientRect().width ?? 0;
+      const deltaX = e.clientX - startClientXRef.current;
+      // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
+      const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
+      const barsDelta = Math.round(deltaX / barPixelWidth);
+      // 向右拖（deltaX>0）露出較舊的 K 棒 → rightOffset 增加
+      const maxOffset = Math.max(0, data.length - barsToShow);
+      const newOffset = Math.min(Math.max(0, startOffsetRef.current + barsDelta), maxOffset);
+      if (dragRafRef.current) return; // 已排程
+      dragRafRef.current = requestAnimationFrame(() => {
+          dragRafRef.current = null;
+          setRightOffset(prev => (prev === newOffset ? prev : newOffset));
+      });
+  }, [barsToShow, data.length]);
+
+  const handleDragEnd = useCallback(() => {
+      draggingRef.current = false;
+      setIsDragging(false);
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      if (dragRafRef.current) {
+          cancelAnimationFrame(dragRafRef.current);
+          dragRafRef.current = null;
+      }
+  }, [handleDragMove]);
+
+  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return; // 只處理左鍵
+      e.preventDefault(); // 避免拖曳時選取文字
+      draggingRef.current = true;
+      startClientXRef.current = e.clientX;
+      // 以目前實際夾止後的位移為起點（避免縮放後 rightOffset 超出範圍導致跳動）
+      startOffsetRef.current = Math.min(Math.max(0, rightOffset), Math.max(0, data.length - barsToShow));
+      setIsDragging(true);
+      setActiveIndex(null); // 進入拖曳即清除十字線
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+  }, [rightOffset, data.length, barsToShow, handleDragMove, handleDragEnd]);
+
+  // 卸載時清掉殘留的 window 監聽與 rAF（guard 避免洩漏）
+  useEffect(() => {
+      return () => {
+          window.removeEventListener('mousemove', handleDragMove);
+          window.removeEventListener('mouseup', handleDragEnd);
+          if (dragRafRef.current) cancelAnimationFrame(dragRafRef.current);
+      };
+  }, [handleDragMove, handleDragEnd]);
 
   // Pre-compute Cell arrays to avoid recreating on every render
   const volumeCells = useMemo(() => displayData.map((entry, index) => (
@@ -670,14 +738,18 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       
       {/* 1. Price Chart Section */}
       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg relative outline-none">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2 pr-20">
-            <div className="flex items-center gap-2">
-                <h3 className="text-slate-200 font-semibold text-lg">K線圖</h3>
-                <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">
-                    {settings.useAdjusted ? 'Adj (還原)' : 'Raw (原始)'}
-                </span>
+        <div className="flex flex-col mb-4 gap-2 pr-20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-slate-200 font-semibold text-lg">K線圖</h3>
+                    <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">
+                        {settings.useAdjusted ? 'Adj (還原)' : 'Raw (原始)'}
+                    </span>
+                </div>
+                <MALegend currentData={activeData} settings={settings} />
             </div>
-            <MALegend currentData={activeData} settings={settings} />
+            {/* 固定 OHLC 資訊列：hover 該根 / idle 最新一根；位於 header 非繪圖區，永不遮擋 K 棒 */}
+            <OHLCInfoBar activeData={activeData} isTaiwanStock={isTaiwanStock} />
         </div>
 
         <div className="absolute top-4 right-4 flex gap-1 z-10">
@@ -689,7 +761,11 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             </button>
         </div>
         
-        <div className="h-[450px] w-full">
+        <div
+          ref={wrapperRef}
+          onMouseDown={handleDragStart}
+          className={`h-[450px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        >
           <MainPriceChart
             displayData={displayData}
             settings={settings}
