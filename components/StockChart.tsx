@@ -92,57 +92,9 @@ const CandleStickShape = (props: any) => {
   );
 };
 
-// Main Tooltip for Price/Volume
-const MainTooltip = ({ active, payload, label, isTaiwanStock }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const isUp = data.close > data.open;
-    const colorClass = isUp ? "text-red-400" : data.close < data.open ? "text-emerald-400" : "text-slate-400";
-
-    // Display Volume in Lots for Taiwan Stocks
-    const volDisplay = isTaiwanStock
-        ? `${Math.round(data.volume / 1000).toLocaleString()} 張`
-        : `${(data.volume).toLocaleString()}`;
-
-    const priceChange = data.priceChange;
-    const priceChangePercent = data.priceChangePercent;
-
-    const isChangeUp = priceChange > 0;
-    const isChangeDown = priceChange < 0;
-    const changeColor = isChangeUp ? "text-red-400" : isChangeDown ? "text-emerald-400" : "text-slate-400";
-    const arrow = isChangeUp ? "↑" : isChangeDown ? "↓" : "";
-    const changeTxt = priceChange !== undefined ? `${arrow}${Math.abs(priceChange).toFixed(2)}` : '-';
-    const percentTxt = priceChangePercent !== undefined ? `${arrow}${Math.abs(priceChangePercent).toFixed(2)}%` : '-';
-
-    return (
-      <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-xs backdrop-blur-md bg-opacity-90 z-50 min-w-[150px]">
-        <p className="text-slate-400 mb-2 font-medium border-b border-slate-700 pb-1">{data.date}</p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            <span className="text-slate-500">開</span><span className={colorClass}>{data.open.toFixed(2)}</span>
-            <span className="text-slate-500">高</span><span className={colorClass}>{data.high.toFixed(2)}</span>
-            <span className="text-slate-500">低</span><span className={colorClass}>{data.low.toFixed(2)}</span>
-            <span className="text-slate-500">收</span><span className={colorClass}>{data.close.toFixed(2)}</span>
-
-            <span className="text-slate-500">漲跌</span><span className={changeColor}>{changeTxt}</span>
-            <span className="text-slate-500">漲跌%</span><span className={changeColor}>{percentTxt}</span>
-
-            <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
-            <span className="text-slate-500">量</span><span className="text-slate-200">{volDisplay}</span>
-
-            {data.bbUpper != null && (
-              <>
-                <span className="text-slate-500 col-span-2 border-t border-slate-800 my-1"></span>
-                <span className="text-purple-400">BB上</span><span className="text-slate-200">{data.bbUpper.toFixed(2)}</span>
-                <span className="text-purple-400">BB中</span><span className="text-slate-200">{data.bbMiddle?.toFixed(2)}</span>
-                <span className="text-purple-400">BB下</span><span className="text-slate-200">{data.bbLower?.toFixed(2)}</span>
-              </>
-            )}
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
+// 註：主圖單根 OHLC 浮動框（原 MainTooltip）已移除，改為 header 內固定資訊列
+// （見 StockChart 的 activeData 讀數列）。副圖的 Tooltip（ChipTooltip / MACDTooltip /
+// IndicatorTooltip）維持浮動，不在本次調整範圍。
 
 const ChipTooltip = ({ active, payload, title }: any) => {
     if (active && payload && payload.length) {
@@ -259,6 +211,45 @@ const MALegend = ({ currentData, settings }: { currentData: any, settings: Indic
                     </div>
                 );
             })}
+        </div>
+    );
+};
+
+// 固定 OHLC/量資訊列 —— 取代原浮動 MainTooltip，置於 header 區（非繪圖區），永不遮擋 K 棒。
+// 讀 activeData：idle 顯示最新一根、hover 顯示該根（由 parent 的 activeData 決定）。
+const OHLCInfoBar = ({ activeData, isTaiwanStock }: { activeData: any, isTaiwanStock: boolean }) => {
+    if (!activeData) return null;
+
+    // 顏色沿用原 MainTooltip：close>open 紅、<open 綠、平 灰（台股紅漲綠跌）
+    const priceColor = activeData.close > activeData.open
+        ? 'text-red-400'
+        : activeData.close < activeData.open ? 'text-emerald-400' : 'text-slate-400';
+
+    const priceChange = activeData.priceChange;
+    const priceChangePercent = activeData.priceChangePercent;
+    const isChangeUp = priceChange > 0;
+    const isChangeDown = priceChange < 0;
+    const changeColor = isChangeUp ? 'text-red-400' : isChangeDown ? 'text-emerald-400' : 'text-slate-400';
+    const arrow = isChangeUp ? '↑' : isChangeDown ? '↓' : '';
+    const changeTxt = priceChange !== undefined ? `${arrow}${Math.abs(priceChange).toFixed(2)}` : '-';
+    const percentTxt = priceChangePercent !== undefined ? `${arrow}${Math.abs(priceChangePercent).toFixed(2)}%` : '-';
+
+    // 量：台股 → 張、美股 → 原始股數
+    const volDisplay = activeData.volume == null
+        ? '-'
+        : isTaiwanStock
+            ? `${Math.round(activeData.volume / 1000).toLocaleString()} 張`
+            : `${activeData.volume.toLocaleString()}`;
+
+    return (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono">
+            <span className="text-slate-400">{activeData.date}</span>
+            <span className="flex gap-1"><span className="text-slate-500">開</span><span className={priceColor}>{activeData.open?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">高</span><span className={priceColor}>{activeData.high?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">低</span><span className={priceColor}>{activeData.low?.toFixed(2)}</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">收</span><span className={priceColor}>{activeData.close?.toFixed(2)}</span></span>
+            <span className={`flex gap-1 ${changeColor}`}>{changeTxt}<span>({percentTxt})</span></span>
+            <span className="flex gap-1"><span className="text-slate-500">量</span><span className="text-slate-200">{volDisplay}</span></span>
         </div>
     );
 };
@@ -390,7 +381,13 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
         />
         {/* Hidden volume axis — domain inflated so bars occupy bottom ~20% */}
         <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
-        <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
+        {/*
+          浮動框已移除（改為 header 固定資訊列），但 Tooltip 仍須啟用：
+          content 渲染 null（不顯示框），cursor 維持 <CrosshairCursor /> 顯示垂直十字線。
+          啟用中的 Tooltip 仍會填充 active 狀態，故 CursorPriceLine 的
+          useActiveTooltipDataPoints 與水平收盤價線不受影響。
+        */}
+        <Tooltip content={() => null} cursor={<CrosshairCursor />} />
 
         {/* Volume overlay — behind candlesticks, on its own x-axis so it is centered in its band */}
         <Bar xAxisId="volume" yAxisId="volume" dataKey="volume" isAnimationActive={false}>
@@ -741,14 +738,18 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       
       {/* 1. Price Chart Section */}
       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg relative outline-none">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2 pr-20">
-            <div className="flex items-center gap-2">
-                <h3 className="text-slate-200 font-semibold text-lg">K線圖</h3>
-                <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">
-                    {settings.useAdjusted ? 'Adj (還原)' : 'Raw (原始)'}
-                </span>
+        <div className="flex flex-col mb-4 gap-2 pr-20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-slate-200 font-semibold text-lg">K線圖</h3>
+                    <span className="text-[10px] bg-slate-700 text-slate-400 px-2 py-0.5 rounded uppercase tracking-wider">
+                        {settings.useAdjusted ? 'Adj (還原)' : 'Raw (原始)'}
+                    </span>
+                </div>
+                <MALegend currentData={activeData} settings={settings} />
             </div>
-            <MALegend currentData={activeData} settings={settings} />
+            {/* 固定 OHLC 資訊列：hover 該根 / idle 最新一根；位於 header 非繪圖區，永不遮擋 K 棒 */}
+            <OHLCInfoBar activeData={activeData} isTaiwanStock={isTaiwanStock} />
         </div>
 
         <div className="absolute top-4 right-4 flex gap-1 z-10">
