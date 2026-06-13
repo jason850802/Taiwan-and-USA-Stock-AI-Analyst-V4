@@ -524,8 +524,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
   const [barsToShow, setBarsToShow] = useState(100);
 
+  // 向右隱藏的 K 棒數（0 = 錨定最新一根 / 右邊緣）；拖曳平移時增減
+  const [rightOffset, setRightOffset] = useState(0);
+
   useEffect(() => {
      setBarsToShow(Math.min(100, data.length));
+     // 切換股票 / 週期 → 快照回最新一根
+     setRightOffset(0);
   }, [data.length]);
 
   const handleZoom = useCallback((direction: 'in' | 'out') => {
@@ -566,8 +571,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   // Transform Data based on Settings (Adj vs Raw) — zoom only re-slices, no SMA recalc
   const displayData = useMemo(() => {
     const useAdj = settings.useAdjusted;
-    const startIndex = Math.max(0, data.length - barsToShow);
-    const sliced = data.slice(startIndex, data.length);
+    // 平移夾止：clampedOffset 一律即時夾回有效範圍，縮小（barsToShow 變大）時 maxOffset
+    // 變小會自動把位移夾回，毋須額外 effect 校正。
+    const maxOffset = Math.max(0, data.length - barsToShow);
+    const clampedOffset = Math.min(Math.max(0, rightOffset), maxOffset);
+    const endIndex = data.length - clampedOffset;
+    const startIndex = Math.max(0, endIndex - barsToShow);
+    const sliced = data.slice(startIndex, endIndex);
 
     return sliced.map((d, i) => {
         const originalIndex = startIndex + i;
@@ -623,7 +633,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             priceChangePercent
         };
     });
-  }, [data, barsToShow, settings.useAdjusted, maResultsCache]);
+  }, [data, barsToShow, rightOffset, settings.useAdjusted, maResultsCache]);
 
   const activeData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : displayData[displayData.length - 1];
 
@@ -632,6 +642,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const pendingIndex = useRef<number | null>(null);
 
   const handleMouseMove = useCallback((state: any) => {
+      if (draggingRef.current) return; // 拖曳期間不更新十字線，避免亂跳
       const newIndex = state?.activeTooltipIndex ?? null;
       if (newIndex === pendingIndex.current) return; // skip if same
       pendingIndex.current = newIndex;
@@ -645,6 +656,66 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const handleMouseLeave = useCallback(() => {
       setActiveIndex(null);
   }, []);
+
+  // ----- Drag-to-pan（拖曳平移）-----
+  // wrapperRef 量測繪圖區寬度以換算每根 K 棒像素寬；draggingRef 為拖曳閘門（同步、不觸發重繪）。
+  // isDragging state 僅用來切換 grab/grabbing 游標（純樣式，不影響記憶化圖表 props）。
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+  const startClientXRef = useRef(0);
+  const startOffsetRef = useRef(0);
+  const dragRafRef = useRef<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const width = wrapperRef.current?.getBoundingClientRect().width ?? 0;
+      const deltaX = e.clientX - startClientXRef.current;
+      // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
+      const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
+      const barsDelta = Math.round(deltaX / barPixelWidth);
+      // 向右拖（deltaX>0）露出較舊的 K 棒 → rightOffset 增加
+      const maxOffset = Math.max(0, data.length - barsToShow);
+      const newOffset = Math.min(Math.max(0, startOffsetRef.current + barsDelta), maxOffset);
+      if (dragRafRef.current) return; // 已排程
+      dragRafRef.current = requestAnimationFrame(() => {
+          dragRafRef.current = null;
+          setRightOffset(prev => (prev === newOffset ? prev : newOffset));
+      });
+  }, [barsToShow, data.length]);
+
+  const handleDragEnd = useCallback(() => {
+      draggingRef.current = false;
+      setIsDragging(false);
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      if (dragRafRef.current) {
+          cancelAnimationFrame(dragRafRef.current);
+          dragRafRef.current = null;
+      }
+  }, [handleDragMove]);
+
+  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return; // 只處理左鍵
+      e.preventDefault(); // 避免拖曳時選取文字
+      draggingRef.current = true;
+      startClientXRef.current = e.clientX;
+      // 以目前實際夾止後的位移為起點（避免縮放後 rightOffset 超出範圍導致跳動）
+      startOffsetRef.current = Math.min(Math.max(0, rightOffset), Math.max(0, data.length - barsToShow));
+      setIsDragging(true);
+      setActiveIndex(null); // 進入拖曳即清除十字線
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+  }, [rightOffset, data.length, barsToShow, handleDragMove, handleDragEnd]);
+
+  // 卸載時清掉殘留的 window 監聽與 rAF（guard 避免洩漏）
+  useEffect(() => {
+      return () => {
+          window.removeEventListener('mousemove', handleDragMove);
+          window.removeEventListener('mouseup', handleDragEnd);
+          if (dragRafRef.current) cancelAnimationFrame(dragRafRef.current);
+      };
+  }, [handleDragMove, handleDragEnd]);
 
   // Pre-compute Cell arrays to avoid recreating on every render
   const volumeCells = useMemo(() => displayData.map((entry, index) => (
@@ -689,7 +760,11 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             </button>
         </div>
         
-        <div className="h-[450px] w-full">
+        <div
+          ref={wrapperRef}
+          onMouseDown={handleDragStart}
+          className={`h-[450px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        >
           <MainPriceChart
             displayData={displayData}
             settings={settings}
