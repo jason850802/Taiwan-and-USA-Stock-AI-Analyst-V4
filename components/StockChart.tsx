@@ -12,7 +12,10 @@ import {
   BarChart,
   Cell,
   ReferenceLine,
-  Label
+  // recharts 3.x public hooks — used by CursorPriceLine (in-chart, no internal imports)
+  useActiveTooltipDataPoints,
+  useYAxisScale,
+  usePlotArea
 } from 'recharts';
 import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
 import { calculateSMA } from '../utils/math';
@@ -261,10 +264,247 @@ const MALegend = ({ currentData, settings }: { currentData: any, settings: Indic
 };
 
 // ----------------------------------------------------------------------
+// 2b. In-chart cursor price line (hooks-based, replaces old ReferenceLine+Label)
+// ----------------------------------------------------------------------
+
+// 維護備註：此元件依賴 recharts 3.x 公開 hooks
+// （useActiveTooltipDataPoints / useYAxisScale / usePlotArea），
+// 已在安裝的 recharts 3.8.0 (node_modules/recharts/types/hooks.d.ts) 確認存在。
+// 只用公開 export，不從 recharts/es6/... 內部路徑匯入。
+// 它被當作 <ComposedChart> 的子元素渲染，因而能讀取圖表 context。
+// 升級 recharts 時請確認這三個 hook 仍然存在。
+const CursorPriceLine = () => {
+  const activePoints = useActiveTooltipDataPoints<any>(); // 目前 hover 的資料點（無 hover 時 undefined）
+  const yScale = useYAxisScale('right'); // 價格軸 yAxisId="right"
+  const plotArea = usePlotArea();
+
+  // 任一 hook 在無 active cursor / context 未就緒時回傳 undefined → 不渲染
+  if (!activePoints || activePoints.length === 0 || !yScale || !plotArea) return null;
+
+  const close = activePoints[0]?.close;
+  if (close == null) return null;
+
+  const y = yScale(close);
+  if (y == null) return null;
+
+  const xStart = plotArea.x;
+  const xEnd = plotArea.x + plotArea.width;
+
+  // 與舊的 ReferenceLine+Label 視覺一致：虛線 #94a3b8、標籤 #e2e8f0 fontSize 11
+  return (
+    <g>
+      <line
+        x1={xStart}
+        y1={y}
+        x2={xEnd}
+        y2={y}
+        stroke="#94a3b8"
+        strokeDasharray="3 3"
+        opacity={0.8}
+      />
+      <text x={xEnd + 4} y={y} dy={4} fill="#e2e8f0" fontSize={11} textAnchor="start">
+        {close.toFixed(2)}
+      </text>
+    </g>
+  );
+};
+
+// ----------------------------------------------------------------------
 // 3. Main Chart Component
 // ----------------------------------------------------------------------
 
 type PanelView = 'foreign' | 'trust' | 'macd' | 'kdj' | 'rsi';
+
+// 模組層級常數 —— 避免在 parent render 中重建物件字面值而破壞 React.memo
+const CHART_MARGIN = { top: 5, right: 0, left: 0, bottom: 5 };
+const SYNC_ID = 'stockDashboard';
+const Y_AXIS_WIDTH = 60;
+const COMMON_Y_AXIS_PROPS = {
+  orientation: 'right' as const,
+  width: Y_AXIS_WIDTH,
+  tick: { fontSize: 11, fill: '#94a3b8' },
+  tickLine: false,
+  axisLine: false,
+  mirror: false,
+  tickMargin: 5,
+};
+
+// ----------------------------------------------------------------------
+// 3a. Memoized main price chart body
+// ----------------------------------------------------------------------
+
+interface MainPriceChartProps {
+  displayData: any[];
+  settings: IndicatorSettings;
+  isTaiwanStock: boolean;
+  volumeCells: React.ReactNode;
+  onMouseMove: (state: any) => void;
+  onMouseLeave: () => void;
+}
+
+const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
+  displayData,
+  settings,
+  isTaiwanStock,
+  volumeCells,
+  onMouseMove,
+  onMouseLeave,
+}) => {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <ComposedChart
+        data={displayData}
+        syncId={SYNC_ID}
+        margin={CHART_MARGIN}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        barCategoryGap="20%"
+        barGap="-100%"
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+        <XAxis
+          dataKey="date"
+          stroke="#94a3b8"
+          tick={{ fill: '#94a3b8', fontSize: 11 }}
+          minTickGap={40}
+          tickLine={false}
+          axisLine={{ stroke: '#475569' }}
+        />
+        <YAxis
+          {...COMMON_Y_AXIS_PROPS}
+          yAxisId="right"
+          domain={['dataMin', 'dataMax']}
+          tickFormatter={(val) => val.toFixed(0)}
+          textAnchor="start"
+        />
+        {/* Hidden volume axis — domain inflated so bars occupy bottom ~20% */}
+        <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
+        <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
+
+        {/* Volume overlay — behind candlesticks, same position via barGap=-100% */}
+        <Bar yAxisId="volume" dataKey="volume" isAnimationActive={false}>
+          {volumeCells}
+        </Bar>
+
+        {settings.maLines.filter(l => l.enabled).map((line) => (
+          <Line key={`ma-${line.period}`} yAxisId="right" type="monotone" dataKey={`ma_${line.period}`} stroke={line.color} strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />
+        ))}
+
+        {/* Bollinger Bands */}
+        {settings.showBB && (
+          <>
+            <Area yAxisId="right" type="monotone" dataKey="bbBand" stroke="none" fill="#8b5cf6" fillOpacity={0.06} isAnimationActive={false} dot={false} activeDot={false} />
+            <Line yAxisId="right" type="monotone" dataKey="bbUpper" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
+            <Line yAxisId="right" type="monotone" dataKey="bbLower" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
+          </>
+        )}
+
+        <Bar yAxisId="right" dataKey="candleBody" shape={<CandleStickShape />} name="Price" isAnimationActive={false} />
+
+        {/* Hooks-based close-price tracking line (follows cursor via recharts store, not parent state) */}
+        <CursorPriceLine />
+      </ComposedChart>
+    </ResponsiveContainer>
+  );
+});
+
+// ----------------------------------------------------------------------
+// 3b. Memoized sub-panel chart body
+// ----------------------------------------------------------------------
+
+interface SubPanelChartProps {
+  view: PanelView;
+  displayData: any[];
+  settings: IndicatorSettings;
+  isTaiwanStock: boolean;
+  macdHistCells: React.ReactNode;
+  foreignCells: React.ReactNode;
+  trustCells: React.ReactNode;
+  onMouseMove: (state: any) => void;
+  onMouseLeave: () => void;
+}
+
+const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
+  view,
+  displayData,
+  settings,
+  macdHistCells,
+  foreignCells,
+  trustCells,
+  onMouseMove,
+  onMouseLeave,
+}) => {
+  const sharedChartProps = {
+    data: displayData,
+    syncId: SYNC_ID,
+    margin: CHART_MARGIN,
+    onMouseMove,
+    onMouseLeave,
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      {view === 'foreign' ? (
+        <BarChart {...sharedChartProps} barCategoryGap="20%">
+          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <XAxis dataKey="date" hide />
+          <YAxis {...COMMON_Y_AXIS_PROPS} stroke="#94a3b8" tickFormatter={(val) => (val / 1000).toFixed(0)} />
+          <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Foreign" />} />
+          <ReferenceLine y={0} stroke="#475569" />
+          <Bar dataKey="foreignBuySell" isAnimationActive={false}>
+            {foreignCells}
+          </Bar>
+        </BarChart>
+      ) : view === 'trust' ? (
+        <BarChart {...sharedChartProps} barCategoryGap="20%">
+          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <XAxis dataKey="date" hide />
+          <YAxis {...COMMON_Y_AXIS_PROPS} stroke="#94a3b8" tickFormatter={(val) => (val / 1000).toFixed(0)} />
+          <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Trust" />} />
+          <ReferenceLine y={0} stroke="#475569" />
+          <Bar dataKey="investmentTrustBuySell" isAnimationActive={false}>
+            {trustCells}
+          </Bar>
+        </BarChart>
+      ) : view === 'macd' ? (
+        <ComposedChart {...sharedChartProps} barCategoryGap="20%">
+          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <XAxis dataKey="date" hide />
+          <YAxis {...COMMON_Y_AXIS_PROPS} stroke="#94a3b8" />
+          <Tooltip content={<MACDTooltip />} />
+          <ReferenceLine y={0} stroke="#475569" />
+          <Bar dataKey="macdHist" isAnimationActive={false}>
+            {macdHistCells}
+          </Bar>
+          <Line type="monotone" dataKey="macd" stroke="#fb923c" dot={false} strokeWidth={1.5} name="DIF" isAnimationActive={false} />
+          <Line type="monotone" dataKey="macdSignal" stroke="#22d3ee" dot={false} strokeWidth={1.5} name="DEA" isAnimationActive={false} />
+        </ComposedChart>
+      ) : view === 'kdj' ? (
+        <ComposedChart {...sharedChartProps}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <XAxis dataKey="date" hide />
+          <YAxis {...COMMON_Y_AXIS_PROPS} domain={[0, 100]} stroke="#94a3b8" />
+          <Tooltip content={<IndicatorTooltip settings={settings} />} />
+          <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
+          <ReferenceLine y={20} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
+          {settings.showK && <Line type="monotone" dataKey="k" stroke="#facc15" dot={false} strokeWidth={1.5} name="K" isAnimationActive={false} />}
+          {settings.showD && <Line type="monotone" dataKey="d" stroke="#f472b6" dot={false} strokeWidth={1.5} name="D" isAnimationActive={false} />}
+          {settings.showJ && <Line type="monotone" dataKey="j" stroke="#c084fc" dot={false} strokeWidth={1.5} name="J" isAnimationActive={false} />}
+        </ComposedChart>
+      ) : (
+        <ComposedChart {...sharedChartProps}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+          <XAxis dataKey="date" hide />
+          <YAxis {...COMMON_Y_AXIS_PROPS} domain={[0, 100]} stroke="#94a3b8" />
+          <Tooltip content={<IndicatorTooltip settings={settings} />} />
+          <ReferenceLine y={70} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
+          <ReferenceLine y={30} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
+          <Line type="monotone" dataKey="rsi" stroke="#38bdf8" dot={false} strokeWidth={2} name="RSI" isAnimationActive={false} />
+        </ComposedChart>
+      )}
+    </ResponsiveContainer>
+  );
+});
 
 const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, onToggleSetting }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -375,7 +615,6 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   }, [data, barsToShow, settings.useAdjusted, maResultsCache]);
 
   const activeData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : displayData[displayData.length - 1];
-  const cursorData = activeIndex !== null && displayData[activeIndex] ? displayData[activeIndex] : null;
 
   // Throttle mouse move to reduce re-renders (~60fps max)
   const rafRef = useRef<number | null>(null);
@@ -395,25 +634,6 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const handleMouseLeave = useCallback(() => {
       setActiveIndex(null);
   }, []);
-
-  const sharedChartProps = {
-    data: displayData,
-    syncId: "stockDashboard",
-    margin: { top: 5, right: 0, left: 0, bottom: 5 },
-    onMouseMove: handleMouseMove,
-    onMouseLeave: handleMouseLeave,
-  };
-
-  const Y_AXIS_WIDTH = 60;
-  const commonYAxisProps = {
-    orientation: "right" as const,
-    width: Y_AXIS_WIDTH,
-    tick: { fontSize: 11, fill: '#94a3b8' },
-    tickLine: false,
-    axisLine: false,
-    mirror: false,
-    tickMargin: 5,
-  };
 
   // Pre-compute Cell arrays to avoid recreating on every render
   const volumeCells = useMemo(() => displayData.map((entry, index) => (
@@ -459,68 +679,14 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
         </div>
         
         <div className="h-[450px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart {...sharedChartProps} barCategoryGap="20%" barGap="-100%">
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-              <XAxis
-                dataKey="date"
-                stroke="#94a3b8"
-                tick={{fill: '#94a3b8', fontSize: 11}}
-                minTickGap={40}
-                tickLine={false}
-                axisLine={{stroke: '#475569'}}
-              />
-              <YAxis
-                {...commonYAxisProps}
-                yAxisId="right"
-                domain={['dataMin', 'dataMax']}
-                tickFormatter={(val) => val.toFixed(0)}
-                textAnchor="start"
-              />
-              {/* Hidden volume axis — domain inflated so bars occupy bottom ~20% */}
-              <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
-              <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
-
-              {/* Volume overlay — behind candlesticks, same position via barGap=-100% */}
-              <Bar yAxisId="volume" dataKey="volume" isAnimationActive={false}>
-                {volumeCells}
-              </Bar>
-
-              {settings.maLines.filter(l => l.enabled).map((line) => (
-                <Line key={`ma-${line.period}`} yAxisId="right" type="monotone" dataKey={`ma_${line.period}`} stroke={line.color} strokeWidth={1.5} dot={false} activeDot={false} isAnimationActive={false} />
-              ))}
-
-              {/* Bollinger Bands */}
-              {settings.showBB && (
-                <>
-                  <Area yAxisId="right" type="monotone" dataKey="bbBand" stroke="none" fill="#8b5cf6" fillOpacity={0.06} isAnimationActive={false} dot={false} activeDot={false} />
-                  <Line yAxisId="right" type="monotone" dataKey="bbUpper" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
-                  <Line yAxisId="right" type="monotone" dataKey="bbLower" stroke="#8b5cf6" strokeWidth={1} strokeDasharray="4 2" dot={false} activeDot={false} isAnimationActive={false} />
-                </>
-              )}
-
-              <Bar yAxisId="right" dataKey="candleBody" shape={<CandleStickShape />} name="Price" isAnimationActive={false} />
-
-              {cursorData && (
-                <ReferenceLine
-                    yAxisId="right"
-                    y={cursorData.close}
-                    stroke="#94a3b8"
-                    strokeDasharray="3 3"
-                    opacity={0.8}
-                >
-                    <Label
-                        value={cursorData.close.toFixed(2)}
-                        position="right"
-                        fill="#e2e8f0"
-                        fontSize={11}
-                        className="bg-slate-800"
-                        offset={5}
-                    />
-                </ReferenceLine>
-              )}
-            </ComposedChart>
-          </ResponsiveContainer>
+          <MainPriceChart
+            displayData={displayData}
+            settings={settings}
+            isTaiwanStock={isTaiwanStock}
+            volumeCells={volumeCells}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          />
         </div>
       </div>
 
@@ -566,66 +732,17 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
                </div>
              </div>
              <div className="h-[180px] w-full">
-               <ResponsiveContainer width="100%" height="100%">
-                 {view === 'foreign' ? (
-                   <BarChart {...sharedChartProps} barCategoryGap="20%">
-                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                     <XAxis dataKey="date" hide />
-                     <YAxis {...commonYAxisProps} stroke="#94a3b8" tickFormatter={(val) => (val/1000).toFixed(0)} />
-                     <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Foreign" />} />
-                     <ReferenceLine y={0} stroke="#475569" />
-                     <Bar dataKey="foreignBuySell" isAnimationActive={false}>
-                       {foreignCells}
-                     </Bar>
-                   </BarChart>
-                 ) : view === 'trust' ? (
-                   <BarChart {...sharedChartProps} barCategoryGap="20%">
-                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                     <XAxis dataKey="date" hide />
-                     <YAxis {...commonYAxisProps} stroke="#94a3b8" tickFormatter={(val) => (val/1000).toFixed(0)} />
-                     <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Trust" />} />
-                     <ReferenceLine y={0} stroke="#475569" />
-                     <Bar dataKey="investmentTrustBuySell" isAnimationActive={false}>
-                       {trustCells}
-                     </Bar>
-                   </BarChart>
-                 ) : view === 'macd' ? (
-                   <ComposedChart {...sharedChartProps} barCategoryGap="20%">
-                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                     <XAxis dataKey="date" hide />
-                     <YAxis {...commonYAxisProps} stroke="#94a3b8" />
-                     <Tooltip content={<MACDTooltip />} />
-                     <ReferenceLine y={0} stroke="#475569" />
-                     <Bar dataKey="macdHist" isAnimationActive={false}>
-                       {macdHistCells}
-                     </Bar>
-                     <Line type="monotone" dataKey="macd" stroke="#fb923c" dot={false} strokeWidth={1.5} name="DIF" isAnimationActive={false} />
-                     <Line type="monotone" dataKey="macdSignal" stroke="#22d3ee" dot={false} strokeWidth={1.5} name="DEA" isAnimationActive={false} />
-                   </ComposedChart>
-                 ) : view === 'kdj' ? (
-                   <ComposedChart {...sharedChartProps}>
-                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                     <XAxis dataKey="date" hide />
-                     <YAxis {...commonYAxisProps} domain={[0, 100]} stroke="#94a3b8" />
-                     <Tooltip content={<IndicatorTooltip settings={settings} />} />
-                     <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
-                     <ReferenceLine y={20} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
-                     {settings.showK && <Line type="monotone" dataKey="k" stroke="#facc15" dot={false} strokeWidth={1.5} name="K" isAnimationActive={false} />}
-                     {settings.showD && <Line type="monotone" dataKey="d" stroke="#f472b6" dot={false} strokeWidth={1.5} name="D" isAnimationActive={false} />}
-                     {settings.showJ && <Line type="monotone" dataKey="j" stroke="#c084fc" dot={false} strokeWidth={1.5} name="J" isAnimationActive={false} />}
-                   </ComposedChart>
-                 ) : (
-                   <ComposedChart {...sharedChartProps}>
-                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                     <XAxis dataKey="date" hide />
-                     <YAxis {...commonYAxisProps} domain={[0, 100]} stroke="#94a3b8" />
-                     <Tooltip content={<IndicatorTooltip settings={settings} />} />
-                     <ReferenceLine y={70} stroke="#ef4444" strokeDasharray="3 3" opacity={0.4} />
-                     <ReferenceLine y={30} stroke="#10b981" strokeDasharray="3 3" opacity={0.4} />
-                     <Line type="monotone" dataKey="rsi" stroke="#38bdf8" dot={false} strokeWidth={2} name="RSI" isAnimationActive={false} />
-                   </ComposedChart>
-                 )}
-               </ResponsiveContainer>
+               <SubPanelChart
+                 view={view}
+                 displayData={displayData}
+                 settings={settings}
+                 isTaiwanStock={isTaiwanStock}
+                 macdHistCells={macdHistCells}
+                 foreignCells={foreignCells}
+                 trustCells={trustCells}
+                 onMouseMove={handleMouseMove}
+                 onMouseLeave={handleMouseLeave}
+               />
              </div>
            </div>
          );
