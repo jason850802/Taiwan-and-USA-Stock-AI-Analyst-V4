@@ -88,6 +88,7 @@ None yet.
 | 260612-pdz | 修復程式碼審查 7 項 bug：volume.ts 時區日期、健檢決策 regex、盤中攻擊量改用預估全日量、錯誤訊息變數名、yahoo.ts 指標 nullish、切週期/更新報價用已解析 symbol、移除死碼 import | 2026-06-12 | 3251169 | [260612-pdz-fix-code-review-bugs-timezone-date-bug-h](./quick/260612-pdz-fix-code-review-bugs-timezone-date-bug-h/) |
 | 260612-w4i | 用 50 檔大型權值股 60 日 5 分 K 實證校準台股盤中累積量權重曲線（2505 stock-days 中位數），getTaiwanVolumeWeight 改查表內插，Insufficient 窗口依實證誤差設 T*=105 分（美股不變） | 2026-06-12 | 4d61572 | [260612-w4i-calibrate-tw-intraday-volume-weight-curv](./quick/260612-w4i-calibrate-tw-intraday-volume-weight-curv/) |
 | 260612-wyt | 用 50 檔 S&P 大型股 60 日 5 分 K 實證校準美股盤中累積量權重曲線（2800 stock-days 中位數），getUSVolumeWeight 改查表內插，美股 Insufficient 窗口設 T*=85 分；發現並繞過 Yahoo 美股 1d 量與 5m 加總不一致（改用 5m 自和，15:55 根已含收盤競價） | 2026-06-12 | 19df323 | [260612-wyt-calibrate-us-intraday-volume-weight-curv](./quick/260612-wyt-calibrate-us-intraday-volume-weight-curv/) |
+| 260613-3ab | StockChart 效能重構：主圖/副圖抽成 React.memo、收盤價游標線改用 recharts 3.x 公開 hooks（useActiveTooltipDataPoints 等）在圖內訂閱，滑鼠查價時三圖零重繪（瀏覽器實測 80 次掃動 0 長任務）；修正十字線偏右（量能 Bar 移到獨立隱藏 XAxis，去除 barGap=-100%，實測偏移 0.03px） | 2026-06-13 | 03e4e21 | [260613-3ab-stockchart-performance-refactor-memoize-](./quick/260613-3ab-stockchart-performance-refactor-memoize-/) |
 
 ## Deferred Items
 
