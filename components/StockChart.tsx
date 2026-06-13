@@ -359,7 +359,6 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         barCategoryGap="20%"
-        barGap="-100%"
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
         <XAxis
@@ -370,6 +369,18 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
           tickLine={false}
           axisLine={{ stroke: '#475569' }}
         />
+        {/*
+          Centering fix (QT-3ab-CENTER): the volume Bar now lives on its OWN hidden x-axis
+          (xAxisId="volume"), so each x-axis owns exactly ONE bar series. Confirmed against
+          recharts compiled getBarPositions (es6/state/selectors/combiners/combineAllBarPositions.js):
+          with 2 bars sharing one band + barGap="-100%", offsets were
+            volume i=0 → 0.2*band (center 0.6*band), candle i=1 → 0 (center 0.4*band),
+          while the Tooltip cursor sits at the band center (0.5*band) → crosshair landed RIGHT of
+          the candle. With one bar per axis, getBarPositions gives offset=_offset(=0.2*band),
+          size=0.8*band → center 0.5*band = band center, so candle + volume + crosshair all align.
+          barGap is no longer needed (the bars are on different x-axes and overlap at the same center).
+        */}
+        <XAxis xAxisId="volume" dataKey="date" hide />
         <YAxis
           {...COMMON_Y_AXIS_PROPS}
           yAxisId="right"
@@ -381,8 +392,8 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
         <YAxis yAxisId="volume" orientation="left" hide domain={[0, (dataMax: number) => dataMax * 5]} />
         <Tooltip content={<MainTooltip isTaiwanStock={isTaiwanStock} />} cursor={<CrosshairCursor />} />
 
-        {/* Volume overlay — behind candlesticks, same position via barGap=-100% */}
-        <Bar yAxisId="volume" dataKey="volume" isAnimationActive={false}>
+        {/* Volume overlay — behind candlesticks, on its own x-axis so it is centered in its band */}
+        <Bar xAxisId="volume" yAxisId="volume" dataKey="volume" isAnimationActive={false}>
           {volumeCells}
         </Bar>
 
