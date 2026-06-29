@@ -24,3 +24,12 @@ files_modified: [AGENTS.md]
 ## 驗證
 - 根目錄存在 `AGENTS.md`，且為指標檔（非 CLAUDE.md 複本）。
 - 內容涵蓋安全紅線與 GSD 流程要求。
+
+## 後續優化（同任務追補）
+初版 AGENTS.md 誤將 GSD 用法寫成 Claude 專屬的 `/gsd-quick`、`/gsd-execute-phase` 斜線指令，導致 Codex 跟著做會失敗（使用者回報「Codex 無法使用 GSD」）。
+查證後發現 GSD 其實已為 Codex 安裝：`.codex/agents/*.toml`（32 個代理）、`.codex/hooks.json`（gsd-workflow-guard／gsd-validate-commit 等守門 hook）、`.agents/skills/source-command-gsd-ns-*`（入口技能）。Codex 的 GSD 入口是 `gsd-ns-*` 技能（透過 Skill 機制），不是斜線指令。
+已重寫 AGENTS.md：
+- 新增「Codex 如何使用 GSD」一節，明列 `gsd-ns-workflow / review / context / project / manage / ideate` 對照表，並標明「不要用 `/gsd-*` 斜線指令」。
+- 標註 CLAUDE.md 的 GSD 用法（斜線指令）對 Codex 為唯一例外，Codex 改用本節。
+- 點出 `.codex/hooks.json` 的守門 hook 等同 Claude 端的強制規則。
+- 補上 7 個朱家泓分析技能名稱與 `.agents/skills/`、`.claude/skills/` 來源。
