@@ -360,4 +360,18 @@ Create `.planning/phases/02-yahoo/02-01-SUMMARY.md` when done
 **修法（`fetchCookie()` 唯一需要改的地方）**：移除 `if (!response.ok) throw classifyStatus(response.status)` 這個提前失敗的檢查（或至少不要因為 404 就直接丟錯）。改為：不論 HTTP 狀態碼為何，先嘗試從 `response.headers` 讀取 `Set-Cookie`；只有在**讀不到任何 cookie** 時才 `throw new YahooClassifiedError('UPSTREAM_UNAUTHORIZED')`（此檔案下方本來就有這個 fallback 判斷，L125-127，保留即可）。`fetchCrumb()`（L132-153）與 `fetchYahooWithHandshake()` 內對正式 chart/search 請求（L179-188）的 `response.ok` 檢查**維持不變**——這兩處檢查的是真正的 Yahoo API 端點，非 2xx 才代表真正失敗，不受本次修正影響。
 
 **驗證方式**：修完後於本機 `vercel dev` 環境（非獨立 Node 腳本）重新搜尋 2330、美股 AAPL、切換週期、庫存頁匯率，Network 應全數回 200，`vercel dev` 終端機不應再出現 `[yahoo-chart:UPSTREAM_ERROR]`。
+
+## 第三輪審查修正（2026-07-05，人工實測「查詢不存在代號」失敗，必修，權威覆蓋 D-06/chart.ts NOT_FOUND 邏輯）
+
+**現況**：2330、AAPL、切換週期、庫存頁匯率經第二輪修正後**已全部正常**（人工實測通過）。唯一剩下的問題：搜尋一個不存在的股票代號（如 `ZZZZZZ`）時，前端顯示的是通用「Yahoo 行情服務暫時無法回應，請稍後再試。」（`UPSTREAM_ERROR`），而不是預期的「找不到該股票代號。」（`NOT_FOUND`）。
+
+**根本原因（與第二輪同一種模式，位置不同）**：Yahoo 對不存在的代號，標準行為是回傳 **HTTP 404**，但 body 仍帶有結構化錯誤說明（`{"chart":{"result":null,"error":{"code":"Not Found","description":"..."}}}`）。但 `api/_lib/yahoo.ts` 的 `fetchYahooWithHandshake()` 對**正式 chart/search 請求**那段（`if (!response.ok) { throw classifyStatus(response.status); }`）會在還沒讀取 response body 之前，就把任何非 2xx（包含這種帶結構化錯誤的 404）直接分類成通用 `UPSTREAM_ERROR` 並拋出。`api/yahoo/chart.ts` 原本設計好要判斷 `json.chart?.error?.code === 'Not Found'` 的那段邏輯，因為根本沒機會拿到 `json`，完全派不上用場。
+
+**修法（只動 `fetchYahooWithHandshake`，`chart.ts` 既有的 `chartError` 判斷邏輯不用改）**：
+- 在 `fetchYahooWithHandshake` 內，把「非 2xx 就直接 throw」的邏輯改為：**只有 401/429 才需要走既有的重試流程**（清快取、重新握手、重打一次）；**其餘所有非 2xx（含 404、5xx）一律 `return response`，不拋錯**，把 response 原封不動交還給呼叫端（`chart.ts`/`search.ts`）自行解析 body 決定如何分類。
+- 具體改法：把 `if (!response.ok) { throw classifyStatus(response.status); }` 改成 `if (response.status === 401 || response.status === 429) { throw classifyStatus(response.status); }`（其餘狀況不進 catch，直接往下 `return response;`）。
+- `chart.ts` 現有邏輯不用改：拿到 response 後解析 `json`，`chartError?.code === 'Not Found'` → `NOT_FOUND`；`chartError` 存在但非 Not Found → 現有的 `UPSTREAM_ERROR`（此時方為真正上游錯誤，且此時是**看過 body 內容後**才判定，比原本「看都没看就丟」更準確）；否則視為成功回 200。
+- `search.ts` 影響：因為共用同一支 `fetchYahooWithHandshake`，理論上 search 若遇到非 2xx 也會改成不拋錯、直接回傳 body。`search.ts` 目前邏輯是直接 `res.status(200).json(json)`（不檢查 chart-style error），這在 search 情境下風險低（Yahoo search 罕見回非 2xx；即使發生，最壞情況是把 Yahoo 的錯誤 body 原樣转發，前端 `.filter()/.map()` 對非預期格式已有防禦性寫法會視為空結果），**不需要額外修改 search.ts**，但若之後（部署後）觀察到 search 有类似問題，才需要仿照 chart.ts 加對應判斷（非本次必修範圍）。
+
+**驗證方式**：修完後於本機 `vercel dev` 環境搜尋一個不存在的代號（如 `ZZZZZZ`），前端應顯示「找不到該股票代號。」；同時**回歸測試** 2330、AAPL、切換週期、庫存頁匯率仍正常（避免這次修正意外影響 401/429 重試邏輯）。
 </output>
