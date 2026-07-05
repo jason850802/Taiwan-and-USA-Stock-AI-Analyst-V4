@@ -106,10 +106,6 @@ async function fetchCookie(): Promise<string> {
     headers: BROWSER_HEADERS,
   });
 
-  if (!response.ok) {
-    throw classifyStatus(response.status);
-  }
-
   const cookieHeaders = response.headers as Headers & {
     getSetCookie?: () => string[];
   };
