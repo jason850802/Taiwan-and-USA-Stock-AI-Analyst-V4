@@ -35,3 +35,4 @@ dist-ssr
 
 # Volume calibration scratch cache (not committed)
 scripts/.cache-volume-calib/
+.vercel
