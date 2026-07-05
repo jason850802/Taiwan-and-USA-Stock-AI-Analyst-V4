@@ -352,4 +352,12 @@ Create `.planning/phases/02-yahoo/02-01-SUMMARY.md` when done
 - **移除** `services/yahoo.ts:264-265` 的正規化 hack，`queryYahoo` 原樣傳遞 `range`（讓 `1d/5d` 直接送後端、直接合法）。
 
 安全不受影響：range 仍是封閉枚舉、symbol 仍是格式化正則，端點不會因此變成可注入任意上游的開放代理。
+
+## 第二輪審查修正（2026-07-05，人工本機實測 100% 失敗後診斷發現，必修，權威覆蓋 D-03）
+
+**根本原因（已用臨時診斷 log + stack trace 確認，非猜測）**：`api/_lib/yahoo.ts` 的 `fetchCookie()`（約 L104-111）在請求 `https://fc.yahoo.com` 後檢查 `if (!response.ok) throw classifyStatus(response.status)`。**但 `fc.yahoo.com` 這個端點本來就固定回傳 HTTP 404**（頁面標題含 "Not Found on Accelerator"，屬 Yahoo 已知怪異行為）——**它的 404 回應仍然夾帶我們需要的 `Set-Cookie` header**。目前程式碼把非 2xx 一律視為握手失敗，導致 `fetchCookie()` 每次都在讀取 `Set-Cookie`之前就先拋錯，**100% 必然失敗**（已在使用者本機用同樣邏輯的獨立 Node 腳本驗證：拿掉 `response.ok` 檢查後，同一支腳本可正常取得 cookie/crumb/chart 資料）。
+
+**修法（`fetchCookie()` 唯一需要改的地方）**：移除 `if (!response.ok) throw classifyStatus(response.status)` 這個提前失敗的檢查（或至少不要因為 404 就直接丟錯）。改為：不論 HTTP 狀態碼為何，先嘗試從 `response.headers` 讀取 `Set-Cookie`；只有在**讀不到任何 cookie** 時才 `throw new YahooClassifiedError('UPSTREAM_UNAUTHORIZED')`（此檔案下方本來就有這個 fallback 判斷，L125-127，保留即可）。`fetchCrumb()`（L132-153）與 `fetchYahooWithHandshake()` 內對正式 chart/search 請求（L179-188）的 `response.ok` 檢查**維持不變**——這兩處檢查的是真正的 Yahoo API 端點，非 2xx 才代表真正失敗，不受本次修正影響。
+
+**驗證方式**：修完後於本機 `vercel dev` 環境（非獨立 Node 腳本）重新搜尋 2330、美股 AAPL、切換週期、庫存頁匯率，Network 應全數回 200，`vercel dev` 終端機不應再出現 `[yahoo-chart:UPSTREAM_ERROR]`。
 </output>
