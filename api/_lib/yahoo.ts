@@ -23,17 +23,18 @@ export class YahooClassifiedError extends Error {
   }
 }
 
-// 每個週期只允許既有前端實際使用的唯一區間，避免成為任意行情代理。
-const INTERVAL_RANGE_MAP: Record<string, string> = {
-  '1d': '10y',
-  '1wk': '5y',
-  '1mo': 'max',
-  '60m': '1y',
-  '15m': '60d',
+// 每個週期只允許既有前端實際使用的封閉區間集合，避免成為任意行情代理。
+const INTERVAL_RANGE_MAP: Record<string, string[]> = {
+  '1d': ['10y', '5d'],
+  '1wk': ['5y'],
+  '1mo': ['max'],
+  '60m': ['1y'],
+  '15m': ['60d'],
 };
 
 const TAIWAN_SYMBOL_PATTERN = /^\d{3,6}[A-Z]?\.TWO?$/;
 const OVERSEAS_SYMBOL_PATTERN = /^[A-Z]{1,6}(\.[A-Z]{1,2})?$/i;
+const CURRENCY_SYMBOL_PATTERN = /^[A-Z]{3,8}=X$/i;
 
 export function validateChartParams(query: {
   symbol?: unknown;
@@ -45,11 +46,12 @@ export function validateChartParams(query: {
     : '';
   const interval = typeof query.interval === 'string' ? query.interval.trim() : '';
   const range = typeof query.range === 'string' ? query.range.trim() : '';
-  const expectedRange = INTERVAL_RANGE_MAP[interval];
+  const allowedRanges = INTERVAL_RANGE_MAP[interval];
   const validSymbol = TAIWAN_SYMBOL_PATTERN.test(symbol)
-    || OVERSEAS_SYMBOL_PATTERN.test(symbol);
+    || OVERSEAS_SYMBOL_PATTERN.test(symbol)
+    || CURRENCY_SYMBOL_PATTERN.test(symbol);
 
-  if (!expectedRange || range !== expectedRange || !validSymbol) {
+  if (!allowedRanges?.includes(range) || !validSymbol) {
     throw new YahooClassifiedError('BAD_REQUEST');
   }
 

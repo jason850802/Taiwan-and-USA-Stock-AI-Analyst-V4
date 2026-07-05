@@ -261,9 +261,7 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
 };
 
 const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
-    // getLatestPrice 既有呼叫使用 1d/5d；正規化後送入後端唯一合法的 1d/10y 組合。
-    const requestRange = interval === '1d' && range === '5d' ? '10y' : range;
-    const qs = new URLSearchParams({ symbol, interval, range: requestRange }).toString();
+    const qs = new URLSearchParams({ symbol, interval, range }).toString();
     const res = await fetch(`/api/yahoo/chart?${qs}`);
 
     if (!res.ok) {
