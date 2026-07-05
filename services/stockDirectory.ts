@@ -1,6 +1,6 @@
 // stockDirectory.ts — 股票名錄與搜尋（支援中文公司名子字串搜尋）
 // 台股：FinMind TaiwanStockInfo 全清單（瀏覽器直連，快取於 localStorage）
-// 美股/海外：Yahoo Finance search 端點（透過 CORS proxy 即時查詢）
+// 美股/海外：Yahoo Finance search 端點（透過同源後端即時查詢）
 
 export type Market = 'TW' | 'US' | 'OTHER';
 
@@ -13,7 +13,6 @@ export interface StockDirEntry {
 }
 
 const FINMIND = 'https://api.finmindtrade.com/api/v4/data';
-const PROXIES = ['https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
 const LS_KEY = 'tw_stock_directory_v1';
 const LS_TS = 'tw_stock_directory_ts_v1';
 const TTL = 7 * 24 * 60 * 60 * 1000; // 7 天
@@ -91,28 +90,28 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
 export async function searchYahoo(query: string, limit = 8): Promise<StockDirEntry[]> {
   const q = query.trim();
   if (!q) return [];
-  const target = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&quotesCount=${limit}&newsCount=0&lang=zh-Hant-TW&region=TW`;
-  for (const proxy of PROXIES) {
-    try {
-      const res = await fetch(proxy + encodeURIComponent(target));
-      const json = await res.json();
-      const quotes: any[] = json.quotes || [];
-      return quotes
-        .filter(x => x.symbol && (x.quoteType === 'EQUITY' || x.quoteType === 'ETF' || x.isYahooFinance))
-        .map(x => {
-          const sym: string = x.symbol;
-          const market: Market = sym.endsWith('.TW') || sym.endsWith('.TWO') ? 'TW'
-            : (x.exchange === 'NMS' || x.exchange === 'NYQ' || x.exchange === 'PCX' || x.exchange === 'ASE') ? 'US' : 'OTHER';
-          return {
-            id: sym,
-            name: x.shortname || x.longname || sym,
-            industry: x.exchDisp || x.exchange,
-            market,
-          } as StockDirEntry;
-        });
-    } catch { /* 換下一個 proxy */ }
+  const qs = new URLSearchParams({ q, limit: String(limit) }).toString();
+  try {
+    const res = await fetch(`/api/yahoo/search?${qs}`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    const quotes: any[] = json.quotes || [];
+    return quotes
+      .filter(x => x.symbol && (x.quoteType === 'EQUITY' || x.quoteType === 'ETF' || x.isYahooFinance))
+      .map(x => {
+        const sym: string = x.symbol;
+        const market: Market = sym.endsWith('.TW') || sym.endsWith('.TWO') ? 'TW'
+          : (x.exchange === 'NMS' || x.exchange === 'NYQ' || x.exchange === 'PCX' || x.exchange === 'ASE') ? 'US' : 'OTHER';
+        return {
+          id: sym,
+          name: x.shortname || x.longname || sym,
+          industry: x.exchDisp || x.exchange,
+          market,
+        } as StockDirEntry;
+      });
+  } catch {
+    return [];
   }
-  return [];
 }
 
 // ── 整合搜尋：台股本地 +（英文/代碼時）Yahoo 海外 ──

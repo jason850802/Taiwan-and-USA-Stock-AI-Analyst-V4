@@ -1,16 +1,6 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 
-// PROXY ROTATION STRATEGY
-// 1. CorsProxy: Fast, usually reliable.
-// 2. AllOrigins: Good fallback, reliable uptime.
-const PROXIES = [
-    'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url='
-];
-
-// Switch to query2 as it is often more stable/updated
-const YAHOO_BASE = 'https://query2.finance.yahoo.com/v8/finance/chart/';
 const FINMIND_BASE = 'https://api.finmindtrade.com/api/v4/data';
 
 interface YahooChartResponse {
@@ -271,67 +261,31 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
 };
 
 const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
-    // Add random param to prevent Proxy Caching
-    const targetUrl = `${YAHOO_BASE}${symbol}?interval=${interval}&range=${range}&includeAdjustedClose=true&includePrePost=false&lang=zh-Hant-TW&region=TW&_rand=${new Date().getTime()}`;
-    
-    let lastError: any;
-    
-    // Try each proxy in order
-    for (const proxy of PROXIES) {
-        try {
-            const isAllOrigins = proxy.includes('allorigins');
-            const cacheBuster = isAllOrigins ? `&_t=${Date.now()}` : '';
-            
-            const url = `${proxy}${encodeURIComponent(targetUrl)}${cacheBuster}`;
-            
-            const res = await fetch(url);
-            
-            if (!res.ok) {
-                // If 429 (Too Many Requests), definitely try next proxy
-                if (res.status === 429) {
-                    console.warn(`Proxy ${proxy} hit rate limit (429). Switching...`);
-                    continue; 
-                }
-                throw new Error(`Fetch error (${res.status}): ${res.statusText}`);
-            }
-            
-            // Check Content-Type to ensure it's JSON
-            const contentType = res.headers.get('content-type');
-            if (contentType && !contentType.includes('application/json')) {
-                // Try to consume text so we don't leak
-                try { await res.text(); } catch {}
-                throw new Error(`Invalid response (not JSON) from ${proxy}`);
-            }
+    // getLatestPrice 既有呼叫使用 1d/5d；正規化後送入後端唯一合法的 1d/10y 組合。
+    const requestRange = interval === '1d' && range === '5d' ? '10y' : range;
+    const qs = new URLSearchParams({ symbol, interval, range: requestRange }).toString();
+    const res = await fetch(`/api/yahoo/chart?${qs}`);
 
-            const json = await res.json();
-            
-            // Handle Proxy-wrapped errors or Yahoo-specific errors
-            if (json.chart && json.chart.error) {
-                const code = json.chart.error.code;
-                if (code === 'Not Found') {
-                    throw new Error(`Symbol ${symbol} not found.`);
-                }
-                throw new Error(JSON.stringify(json.chart.error)); 
-            }
-            
-            if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
-                 throw new Error('No data found in response');
-            }
-
-            return json as YahooChartResponse;
-
-        } catch (e: any) {
-            console.warn(`Proxy ${proxy} failed for ${symbol}:`, e.message);
-            lastError = e;
-            
-            // Don't retry if it's definitely a "Symbol Not Found" error
-            if (e.message && e.message.includes('not found')) {
-                break;
-            }
-        }
+    if (!res.ok) {
+        const parsed = await res.json().catch(() => ({})) as { message?: string };
+        throw new Error(parsed.message || `Fetch error (${res.status})`);
     }
-    
-    throw lastError || new Error('All Yahoo proxies failed.');
+
+    const json = await res.json() as YahooChartResponse;
+
+    if (json.chart && json.chart.error) {
+        const code = json.chart.error.code;
+        if (code === 'Not Found') {
+            throw new Error(`Symbol ${symbol} not found.`);
+        }
+        throw new Error(JSON.stringify(json.chart.error));
+    }
+
+    if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
+        throw new Error('No data found in response');
+    }
+
+    return json;
 };
 
 const fetchRawData = async (symbol: string, interval: string, range: string) => {
