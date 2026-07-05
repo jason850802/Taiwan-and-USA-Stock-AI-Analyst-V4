@@ -151,11 +151,7 @@ const App: React.FC = () => {
       const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode);
       setAnalysis(report);
     } catch (err: any) {
-        if(err.message?.includes("API Key is missing")) {
-            setAnalysis("### System Error \n\n **API Key Missing.** \nPlease set `GEMINI_API_KEY` in your environment.");
-        } else {
-            setAnalysis("### Analysis Failed \n\n Unable to generate report.");
-        }
+      setAnalysis(err.message || '分析失敗，請稍後再試。');
     } finally {
       setAnalyzing(false);
     }
