@@ -179,7 +179,7 @@ export async function fetchYahooWithHandshake(
         },
       });
 
-      if (!response.ok) {
+      if (response.status === 401 || response.status === 429) {
         throw classifyStatus(response.status);
       }
 
