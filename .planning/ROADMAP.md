@@ -30,7 +30,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Gemini 模型 ID 來自環境變數（`GEMINI_MODEL_FAST` / `GEMINI_MODEL_THINKING`），production 預設為 stable ID；模型不存在時前端收到可辨識的 `MODEL_NOT_FOUND` 訊息（非籠統「分析失敗」）
   4. 任何 upstream 錯誤都經後端分類為 `{ code, message }` 回前端，前端錯誤 body 與 Vercel log 皆無 `key=` / `AIza` / 完整 Google URL
   5. `vercel dev` 能在本地單一 port 同時跑前端與 `/api/*`，且 Gemini 函式設有 `maxDuration`（120s）不落入預設逾時
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 01-gemini-01-PLAN.md — 建 api/_lib/ 共用層、/api/gemini 薄轉發端點、前端 services/gemini.ts 改接、移除金鑰注入
 
 ### Phase 2: Yahoo 代理端點（去公用 Proxy）
 **Goal:** 把所有 Yahoo 行情/搜尋呼叫搬到後端 `/api/yahoo/*`，後端實作完整 cookie/crumb 握手，移除前端對公用 CORS proxy 的依賴，且 `StockDataPoint[]` 領域契約零變動
