@@ -103,6 +103,45 @@ Output: `api/_lib/config.ts`、`api/_lib/http.ts`、`api/_lib/guard.ts`、`api/g
 - 沒有測試 runner，`tsconfig.json` 非 strict。驗證手段是 `npx tsc --noEmit` + 實際跑 `npm run build` 後 `grep -r "AIza" dist/`（用 Bash 工具跑，PowerShell 沒有 grep）。
 </context_for_cold_start_executor>
 
+<preflight_resolutions>
+## 彩排裁定（2026-07-04，Codex 彩排 + Claude 覆核後定案；本節權威高於下方任務裡的模糊寫法）
+
+以下把計畫原本「擇一／未定」的地方定死，執行者照這裡做，不要再自行選擇：
+
+1. **逾時用 `AbortController`，不要用 `Promise.race`**：在 `api/_lib/http.ts` 建 `AbortController`，`setTimeout` 觸發時 `controller.abort()`，並把 `abortSignal: controller.signal` 傳進 `ai.models.generateContent({ ..., config: { ..., abortSignal } })`（`@google/genai` 1.46 支援）。逾時 100000ms（略小於 maxDuration 120s）。理由：race 只讓本地 Promise 提早失敗，不會真的取消上游請求。
+
+2. **`api/gemini.ts` 用 `@vercel/node` 傳統簽章**（因為要用 `req.body`/`req.method`/`res.status().json()`）：
+   `export default async function handler(req: VercelRequest, res: VercelResponse) { ... }`。
+   不要用 Web 標準 `handler(req: Request): Promise<Response>`（Vercel 的 Web 形式其實是 `export default { async fetch(request){} }`，與本計畫用法不符）。
+
+3. **maxDuration 用具名匯出**：`export const maxDuration = 120;`。**不要**用 `export const config = { maxDuration: 120 }`。通常因此**不需要** `vercel.json`；若確認不需要就不要建，並在 SUMMARY 註明。
+
+4. **本地開發首選方案（取代原「雙進程」模糊描述）**：
+   - 後端：`npx vercel dev --listen 3001`（Vercel CLI 未全域安裝，用 npx 即可；**首次可能需要 `vercel login` 與 link 專案**——若環境無法登入/下載 CLI，於 Task 4 回報，改由人工在本機跑）。
+   - 前端：Vite 維持 port 3000（現狀）。
+   - 在 `.env` 的 `ALLOWED_ORIGIN` 同時放行 `http://localhost:3000,http://localhost:3001`。
+   - 若走此雙進程，前端 `fetch('/api/gemini')` 需能到達 3001：可在 `vite.config.ts` 加 `server.proxy` 把 `/api` 轉給 `http://localhost:3001`。
+
+5. **驗證指令的環境相依（Codex 在 PowerShell，我方在 Git Bash）**：
+   - TypeScript：PowerShell 下 `npx tsc` 會被 execution policy 擋 `npx.ps1`，改用 **`npx.cmd tsc --noEmit`**（Git Bash 下 `npx tsc --noEmit` 即可）。
+   - 金鑰掃描：PowerShell 下沒有 `grep`，用 **`Select-String -Path dist\* -Pattern "AIza" -Recurse`**（或在 Git Bash 跑 `grep -r "AIza" dist/`）。兩者命中數都必須為 0。
+
+6. **`@google/genai` 版本**：`package.json` 宣告 `^1.35.0`，本機實際解析為 `1.46.0`，Node 26 下已實測可 import 與建立 `GoogleGenAI`。**維持 `^1.35.0` 範圍即可**（它涵蓋 1.46.0），不要鎖死版本，除非 Vercel 打包出相容性問題再處理並記錄於 SUMMARY。
+
+7. **【安全命脈】Task 4 必須實際觸發每一種錯誤路徑並確認不漏金鑰**（因為本專案無自動測試，tsc + 單一成功路徑不足以證明 5 種分類正確、更不足以證明錯誤路徑不洩漏金鑰——而金鑰封存正是本階段目的）。Task 4 至少要各觸發一次並記錄結果：
+   - `MISSING_KEY`（暫時移除 `.env` 金鑰）、`BAD_REQUEST`（送缺 prompt 的請求，用 curl/Postman 打 `/api/gemini`）、`MODEL_NOT_FOUND`（把 `GEMINI_MODEL_THINKING` 暫設成不存在的模型 ID）。
+   - 每種都確認：回應 body 只有 `{ code, message }`（中文）、**不含** `AIza`/`key=`/完整 googleapis URL；且 Vercel function log 也不含這些片段（log 已 redact）。
+   - `RATE_LIMITED`/`UPSTREAM_ERROR` 難以穩定觸發，可用單元層級或人工說明覆蓋，於 SUMMARY 註記其驗證方式或未能實測的原因。
+
+8. **不安裝 `@vercel/node`（2026-07-04 環境阻塞後定案，覆蓋裁定 #2 的型別來源與 Task 1 的 devDependency 步驟）**：此環境安裝 `@vercel/node` 反覆網路/registry 逾時；而它只是**型別 DX 套件、runtime 不需要**（Vercel 平台自帶 runtime）。因此 **不裝 `@vercel/node`、也不要把它列進 `package.json`**。改在 `api/gemini.ts` 內宣告最小本地型別（tsconfig 非 strict，tsc 會過、部署 runtime 行為不變）：
+   ```ts
+   interface GeminiReq { method?: string; headers: Record<string, string | string[] | undefined>; body?: any; }
+   interface GeminiRes { status(code: number): GeminiRes; json(data: unknown): void; }
+   export default async function handler(req: GeminiReq, res: GeminiRes) { /* ... */ }
+   ```
+   handler 的形狀（`req.body` / `req.method` / `res.status().json()`）維持裁定 #2 不變，只是型別來源改為本地宣告。動手前先清掉先前半套安裝殘留的 `node_modules/@vercel/node`（若有）與任何殘留的 npm 子程序，確保 `git status` 沒有因此產生的雜項。
+</preflight_resolutions>
+
 <execution_context>
 @E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.claude/get-shit-done/workflows/execute-plan.md
 @E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.claude/get-shit-done/templates/summary.md
@@ -185,7 +224,7 @@ Content-Type: application/json
 3. `api/_lib/guard.ts`：
    - `export function isAllowedOrigin(req: { headers: Record<string, string | string[] | undefined> }): boolean`：讀取 request 的 `origin` 或 `referer` header，與 `getAllowedOrigins()` 比對（用 `startsWith` 比對 referer，因為 referer 含完整路徑）；若兩個 header 都不存在（例如同源部署下瀏覽器可能不送 Origin），**允許放行**（因為這只是最簡骨架，不是強防線，避免擋到自己的合法前端請求）；若都存在且都不在允許清單內，回傳 `false`。這只是骨架，Phase 4 才會加上真正的限流與共享密鑰。
 
-在 `package.json` 的 `dependencies` 新增 `@google/genai` 維持 `^1.35.0`（後端與前端共用同一版本，不要升級版本，降低本階段風險），並新增 `devDependencies` 的 `@vercel/node`（型別支援，版本用 `^5`，若 npm 當下無法解析到具體版號則使用 npm 建議的最新相容版）。
+在 `package.json` 的 `dependencies` 確認 `@google/genai`（維持 `^1.35.0`，後端與前端共用同一版本，不要升級）。**不要新增 `@vercel/node`**（見彩排裁定 #8：此環境安裝反覆網路逾時，且它只是型別套件、runtime 不需要，改用最小本地型別，不依賴此套件）。
 
 建立 `.env.example`（專案根目錄，覆蓋既有若有的話）列出：
 ```

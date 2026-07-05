@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-06-01T16:26:32.445Z"
-last_activity: 2026-06-29 — Completed quick task 260629-ag1：新增 AGENTS.md 指向 CLAUDE.md，讓 Codex 與 Claude 同步
+status: executing
+stopped_at: Completed 01-gemini-01-PLAN.md
+last_updated: "2026-07-05T17:14:29+08:00"
+last_activity: 2026-07-05 — Completed Phase 1 Gemini proxy and frontend key isolation
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 25
 ---
 
 # Project State
@@ -21,35 +21,35 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-01)
 
 **Core value:** 讓使用者對任一檔台股/美股得到「客觀進場判斷 ＋ AI 中文解讀」的可信分析，而其依賴的金鑰與資料來源必須安全、穩定、不被盜用或竄改。
-**Current focus:** Phase 1 — 後端骨架 ＋ Gemini 端點（金鑰封存）
+**Current focus:** Phase 2 — Yahoo 代理端點（去公用 Proxy）
 
 ## Current Position
 
-Phase: 1 of 4 (後端骨架 ＋ Gemini 端點)
+Phase: 2 of 4 (Yahoo 代理端點)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-06-01 — 路線圖建立，22 項 v1 需求全數對應到 4 個階段
+Last activity: 2026-07-05 — Phase 1 completed and human checkpoint approved
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 25%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
-- Average duration: - min
-- Total execution time: 0.0 hours
+- Total plans completed: 1
+- Average duration: 126 min
+- Total execution time: 2.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| Phase 1 | 1 | 126 min | 126 min |
 
 **Recent Trend:**
 
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 126 min
+- Trend: Baseline established
 
 *Updated after each plan completion*
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - [里程碑]: 後端採 Vercel Serverless 函式（非自管伺服器），與 Vite 靜態站整合最順、免費層足夠
 - [Phase 1]: Gemini 優先——唯一 CRITICAL 金錢風險、最小端到端切片，先驗通整條鏈路在 Vercel 上可行
 - [架構]: 後端只做啞代理（Yahoo/FinMind 回原始 JSON），指標計算/normalize/prompt 全留前端，維持 `StockDataPoint[]` 契約零變動
+- [Phase 1]: Gemini proxy 使用 AbortController 100 秒逾時，Vercel function `maxDuration=120`
+- [Phase 1]: Handler 使用本地最小 request/response 型別，不依賴 `@vercel/node`
+- [Phase 1]: 本地開發採 Vite 3000 + Vercel 3001，前端 `/api` 由 Vite proxy 轉發
 
 ### Pending Todos
 
@@ -77,7 +80,7 @@ None yet.
 
 - [Phase 2 研究旗標]: Yahoo 非官方端點的 cookie/crumb 握手行為可能隨時間改變；實作後須在 Vercel 環境（非本機）實測 ≥30 分鐘驗證，不能只靠本機。
 - [Phase 1 待測量]: Gemini thinking/pro 模式實際延遲未知；需以真實技術分析提示測量，確認 `maxDuration=120` 是否足夠。
-- [整合風險]: `vercel dev` 與 Vite 6 整合社群回報有坑；先試單進程，遇問題退回 server.proxy + vercel dev 雙進程。
+- [Phase 1 後續確認]: Codex 環境未直接保留 `vercel dev` 啟動輸出；部署前仍應依已核可的 Vite 3000 + Vercel 3001 流程再確認一次。
 
 ### Quick Tasks Completed
 
@@ -103,6 +106,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-01T16:26:32.414Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-gemini/01-CONTEXT.md
+Last session: 2026-07-05T17:14:29+08:00
+Stopped at: Completed 01-gemini-01-PLAN.md
+Resume file: None

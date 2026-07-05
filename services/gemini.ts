@@ -1,6 +1,37 @@
-import { GoogleGenAI } from "@google/genai";
 import { StockDataPoint } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
+
+type GeminiApiPayload = {
+  prompt: string;
+  systemInstruction: string;
+  mode: 'fast' | 'thinking';
+  temperature?: number;
+  thinkingConfig?: {
+    thinkingLevel?: 'MEDIUM';
+    thinkingBudget?: number;
+  };
+};
+
+const callGeminiApi = async (
+  payload: GeminiApiPayload,
+  fallbackText = 'No analysis generated.'
+): Promise<string> => {
+  const response = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({})) as {
+    text?: string;
+    message?: string;
+  };
+
+  if (!response.ok) {
+    throw new Error(data.message || '分析失敗，請稍後再試。');
+  }
+
+  return data.text || fallbackText;
+};
 
 // Helper to format data for the prompt
 interface VolumeProjectionInfo {
@@ -145,13 +176,7 @@ export const analyzeStockWithGemini = async (
     mode: 'fast' | 'thinking' = 'fast',
     volumeProjection?: VolumeProjectionInfo | null
 ) => {
-  if (!process.env.API_KEY) {
-    throw new Error("API Key is missing.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const promptData = formatPromptData(symbol, data, userPosition, volumeProjection);
-  const modelName = mode === 'fast' ? "gemini-3.5-flash" : "gemini-3.1-pro-preview";
 
   const systemInstruction = `
 ### 角色定位
@@ -209,28 +234,13 @@ export const analyzeStockWithGemini = async (
 3. **區分時程**：明確區分日線（短線）與週線（中長線）的判斷差異。
 `;
 
-  try {
-    const config: any = {
-      systemInstruction: systemInstruction,
-      temperature: 0.1,
-    };
-
-    if (mode === 'fast') {
-      config.thinkingConfig = {
-        thinkingLevel: 'MEDIUM',
-      };
-    }
-
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: [{ role: 'user', parts: [{ text: promptData }] }],
-      config: config,
-    });
-    return response.text || "No analysis generated.";
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to analyze stock data.");
-  }
+  return callGeminiApi({
+    prompt: promptData,
+    systemInstruction,
+    mode,
+    temperature: 0.1,
+    thinkingConfig: mode === 'fast' ? { thinkingLevel: 'MEDIUM' } : undefined,
+  });
 };
 
 // ───────────────────────────────────────────────────────────────
@@ -243,12 +253,6 @@ export const analyzeEntryWithGemini = async (
   userPosition?: { hasHolding: boolean; costPrice?: number },
   mode: 'fast' | 'thinking' = 'fast'
 ): Promise<string> => {
-  if (!process.env.API_KEY) {
-    throw new Error("API Key is missing.");
-  }
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  const modelName = mode === 'fast' ? "gemini-3.5-flash" : "gemini-3.1-pro-preview";
-
   const stepsText = result.steps
     .map(s => `步驟${s.id} ${s.name}：[${s.status === 'pass' ? '✅通過' : s.status === 'warn' ? '⚠️警示' : '❌不符'}] ${s.verdict}｜${s.details.join('；')}`)
     .join('\n');
@@ -298,19 +302,13 @@ ${sopText}
 - 結尾加一行小字免責：本分析為技術面教學推演，非投資建議。
 `;
 
-  try {
-    const config: any = { systemInstruction, temperature: 0.2 };
-    if (mode === 'fast') config.thinkingConfig = { thinkingLevel: 'MEDIUM' };
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: [{ role: 'user', parts: [{ text: promptData }] }],
-      config,
-    });
-    return response.text || "No analysis generated.";
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to analyze entry conditions.");
-  }
+  return callGeminiApi({
+    prompt: promptData,
+    systemInstruction,
+    mode,
+    temperature: 0.2,
+    thinkingConfig: mode === 'fast' ? { thinkingLevel: 'MEDIUM' } : undefined,
+  });
 };
 
 export const analyzeTradeDecision = async (
@@ -321,11 +319,6 @@ export const analyzeTradeDecision = async (
   currentPrice?: number,
   recentData?: StockDataPoint[]
 ): Promise<string> => {
-  if (!process.env.API_KEY) {
-    throw new Error("API Key is missing.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const isTaiwanStock = /^\d{3,6}[A-Z]?$/.test(symbol) || symbol.endsWith('.TW') || symbol.endsWith('.TWO');
 
   let priceLine = `買入價格：${buyPrice}`;
@@ -682,21 +675,13 @@ ${latestIndicators}${recentDataStr}
 用 2～3 句話總結，語氣嚴謹但具有激勵性，像一位交易專家教練鼓勵學員持續精進。
 `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: [{ role: 'user', parts: [{ text: promptText }] }],
-      config: {
-        systemInstruction,
-        temperature: 0.3,
-        thinkingConfig: { thinkingBudget: 8192 },
-      },
-    });
-    return response.text || '無法生成分析結果。';
-  } catch (error) {
-    console.error('Gemini Trade Analysis Error:', error);
-    throw new Error('Failed to analyze trade decision.');
-  }
+  return callGeminiApi({
+    prompt: promptText,
+    systemInstruction,
+    mode: 'fast',
+    temperature: 0.3,
+    thinkingConfig: { thinkingBudget: 8192 },
+  }, '無法生成分析結果。');
 };
 
 // ── 庫存持股健檢分析 ────────────────────────────────────────────────────────
@@ -825,11 +810,6 @@ ${kLineData}
 export const analyzePortfolioHealth = async (
   items: PortfolioHealthItem[]
 ): Promise<string> => {
-  if (!process.env.API_KEY) {
-    throw new Error('API Key is missing.');
-  }
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const promptData = formatHealthCheckData(items);
 
   const systemInstruction = `
@@ -1013,19 +993,11 @@ export const analyzePortfolioHealth = async (
 
   const promptText = `以下是我目前的庫存持股，請逐一進行健檢分析：\n${promptData}`;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: [{ role: 'user', parts: [{ text: promptText }] }],
-      config: {
-        systemInstruction,
-        temperature: 0.2,
-        thinkingConfig: { thinkingBudget: 10240 },
-      },
-    });
-    return response.text || '無法生成健檢結果。';
-  } catch (error) {
-    console.error('Gemini Portfolio Health Error:', error);
-    throw new Error('Failed to analyze portfolio health.');
-  }
+  return callGeminiApi({
+    prompt: promptText,
+    systemInstruction,
+    mode: 'fast',
+    temperature: 0.2,
+    thinkingConfig: { thinkingBudget: 10240 },
+  }, '無法生成健檢結果。');
 };
