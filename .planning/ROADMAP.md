@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: 後端骨架 ＋ Gemini 端點（金鑰封存）** - 建 `api/_lib/` 共用層與 `/api/gemini`，移除前端金鑰注入，封住唯一 CRITICAL 金錢風險
+- [x] **Phase 1: 後端骨架 ＋ Gemini 端點（金鑰封存）** - 建 `api/_lib/` 共用層與 `/api/gemini`，移除前端金鑰注入，封住唯一 CRITICAL 金錢風險
 - [ ] **Phase 2: Yahoo 代理端點（去公用 Proxy）** - 後端實作 cookie/crumb 握手，前端 `services/yahoo.ts` 改接，移除公用 CORS proxy 依賴
 - [ ] **Phase 3: FinMind 代理端點（後端集中）** - 後端注入 token＋快取籌碼到當日，明確回傳 unavailable 狀態，前端目錄/搜尋改接
 - [ ] **Phase 4: 防濫用強化 ＋ 部署驗收** - 統一套上 Upstash 限流／CORS／共享密鑰，補 `.env.example` 與 GCP 配額財務防線
@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 1 plan
 
 Plans:
-- [ ] 01-gemini-01-PLAN.md — 建 api/_lib/ 共用層、/api/gemini 薄轉發端點、前端 services/gemini.ts 改接、移除金鑰注入
+- [x] 01-gemini-01-PLAN.md — 建 api/_lib/ 共用層、/api/gemini 薄轉發端點、前端 services/gemini.ts 改接、移除金鑰注入
 
 ### Phase 2: Yahoo 代理端點（去公用 Proxy）
 **Goal:** 把所有 Yahoo 行情/搜尋呼叫搬到後端 `/api/yahoo/*`，後端實作完整 cookie/crumb 握手，移除前端對公用 CORS proxy 的依賴，且 `StockDataPoint[]` 領域契約零變動
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 後端骨架 ＋ Gemini 端點 | 0/TBD | Not started | - |
+| 1. 後端骨架 ＋ Gemini 端點 | 1/1 | Complete | 2026-07-05 |
 | 2. Yahoo 代理端點 | 0/TBD | Not started | - |
 | 3. FinMind 代理端點 | 0/TBD | Not started | - |
 | 4. 防濫用強化 ＋ 部署驗收 | 0/TBD | Not started | - |
