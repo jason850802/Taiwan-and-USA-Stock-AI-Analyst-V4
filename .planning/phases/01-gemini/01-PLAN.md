@@ -132,6 +132,14 @@ Output: `api/_lib/config.ts`、`api/_lib/http.ts`、`api/_lib/guard.ts`、`api/g
    - `MISSING_KEY`（暫時移除 `.env` 金鑰）、`BAD_REQUEST`（送缺 prompt 的請求，用 curl/Postman 打 `/api/gemini`）、`MODEL_NOT_FOUND`（把 `GEMINI_MODEL_THINKING` 暫設成不存在的模型 ID）。
    - 每種都確認：回應 body 只有 `{ code, message }`（中文）、**不含** `AIza`/`key=`/完整 googleapis URL；且 Vercel function log 也不含這些片段（log 已 redact）。
    - `RATE_LIMITED`/`UPSTREAM_ERROR` 難以穩定觸發，可用單元層級或人工說明覆蓋，於 SUMMARY 註記其驗證方式或未能實測的原因。
+
+8. **不安裝 `@vercel/node`（2026-07-04 環境阻塞後定案，覆蓋裁定 #2 的型別來源與 Task 1 的 devDependency 步驟）**：此環境安裝 `@vercel/node` 反覆網路/registry 逾時；而它只是**型別 DX 套件、runtime 不需要**（Vercel 平台自帶 runtime）。因此 **不裝 `@vercel/node`、也不要把它列進 `package.json`**。改在 `api/gemini.ts` 內宣告最小本地型別（tsconfig 非 strict，tsc 會過、部署 runtime 行為不變）：
+   ```ts
+   interface GeminiReq { method?: string; headers: Record<string, string | string[] | undefined>; body?: any; }
+   interface GeminiRes { status(code: number): GeminiRes; json(data: unknown): void; }
+   export default async function handler(req: GeminiReq, res: GeminiRes) { /* ... */ }
+   ```
+   handler 的形狀（`req.body` / `req.method` / `res.status().json()`）維持裁定 #2 不變，只是型別來源改為本地宣告。動手前先清掉先前半套安裝殘留的 `node_modules/@vercel/node`（若有）與任何殘留的 npm 子程序，確保 `git status` 沒有因此產生的雜項。
 </preflight_resolutions>
 
 <execution_context>
@@ -216,7 +224,7 @@ Content-Type: application/json
 3. `api/_lib/guard.ts`：
    - `export function isAllowedOrigin(req: { headers: Record<string, string | string[] | undefined> }): boolean`：讀取 request 的 `origin` 或 `referer` header，與 `getAllowedOrigins()` 比對（用 `startsWith` 比對 referer，因為 referer 含完整路徑）；若兩個 header 都不存在（例如同源部署下瀏覽器可能不送 Origin），**允許放行**（因為這只是最簡骨架，不是強防線，避免擋到自己的合法前端請求）；若都存在且都不在允許清單內，回傳 `false`。這只是骨架，Phase 4 才會加上真正的限流與共享密鑰。
 
-在 `package.json` 的 `dependencies` 新增 `@google/genai` 維持 `^1.35.0`（後端與前端共用同一版本，不要升級版本，降低本階段風險），並新增 `devDependencies` 的 `@vercel/node`（型別支援，版本用 `^5`，若 npm 當下無法解析到具體版號則使用 npm 建議的最新相容版）。
+在 `package.json` 的 `dependencies` 確認 `@google/genai`（維持 `^1.35.0`，後端與前端共用同一版本，不要升級）。**不要新增 `@vercel/node`**（見彩排裁定 #8：此環境安裝反覆網路逾時，且它只是型別套件、runtime 不需要，改用最小本地型別，不依賴此套件）。
 
 建立 `.env.example`（專案根目錄，覆蓋既有若有的話）列出：
 ```
