@@ -330,4 +330,26 @@ Create `.planning/phases/02-yahoo/02-01-SUMMARY.md` when done
 3. **crumb 10 分鐘 TTL 是否與 Yahoo 實際 cookie 過期週期（社群觀察約 10-20 分鐘）吻合**——D-04 選定 10 分鐘是保守值，若部署後觀察到過期更快導致間歇性 401，可能需要縮短 TTL 或提高「無論 TTL 是否到期，遇 401 就強制重新握手」的優先權（本計畫的重試邏輯已涵蓋後者，TTL 只是主動預防機制）。
 4. **台股/美股 symbol 正則格式檢查的邊界案例覆蓋度**——Task 1 的 `validateChartParams` 正則基於 `services/yahoo.ts` 既有的隱式規則（3-6 碼數字+可選字母、`.TW`/`.TWO`）與美股常見格式推導，但 Yahoo 支援的完整代碼格式空間（如某些海外交易所後綴）未窮舉驗證；若 checkpoint 測試中發現合法代碼被誤擋，需調整正則（不影響架構決策，屬實作微調）。
 5. **search 端點是否真的需要 crumb**——Yahoo 的 `/v1/finance/search` 過去多半**不需要** crumb；本計畫為求與 chart 一致，對 search 也走完整 `fetchYahooWithHandshake`。風險：若部署後出現「chart 正常但 search 因握手失敗而壞掉」，代表 search 被握手拖累。屆時的解法是讓 `search.ts` 改為**不強制 crumb**（握手失敗時 fallback 成無 crumb 直接查 search），與 chart 分開處理。本階段先走一致握手，checkpoint 若發現 search 異常再據此調整。
+
+## 審查修正（2026-07-05，Codex 執行後 fresh-context 覆核發現，權威高於 D-05）
+
+覆核窮舉前端所有 (interval,range) 組合與 symbol，發現 D-05 白名單有**兩個缺口**，必須修正（都在 `api/_lib/yahoo.ts`）：
+
+**修正 1（必修 — 功能回歸）：symbol 白名單漏掉匯率格式 `=X`。**
+`components/Portfolio.tsx` 用 `getLatestPrice('USDTWD=X')` 抓台美匯率，但 `validateChartParams` 的正則不接受含 `=` 的匯率代碼，後端會回 400；呼叫端有 try/catch 會靜默吞掉，導致匯率停在舊值（違反「行為與遷移前完全一致」）。**修法**：在 symbol 驗證額外允許 Yahoo 匯率格式，例如新增 pattern `/^[A-Z]{3,8}=X$/i`（`USDTWD=X`、`JPY=X` 等），三種格式（台股/海外/匯率）符合其一即通過。
+
+**修正 2（必修 — 效率，同檔一併做）：白名單改為每個 interval 對應「一組」合法 range，並移除前端正規化 hack。**
+`getLatestPrice` 用 `1d/5d`，原設計 `1d→10y` 一對一導致 `services/yahoo.ts:264-265` 加了「1d/5d 正規化成 1d/10y」的 hack，使抓最新價每次多拉約 480 倍資料（庫存頁逐檔高頻呼叫）。**修法**：
+- `INTERVAL_RANGE_MAP` 由 `Record<string,string>` 改為 `Record<string,string[]>`：
+  ```
+  '1d':  ['10y', '5d'],
+  '1wk': ['5y'],
+  '1mo': ['max'],
+  '60m': ['1y'],
+  '15m': ['60d'],
+  ```
+- `validateChartParams` 改為「`range` 必須**屬於**該 interval 的合法陣列」（`allowed.includes(range)`），非 `===` 單一值。
+- **移除** `services/yahoo.ts:264-265` 的正規化 hack，`queryYahoo` 原樣傳遞 `range`（讓 `1d/5d` 直接送後端、直接合法）。
+
+安全不受影響：range 仍是封閉枚舉、symbol 仍是格式化正則，端點不會因此變成可注入任意上游的開放代理。
 </output>
