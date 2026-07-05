@@ -67,6 +67,10 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 使用者說「分析 XXXX」「XXXX 能不能買」時從 `trend-analysis` 開始依序跑，
 或直接用 `entry-decision` 帶完整流程。各步驟細節讀該 skill 的 SKILL.md，不要憑記憶重建規則。
 
+另有 `tw-fundamentals`（台股基本面資料層）：用 FinMind 免 token 抓台股財報／估值／月營收／股利，
+補上美股 skill（dcf-model／comps-analysis／initiating-coverage）從 SEC 自動取得、台股缺的那層。
+使用者要台股的財報、估值、DCF、基本面時用；抓取腳本 `.claude/skills/_shared/fetch_fundamentals.py`。
+
 <!-- GSD:skills-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
