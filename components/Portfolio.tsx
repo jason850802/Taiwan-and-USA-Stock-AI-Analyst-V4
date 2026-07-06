@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { PortfolioItem, StockDataPoint } from '../types';
 import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
 import { estimateVolumeTrend } from '../utils/volume';
-import { Plus, Trash2, RefreshCw, Wallet, X, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, Bot, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
+import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
+import MarkdownReport from './ui/MarkdownReport';
+import Modal from './ui/Modal';
+import Skeleton from './ui/Skeleton';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -256,7 +257,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
-                        : p?.error  ? <span className="text-red-400 text-xs">讀取失敗</span>
+                        : p?.error  ? <span className="text-danger text-xs">讀取失敗</span>
                         : currentPrice > 0
                           ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-up' : 'text-down'}`}>
                               {currentPrice.toFixed(2)}
@@ -270,7 +271,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.stockDividends}
-                        onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-blue-400" />
+                        onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-accent" />
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.brokerDiscount} digits={1}
@@ -284,13 +285,13 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                       {deleteConfirm === item.id ? (
                         <div className="flex gap-1 justify-end">
                           <button onClick={() => { onDelete(item.id); setDeleteConfirm(null); }}
-                            className="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg hover:bg-red-500/30 transition-colors whitespace-nowrap">確認</button>
+                            className="text-xs bg-danger-muted text-danger border border-danger/30 px-2 py-1 rounded-ctl hover:bg-danger/30 transition-colors whitespace-nowrap">確認</button>
                           <button onClick={() => setDeleteConfirm(null)}
                             className="text-xs bg-slate-700 text-slate-400 px-2 py-1 rounded-lg hover:bg-slate-600 transition-colors">取消</button>
                         </div>
                       ) : (
                         <button onClick={() => setDeleteConfirm(item.id)}
-                          className="text-slate-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/10 flex items-center justify-center ml-auto">
+                          className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center ml-auto">
                           <Trash2 size={15} />
                         </button>
                       )}
@@ -465,7 +466,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                     <td className="p-3">
                       <p className="font-bold text-white">{item.symbol}</p>
                       {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
-                      <p className={`text-[10px] mt-0.5 ${item.isUsEtf ? 'text-purple-400' : 'text-sky-400'}`}>
+                      <p className={`text-[10px] mt-0.5 ${item.isUsEtf ? 'text-accent' : 'text-slate-400'}`}>
                         {item.isUsEtf ? 'ETF  · $3/次' : '個股 · 0.008%'}
                         {item.purchaseCurrency && (
                           <span className="ml-1.5 text-slate-500">買入:{item.purchaseCurrency}</span>
@@ -501,7 +502,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
-                        : p?.error  ? <span className="text-red-400 text-xs">讀取失敗</span>
+                        : p?.error  ? <span className="text-danger text-xs">讀取失敗</span>
                         : priceUsd > 0
                           ? <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / rate) ? 'text-up' : 'text-down'}`}>
                               {fmtUsd(priceUsd)}
@@ -517,7 +518,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.stockDividends}
-                        onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-blue-400" />
+                        onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-accent" />
                     </td>
                     <td className="p-3">
                       <PnLCell pnl={pnl} pnlPct={pnlPct} currency={dc}
@@ -527,13 +528,13 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                       {deleteConfirm === item.id ? (
                         <div className="flex gap-1 justify-end">
                           <button onClick={() => { onDelete(item.id); setDeleteConfirm(null); }}
-                            className="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-1 rounded-lg hover:bg-red-500/30 transition-colors whitespace-nowrap">確認</button>
+                            className="text-xs bg-danger-muted text-danger border border-danger/30 px-2 py-1 rounded-ctl hover:bg-danger/30 transition-colors whitespace-nowrap">確認</button>
                           <button onClick={() => setDeleteConfirm(null)}
                             className="text-xs bg-slate-700 text-slate-400 px-2 py-1 rounded-lg hover:bg-slate-600 transition-colors">取消</button>
                         </div>
                       ) : (
                         <button onClick={() => setDeleteConfirm(item.id)}
-                          className="text-slate-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/10 flex items-center justify-center ml-auto">
+                          className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center ml-auto">
                           <Trash2 size={15} />
                         </button>
                       )}
@@ -829,7 +830,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
   const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
 
-  const inputCls = "w-full bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-600 text-sm";
+  const inputCls = "w-full bg-surface-inset border border-surface-line text-white px-4 py-3 rounded-ctl focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors placeholder:text-slate-600 text-sm";
 
   return (
     <div className="space-y-6">
@@ -915,26 +916,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
       )}
 
       {/* ── 新增 Modal ───────────────────────────────────────────────────── */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-slate-800/50">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                {isAnalyzeMode
-                  ? <><BrainCircuit size={20} className="text-purple-400" /> 新增持股與 AI 分析</>
-                  : <><Plus size={20} className="text-blue-400" /> 新增持股</>
-                }
-              </h3>
-              <button onClick={() => { setShowAddModal(false); setIsAnalyzeMode(false); }} className="text-slate-400 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+      <Modal
+        open={showAddModal}
+        onClose={() => { setShowAddModal(false); setIsAnalyzeMode(false); }}
+        title={isAnalyzeMode ? '新增持股與 AI 分析' : '新增持股'}
+        maxWidth="max-w-md"
+      >
+            <div className="space-y-4">
               {/* 代號 */}
               <div>
                 <label className="text-slate-300 text-sm font-medium block mb-1.5">
-                  股票代號 <span className="text-red-400">*</span>
+                  股票代號 <span className="text-danger">*</span>
                 </label>
                 <input type="text" value={form.symbol}
                   onChange={e => setForm(p => ({ ...p, symbol: e.target.value }))}
@@ -952,15 +944,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                 <div className="space-y-3">
                   <div>
                     <label className="text-slate-300 text-sm font-medium block mb-1.5">購入幣別</label>
-                    <div className="flex bg-slate-900 border border-slate-700 rounded-xl p-1 gap-1">
+                    <div className="flex bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
                       <button onClick={() => setForm(p => ({ ...p, purchaseCurrency: 'USD' }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5
-                          ${form.purchaseCurrency === 'USD' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                          ${form.purchaseCurrency === 'USD' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
                         <DollarSign size={13} /> 美元 (USD)
                       </button>
                       <button onClick={() => setForm(p => ({ ...p, purchaseCurrency: 'TWD' }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                          ${form.purchaseCurrency === 'TWD' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                          ${form.purchaseCurrency === 'TWD' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
                         TWD 台幣
                       </button>
                     </div>
@@ -973,15 +965,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                   </div>
                   <div>
                     <label className="text-slate-300 text-sm font-medium block mb-1.5">股票類型</label>
-                    <div className="flex bg-slate-900 border border-slate-700 rounded-xl p-1 gap-1">
+                    <div className="flex bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
                       <button onClick={() => setForm(p => ({ ...p, isUsEtf: false }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                          ${!form.isUsEtf ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                          ${!form.isUsEtf ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
                         個股（0.008%）
                       </button>
                       <button onClick={() => setForm(p => ({ ...p, isUsEtf: true }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                          ${form.isUsEtf ? 'bg-purple-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                          ${form.isUsEtf ? 'bg-ai text-white' : 'text-slate-400 hover:text-white'}`}>
                         ETF（$3/次）
                       </button>
                     </div>
@@ -992,15 +984,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
               {/* 輸入模式 */}
               <div>
                 <label className="text-slate-300 text-sm font-medium block mb-1.5">成本輸入方式</label>
-                <div className="flex bg-slate-900 border border-slate-700 rounded-xl p-1 gap-1">
+                <div className="flex bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
                   <button onClick={() => setForm(p => ({ ...p, inputMode: 'avg' }))}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                      ${form.inputMode === 'avg' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                      ${form.inputMode === 'avg' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
                     輸入成本均價
                   </button>
                   <button onClick={() => setForm(p => ({ ...p, inputMode: 'total' }))}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                      ${form.inputMode === 'total' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                      ${form.inputMode === 'total' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
                     輸入總成本
                   </button>
                 </div>
@@ -1012,7 +1004,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                   <div>
                     <label className="text-slate-300 text-sm font-medium block mb-1.5">
                       成本均價 {!formIsTW && <span className="text-slate-500">({form.purchaseCurrency})</span>}
-                      <span className="text-red-400"> *</span>
+                      <span className="text-danger"> *</span>
                     </label>
                     <input type="number" value={form.avgCostPrice}
                       onChange={e => setForm(p => ({ ...p, avgCostPrice: e.target.value }))}
@@ -1023,7 +1015,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                   <div>
                     <label className="text-slate-300 text-sm font-medium block mb-1.5">
                       總成本 {!formIsTW ? `(${form.purchaseCurrency})` : '(TWD)'}
-                      <span className="text-red-400"> *</span>
+                      <span className="text-danger"> *</span>
                     </label>
                     <input type="number" value={form.totalCostInput}
                       onChange={e => setForm(p => ({ ...p, totalCostInput: e.target.value }))}
@@ -1033,7 +1025,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                 )}
                 <div>
                   <label className="text-slate-300 text-sm font-medium block mb-1.5">
-                    總股數 <span className="text-red-400">*</span>
+                    總股數 <span className="text-danger">*</span>
                   </label>
                   <input type="number" value={form.totalShares}
                     onChange={e => setForm(p => ({ ...p, totalShares: e.target.value }))}
@@ -1056,7 +1048,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
 
               {/* 試算預覽 */}
               {preview.total > 0 && shares > 0 && (
-                <div className="bg-slate-900/60 rounded-xl p-4 border border-amber-500/20 space-y-1.5 text-xs">
+                <div className="bg-surface-inset rounded-card p-4 border border-warn/20 space-y-1.5 text-xs">
                   <p className="text-amber-400 font-bold uppercase tracking-wider mb-2">試算預覽</p>
                   {form.inputMode === 'avg' ? (
                     <>
@@ -1123,8 +1115,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
               {/* 買入時間與原因（分析模式專用） */}
               {isAnalyzeMode && (
                 <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="border-t border-purple-500/20 pt-3">
-                    <p className="text-purple-300 text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <div className="border-t border-ai/20 pt-3">
+                    <p className="text-ai text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5">
                       <BrainCircuit size={13} /> AI 分析資訊
                     </p>
                     <div className="space-y-3">
@@ -1138,7 +1130,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                       </div>
                       <div>
                         <label className="text-slate-300 text-sm font-medium block mb-1.5 flex items-center gap-1.5">
-                          <MessageSquare size={14} className="text-slate-400" /> 買入原因 <span className="text-red-400">*</span>
+                          <MessageSquare size={14} className="text-slate-400" /> 買入原因 <span className="text-danger">*</span>
                         </label>
                         <textarea
                           value={form.buyReason}
@@ -1154,203 +1146,70 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
               )}
 
               {isAnalyzeMode ? (
-                <button onClick={handleAddAndAnalyze}
+                <Button variant="ai" onClick={handleAddAndAnalyze}
                   disabled={!form.symbol || shares <= 0 || preview.total <= 0 || !form.buyReason.trim()}
-                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white py-3.5 rounded-xl font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                  className="w-full flex items-center justify-center gap-2">
                   <BrainCircuit size={18} /> 新增並 AI 分析
-                </button>
+                </Button>
               ) : (
-                <button onClick={handleAdd}
+                <Button variant="primary" onClick={handleAdd}
                   disabled={!form.symbol || shares <= 0 || preview.total <= 0}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                  className="w-full">
                   確認新增
-                </button>
+                </Button>
               )}
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* ── AI 分析中 Loading Overlay ────────────────────────────────── */}
-      {tradeAnalyzing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="bg-slate-800 border border-purple-500/30 rounded-2xl p-10 flex flex-col items-center gap-5 shadow-2xl max-w-sm w-full mx-4">
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <BrainCircuit className="text-purple-400 animate-pulse" size={32} />
-              </div>
-              <div className="absolute inset-0 rounded-full border-2 border-purple-500/50 animate-spin border-t-transparent" />
-            </div>
-            <div className="text-center">
-              <p className="text-white font-bold text-lg">AI 思考分析中</p>
-              <p className="text-slate-400 text-sm mt-1">正在評估您的買入決策，請稍候…</p>
-              <p className="text-slate-500 text-xs mt-1">使用 Gemini 3.1 Pro 思考模式</p>
-            </div>
+      <Modal
+        open={tradeAnalyzing}
+        onClose={() => setTradeAnalyzing(false)}
+        title="AI 思考分析中"
+        maxWidth="max-w-sm"
+      >
+        <div className="space-y-4">
+          <Skeleton variant="lines" lines={4} />
+          <div className="text-center">
+            <p className="text-slate-400 text-sm">正在評估您的買入決策，請稍候…</p>
+            <p className="text-slate-500 text-xs mt-1">使用 Gemini 3.1 Pro 思考模式</p>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* ── AI 分析結果 Modal ────────────────────────────────────────── */}
-      {showTradeResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 shrink-0">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <BrainCircuit size={20} className="text-purple-400" /> AI 買入決策評估報告
-              </h3>
-              <button onClick={() => setShowTradeResult(false)} className="text-slate-400 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
+      <Modal
+        open={showTradeResult}
+        onClose={() => setShowTradeResult(false)}
+        title="AI 買入決策評估報告"
+      >
+            <div className="text-slate-300">
+              <MarkdownReport content={tradeResult} />
             </div>
-            <div className="overflow-y-auto p-6 text-slate-300 prose-invert">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  h2: ({node, ...props}) => (
-                    <h2 className="text-xl font-bold text-white mt-2 mb-4 pb-3 border-b border-slate-700 flex items-center gap-2" {...props} />
-                  ),
-                  h3: ({node, ...props}) => (
-                    <h3 className="text-lg font-bold text-purple-300 mt-6 mb-3 pt-4 border-t border-slate-700/50" {...props} />
-                  ),
-                  strong: ({node, children, ...props}) => {
-                    const text = children?.toString() || '';
-                    if (['停損', '風險', '出場', '減碼'].some(k => text.includes(k)))
-                      return <strong className="text-red-400 font-bold" {...props}>{children}</strong>;
-                    if (['加碼', '目標', '突破', '買入', '策略'].some(k => text.includes(k)))
-                      return <strong className="text-emerald-400 font-bold" {...props}>{children}</strong>;
-                    return <strong className="text-blue-200 font-bold" {...props}>{children}</strong>;
-                  },
-                  ul: ({node, ...props}) => <ul className="space-y-2 my-3 pl-5 list-disc marker:text-purple-400" {...props} />,
-                  ol: ({node, ...props}) => <ol className="space-y-2 my-3 pl-5 list-decimal marker:text-purple-400" {...props} />,
-                  li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed" {...props} />,
-                  p:  ({node, ...props}) => <p className="mb-3 leading-7 text-slate-200" {...props} />,
-                  table: ({node, ...props}) => (
-                    <div className="overflow-x-auto my-4">
-                      <table className="w-full text-sm border-collapse" {...props} />
-                    </div>
-                  ),
-                  thead: ({node, ...props}) => (
-                    <thead className="bg-slate-700/60" {...props} />
-                  ),
-                  tbody: ({node, ...props}) => (
-                    <tbody className="divide-y divide-slate-700/40" {...props} />
-                  ),
-                  tr: ({node, ...props}) => (
-                    <tr className="hover:bg-slate-700/30 transition-colors" {...props} />
-                  ),
-                  th: ({node, ...props}) => (
-                    <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 uppercase tracking-wider border border-slate-600/50" {...props} />
-                  ),
-                  td: ({node, children, ...props}) => {
-                    const text = String(children ?? '');
-                    const isPass = text === '✅';
-                    const isWarn = text === '⚠️';
-                    const isFail = text === '❌';
-                    return (
-                      <td
-                        className={`px-3 py-2 border border-slate-700/40 text-sm align-top
-                          ${isPass ? 'text-emerald-400 text-center font-bold text-base' : ''}
-                          ${isWarn ? 'text-amber-400 text-center font-bold text-base' : ''}
-                          ${isFail ? 'text-red-400 text-center font-bold text-base' : 'text-slate-200'}
-                        `}
-                        {...props}
-                      >
-                        {children}
-                      </td>
-                    );
-                  },
-                }}
-              >
-                {tradeResult}
-              </ReactMarkdown>
-            </div>
-            <div className="p-4 border-t border-slate-700 shrink-0">
-              <button onClick={() => setShowTradeResult(false)}
-                className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 py-2.5 rounded-xl font-medium transition-all text-sm">
+            <div className="pt-4 border-t border-surface-line">
+              <Button variant="ghost" onClick={() => setShowTradeResult(false)} className="w-full">
                 關閉
-              </button>
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
       {/* ── 個股健檢結果 Modal ────────────────────────────────────────── */}
-      {healthModalSymbol && healthResults[healthModalSymbol]?.fullResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-gradient-to-r from-rose-600/20 to-orange-600/20 shrink-0">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <HeartPulse size={20} className="text-rose-400" /> 持股健檢：{healthModalSymbol}
-              </h3>
-              <button onClick={() => setHealthModalSymbol(null)} className="text-slate-400 hover:text-white transition-colors">
-                <X size={20} />
-              </button>
+      <Modal
+        open={Boolean(healthModalSymbol && healthResults[healthModalSymbol]?.fullResult)}
+        onClose={() => setHealthModalSymbol(null)}
+        title={`持股健檢：${healthModalSymbol ?? ''}`}
+        maxWidth="max-w-3xl"
+      >
+            <div className="text-slate-300">
+              <MarkdownReport
+                content={healthModalSymbol ? healthResults[healthModalSymbol]?.fullResult ?? '' : ''}
+              />
             </div>
-            <div className="overflow-y-auto p-6 text-slate-300 prose-invert">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  h2: ({node, ...props}) => (
-                    <h2 className="text-xl font-bold text-white mt-2 mb-4 pb-3 border-b border-slate-700 flex items-center gap-2" {...props} />
-                  ),
-                  h3: ({node, ...props}) => (
-                    <h3 className="text-lg font-bold text-rose-300 mt-6 mb-3 pt-4 border-t border-slate-700/50" {...props} />
-                  ),
-                  strong: ({node, children, ...props}) => {
-                    const text = children?.toString() || '';
-                    if (['停損', '風險', '出場', '🔴', '❌'].some(k => text.includes(k)))
-                      return <strong className="text-red-400 font-bold" {...props}>{children}</strong>;
-                    if (['加碼', '突破', '🟢', '✅'].some(k => text.includes(k)))
-                      return <strong className="text-emerald-400 font-bold" {...props}>{children}</strong>;
-                    if (['停利', '🟠'].some(k => text.includes(k)))
-                      return <strong className="text-orange-400 font-bold" {...props}>{children}</strong>;
-                    if (['續抱', '🔵'].some(k => text.includes(k)))
-                      return <strong className="text-blue-400 font-bold" {...props}>{children}</strong>;
-                    if (['減碼', '🟡'].some(k => text.includes(k)))
-                      return <strong className="text-yellow-400 font-bold" {...props}>{children}</strong>;
-                    return <strong className="text-blue-200 font-bold" {...props}>{children}</strong>;
-                  },
-                  ul: ({node, ...props}) => <ul className="space-y-2 my-3 pl-5 list-disc marker:text-rose-400" {...props} />,
-                  ol: ({node, ...props}) => <ol className="space-y-2 my-3 pl-5 list-decimal marker:text-rose-400" {...props} />,
-                  li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed" {...props} />,
-                  p:  ({node, ...props}) => <p className="mb-3 leading-7 text-slate-200" {...props} />,
-                  table: ({node, ...props}) => (
-                    <div className="overflow-x-auto my-4">
-                      <table className="w-full text-sm border-collapse" {...props} />
-                    </div>
-                  ),
-                  thead: ({node, ...props}) => <thead className="bg-slate-700/60" {...props} />,
-                  tbody: ({node, ...props}) => <tbody className="divide-y divide-slate-700/40" {...props} />,
-                  tr: ({node, ...props}) => <tr className="hover:bg-slate-700/30 transition-colors" {...props} />,
-                  th: ({node, ...props}) => (
-                    <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 uppercase tracking-wider border border-slate-600/50" {...props} />
-                  ),
-                  td: ({node, children, ...props}) => {
-                    const text = String(children ?? '');
-                    let colorCls = 'text-slate-200';
-                    if (text.includes('✅'))      colorCls = 'text-emerald-400 font-bold';
-                    else if (text.includes('✔'))  colorCls = 'text-red-400 font-bold';
-                    else if (text.includes('⛔')) colorCls = 'text-orange-400 font-bold';
-                    else if (text.includes('⚠️')) colorCls = 'text-amber-400 font-bold';
-                    else if (text.includes('➖')) colorCls = 'text-slate-400';
-                    else if (text.includes('－')) colorCls = 'text-emerald-400 font-bold';
-                    return (
-                      <td className={`px-3 py-2 border border-slate-700/40 text-sm align-top ${colorCls}`} {...props}>{children}</td>
-                    );
-                  },
-                }}
-              >
-                {healthResults[healthModalSymbol].fullResult}
-              </ReactMarkdown>
-            </div>
-            <div className="p-4 border-t border-slate-700 shrink-0">
-              <button onClick={() => setHealthModalSymbol(null)}
-                className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 py-2.5 rounded-xl font-medium transition-all text-sm">
+            <div className="pt-4 border-t border-surface-line">
+              <Button variant="ghost" onClick={() => setHealthModalSymbol(null)} className="w-full">
                 關閉
-              </button>
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 };
