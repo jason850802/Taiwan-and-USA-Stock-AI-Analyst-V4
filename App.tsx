@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
+import Banner from './components/ui/Banner';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import Portfolio from './components/Portfolio';
@@ -9,7 +10,7 @@ import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
-import { Search, AlertCircle, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
+import { Search, Bot, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
 type AppView = 'dashboard' | 'portfolio';
@@ -185,7 +186,7 @@ const App: React.FC = () => {
             <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-slate-800/50">
                     <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <BotIcon className="text-blue-400" /> AI 分析參數設定
+                        <Bot className="text-blue-400" /> AI 分析參數設定
                     </h3>
                     <button onClick={() => setShowAnalysisModal(false)} className="text-slate-400 hover:text-white transition-colors">
                         <X size={20} />
@@ -260,7 +261,7 @@ const App: React.FC = () => {
                         disabled={hasHolding === null || (hasHolding === true && !costPrice)}
                         className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-4 flex items-center justify-center gap-2"
                     >
-                        <BotIcon className="w-6 h-6" /> 開始 AI 智能分析
+                        <Bot className="w-6 h-6" /> 開始 AI 智能分析
                     </button>
                 </div>
             </div>
@@ -298,10 +299,13 @@ const App: React.FC = () => {
             />
 
             {error && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-4 rounded-xl flex items-center gap-3">
-                    <AlertCircle size={20} />
-                    <span>{error}</span>
-                </div>
+              <Banner
+                variant="error"
+                onDismiss={() => setError(null)}
+                onRetry={() => fetchData(info?.symbol || symbol, interval)}
+              >
+                {error}
+              </Banner>
             )}
 
             {info && (
@@ -370,7 +374,7 @@ const App: React.FC = () => {
                         disabled={analyzing || loading || data.length === 0}
                         className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                     >
-                        {analyzing ? <Loader2 className="animate-spin" /> : <BotIcon className="group-hover:scale-110 transition-transform" />}
+                        {analyzing ? <Loader2 className="animate-spin" /> : <Bot className="group-hover:scale-110 transition-transform" />}
                         AI 分析
                     </button>
                  </div>
@@ -388,7 +392,7 @@ const App: React.FC = () => {
                              <AnalysisResult content={analysis} loading={analyzing} />
                         ) : !entryResult ? (
                              <div className="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-5 flex items-center justify-center gap-3 text-center">
-                                <BotIcon className="text-slate-500 w-5 h-5 shrink-0" />
+                                <Bot className="text-slate-500 w-5 h-5 shrink-0" />
                                 <p className="text-slate-500 text-sm">點擊上方「AI 分析」按鈕，逐步通過六六大順濾網並生成進場分析報告</p>
                              </div>
                         ) : null}
@@ -401,18 +405,5 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-const BotIcon = ({ className = "" }: { className?: string }) => (
-    <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-    className={className}
-    >
-        <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
-        <path d="M4 11h16a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z"/>
-        <path d="M9 16v1"/>
-        <path d="M15 16v1"/>
-    </svg>
-)
 
 export default App;
