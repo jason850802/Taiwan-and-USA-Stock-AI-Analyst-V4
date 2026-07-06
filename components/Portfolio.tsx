@@ -6,6 +6,9 @@ import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
 import { estimateVolumeTrend } from '../utils/volume';
 import { Plus, Trash2, RefreshCw, Wallet, X, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, Bot, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
+import Badge from './ui/Badge';
+import Button from './ui/Button';
+import StatCard from './ui/StatCard';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -76,10 +79,9 @@ const EditableCell: React.FC<{
       onBlur={() => { const n = parseFloat(draft); if (!isNaN(n) && n >= 0) onSave(n); setActive(false); }}
       onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
       title="點擊直接編輯"
-      className={`bg-transparent text-right w-24 min-w-0 ${cls}
-        hover:bg-slate-700/40 hover:rounded
-        focus:bg-slate-700/80 focus:rounded focus:outline-none focus:ring-1 focus:ring-blue-400
-        cursor-text transition-all text-sm`}
+      className={`bg-surface-inset border border-surface-line rounded-ctl text-right w-24 min-w-0 px-1.5 py-0.5 font-mono tabular-nums ${cls}
+        hover:border-slate-500 focus:outline-none focus:ring-1 focus:ring-accent
+        cursor-text transition-colors text-sm`}
     />
   );
 };
@@ -97,19 +99,19 @@ const PnLCell: React.FC<{
   return (
     <div className="relative inline-flex items-start gap-1 justify-end w-full"
       onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
-      <div className="text-right">
-        <p className={`font-bold ${pnl >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+      <div className="text-right font-mono tabular-nums">
+        <p className={`font-bold ${pnl >= 0 ? 'text-up' : 'text-down'}`}>
           {pnl >= 0 ? '+' : ''}{f(pnl)}
         </p>
         {pnlPct !== null && (
-          <p className={`text-xs ${pnl >= 0 ? 'text-red-400/70' : 'text-emerald-400/70'}`}>
+          <p className={`text-xs ${pnl >= 0 ? 'text-up/70' : 'text-down/70'}`}>
             ({pnl >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%)
           </p>
         )}
       </div>
       {hasFees && <Info size={12} className="text-slate-500 mt-0.5 shrink-0" />}
       {show && hasFees && feeDetails && (
-        <div className="absolute z-50 right-5 top-0 w-60 bg-slate-900 border border-slate-600 rounded-xl shadow-xl p-3 text-xs text-left pointer-events-none whitespace-nowrap">
+        <div className="absolute z-50 right-5 top-0 w-60 bg-surface-inset border border-surface-line rounded-card p-3 text-xs text-left pointer-events-none whitespace-nowrap">
           <p className="text-slate-300 font-bold mb-2">損益含預估賣出費用</p>
           <div className="space-y-1 text-slate-400">
             <div className="flex justify-between gap-4"><span>目前市值</span><span className="text-white">{f(feeDetails.currentValue)}</span></div>
@@ -164,17 +166,17 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
   const groupPnLPct  = groupPnL !== null && groupInvested > 0 ? (groupPnL / groupInvested) * 100 : null;
 
   return (
-    <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+    <div className="bg-surface-card rounded-card border border-surface-line overflow-hidden">
       <button onClick={() => setCollapsed(v => !v)}
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/30 transition-colors">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-red-500/20 text-red-400 border-red-500/30">台股</span>
+          <Badge variant="neutral">台股</Badge>
           <span className="text-white font-semibold">台灣股票</span>
           <span className="text-slate-500 text-xs">{items.length} 檔</span>
         </div>
         <div className="flex items-center gap-4 text-sm">
           {groupPnL !== null && groupPnLPct !== null && (
-            <span className={`font-bold ${groupPnL >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+            <span className={`font-bold font-mono tabular-nums ${groupPnL >= 0 ? 'text-up' : 'text-down'}`}>
               {groupPnL >= 0 ? '+' : ''}{fmt(groupPnL)} ({groupPnL >= 0 ? '+' : ''}{groupPnLPct.toFixed(2)}%)
             </span>
           )}
@@ -182,10 +184,10 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
         </div>
       </button>
       {!collapsed && (
-        <div className="overflow-x-auto border-t border-slate-700">
+        <div className="overflow-x-auto border-t border-surface-line">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-slate-900/40 text-slate-400 font-medium">
+            <thead className="sticky top-0 bg-surface-card z-10">
+              <tr className="text-slate-400 font-medium">
                 <th className="text-center p-3 whitespace-nowrap">健檢</th>
                 <th className="text-left p-3 whitespace-nowrap">代號 / 名稱</th>
                 <th className="text-right p-3 whitespace-nowrap">成本均價</th>
@@ -211,27 +213,27 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                   : null;
                 const pnlPct = pnl !== null && item.totalCost > 0 ? (pnl / item.totalCost) * 100 : null;
                 return (
-                  <tr key={item.id} className="border-t border-slate-700/50 hover:bg-slate-700/20 transition-colors">
+                  <tr key={item.id} className="border-t border-surface-line odd:bg-surface-inset/40 hover:bg-surface-inset transition-colors">
                     <td className="p-3 text-center">
                       {(() => {
                         const hr = healthResults[item.symbol];
                         if (!hr) return (
                           <button onClick={() => onHealthCheck(item.symbol)} title="健檢"
-                            className="p-1.5 rounded-lg bg-slate-700 hover:bg-rose-600/30 text-slate-400 hover:text-rose-400 transition-all">
+                            className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors">
                             <HeartPulse size={14} />
                           </button>
                         );
-                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-rose-400 mx-auto" />;
-                        const decColor = hr.decision.includes('停損') ? 'text-red-400 bg-red-500/15 border-red-500/30'
-                          : hr.decision.includes('停利') ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                          : hr.decision.includes('減碼') ? 'text-yellow-400 bg-yellow-500/15 border-yellow-500/30'
-                          : hr.decision.includes('續抱') ? 'text-blue-400 bg-blue-500/15 border-blue-500/30'
-                          : hr.decision.includes('加碼') ? 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30'
-                          : 'text-slate-400 bg-slate-700 border-slate-600';
+                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
+                        const decVariant = hr.decision.includes('停損') ? 'danger'
+                          : hr.decision.includes('停利') ? 'warn'
+                          : hr.decision.includes('減碼') ? 'warn'
+                          : hr.decision.includes('續抱') ? 'ok'
+                          : hr.decision.includes('加碼') ? 'ok'
+                          : 'neutral';
                         return (
                           <button onClick={() => onShowDetail(item.symbol)}
-                            className={`text-[11px] font-bold px-2 py-1 rounded-lg border cursor-pointer hover:brightness-125 transition-all ${decColor}`}>
-                            {hr.decision}
+                            className="cursor-pointer hover:brightness-125 transition-all">
+                            <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
                           </button>
                         );
                       })()}
@@ -240,37 +242,37 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                       <p className="font-bold text-white">{item.symbol}</p>
                       {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.avgCostPrice} digits={2}
                         onSave={v => onUpdate(item.id, 'avgCostPrice', v)} />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.totalShares}
                         onSave={v => onUpdate(item.id, 'totalShares', v)} />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.totalCost}
                         onSave={v => onUpdate(item.id, 'totalCost', v)} cls="text-amber-300" />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
                         : p?.error  ? <span className="text-red-400 text-xs">讀取失敗</span>
                         : currentPrice > 0
-                          ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-red-400' : 'text-emerald-400'}`}>
+                          ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-up' : 'text-down'}`}>
                               {currentPrice.toFixed(2)}
                             </span>
                           : '—'}
                     </td>
-                    <td className="p-3 text-right text-slate-200">{currentValue > 0 ? fmt(currentValue) : '—'}</td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right text-slate-200 font-mono tabular-nums">{currentValue > 0 ? fmt(currentValue) : '—'}</td>
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.cashDividends}
-                        onSave={v => onUpdate(item.id, 'cashDividends', v)} cls="text-emerald-400" />
+                        onSave={v => onUpdate(item.id, 'cashDividends', v)} cls="text-up" />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.stockDividends}
                         onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-blue-400" />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.brokerDiscount} digits={1}
                         onSave={v => onUpdate(item.id, 'brokerDiscount', v)} cls="text-slate-400" />
                     </td>
@@ -359,11 +361,11 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
   const f  = (v: number) => dc === 'USD' ? fmtUsd(v) : `${fmt(v)}`;
 
   return (
-    <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+    <div className="bg-surface-card rounded-card border border-surface-line overflow-hidden">
       <button onClick={() => setCollapsed(v => !v)}
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/30 transition-colors">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-blue-500/20 text-blue-400 border-blue-500/30">美股</span>
+          <Badge variant="neutral">美股</Badge>
           <span className="text-white font-semibold">美國股票</span>
           <span className="text-slate-500 text-xs">{items.length} 檔</span>
           {usdTwdRate > 0 && (
@@ -373,20 +375,20 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
         <div className="flex items-center gap-3 text-sm">
           {/* Currency toggle — stop propagation so it doesn't collapse the table */}
           <div onClick={e => e.stopPropagation()}
-            className="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-0.5 gap-0.5">
+            className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-0.5 gap-0.5">
             <button onClick={onToggleCurrency}
               className={`px-2.5 py-1 rounded text-xs font-medium transition-all
-                ${dc === 'USD' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                ${dc === 'USD' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
               USD
             </button>
             <button onClick={onToggleCurrency}
               className={`px-2.5 py-1 rounded text-xs font-medium transition-all
-                ${dc === 'TWD' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+                ${dc === 'TWD' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
               TWD
             </button>
           </div>
           {groupPnL !== null && groupPnLPct !== null && (
-            <span className={`font-bold ${groupPnL >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+            <span className={`font-bold font-mono tabular-nums ${groupPnL >= 0 ? 'text-up' : 'text-down'}`}>
               {groupPnL >= 0 ? '+' : ''}{f(groupPnL)} ({groupPnL >= 0 ? '+' : ''}{groupPnLPct.toFixed(2)}%)
             </span>
           )}
@@ -395,10 +397,10 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
       </button>
 
       {!collapsed && (
-        <div className="overflow-x-auto border-t border-slate-700">
+        <div className="overflow-x-auto border-t border-surface-line">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-slate-900/40 text-slate-400 font-medium">
+            <thead className="sticky top-0 bg-surface-card z-10">
+              <tr className="text-slate-400 font-medium">
                 <th className="text-center p-3 whitespace-nowrap">健檢</th>
                 <th className="text-left p-3 whitespace-nowrap">代號 / 名稱</th>
                 <th className="text-right p-3 whitespace-nowrap">成本均價 ({dc})</th>
@@ -435,27 +437,27 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                 })();
 
                 return (
-                  <tr key={item.id} className="border-t border-slate-700/50 hover:bg-slate-700/20 transition-colors">
+                  <tr key={item.id} className="border-t border-surface-line odd:bg-surface-inset/40 hover:bg-surface-inset transition-colors">
                     <td className="p-3 text-center">
                       {(() => {
                         const hr = healthResults[item.symbol];
                         if (!hr) return (
                           <button onClick={() => onHealthCheck(item.symbol)} title="健檢"
-                            className="p-1.5 rounded-lg bg-slate-700 hover:bg-rose-600/30 text-slate-400 hover:text-rose-400 transition-all">
+                            className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors">
                             <HeartPulse size={14} />
                           </button>
                         );
-                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-rose-400 mx-auto" />;
-                        const decColor = hr.decision.includes('停損') ? 'text-red-400 bg-red-500/15 border-red-500/30'
-                          : hr.decision.includes('停利') ? 'text-orange-400 bg-orange-500/15 border-orange-500/30'
-                          : hr.decision.includes('減碼') ? 'text-yellow-400 bg-yellow-500/15 border-yellow-500/30'
-                          : hr.decision.includes('續抱') ? 'text-blue-400 bg-blue-500/15 border-blue-500/30'
-                          : hr.decision.includes('加碼') ? 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30'
-                          : 'text-slate-400 bg-slate-700 border-slate-600';
+                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
+                        const decVariant = hr.decision.includes('停損') ? 'danger'
+                          : hr.decision.includes('停利') ? 'warn'
+                          : hr.decision.includes('減碼') ? 'warn'
+                          : hr.decision.includes('續抱') ? 'ok'
+                          : hr.decision.includes('加碼') ? 'ok'
+                          : 'neutral';
                         return (
                           <button onClick={() => onShowDetail(item.symbol)}
-                            className={`text-[11px] font-bold px-2 py-1 rounded-lg border cursor-pointer hover:brightness-125 transition-all ${decColor}`}>
-                            {hr.decision}
+                            className="cursor-pointer hover:brightness-125 transition-all">
+                            <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
                           </button>
                         );
                       })()}
@@ -470,14 +472,14 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                         )}
                       </p>
                     </td>
-                    <td className="p-3 text-right text-slate-200 text-sm">
+                    <td className="p-3 text-right text-slate-200 text-sm font-mono tabular-nums">
                       {dc === 'USD' ? fmtUsd(dispAvgCost) : dispAvgCost.toFixed(2)}
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.totalShares}
                         onSave={v => onUpdate(item.id, 'totalShares', v)} />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       {/* Edit the "fixed" cost in its purchase currency */}
                       {item.purchaseCurrency === 'USD' && item.totalCostUSD != null ? (
                         <div>
@@ -497,23 +499,23 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                         </div>
                       )}
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
                         : p?.error  ? <span className="text-red-400 text-xs">讀取失敗</span>
                         : priceUsd > 0
-                          ? <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / rate) ? 'text-red-400' : 'text-emerald-400'}`}>
+                          ? <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / rate) ? 'text-up' : 'text-down'}`}>
                               {fmtUsd(priceUsd)}
                             </span>
                           : '—'}
                     </td>
-                    <td className="p-3 text-right text-slate-200">
+                    <td className="p-3 text-right text-slate-200 font-mono tabular-nums">
                       {dispValue > 0 ? (dc === 'USD' ? fmtUsd(dispValue) : fmt(dispValue)) : '—'}
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.cashDividends}
-                        onSave={v => onUpdate(item.id, 'cashDividends', v)} cls="text-emerald-400" />
+                        onSave={v => onUpdate(item.id, 'cashDividends', v)} cls="text-up" />
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.stockDividends}
                         onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-blue-400" />
                     </td>
@@ -832,91 +834,66 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   return (
     <div className="space-y-6">
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-slate-800/50 p-6 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-surface-card p-6 rounded-card border border-surface-line">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">我的庫存</h2>
           <p className="text-slate-400 text-sm">台股含手續費與證交稅・美股個股 0.008%・ETF $3/次</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <div className="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1 gap-1">
-            <button onClick={() => setIncludeDividend(true)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all
-                ${includeDividend ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+          <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
+            <Button variant="ghost" size="sm" onClick={() => setIncludeDividend(true)}
+              className={includeDividend ? 'text-accent border-accent bg-accent/15' : ''}>
               含息損益
-            </button>
-            <button onClick={() => setIncludeDividend(false)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all
-                ${!includeDividend ? 'bg-slate-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setIncludeDividend(false)}
+              className={!includeDividend ? 'text-accent border-accent bg-accent/15' : ''}>
               不含息損益
-            </button>
+            </Button>
           </div>
-          <button onClick={fetchAllPrices}
-            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
             <RefreshCw size={15} /> 更新報價
-          </button>
-          <button onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-blue-600/20">
+          </Button>
+          <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus size={15} /> 新增持股
-          </button>
-          <button onClick={() => { setIsAnalyzeMode(true); setShowAddModal(true); }}
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-purple-600/20">
+          </Button>
+          <Button variant="ai" onClick={() => { setIsAnalyzeMode(true); setShowAddModal(true); }} className="flex items-center gap-2">
             <BrainCircuit size={15} /> 新增持股與分析
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* ── 全局摘要 ───────────────────────────────────────────────────── */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">總投入成本 (TWD)</p>
-            <p className="text-xl font-bold text-amber-300">{fmt(totalInvested)} 元</p>
-            <p className="text-[10px] text-slate-500 mt-1">美股依即時匯率換算</p>
-          </div>
-          <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">目前市值 (TWD)</p>
-            <p className="text-xl font-bold text-white">{hasAnyPrice ? fmt(totalValue) + ' 元' : '—'}</p>
-            {usdTwdRate > 0 && <p className="text-[10px] text-slate-500 mt-1">USD/TWD {fmt(usdTwdRate, 2)}</p>}
-          </div>
-          <div className="bg-slate-800 p-4 rounded-xl border border-emerald-500/20">
-            <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">已領現金股利</p>
-            <p className="text-xl font-bold text-emerald-400">{fmt(totalCashDiv)} 元</p>
-          </div>
-          <div className={`bg-slate-800 p-4 rounded-xl border
-            ${totalPnL !== null ? (totalPnL >= 0 ? 'border-red-500/30' : 'border-emerald-500/30') : 'border-slate-700'}`}>
-            <p className="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">
-              總損益 (TWD)
-              <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded font-normal normal-case
-                ${includeDividend ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-600 text-slate-400'}`}>
-                {includeDividend ? '含息' : '不含息'}
-              </span>
-            </p>
-            {totalPnL !== null && totalPnLPct !== null ? (
-              <>
-                <p className={`text-xl font-bold ${totalPnL >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                  {totalPnL >= 0 ? '+' : ''}{fmt(totalPnL)} 元
-                </p>
-                <p className={`text-xs mt-0.5 ${totalPnL >= 0 ? 'text-red-400/70' : 'text-emerald-400/70'}`}>
-                  ({totalPnL >= 0 ? '+' : ''}{totalPnLPct.toFixed(2)}%)
-                </p>
-              </>
-            ) : <p className="text-xl font-bold text-slate-500">—</p>}
-          </div>
+          <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`} sub="美股依即時匯率換算" />
+          <StatCard
+            label="目前市值 (TWD)"
+            value={hasAnyPrice ? `${fmt(totalValue)} 元` : '—'}
+            sub={usdTwdRate > 0 ? `USD/TWD ${fmt(usdTwdRate, 2)}` : undefined}
+          />
+          <StatCard label="已領現金股利" value={`${fmt(totalCashDiv)} 元`} tone="up" />
+          <StatCard
+            label="總損益 (TWD)"
+            value={totalPnL !== null ? `${totalPnL >= 0 ? '+' : ''}${fmt(totalPnL)} 元` : '—'}
+            tone={totalPnL === null ? 'neutral' : totalPnL >= 0 ? 'up' : 'down'}
+            sub={totalPnL !== null && totalPnLPct !== null
+              ? `${totalPnL >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}% · ${includeDividend ? '含息' : '不含息'}`
+              : undefined}
+          />
         </div>
       )}
 
       {/* ── 空狀態 ──────────────────────────────────────────────────────── */}
       {items.length === 0 && (
-        <div className="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-16 flex flex-col items-center justify-center text-center">
-          <div className="p-4 bg-slate-800 rounded-full mb-4">
+        <div className="bg-surface-card border border-surface-line border-dashed rounded-card p-16 flex flex-col items-center justify-center text-center">
+          <div className="p-4 bg-surface-inset rounded-full mb-4">
             <Wallet className="text-slate-500 w-8 h-8" />
           </div>
           <h3 className="text-slate-300 font-medium mb-2 text-lg">尚無持股紀錄</h3>
           <p className="text-slate-500 mb-6">點擊「新增持股」按鈕來加入您的庫存</p>
-          <button onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all">
+          <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus size={16} /> 新增持股
-          </button>
+          </Button>
         </div>
       )}
 
@@ -963,8 +940,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                   onChange={e => setForm(p => ({ ...p, symbol: e.target.value }))}
                   placeholder="台股：2330 ／ 美股：AAPL, SPY" className={inputCls} />
                 {form.symbol && (
-                  <p className={`text-xs mt-1.5 px-1 ${formIsTW ? 'text-red-400' : 'text-blue-400'}`}>
-                    {formIsTW ? '🇹🇼 台股，將計算買進手續費' : '🇺🇸 美股，請選擇購入幣別與股票類型'}
+                  <p className="text-xs mt-1.5 px-1 text-slate-400 flex items-center gap-2">
+                    <Badge variant="neutral">{formIsTW ? '台股' : '美股'}</Badge>
+                    {formIsTW ? '將計算買進手續費' : '請選擇購入幣別與股票類型'}
                   </p>
                 )}
               </div>
