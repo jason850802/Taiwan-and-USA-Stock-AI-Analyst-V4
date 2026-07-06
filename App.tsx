@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
+import QuoteHeader from './components/QuoteHeader';
 import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
 import Banner from './components/ui/Banner';
+import Button from './components/ui/Button';
+import Card from './components/ui/Card';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import Portfolio from './components/Portfolio';
@@ -11,7 +14,7 @@ import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
-import { Search, Bot, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
+import { Search, Bot, X, Wallet, DollarSign, Zap, BrainCircuit } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
 type AppView = 'dashboard' | 'portfolio';
@@ -178,6 +181,12 @@ const App: React.FC = () => {
       : (symbol.endsWith('.TW') || symbol.endsWith('.TWO') || /^\d{4}$/.test(symbol)), [info, symbol]);
 
   const volumeProj = useMemo(() => estimateVolumeTrend(data, isTaiwanStock, interval), [data, isTaiwanStock, interval]);
+  const latestPoint = data.length > 0 ? data[data.length - 1] : null;
+  const previousPoint = data.length > 1 ? data[data.length - 2] : null;
+  const latestPrice = latestPoint?.close ?? 0;
+  const changeAbs = latestPoint?.priceChange ?? (previousPoint ? latestPrice - previousPoint.close : 0);
+  const changePct = latestPoint?.priceChangePercent
+    ?? (previousPoint?.close ? (changeAbs / previousPoint.close) * 100 : 0);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-slate-900 text-slate-100 relative">
@@ -306,89 +315,65 @@ const App: React.FC = () => {
             )}
 
             {info && (
-                 <div className="flex flex-wrap items-stretch gap-3">
-                    {/* Symbol */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-3 min-w-0">
-                        <div className="min-w-0">
-                            <p className="text-xl font-bold text-white leading-tight truncate">{info.symbol}</p>
-                            <p className="text-xs text-slate-400 font-medium truncate">{info.name}</p>
-                        </div>
-                    </div>
+              <QuoteHeader
+                info={info}
+                price={latestPrice}
+                changeAbs={changeAbs}
+                changePct={changePct}
+                volume={latestPoint?.volume ?? 0}
+                volumeProjection={volumeProj}
+                loading={loading}
+                refreshing={refreshing}
+                analyzing={analyzing}
+                hasData={data.length > 0}
+                onRefresh={handleRefreshQuote}
+                onAnalyze={handleOpenAnalysisModal}
+              />
+            )}
 
-                    {/* Price */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-2">
-                        <div>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">收盤</p>
-                            <div className="flex items-baseline gap-1.5">
-                                <p className={`text-xl font-bold ${data.length > 1 && data[data.length-1].close > data[data.length-2].close ? 'text-red-400' : 'text-emerald-400'}`}>
-                                    {data.length > 0 ? data[data.length-1].close.toFixed(2) : '-'}
-                                </p>
-                                {data.length > 0 && data[data.length-1].priceChangePercent !== undefined && (
-                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${data[data.length-1].priceChangePercent! > 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                        {data[data.length-1].priceChangePercent! > 0 ? '+' : ''}{data[data.length-1].priceChangePercent!.toFixed(2)}%
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Volume */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700">
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">成交量</p>
-                        <p className="text-xl font-bold text-white leading-tight">
-                            {data.length > 0
-                                ? isTaiwanStock
-                                    ? Math.round(data[data.length-1].volume / 1000).toLocaleString() + ' 張'
-                                    : data[data.length-1].volume.toLocaleString()
-                                : '-'}
-                        </p>
-                        {volumeProj && volumeProj.status !== 'Insufficient' && (
-                            <p className={`text-[10px] font-medium ${volumeProj.changePercent >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                                {volumeProj.status === 'Intraday'
-                                    ? `預估 ${isTaiwanStock
-                                        ? Math.round(volumeProj.projectedVolume / 1000).toLocaleString()
-                                        : volumeProj.projectedVolume.toLocaleString()
-                                      } (${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%)`
-                                    : `量變化 ${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%`}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Refresh Button */}
-                    <button
-                        onClick={handleRefreshQuote}
-                        disabled={refreshing || loading || data.length === 0}
-                        className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl font-medium transition-all border border-slate-600 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
-                        title="更新最新報價、成交量與預估量"
+            {!info && !loading && data.length === 0 && (
+              <Card className="py-12 flex flex-col items-center text-center gap-4">
+                <Search size={48} className="text-slate-600" />
+                <div>
+                  <h2 className="text-lg font-medium text-white">搜尋一檔台股或美股開始分析</h2>
+                  <p className="text-sm text-slate-400 mt-1">輸入股票代號，查看行情、技術指標與 AI 分析。</p>
+                </div>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                  {[
+                    { symbol: '2330', label: '2330 台積電' },
+                    { symbol: '0050', label: '0050 元大台灣50' },
+                    { symbol: 'AAPL', label: 'AAPL Apple' },
+                  ].map(item => (
+                    <Button
+                      key={item.symbol}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSymbol(item.symbol);
+                        fetchData(item.symbol, interval);
+                      }}
                     >
-                        <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
-                        {refreshing ? '更新中...' : '更新報價'}
-                    </button>
-
-                    {/* AI Button */}
-                    <button
-                        onClick={handleOpenAnalysisModal}
-                        disabled={analyzing || loading || data.length === 0}
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
-                    >
-                        {analyzing ? <Loader2 className="animate-spin" /> : <Bot className="group-hover:scale-110 transition-transform" />}
-                        AI 分析
-                    </button>
-                 </div>
+                      {item.label}
+                    </Button>
+                  ))}
+                </div>
+              </Card>
             )}
 
             {data.length > 0 && (
                 <div className="flex flex-col gap-6">
-                    <ChartToolbar
-                      interval={interval}
-                      setInterval={setInterval}
-                      settings={indicatorSettings}
-                      setSettings={setIndicatorSettings}
-                    />
-                    <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
-                      if (key === 'maLines') return;
-                      setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
-                    }} />
+                    <Card className="p-0 overflow-hidden">
+                      <ChartToolbar
+                        interval={interval}
+                        setInterval={setInterval}
+                        settings={indicatorSettings}
+                        setSettings={setIndicatorSettings}
+                      />
+                      <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
+                        if (key === 'maLines') return;
+                        setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
+                      }} />
+                    </Card>
                     <div id="ai-analysis-section" className="pt-4 flex flex-col gap-6">
                         {entryResult && <EntryChecklist result={entryResult} />}
                         {analysis || analyzing ? (
