@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
+import ChartToolbar from './components/ChartToolbar';
 import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
 import Banner from './components/ui/Banner';
@@ -269,10 +270,6 @@ const App: React.FC = () => {
       )}
 
       <Sidebar
-        interval={interval}
-        setInterval={setInterval}
-        settings={indicatorSettings}
-        setSettings={setIndicatorSettings}
         currentView={currentView}
         setView={setCurrentView}
       />
@@ -382,6 +379,12 @@ const App: React.FC = () => {
 
             {data.length > 0 && (
                 <div className="flex flex-col gap-6">
+                    <ChartToolbar
+                      interval={interval}
+                      setInterval={setInterval}
+                      settings={indicatorSettings}
+                      setSettings={setIndicatorSettings}
+                    />
                     <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
                       if (key === 'maLines') return;
                       setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
