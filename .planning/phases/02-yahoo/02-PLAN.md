@@ -330,4 +330,48 @@ Create `.planning/phases/02-yahoo/02-01-SUMMARY.md` when done
 3. **crumb 10 分鐘 TTL 是否與 Yahoo 實際 cookie 過期週期（社群觀察約 10-20 分鐘）吻合**——D-04 選定 10 分鐘是保守值，若部署後觀察到過期更快導致間歇性 401，可能需要縮短 TTL 或提高「無論 TTL 是否到期，遇 401 就強制重新握手」的優先權（本計畫的重試邏輯已涵蓋後者，TTL 只是主動預防機制）。
 4. **台股/美股 symbol 正則格式檢查的邊界案例覆蓋度**——Task 1 的 `validateChartParams` 正則基於 `services/yahoo.ts` 既有的隱式規則（3-6 碼數字+可選字母、`.TW`/`.TWO`）與美股常見格式推導，但 Yahoo 支援的完整代碼格式空間（如某些海外交易所後綴）未窮舉驗證；若 checkpoint 測試中發現合法代碼被誤擋，需調整正則（不影響架構決策，屬實作微調）。
 5. **search 端點是否真的需要 crumb**——Yahoo 的 `/v1/finance/search` 過去多半**不需要** crumb；本計畫為求與 chart 一致，對 search 也走完整 `fetchYahooWithHandshake`。風險：若部署後出現「chart 正常但 search 因握手失敗而壞掉」，代表 search 被握手拖累。屆時的解法是讓 `search.ts` 改為**不強制 crumb**（握手失敗時 fallback 成無 crumb 直接查 search），與 chart 分開處理。本階段先走一致握手，checkpoint 若發現 search 異常再據此調整。
+
+## 審查修正（2026-07-05，Codex 執行後 fresh-context 覆核發現，權威高於 D-05）
+
+覆核窮舉前端所有 (interval,range) 組合與 symbol，發現 D-05 白名單有**兩個缺口**，必須修正（都在 `api/_lib/yahoo.ts`）：
+
+**修正 1（必修 — 功能回歸）：symbol 白名單漏掉匯率格式 `=X`。**
+`components/Portfolio.tsx` 用 `getLatestPrice('USDTWD=X')` 抓台美匯率，但 `validateChartParams` 的正則不接受含 `=` 的匯率代碼，後端會回 400；呼叫端有 try/catch 會靜默吞掉，導致匯率停在舊值（違反「行為與遷移前完全一致」）。**修法**：在 symbol 驗證額外允許 Yahoo 匯率格式，例如新增 pattern `/^[A-Z]{3,8}=X$/i`（`USDTWD=X`、`JPY=X` 等），三種格式（台股/海外/匯率）符合其一即通過。
+
+**修正 2（必修 — 效率，同檔一併做）：白名單改為每個 interval 對應「一組」合法 range，並移除前端正規化 hack。**
+`getLatestPrice` 用 `1d/5d`，原設計 `1d→10y` 一對一導致 `services/yahoo.ts:264-265` 加了「1d/5d 正規化成 1d/10y」的 hack，使抓最新價每次多拉約 480 倍資料（庫存頁逐檔高頻呼叫）。**修法**：
+- `INTERVAL_RANGE_MAP` 由 `Record<string,string>` 改為 `Record<string,string[]>`：
+  ```
+  '1d':  ['10y', '5d'],
+  '1wk': ['5y'],
+  '1mo': ['max'],
+  '60m': ['1y'],
+  '15m': ['60d'],
+  ```
+- `validateChartParams` 改為「`range` 必須**屬於**該 interval 的合法陣列」（`allowed.includes(range)`），非 `===` 單一值。
+- **移除** `services/yahoo.ts:264-265` 的正規化 hack，`queryYahoo` 原樣傳遞 `range`（讓 `1d/5d` 直接送後端、直接合法）。
+
+安全不受影響：range 仍是封閉枚舉、symbol 仍是格式化正則，端點不會因此變成可注入任意上游的開放代理。
+
+## 第二輪審查修正（2026-07-05，人工本機實測 100% 失敗後診斷發現，必修，權威覆蓋 D-03）
+
+**根本原因（已用臨時診斷 log + stack trace 確認，非猜測）**：`api/_lib/yahoo.ts` 的 `fetchCookie()`（約 L104-111）在請求 `https://fc.yahoo.com` 後檢查 `if (!response.ok) throw classifyStatus(response.status)`。**但 `fc.yahoo.com` 這個端點本來就固定回傳 HTTP 404**（頁面標題含 "Not Found on Accelerator"，屬 Yahoo 已知怪異行為）——**它的 404 回應仍然夾帶我們需要的 `Set-Cookie` header**。目前程式碼把非 2xx 一律視為握手失敗，導致 `fetchCookie()` 每次都在讀取 `Set-Cookie`之前就先拋錯，**100% 必然失敗**（已在使用者本機用同樣邏輯的獨立 Node 腳本驗證：拿掉 `response.ok` 檢查後，同一支腳本可正常取得 cookie/crumb/chart 資料）。
+
+**修法（`fetchCookie()` 唯一需要改的地方）**：移除 `if (!response.ok) throw classifyStatus(response.status)` 這個提前失敗的檢查（或至少不要因為 404 就直接丟錯）。改為：不論 HTTP 狀態碼為何，先嘗試從 `response.headers` 讀取 `Set-Cookie`；只有在**讀不到任何 cookie** 時才 `throw new YahooClassifiedError('UPSTREAM_UNAUTHORIZED')`（此檔案下方本來就有這個 fallback 判斷，L125-127，保留即可）。`fetchCrumb()`（L132-153）與 `fetchYahooWithHandshake()` 內對正式 chart/search 請求（L179-188）的 `response.ok` 檢查**維持不變**——這兩處檢查的是真正的 Yahoo API 端點，非 2xx 才代表真正失敗，不受本次修正影響。
+
+**驗證方式**：修完後於本機 `vercel dev` 環境（非獨立 Node 腳本）重新搜尋 2330、美股 AAPL、切換週期、庫存頁匯率，Network 應全數回 200，`vercel dev` 終端機不應再出現 `[yahoo-chart:UPSTREAM_ERROR]`。
+
+## 第三輪審查修正（2026-07-05，人工實測「查詢不存在代號」失敗，必修，權威覆蓋 D-06/chart.ts NOT_FOUND 邏輯）
+
+**現況**：2330、AAPL、切換週期、庫存頁匯率經第二輪修正後**已全部正常**（人工實測通過）。唯一剩下的問題：搜尋一個不存在的股票代號（如 `ZZZZZZ`）時，前端顯示的是通用「Yahoo 行情服務暫時無法回應，請稍後再試。」（`UPSTREAM_ERROR`），而不是預期的「找不到該股票代號。」（`NOT_FOUND`）。
+
+**根本原因（與第二輪同一種模式，位置不同）**：Yahoo 對不存在的代號，標準行為是回傳 **HTTP 404**，但 body 仍帶有結構化錯誤說明（`{"chart":{"result":null,"error":{"code":"Not Found","description":"..."}}}`）。但 `api/_lib/yahoo.ts` 的 `fetchYahooWithHandshake()` 對**正式 chart/search 請求**那段（`if (!response.ok) { throw classifyStatus(response.status); }`）會在還沒讀取 response body 之前，就把任何非 2xx（包含這種帶結構化錯誤的 404）直接分類成通用 `UPSTREAM_ERROR` 並拋出。`api/yahoo/chart.ts` 原本設計好要判斷 `json.chart?.error?.code === 'Not Found'` 的那段邏輯，因為根本沒機會拿到 `json`，完全派不上用場。
+
+**修法（只動 `fetchYahooWithHandshake`，`chart.ts` 既有的 `chartError` 判斷邏輯不用改）**：
+- 在 `fetchYahooWithHandshake` 內，把「非 2xx 就直接 throw」的邏輯改為：**只有 401/429 才需要走既有的重試流程**（清快取、重新握手、重打一次）；**其餘所有非 2xx（含 404、5xx）一律 `return response`，不拋錯**，把 response 原封不動交還給呼叫端（`chart.ts`/`search.ts`）自行解析 body 決定如何分類。
+- 具體改法：把 `if (!response.ok) { throw classifyStatus(response.status); }` 改成 `if (response.status === 401 || response.status === 429) { throw classifyStatus(response.status); }`（其餘狀況不進 catch，直接往下 `return response;`）。
+- `chart.ts` 現有邏輯不用改：拿到 response 後解析 `json`，`chartError?.code === 'Not Found'` → `NOT_FOUND`；`chartError` 存在但非 Not Found → 現有的 `UPSTREAM_ERROR`（此時方為真正上游錯誤，且此時是**看過 body 內容後**才判定，比原本「看都没看就丟」更準確）；否則視為成功回 200。
+- `search.ts` 影響：因為共用同一支 `fetchYahooWithHandshake`，理論上 search 若遇到非 2xx 也會改成不拋錯、直接回傳 body。`search.ts` 目前邏輯是直接 `res.status(200).json(json)`（不檢查 chart-style error），這在 search 情境下風險低（Yahoo search 罕見回非 2xx；即使發生，最壞情況是把 Yahoo 的錯誤 body 原樣转發，前端 `.filter()/.map()` 對非預期格式已有防禦性寫法會視為空結果），**不需要額外修改 search.ts**，但若之後（部署後）觀察到 search 有类似問題，才需要仿照 chart.ts 加對應判斷（非本次必修範圍）。
+
+**驗證方式**：修完後於本機 `vercel dev` 環境搜尋一個不存在的代號（如 `ZZZZZZ`），前端應顯示「找不到該股票代號。」；同時**回歸測試** 2330、AAPL、切換週期、庫存頁匯率仍正常（避免這次修正意外影響 401/429 重試邏輯）。
 </output>
