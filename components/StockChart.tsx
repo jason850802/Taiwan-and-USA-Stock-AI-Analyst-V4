@@ -51,7 +51,7 @@ const CandleStickShape = (props: any) => {
 
   const isUp   = close > open;
   const isDown = close < open;
-  const color  = isUp ? '#ef4444' : isDown ? '#10b981' : '#94a3b8';
+  const color  = isUp ? '#f0405a' : isDown ? '#22c55e' : '#94a3b8'; // token: up 紅漲 / down 綠跌
   const centerX = x + width / 2;
 
   // candleBody is now [low, high], so:
@@ -736,7 +736,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
   // Pre-compute Cell arrays to avoid recreating on every render
   const volumeCells = useMemo(() => displayData.map((entry, index) => (
-    <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#ef4444' : '#10b981'} fillOpacity={0.15} />
+    <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#f0405a' : '#22c55e'} fillOpacity={0.15} /> // token: up 紅漲 / down 綠跌
   )), [displayData]);
 
   // 副圖 Cell 改吃 subPanelData：拖曳中凍結（與 SubPanelChart 一起跳過重繪），放開後回到即時。
@@ -785,7 +785,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
         <div
           ref={wrapperRef}
           onMouseDown={handleDragStart}
-          className={`h-[450px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`h-[450px] max-md:h-[320px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         >
           <MainPriceChart
             displayData={displayData}
@@ -839,7 +839,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
                  ))}
                </div>
              </div>
-             <div className="h-[180px] w-full">
+             <div className="h-[180px] max-md:h-[140px] w-full">
                <SubPanelChart
                  view={view}
                  displayData={subPanelData}

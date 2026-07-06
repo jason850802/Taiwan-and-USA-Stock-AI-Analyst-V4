@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
+import ChartToolbar from './components/ChartToolbar';
+import QuoteHeader from './components/QuoteHeader';
 import StockChart from './components/StockChart';
 import AnalysisResult from './components/AnalysisResult';
 import Banner from './components/ui/Banner';
+import Button from './components/ui/Button';
+import Card from './components/ui/Card';
+import Modal from './components/ui/Modal';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import Portfolio from './components/Portfolio';
@@ -10,7 +15,7 @@ import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
-import { Search, Bot, Loader2, X, Wallet, DollarSign, Zap, BrainCircuit, RefreshCw } from 'lucide-react';
+import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
 type AppView = 'dashboard' | 'portfolio';
@@ -177,102 +182,115 @@ const App: React.FC = () => {
       : (symbol.endsWith('.TW') || symbol.endsWith('.TWO') || /^\d{4}$/.test(symbol)), [info, symbol]);
 
   const volumeProj = useMemo(() => estimateVolumeTrend(data, isTaiwanStock, interval), [data, isTaiwanStock, interval]);
+  const latestPoint = data.length > 0 ? data[data.length - 1] : null;
+  const previousPoint = data.length > 1 ? data[data.length - 2] : null;
+  const latestPrice = latestPoint?.close ?? 0;
+  const changeAbs = latestPoint?.priceChange ?? (previousPoint ? latestPrice - previousPoint.close : 0);
+  const changePct = latestPoint?.priceChangePercent
+    ?? (previousPoint?.close ? (changeAbs / previousPoint.close) * 100 : 0);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-slate-900 text-slate-100 relative">
       
-      {showAnalysisModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="flex justify-between items-center p-4 border-b border-slate-700 bg-slate-800/50">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <Bot className="text-blue-400" /> AI 分析參數設定
-                    </h3>
-                    <button onClick={() => setShowAnalysisModal(false)} className="text-slate-400 hover:text-white transition-colors">
-                        <X size={20} />
-                    </button>
-                </div>
-                
-                <div className="p-6 space-y-6">
-                    <div className="space-y-3">
-                        <p className="text-slate-300 font-medium text-sm">選擇分析模式</p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={() => setAnalysisMode('fast')}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                                    analysisMode === 'fast'
-                                    ? 'bg-blue-600/20 border-blue-500 text-blue-400 font-bold'
-                                    : 'bg-slate-900 border-slate-700 text-slate-400'
-                                }`}
-                            >
-                                <Zap size={18} /> 快捷 (Flash)
-                            </button>
-                            <button
-                                onClick={() => setAnalysisMode('thinking')}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                                    analysisMode === 'thinking'
-                                    ? 'bg-purple-600/20 border-purple-500 text-purple-400 font-bold'
-                                    : 'bg-slate-900 border-slate-700 text-slate-400'
-                                }`}
-                            >
-                                <BrainCircuit size={18} /> 思考 (Pro)
-                            </button>
-                        </div>
-                    </div>
-                    <div className="border-t border-slate-700/50" />
-                    <div className="space-y-3">
-                        <p className="text-slate-300 font-medium text-sm">您目前是否持有 <span className="text-white font-bold">{info?.symbol}</span> 這檔股票？</p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button 
-                                onClick={() => setHasHolding(true)}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                                    hasHolding === true ? 'bg-blue-600/20 border-blue-500 text-blue-400 font-bold' : 'bg-slate-900 border-slate-700 text-slate-400'
-                                }`}
-                            >
-                                <Wallet size={18} /> 是，我已持有
-                            </button>
-                            <button 
-                                onClick={() => setHasHolding(false)}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
-                                    hasHolding === false ? 'bg-emerald-600/20 border-emerald-500 text-emerald-400 font-bold' : 'bg-slate-900 border-slate-700 text-slate-400'
-                                }`}
-                            >
-                                <Search size={18} /> 否，空手想買進
-                            </button>
-                        </div>
-                    </div>
-                    {hasHolding === true && (
-                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <label className="text-slate-300 font-medium text-sm block">您的平均成本價位</label>
-                            <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                                <input 
-                                    type="number" 
-                                    value={costPrice}
-                                    onChange={(e) => setCostPrice(e.target.value)}
-                                    placeholder="例如：500.5"
-                                    className="w-full bg-slate-900 border border-slate-700 text-white pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-                                />
-                            </div>
-                        </div>
-                    )}
-                    <button 
-                        onClick={handleRunAnalysis}
-                        disabled={hasHolding === null || (hasHolding === true && !costPrice)}
-                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-4 flex items-center justify-center gap-2"
-                    >
-                        <Bot className="w-6 h-6" /> 開始 AI 智能分析
-                    </button>
-                </div>
+      <Modal
+        open={showAnalysisModal}
+        onClose={() => setShowAnalysisModal(false)}
+        title="AI 分析參數設定"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-6">
+          <section className="space-y-3">
+            <p className="text-sm font-medium text-slate-300">分析模式</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setAnalysisMode('fast')}
+                className={`p-3 rounded-ctl border text-left transition-colors ${
+                  analysisMode === 'fast'
+                    ? 'border-accent bg-accent/10 text-white'
+                    : 'border-surface-line bg-surface-inset text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-2 font-medium"><Zap size={18} /> 快捷 (Flash)</span>
+                <span className="block text-xs text-slate-500 mt-1">快速完成重點分析</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAnalysisMode('thinking')}
+                className={`p-3 rounded-ctl border text-left transition-colors ${
+                  analysisMode === 'thinking'
+                    ? 'border-accent bg-accent/10 text-white'
+                    : 'border-surface-line bg-surface-inset text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-2 font-medium"><BrainCircuit size={18} /> 思考 (Pro)</span>
+                <span className="block text-xs text-slate-500 mt-1">進行更深入的推理</span>
+              </button>
             </div>
+          </section>
+
+          <section className="space-y-3 border-t border-surface-line pt-5">
+            <p className="text-sm font-medium text-slate-300">
+              持股狀態 <span className="text-slate-500">{info?.symbol}</span>
+            </p>
+            <div className="grid grid-cols-2 border border-surface-line rounded-ctl overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setHasHolding(false)}
+                className={`flex items-center justify-center gap-2 px-3 py-2 text-sm transition-colors ${
+                  hasHolding === false ? 'bg-accent/15 text-accent font-medium' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Search size={16} /> 空手
+              </button>
+              <button
+                type="button"
+                onClick={() => setHasHolding(true)}
+                className={`flex items-center justify-center gap-2 px-3 py-2 text-sm transition-colors ${
+                  hasHolding === true ? 'bg-accent/15 text-accent font-medium' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Wallet size={16} /> 持有
+              </button>
+            </div>
+
+            {hasHolding === true && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300 block">您的平均成本價位</label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input
+                    type="number"
+                    value={costPrice}
+                    onChange={(e) => setCostPrice(e.target.value)}
+                    placeholder="例如：500.5"
+                    className="w-full bg-surface-inset border border-surface-line text-white pl-10 pr-4 py-2.5 rounded-ctl focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors"
+                  />
+                </div>
+              </div>
+            )}
+          </section>
+
+          <div>
+            <Button
+              variant="ai"
+              onClick={handleRunAnalysis}
+              disabled={hasHolding === null || (hasHolding === true && !costPrice)}
+              className="w-full inline-flex items-center justify-center gap-2"
+            >
+              <Bot className="w-5 h-5" /> 開始 AI 智能分析
+            </Button>
+            {hasHolding === null && (
+              <p className="text-xs text-slate-500 text-center mt-2">請先選擇持股狀態</p>
+            )}
+            {hasHolding === true && !costPrice && (
+              <p className="text-xs text-slate-500 text-center mt-2">請輸入持有成本價</p>
+            )}
+          </div>
         </div>
-      )}
+      </Modal>
 
       <Sidebar
-        interval={interval}
-        setInterval={setInterval}
-        settings={indicatorSettings}
-        setSettings={setIndicatorSettings}
         currentView={currentView}
         setView={setCurrentView}
       />
@@ -309,93 +327,81 @@ const App: React.FC = () => {
             )}
 
             {info && (
-                 <div className="flex flex-wrap items-stretch gap-3">
-                    {/* Symbol */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-3 min-w-0">
-                        <div className="min-w-0">
-                            <p className="text-xl font-bold text-white leading-tight truncate">{info.symbol}</p>
-                            <p className="text-xs text-slate-400 font-medium truncate">{info.name}</p>
-                        </div>
-                    </div>
+              <QuoteHeader
+                info={info}
+                price={latestPrice}
+                changeAbs={changeAbs}
+                changePct={changePct}
+                volume={latestPoint?.volume ?? 0}
+                volumeProjection={volumeProj}
+                loading={loading}
+                refreshing={refreshing}
+                analyzing={analyzing}
+                hasData={data.length > 0}
+                onRefresh={handleRefreshQuote}
+                onAnalyze={handleOpenAnalysisModal}
+              />
+            )}
 
-                    {/* Price */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700 flex items-center gap-2">
-                        <div>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">收盤</p>
-                            <div className="flex items-baseline gap-1.5">
-                                <p className={`text-xl font-bold ${data.length > 1 && data[data.length-1].close > data[data.length-2].close ? 'text-red-400' : 'text-emerald-400'}`}>
-                                    {data.length > 0 ? data[data.length-1].close.toFixed(2) : '-'}
-                                </p>
-                                {data.length > 0 && data[data.length-1].priceChangePercent !== undefined && (
-                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${data[data.length-1].priceChangePercent! > 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                        {data[data.length-1].priceChangePercent! > 0 ? '+' : ''}{data[data.length-1].priceChangePercent!.toFixed(2)}%
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Volume */}
-                    <div className="bg-slate-800 px-5 py-3 rounded-xl border border-slate-700">
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">成交量</p>
-                        <p className="text-xl font-bold text-white leading-tight">
-                            {data.length > 0
-                                ? isTaiwanStock
-                                    ? Math.round(data[data.length-1].volume / 1000).toLocaleString() + ' 張'
-                                    : data[data.length-1].volume.toLocaleString()
-                                : '-'}
-                        </p>
-                        {volumeProj && volumeProj.status !== 'Insufficient' && (
-                            <p className={`text-[10px] font-medium ${volumeProj.changePercent >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                                {volumeProj.status === 'Intraday'
-                                    ? `預估 ${isTaiwanStock
-                                        ? Math.round(volumeProj.projectedVolume / 1000).toLocaleString()
-                                        : volumeProj.projectedVolume.toLocaleString()
-                                      } (${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%)`
-                                    : `量變化 ${volumeProj.changePercent >= 0 ? '+' : ''}${volumeProj.changePercent.toFixed(1)}%`}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Refresh Button */}
-                    <button
-                        onClick={handleRefreshQuote}
-                        disabled={refreshing || loading || data.length === 0}
-                        className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl font-medium transition-all border border-slate-600 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
-                        title="更新最新報價、成交量與預估量"
+            {!info && !loading && data.length === 0 && (
+              <Card className="py-12 flex flex-col items-center text-center gap-4">
+                <Search size={48} className="text-slate-600" />
+                <div>
+                  <h2 className="text-lg font-medium text-white">搜尋一檔台股或美股開始分析</h2>
+                  <p className="text-sm text-slate-400 mt-1">輸入股票代號，查看行情、技術指標與 AI 分析。</p>
+                </div>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                  {[
+                    { symbol: '2330', label: '2330 台積電' },
+                    { symbol: '0050', label: '0050 元大台灣50' },
+                    { symbol: 'AAPL', label: 'AAPL Apple' },
+                  ].map(item => (
+                    <Button
+                      key={item.symbol}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSymbol(item.symbol);
+                        fetchData(item.symbol, interval);
+                      }}
                     >
-                        <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
-                        {refreshing ? '更新中...' : '更新報價'}
-                    </button>
-
-                    {/* AI Button */}
-                    <button
-                        onClick={handleOpenAnalysisModal}
-                        disabled={analyzing || loading || data.length === 0}
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
-                    >
-                        {analyzing ? <Loader2 className="animate-spin" /> : <Bot className="group-hover:scale-110 transition-transform" />}
-                        AI 分析
-                    </button>
-                 </div>
+                      {item.label}
+                    </Button>
+                  ))}
+                </div>
+              </Card>
             )}
 
             {data.length > 0 && (
                 <div className="flex flex-col gap-6">
-                    <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
-                      if (key === 'maLines') return;
-                      setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
-                    }} />
-                    <div id="ai-analysis-section" className="pt-4 flex flex-col gap-6">
-                        {entryResult && <EntryChecklist result={entryResult} />}
-                        {analysis || analyzing ? (
-                             <AnalysisResult content={analysis} loading={analyzing} />
-                        ) : !entryResult ? (
-                             <div className="bg-slate-800/50 border border-slate-700 border-dashed rounded-xl p-5 flex items-center justify-center gap-3 text-center">
-                                <Bot className="text-slate-500 w-5 h-5 shrink-0" />
-                                <p className="text-slate-500 text-sm">點擊上方「AI 分析」按鈕，逐步通過六六大順濾網並生成進場分析報告</p>
-                             </div>
-                        ) : null}
+                    <Card className="p-0 overflow-hidden">
+                      <ChartToolbar
+                        interval={interval}
+                        setInterval={setInterval}
+                        settings={indicatorSettings}
+                        setSettings={setIndicatorSettings}
+                      />
+                      <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
+                        if (key === 'maLines') return;
+                        setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
+                      }} />
+                    </Card>
+                    <div id="ai-analysis-section" className="pt-4 grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+                        {entryResult && (
+                          <div className="xl:col-span-5">
+                            <EntryChecklist result={entryResult} />
+                          </div>
+                        )}
+                        <div className="xl:col-span-7">
+                          {analysis || analyzing ? (
+                               <AnalysisResult content={analysis} loading={analyzing} />
+                          ) : !entryResult ? (
+                               <div className="bg-surface-card border border-surface-line border-dashed rounded-card p-5 flex items-center justify-center gap-3 text-center">
+                                  <Bot className="text-slate-500 w-5 h-5 shrink-0" />
+                                  <p className="text-slate-500 text-sm">點擊上方「AI 分析」按鈕，逐步通過六六大順濾網並生成進場分析報告</p>
+                               </div>
+                          ) : null}
+                        </div>
                     </div>
                 </div>
             )}
