@@ -842,12 +842,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
         </div>
         <div className="flex flex-wrap gap-2">
           <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setIncludeDividend(true)}
-              className={includeDividend ? 'text-accent border-accent bg-accent/15' : ''}>
+            <Button variant={includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(true)}>
               含息損益
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setIncludeDividend(false)}
-              className={!includeDividend ? 'text-accent border-accent bg-accent/15' : ''}>
+            <Button variant={!includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(false)}>
               不含息損益
             </Button>
           </div>

@@ -19,6 +19,10 @@ const Modal: React.FC<ModalProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (open) contentRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -26,7 +30,6 @@ const Modal: React.FC<ModalProps> = ({
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    contentRef.current?.focus();
 
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onClose]);

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MarkdownReportProps {
   content: string;
@@ -7,6 +8,7 @@ interface MarkdownReportProps {
 
 const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
   <ReactMarkdown
+    remarkPlugins={[remarkGfm]}
     components={{
       h2: ({node, ...props}) => (
         <h2 className="text-2xl font-extrabold text-white mt-2 mb-6 pb-4 border-b border-slate-700 flex flex-wrap gap-2 items-center" {...props} />
@@ -51,6 +53,20 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       ol: ({node, ...props}) => <ol className="space-y-3 my-4 pl-4 list-decimal marker:text-blue-500" {...props} />,
       li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
       p: ({node, ...props}) => <p className="mb-4 leading-7 text-slate-200" {...props} />,
+      table: ({node, ...props}) => (
+        <div className="overflow-x-auto my-4">
+          <table className="w-full text-sm border-collapse" {...props} />
+        </div>
+      ),
+      thead: ({node, ...props}) => <thead className="bg-surface-inset" {...props} />,
+      tbody: ({node, ...props}) => <tbody className="divide-y divide-surface-line" {...props} />,
+      tr: ({node, ...props}) => <tr className="hover:bg-surface-inset/60 transition-colors" {...props} />,
+      th: ({node, ...props}) => (
+        <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 border border-surface-line" {...props} />
+      ),
+      td: ({node, ...props}) => (
+        <td className="px-3 py-2 text-sm text-slate-200 align-top border border-surface-line" {...props} />
+      ),
     }}
   >
     {content}
