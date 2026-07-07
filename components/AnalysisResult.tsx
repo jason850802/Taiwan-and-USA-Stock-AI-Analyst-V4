@@ -20,10 +20,10 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ content, loading }) => 
   if (!content) return null;
 
   return (
-    <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl mb-10">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center gap-3">
-        <Bot className="text-white" size={24} />
-        <h2 className="text-xl font-bold text-white tracking-wide">AI 技術分析報告</h2>
+    <div className="bg-surface-card rounded-card border border-surface-line overflow-hidden mb-10">
+      <div className="bg-ai/15 px-6 py-4 flex items-center gap-3 border-b border-surface-line">
+        <Bot className="text-ai" size={24} />
+        <h2 className="text-xl font-bold text-ai tracking-wide">AI 技術分析報告</h2>
       </div>
       <div className="p-8 text-slate-300">
         <MarkdownReport content={content} />

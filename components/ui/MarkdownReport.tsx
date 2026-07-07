@@ -17,10 +17,10 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       h4: ({node, children, ...props}) => {
         const text = children?.toString() || "";
         if (text.includes("空方") || text.includes("警示") || text.includes("出場") || text.includes("減碼")) {
-          return <h4 className="text-lg font-bold text-red-400 mt-6 mb-3 border-l-4 border-red-500 pl-3 uppercase tracking-wider bg-red-500/5 py-1" {...props}>{children}</h4>;
+          return <h4 className="text-lg font-bold text-danger mt-6 mb-3 border-l-4 border-danger pl-3 uppercase tracking-wider bg-danger-muted py-1" {...props}>{children}</h4>;
         }
         if (text.includes("多方") || text.includes("進場") || text.includes("獲利") || text.includes("停利")) {
-          return <h4 className="text-lg font-bold text-emerald-400 mt-6 mb-3 border-l-4 border-emerald-500 pl-3 uppercase tracking-wider bg-emerald-500/5 py-1" {...props}>{children}</h4>;
+          return <h4 className="text-lg font-bold text-ok mt-6 mb-3 border-l-4 border-ok pl-3 uppercase tracking-wider bg-ok-muted py-1" {...props}>{children}</h4>;
         }
         return <h4 className="text-lg font-bold text-slate-200 mt-6 mb-3" {...props}>{children}</h4>;
       },
@@ -39,10 +39,10 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
         const isBullish = bullishKeywords.some(k => text.includes(k));
 
         if (isBearish) {
-          return <strong className="text-red-400 font-bold mx-1" {...props}>{children}</strong>;
+          return <strong className="text-danger font-bold mx-1" {...props}>{children}</strong>;
         }
         if (isBullish) {
-          return <strong className="text-emerald-400 font-bold mx-1" {...props}>{children}</strong>;
+          return <strong className="text-ok font-bold mx-1" {...props}>{children}</strong>;
         }
 
         return <strong className="text-blue-200 font-bold mx-1" {...props}>{children}</strong>;
