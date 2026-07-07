@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => (
     </div>
 
     <div className="mt-auto pt-6 border-t border-surface-line">
-      <div className="flex items-center gap-2 text-down text-xs font-medium bg-down-muted p-3 rounded-ctl border border-down/20">
+      <div className="flex items-center gap-2 text-ok text-xs font-medium bg-ok-muted p-3 rounded-ctl border border-ok/20">
         <Activity size={14} />
         <span>系統運作中</span>
       </div>

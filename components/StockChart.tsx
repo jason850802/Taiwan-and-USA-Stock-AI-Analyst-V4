@@ -104,7 +104,7 @@ const ChipTooltip = ({ active, payload, title }: any) => {
         if (title === "Trust") val = data.investmentTrustBuySell;
 
         const lots = Math.round(val / 1000);
-        const colorClass = lots > 0 ? "text-red-400" : lots < 0 ? "text-emerald-400" : "text-slate-400";
+        const colorClass = lots > 0 ? "text-up" : lots < 0 ? "text-down" : "text-slate-400";
 
         return (
             <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-xs backdrop-blur-md bg-opacity-90 z-50">
@@ -178,7 +178,7 @@ const MACDTooltip = ({ active, payload }: any) => {
                     <span className="text-slate-200">{data.macdSignal?.toFixed(2)}</span>
                     
                     <span className="text-slate-300 font-bold">Hist</span>
-                    <span className={data.macdHist >= 0 ? 'text-red-400' : 'text-emerald-400'}>{data.macdHist?.toFixed(2)}</span>
+                    <span className={data.macdHist >= 0 ? 'text-up' : 'text-down'}>{data.macdHist?.toFixed(2)}</span>
                 </div>
             </div>
         );
@@ -202,7 +202,7 @@ const MALegend = ({ currentData, settings }: { currentData: any, settings: Indic
                 const dir = currentData[dirKey] as string | undefined;
                 if (value === undefined) return null;
                 const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
-                const dirColor = dir === 'up' ? 'text-red-400' : dir === 'down' ? 'text-emerald-400' : 'text-slate-500';
+                const dirColor = dir === 'up' ? 'text-up' : dir === 'down' ? 'text-down' : 'text-slate-500';
                 return (
                     <div key={key} className="flex items-center gap-1.5 text-xs font-mono bg-slate-900/50 px-2 py-1 rounded border border-slate-800">
                         <span style={{ color: line.color }} className="font-bold">MA{line.period}</span>
@@ -222,14 +222,14 @@ const OHLCInfoBar = ({ activeData, isTaiwanStock }: { activeData: any, isTaiwanS
 
     // 顏色沿用原 MainTooltip：close>open 紅、<open 綠、平 灰（台股紅漲綠跌）
     const priceColor = activeData.close > activeData.open
-        ? 'text-red-400'
-        : activeData.close < activeData.open ? 'text-emerald-400' : 'text-slate-400';
+        ? 'text-up'
+        : activeData.close < activeData.open ? 'text-down' : 'text-slate-400';
 
     const priceChange = activeData.priceChange;
     const priceChangePercent = activeData.priceChangePercent;
     const isChangeUp = priceChange > 0;
     const isChangeDown = priceChange < 0;
-    const changeColor = isChangeUp ? 'text-red-400' : isChangeDown ? 'text-emerald-400' : 'text-slate-400';
+    const changeColor = isChangeUp ? 'text-up' : isChangeDown ? 'text-down' : 'text-slate-400';
     const arrow = isChangeUp ? '↑' : isChangeDown ? '↓' : '';
     const changeTxt = priceChange !== undefined ? `${arrow}${Math.abs(priceChange).toFixed(2)}` : '-';
     const percentTxt = priceChangePercent !== undefined ? `${arrow}${Math.abs(priceChangePercent).toFixed(2)}%` : '-';
@@ -741,15 +741,15 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
   // 副圖 Cell 改吃 subPanelData：拖曳中凍結（與 SubPanelChart 一起跳過重繪），放開後回到即時。
   const macdHistCells = useMemo(() => subPanelData.map((entry, index) => (
-    <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#ef4444' : '#10b981'} />
+    <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#f0405a' : '#22c55e'} />
   )), [subPanelData]);
 
   const foreignCells = useMemo(() => subPanelData.map((entry, index) => (
-    <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
+    <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#f0405a' : '#22c55e'} />
   )), [subPanelData]);
 
   const trustCells = useMemo(() => subPanelData.map((entry, index) => (
-    <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#ef4444' : '#10b981'} />
+    <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#f0405a' : '#22c55e'} />
   )), [subPanelData]);
 
   if (!data || data.length === 0) return <div className="text-gray-400">No data available for chart</div>;

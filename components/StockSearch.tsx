@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { ensureTaiwanDirectory, searchStocks, StockDirEntry, Market } from '../services/stockDirectory';
+import Button from './ui/Button';
 
 interface StockSearchProps {
   value: string;
@@ -10,9 +11,9 @@ interface StockSearchProps {
 }
 
 const marketBadge: Record<Market, { label: string; cls: string }> = {
-  TW: { label: '台股', cls: 'bg-blue-500/15 text-blue-300' },
-  US: { label: '美股', cls: 'bg-emerald-500/15 text-emerald-300' },
-  OTHER: { label: '海外', cls: 'bg-slate-500/20 text-slate-300' },
+  TW: { label: '台股', cls: 'bg-surface-inset text-slate-300' },
+  US: { label: '美股', cls: 'bg-surface-inset text-slate-300' },
+  OTHER: { label: '海外', cls: 'bg-surface-inset text-slate-300' },
 };
 
 // 將符合的字串片段高亮
@@ -142,13 +143,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
         )}
       </div>
 
-      <button
+      <Button
         type="submit"
+        variant="primary"
         disabled={loading}
-        className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]"
+        className="flex items-center justify-center min-w-[80px]"
       >
         {loading ? <Loader2 className="animate-spin" size={20} /> : '搜尋'}
-      </button>
+      </Button>
     </form>
   );
 };
