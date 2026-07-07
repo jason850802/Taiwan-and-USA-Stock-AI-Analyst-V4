@@ -308,3 +308,35 @@ Create `.planning/phases/07-ui-portfolio/07-01-SUMMARY.md`. 必記錄：
    不接受則把表格報酬色一行換回（token 化後成本極低），不影響其他交付。
 3. MACD 柱的紅綠語意（正柱/負柱對應哪個 hex）以 main 版現況為準做同語意替換；若 grep 發現
    現況本身語意混亂（不同處相反），執行者停下記錄並沿用各處原語意，不要自行統一，留待使用者裁決。
+
+## 第二輪修正（2026-07-06，Task 5 人工驗證發現，必修，權威）
+
+人工驗證發現 3 個問題（#5 紅漲綠跌已確認接受、台美股本就一致，無需改）：
+
+**修正 1（必修 — 回歸 bug）：`ui/Modal` 每次重繪都搶焦點，導致 modal 內數字輸入框每打一字就失焦。**
+根因：`components/ui/Modal.tsx` 的 `useEffect` 依賴 `[open, onClose]`，且內部呼叫
+`contentRef.current?.focus()`。父層傳入的 `onClose` 多為 inline 箭頭函式（每次 render 新參考），
+故使用者每打一個字 → 父層重繪 → onClose 參考變 → effect 重跑 → focus() 把焦點搶回 modal 外框。
+**修法**：把該 effect 拆成兩個——(a) `useEffect(() => { if(open) contentRef.current?.focus(); }, [open])`
+只在開啟時 focus；(b) 另一個 effect 掛 Esc 的 keydown 監聽、依賴 `[open, onClose]`（維持既有清理）。
+這樣 focus 只在 open 變化時觸發，不再每次重繪搶焦點。此檔屬 Phase A 元件，影響全站所有 modal。
+
+**修正 2（必修 — 回歸 bug）：`ui/MarkdownReport` 遺漏表格支援，健檢報告的 markdown 表格渲染成原始 `| ... |` 文字。**
+根因：main 版 `Portfolio.tsx` 被刪除的兩份 renderer 原本有 `remarkPlugins={[remarkGfm]}` 與
+`table/thead/tbody/th/td` 客製渲染器（約 main 版 L1229/1249/1312/1338），但 `ui/MarkdownReport.tsx`
+（Phase A 從 AnalysisResult 搬移）兩者都沒有。**修法**：在 `ui/MarkdownReport.tsx` 加
+`import remarkGfm from 'remark-gfm'`、`remarkPlugins={[remarkGfm]}`，並補 table 系列渲染器
+（樣式 token 化：邊框 `border-surface-line`、表頭 `bg-surface-inset`、儲存格 padding，
+可參照 main 版被刪的 table renderer 的結構）。修完 dashboard 與 portfolio 的 AI 報告都支援表格。
+（remark-gfm 是既有依賴，index.html importmap 已有，勿新增套件。）
+
+**修正 3（小調整）：含息/不含息切換選中態不夠明顯。**
+Portfolio header 的含息切換：選中態從「只有邊框亮」改為「填色按鈕」
+（選中 `bg-accent text-white`、未選 `ghost`），比照 segmented control 的視覺。
+
+**不改（已確認）**：#5 紅漲綠跌台美股已一致且使用者接受；#6 六六大順與 AI 報告渲染正確。
+**另立任務（不在本期）**：手續費改造（改名、預設 成交金額×0.1425%、可覆蓋 UX、買賣各算、
+證交稅賣出才算）——屬計算邏輯/資料模型，UI 收官合併後另行規劃。
+
+修完驗收：`npx tsc --noEmit` 0 錯誤、`npm run build` 成功；人工複驗：新增持股數字框可連續輸入、
+健檢報告表格正常呈現、含息切換選中態明顯。
