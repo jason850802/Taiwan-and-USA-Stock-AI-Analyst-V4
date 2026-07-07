@@ -59,19 +59,30 @@ const calcTwSellFeeAndTax = (value: number, discount: number, symbol: string) =>
 const calcUsFee = (valueUsd: number, isEtf: boolean): number =>
   isEtf ? 3 : valueUsd * 0.00008;
 
+// lots 維持逐筆儲存，只在渲染時依 symbol 保序分組。
+const groupLotsBySymbol = (items: PortfolioItem[]): Map<string, PortfolioItem[]> => {
+  const groups = new Map<string, PortfolioItem[]>();
+  items.forEach(item => {
+    const lots = groups.get(item.symbol) ?? [];
+    lots.push(item);
+    groups.set(item.symbol, lots);
+  });
+  return groups;
+};
+
 // ── 格式化 ─────────────────────────────────────────────────────────────────
 const fmt  = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtUsd = (n: number, d = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
 // ── 可編輯儲存格 ────────────────────────────────────────────────────────────
 const EditableCell: React.FC<{
-  value: number; digits?: number;
+  value?: number; digits?: number;
   onSave: (v: number) => void;
   cls?: string;
 }> = ({ value, digits = 0, onSave, cls = 'text-slate-200' }) => {
   const [active, setActive] = useState(false);
   const [draft,  setDraft]  = useState('');
-  const display = digits > 0 ? value.toFixed(digits) : String(value);
+  const display = value === undefined ? '' : digits > 0 ? value.toFixed(digits) : String(value);
   return (
     <input type="number"
       value={active ? draft : display}
@@ -80,6 +91,7 @@ const EditableCell: React.FC<{
       onBlur={() => { const n = parseFloat(draft); if (!isNaN(n) && n >= 0) onSave(n); setActive(false); }}
       onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
       title="點擊直接編輯"
+      placeholder="—"
       className={`bg-surface-inset border border-surface-line rounded-ctl text-right w-24 min-w-0 px-1.5 py-0.5 font-mono tabular-nums ${cls}
         hover:border-slate-500 focus:outline-none focus:ring-1 focus:ring-accent
         cursor-text transition-colors text-sm`}
@@ -149,6 +161,16 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
   healthResults, onHealthCheck, onShowDetail,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedSymbols, setExpandedSymbols] = useState<Set<string>>(new Set());
+
+  const toggleSymbol = (symbol: string) => {
+    setExpandedSymbols(current => {
+      const next = new Set(current);
+      if (next.has(symbol)) next.delete(symbol);
+      else next.add(symbol);
+      return next;
+    });
+  };
 
   const groupInvested = items.reduce((s, i) => s + i.totalCost, 0);
   const groupValue    = items.reduce((s, i) => {
@@ -173,7 +195,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
         <div className="flex items-center gap-3">
           <Badge variant="neutral">台股</Badge>
           <span className="text-white font-semibold">台灣股票</span>
-          <span className="text-slate-500 text-xs">{items.length} 檔</span>
+          <span className="text-slate-500 text-xs">{groupLotsBySymbol(items).size} 檔</span>
         </div>
         <div className="flex items-center gap-4 text-sm">
           {groupPnL !== null && groupPnLPct !== null && (
@@ -198,13 +220,96 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                 <th className="text-right p-3 whitespace-nowrap">目前市值</th>
                 <th className="text-right p-3 whitespace-nowrap">現金股利</th>
                 <th className="text-right p-3 whitespace-nowrap">股票股利(股)</th>
-                <th className="text-right p-3 whitespace-nowrap">券商折扣</th>
+                <th className="text-right p-3 whitespace-nowrap">手續費</th>
                 <th className="text-right p-3 whitespace-nowrap">總損益</th>
                 <th className="p-3"></th>
               </tr>
             </thead>
             <tbody>
-              {items.map(item => {
+              {Array.from(groupLotsBySymbol(items)).map(([symbol, lots]) => {
+                const p = prices[symbol];
+                const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
+                const totalCost = lots.reduce((sum, lot) => sum + lot.totalCost, 0);
+                const totalCashDividends = lots.reduce((sum, lot) => sum + lot.cashDividends, 0);
+                const totalStockDividends = lots.reduce((sum, lot) => sum + lot.stockDividends, 0);
+                const totalBuyFee = lots.reduce((sum, lot) => sum + (lot.buyFee ?? 0), 0);
+                const hasBuyFee = lots.some(lot => lot.buyFee !== undefined);
+                const currentPrice = p?.price ?? 0;
+                const currentValue = currentPrice * totalShares;
+                const sellCosts = lots.reduce((sum, lot) => {
+                  const lotValue = currentPrice * lot.totalShares;
+                  const { sellFee, tax } = calcTwSellFeeAndTax(lotValue, lot.brokerDiscount, symbol);
+                  return sum + sellFee + tax;
+                }, 0);
+                const pnl = (p && !p.loading && !p.error && currentPrice > 0)
+                  ? currentValue - totalCost - sellCosts + (includeDividend ? totalCashDividends : 0)
+                  : null;
+                const pnlPct = pnl !== null && totalCost > 0 ? (pnl / totalCost) * 100 : null;
+                const avgCost = totalShares > 0 ? totalCost / totalShares : 0;
+                const expanded = expandedSymbols.has(symbol);
+
+                return (
+                  <React.Fragment key={symbol}>
+                    <tr
+                      onClick={() => toggleSymbol(symbol)}
+                      className="border-t border-surface-line hover:bg-surface-inset transition-colors cursor-pointer"
+                    >
+                      <td className="p-3 text-center">
+                        {(() => {
+                          const hr = healthResults[symbol];
+                          if (!hr) return (
+                            <button
+                              onClick={event => { event.stopPropagation(); onHealthCheck(symbol); }}
+                              title="健檢"
+                              className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors"
+                            >
+                              <HeartPulse size={14} />
+                            </button>
+                          );
+                          if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
+                          const decVariant = hr.decision.includes('停損') ? 'danger'
+                            : hr.decision.includes('停利') ? 'warn'
+                            : hr.decision.includes('減碼') ? 'warn'
+                            : hr.decision.includes('續抱') ? 'ok'
+                            : hr.decision.includes('加碼') ? 'ok'
+                            : 'neutral';
+                          return (
+                            <button
+                              onClick={event => { event.stopPropagation(); onShowDetail(symbol); }}
+                              className="cursor-pointer hover:brightness-125 transition-all"
+                            >
+                              <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
+                            </button>
+                          );
+                        })()}
+                      </td>
+                      <td className="p-3">
+                        <p className="font-bold text-white">{symbol}</p>
+                        {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
+                        <p className="text-[10px] text-slate-500 mt-0.5">{lots.length} 批</p>
+                      </td>
+                      <td className="p-3 text-right font-mono tabular-nums">{avgCost.toFixed(2)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalShares)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums text-amber-300">{fmt(totalCost)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">
+                        {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
+                          : p?.error ? <span className="text-danger text-xs">讀取失敗</span>
+                          : currentPrice > 0
+                            ? <span className={currentPrice >= avgCost ? 'text-up' : 'text-down'}>{currentPrice.toFixed(2)}</span>
+                            : '—'}
+                      </td>
+                      <td className="p-3 text-right font-mono tabular-nums">{currentValue > 0 ? fmt(currentValue) : '—'}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalCashDividends)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalStockDividends)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{hasBuyFee ? fmt(totalBuyFee) : '—'}</td>
+                      <td className="p-3">
+                        <PnLCell pnl={pnl} pnlPct={pnlPct} currency="TWD" />
+                      </td>
+                      <td className="p-3 text-right">
+                        {expanded ? <ChevronUp size={16} className="ml-auto text-slate-400" /> : <ChevronDown size={16} className="ml-auto text-slate-400" />}
+                      </td>
+                    </tr>
+                    {expanded && lots.map(item => {
                 const p            = prices[item.symbol];
                 const currentPrice = p?.price ?? 0;
                 const currentValue = currentPrice * item.totalShares;
@@ -214,31 +319,8 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                   : null;
                 const pnlPct = pnl !== null && item.totalCost > 0 ? (pnl / item.totalCost) * 100 : null;
                 return (
-                  <tr key={item.id} className="border-t border-surface-line odd:bg-surface-inset/40 hover:bg-surface-inset transition-colors">
-                    <td className="p-3 text-center">
-                      {(() => {
-                        const hr = healthResults[item.symbol];
-                        if (!hr) return (
-                          <button onClick={() => onHealthCheck(item.symbol)} title="健檢"
-                            className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors">
-                            <HeartPulse size={14} />
-                          </button>
-                        );
-                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
-                        const decVariant = hr.decision.includes('停損') ? 'danger'
-                          : hr.decision.includes('停利') ? 'warn'
-                          : hr.decision.includes('減碼') ? 'warn'
-                          : hr.decision.includes('續抱') ? 'ok'
-                          : hr.decision.includes('加碼') ? 'ok'
-                          : 'neutral';
-                        return (
-                          <button onClick={() => onShowDetail(item.symbol)}
-                            className="cursor-pointer hover:brightness-125 transition-all">
-                            <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
-                          </button>
-                        );
-                      })()}
-                    </td>
+                  <tr key={item.id} className="border-t border-surface-line bg-surface-inset/50 hover:bg-surface-inset transition-colors">
+                    <td className="p-3 text-center text-xs text-slate-500">明細</td>
                     <td className="p-3">
                       <p className="font-bold text-white">{item.symbol}</p>
                       {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
@@ -274,8 +356,8 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                         onSave={v => onUpdate(item.id, 'stockDividends', v)} cls="text-accent" />
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
-                      <EditableCell value={item.brokerDiscount} digits={1}
-                        onSave={v => onUpdate(item.id, 'brokerDiscount', v)} cls="text-slate-400" />
+                      <EditableCell value={item.buyFee}
+                        onSave={v => onUpdate(item.id, 'buyFee', v)} cls="text-slate-400" />
                     </td>
                     <td className="p-3">
                       <PnLCell pnl={pnl} pnlPct={pnlPct} currency="TWD"
@@ -297,6 +379,9 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                       )}
                     </td>
                   </tr>
+                );
+              })}
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -327,7 +412,17 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
   healthResults, onHealthCheck, onShowDetail,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedSymbols, setExpandedSymbols] = useState<Set<string>>(new Set());
   const rate = usdTwdRate > 0 ? usdTwdRate : 32; // fallback rate
+
+  const toggleSymbol = (symbol: string) => {
+    setExpandedSymbols(current => {
+      const next = new Set(current);
+      if (next.has(symbol)) next.delete(symbol);
+      else next.add(symbol);
+      return next;
+    });
+  };
 
   // Convert USD value to display currency
   const toDisplay = (usdVal: number) => displayCurrency === 'USD' ? usdVal : usdVal * rate;
@@ -368,7 +463,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
         <div className="flex items-center gap-3">
           <Badge variant="neutral">美股</Badge>
           <span className="text-white font-semibold">美國股票</span>
-          <span className="text-slate-500 text-xs">{items.length} 檔</span>
+          <span className="text-slate-500 text-xs">{groupLotsBySymbol(items).size} 檔</span>
           {usdTwdRate > 0 && (
             <span className="text-xs text-slate-500">1 USD ≈ {fmt(usdTwdRate, 2)} TWD</span>
           )}
@@ -416,7 +511,86 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
               </tr>
             </thead>
             <tbody>
-              {items.map(item => {
+              {Array.from(groupLotsBySymbol(items)).map(([symbol, lots]) => {
+                const p = prices[symbol];
+                const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
+                const totalCost = lots.reduce((sum, lot) => sum + itemCostInDisplay(lot), 0);
+                const priceUsd = p?.price ?? 0;
+                const valueUsd = priceUsd * totalShares;
+                const dispValue = toDisplay(valueUsd);
+                const dispFee = lots.reduce((sum, lot) => {
+                  const lotValueUsd = priceUsd * lot.totalShares;
+                  return sum + toDisplay(calcUsFee(lotValueUsd, lot.isUsEtf ?? false));
+                }, 0);
+                const totalCashDividends = lots.reduce((sum, lot) =>
+                  sum + (dc === 'USD' ? lot.cashDividends / rate : lot.cashDividends), 0);
+                const totalStockDividends = lots.reduce((sum, lot) => sum + lot.stockDividends, 0);
+                const pnl = (p && !p.loading && !p.error && priceUsd > 0)
+                  ? dispValue - totalCost - dispFee + (includeDividend ? totalCashDividends : 0)
+                  : null;
+                const pnlPct = pnl !== null && totalCost > 0 ? (pnl / totalCost) * 100 : null;
+                const avgCost = totalShares > 0 ? totalCost / totalShares : 0;
+                const expanded = expandedSymbols.has(symbol);
+
+                return (
+                  <React.Fragment key={symbol}>
+                    <tr
+                      onClick={() => toggleSymbol(symbol)}
+                      className="border-t border-surface-line hover:bg-surface-inset transition-colors cursor-pointer"
+                    >
+                      <td className="p-3 text-center">
+                        {(() => {
+                          const hr = healthResults[symbol];
+                          if (!hr) return (
+                            <button
+                              onClick={event => { event.stopPropagation(); onHealthCheck(symbol); }}
+                              title="健檢"
+                              className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors"
+                            >
+                              <HeartPulse size={14} />
+                            </button>
+                          );
+                          if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
+                          const decVariant = hr.decision.includes('停損') ? 'danger'
+                            : hr.decision.includes('停利') ? 'warn'
+                            : hr.decision.includes('減碼') ? 'warn'
+                            : hr.decision.includes('續抱') ? 'ok'
+                            : hr.decision.includes('加碼') ? 'ok'
+                            : 'neutral';
+                          return (
+                            <button
+                              onClick={event => { event.stopPropagation(); onShowDetail(symbol); }}
+                              className="cursor-pointer hover:brightness-125 transition-all"
+                            >
+                              <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
+                            </button>
+                          );
+                        })()}
+                      </td>
+                      <td className="p-3">
+                        <p className="font-bold text-white">{symbol}</p>
+                        {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
+                        <p className="text-[10px] text-slate-500 mt-0.5">{lots.length} 批</p>
+                      </td>
+                      <td className="p-3 text-right font-mono tabular-nums">{dc === 'USD' ? fmtUsd(avgCost) : avgCost.toFixed(2)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalShares)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums text-amber-300">{dc === 'USD' ? fmtUsd(totalCost) : fmt(totalCost)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">
+                        {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
+                          : p?.error ? <span className="text-danger text-xs">讀取失敗</span>
+                          : priceUsd > 0 ? fmtUsd(priceUsd) : '—'}
+                      </td>
+                      <td className="p-3 text-right font-mono tabular-nums">{dispValue > 0 ? (dc === 'USD' ? fmtUsd(dispValue) : fmt(dispValue)) : '—'}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{dc === 'USD' ? fmtUsd(totalCashDividends) : fmt(totalCashDividends)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalStockDividends)}</td>
+                      <td className="p-3">
+                        <PnLCell pnl={pnl} pnlPct={pnlPct} currency={dc} />
+                      </td>
+                      <td className="p-3 text-right">
+                        {expanded ? <ChevronUp size={16} className="ml-auto text-slate-400" /> : <ChevronDown size={16} className="ml-auto text-slate-400" />}
+                      </td>
+                    </tr>
+                    {expanded && lots.map(item => {
                 const p            = prices[item.symbol];
                 const priceUsd     = p?.price ?? 0;
                 const valueUsd     = priceUsd * item.totalShares;
@@ -438,31 +612,8 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                 })();
 
                 return (
-                  <tr key={item.id} className="border-t border-surface-line odd:bg-surface-inset/40 hover:bg-surface-inset transition-colors">
-                    <td className="p-3 text-center">
-                      {(() => {
-                        const hr = healthResults[item.symbol];
-                        if (!hr) return (
-                          <button onClick={() => onHealthCheck(item.symbol)} title="健檢"
-                            className="p-1.5 rounded-ctl bg-surface-inset hover:bg-danger-muted text-slate-400 hover:text-danger transition-colors">
-                            <HeartPulse size={14} />
-                          </button>
-                        );
-                        if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
-                        const decVariant = hr.decision.includes('停損') ? 'danger'
-                          : hr.decision.includes('停利') ? 'warn'
-                          : hr.decision.includes('減碼') ? 'warn'
-                          : hr.decision.includes('續抱') ? 'ok'
-                          : hr.decision.includes('加碼') ? 'ok'
-                          : 'neutral';
-                        return (
-                          <button onClick={() => onShowDetail(item.symbol)}
-                            className="cursor-pointer hover:brightness-125 transition-all">
-                            <Badge variant={decVariant}>{hr.decision.replace(/[🟢🔵🟡🟠🔴]/gu, '')}</Badge>
-                          </button>
-                        );
-                      })()}
-                    </td>
+                  <tr key={item.id} className="border-t border-surface-line bg-surface-inset/50 hover:bg-surface-inset transition-colors">
+                    <td className="p-3 text-center text-xs text-slate-500">明細</td>
                     <td className="p-3">
                       <p className="font-bold text-white">{item.symbol}</p>
                       {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
@@ -542,6 +693,9 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                   </tr>
                 );
               })}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -604,7 +758,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   }, []);
 
   const fetchAllPrices = useCallback(() => {
-    items.forEach(i => fetchPrice(i.symbol));
+    Array.from(new Set(items.map(i => i.symbol))).forEach(fetchPrice);
     // Fetch exchange rate if any US stock exists
     if (items.some(i => !isTwStock(i.symbol))) fetchExchangeRate();
   }, [items, fetchPrice, fetchExchangeRate]);
@@ -747,8 +901,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
 
   // ── 單檔庫存健檢 ──────────────────────────────────────────────────────
   const handleSingleHealthCheck = useCallback(async (symbol: string) => {
-    const item = items.find(i => i.symbol === symbol);
-    if (!item) return;
+    const lots = items.filter(item => item.symbol === symbol);
+    if (lots.length === 0) return;
 
     setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
 
@@ -759,9 +913,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
       // 美股：currentPrice 永遠是 USD；avgCostPrice 若以 TWD 購入需先換算成 USD
       const isUS = !isTwStock(symbol);
       const rate = usdTwdRate > 0 ? usdTwdRate : 32;
-      const avgCostPriceInCurrentCurrency = isUS && (item.purchaseCurrency === 'TWD' || !item.purchaseCurrency)
-        ? item.avgCostPrice / rate   // TWD → USD
-        : item.avgCostPrice;         // 台股 TWD / 美股已是 USD
+      const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
+      const totalCostInCurrentCurrency = lots.reduce((sum, lot) => {
+        if (!isUS) return sum + lot.totalCost;
+        if (lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null) return sum + lot.totalCostUSD;
+        return sum + lot.totalCost / rate;
+      }, 0);
+      const avgCostPriceInCurrentCurrency = totalShares > 0
+        ? totalCostInCurrentCurrency / totalShares
+        : 0;
 
       const profitPct = avgCostPriceInCurrentCurrency > 0 && currentPrice > 0
         ? ((currentPrice - avgCostPriceInCurrentCurrency) / avgCostPriceInCurrentCurrency) * 100 : 0;
@@ -776,7 +936,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
 
       const healthItem: PortfolioHealthItem = {
         symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
-        currentPrice, totalShares: item.totalShares, profitPct, recentData, volumeProjection: volProj,
+        currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj,
       };
 
       const result = await analyzePortfolioHealth([healthItem]);
