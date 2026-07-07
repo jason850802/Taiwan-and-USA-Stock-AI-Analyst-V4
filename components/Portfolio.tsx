@@ -45,11 +45,11 @@ const getTaxRate = (symbol: string): number => {
 };
 
 // ── 台股手續費 ──────────────────────────────────────────────────────────────
-const calcTwBuyFee = (base: number, discount: number): number =>
-  discount > 0 ? Math.max(1, Math.floor(base * (discount / 10) * 0.001425)) : 0;
-const calcTwSellFeeAndTax = (value: number, discount: number, symbol: string) => {
+const calcTwBuyFee = (base: number): number =>
+  base > 0 ? Math.max(1, Math.floor(base * 0.001425)) : 0;
+const calcTwSellFeeAndTax = (value: number, symbol: string) => {
   if (value <= 0) return { sellFee: 0, tax: 0 };
-  const sellFee = discount > 0 ? Math.max(1, Math.floor(value * (discount / 10) * 0.001425)) : 0;
+  const sellFee = Math.max(1, Math.floor(value * 0.001425));
   const tax = Math.floor(value * getTaxRate(symbol));
   return { sellFee, tax };
 };
@@ -180,7 +180,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
   const groupSellFees = items.reduce((s, i) => {
     const p = prices[i.symbol];
     if (!p || p.loading || p.error) return s;
-    const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.brokerDiscount, i.symbol);
+    const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.symbol);
     return s + sellFee + tax;
   }, 0);
   const groupCashDiv = items.reduce((s, i) => s + i.cashDividends, 0);
@@ -236,11 +236,8 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                 const hasBuyFee = lots.some(lot => lot.buyFee !== undefined);
                 const currentPrice = p?.price ?? 0;
                 const currentValue = currentPrice * totalShares;
-                const sellCosts = lots.reduce((sum, lot) => {
-                  const lotValue = currentPrice * lot.totalShares;
-                  const { sellFee, tax } = calcTwSellFeeAndTax(lotValue, lot.brokerDiscount, symbol);
-                  return sum + sellFee + tax;
-                }, 0);
+                const { sellFee, tax } = calcTwSellFeeAndTax(currentValue, symbol);
+                const sellCosts = sellFee + tax;
                 const pnl = (p && !p.loading && !p.error && currentPrice > 0)
                   ? currentValue - totalCost - sellCosts + (includeDividend ? totalCashDividends : 0)
                   : null;
@@ -313,7 +310,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                 const p            = prices[item.symbol];
                 const currentPrice = p?.price ?? 0;
                 const currentValue = currentPrice * item.totalShares;
-                const { sellFee, tax } = calcTwSellFeeAndTax(currentValue, item.brokerDiscount, item.symbol);
+                const { sellFee, tax } = calcTwSellFeeAndTax(currentValue, item.symbol);
                 const pnl    = (p && !p.loading && !p.error && currentPrice > 0)
                   ? currentValue - item.totalCost - sellFee - tax + (includeDividend ? item.cashDividends : 0)
                   : null;
@@ -738,6 +735,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     buyDate:          '',     // 買入時間（分析用）
     buyReason:        '',     // 買入原因（分析用）
   });
+  const [feeInput, setFeeInput] = useState('');
+  const [feeTouched, setFeeTouched] = useState(false);
 
   // ── 報價抓取 ───────────────────────────────────────────────────────────
   const fetchPrice = useCallback(async (symbol: string) => {
@@ -770,53 +769,70 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
 
   // ── 表單輔助 ───────────────────────────────────────────────────────────
   const formIsTW = isTwStock(form.symbol);
-  const discount = parseFloat(form.brokerDiscount) || 0;
   const shares   = parseFloat(form.totalShares)    || 0;
   const rate     = usdTwdRate > 0 ? usdTwdRate : 32;
+
+  useEffect(() => {
+    if (feeTouched) return;
+    if (formIsTW && form.inputMode === 'total') {
+      setFeeInput('');
+      return;
+    }
+
+    const avg = parseFloat(form.avgCostPrice) || 0;
+    const totalInput = parseFloat(form.totalCostInput) || 0;
+    const base = form.inputMode === 'avg' ? avg * shares : totalInput;
+    if (base <= 0) {
+      setFeeInput('');
+      return;
+    }
+
+    if (formIsTW) {
+      setFeeInput(String(calcTwBuyFee(base)));
+      return;
+    }
+
+    const fee = form.purchaseCurrency === 'USD'
+      ? calcUsFee(base, form.isUsEtf)
+      : calcUsFee(base / rate, form.isUsEtf) * rate;
+    setFeeInput(String(Number(fee.toFixed(2))));
+  }, [feeTouched, form.avgCostPrice, form.inputMode, form.isUsEtf, form.purchaseCurrency,
+    form.totalCostInput, formIsTW, rate, shares]);
 
   const preview = (() => {
     const avg       = parseFloat(form.avgCostPrice)   || 0;
     const totalInp  = parseFloat(form.totalCostInput) || 0;
+    const enteredBuyFee = parseFloat(feeInput) || 0;
 
     if (formIsTW) {
-      // Taiwan stock — same as before
       if (form.inputMode === 'avg') {
         const base   = avg * shares;
-        const buyFee = calcTwBuyFee(base, discount);
+        const buyFee = enteredBuyFee;
         const total  = base + buyFee;
-        return { base, buyFee, total, adjAvg: shares > 0 ? total / shares : avg, feeLabel: `買進手續費（${form.brokerDiscount}折）` };
+        return { base, buyFee, total, adjAvg: shares > 0 ? total / shares : avg, feeLabel: '買進手續費' };
       } else {
         const total = totalInp;
         return { base: total, buyFee: 0, total, adjAvg: shares > 0 ? total / shares : 0, feeLabel: '' };
       }
     } else {
-      // US stock
-      const isEtf = form.isUsEtf;
       if (form.purchaseCurrency === 'USD') {
-        if (form.inputMode === 'avg') {
-          const baseUsd  = avg * shares;
-          const feeUsd   = calcUsFee(baseUsd, isEtf);
-          const totalUsd = baseUsd + feeUsd;
-          const totalTwd = totalUsd * rate;
-          return { base: baseUsd, buyFee: feeUsd, total: totalUsd, adjAvg: shares > 0 ? totalUsd / shares : avg, totalTwd, feeLabel: isEtf ? 'ETF手續費 $3' : '個股手續費 0.008%' };
-        } else {
-          const totalUsd = totalInp;
-          const totalTwd = totalUsd * rate;
-          return { base: totalUsd, buyFee: 0, total: totalUsd, adjAvg: shares > 0 ? totalUsd / shares : 0, totalTwd, feeLabel: '' };
-        }
+        const baseUsd = form.inputMode === 'avg' ? avg * shares : totalInp;
+        const totalUsd = baseUsd + enteredBuyFee;
+        const totalTwd = totalUsd * rate;
+        return {
+          base: baseUsd, buyFee: enteredBuyFee, total: totalUsd,
+          adjAvg: shares > 0 ? totalUsd / shares : avg, totalTwd,
+          feeLabel: '買進手續費',
+        };
       } else {
-        // TWD purchase
-        if (form.inputMode === 'avg') {
-          const baseTwd  = avg * shares;
-          const baseUsd  = baseTwd / rate;
-          const feeUsd   = calcUsFee(baseUsd, isEtf);
-          const feeTwd   = feeUsd * rate;
-          const totalTwd = baseTwd + feeTwd;
-          return { base: baseTwd, buyFee: feeTwd, total: totalTwd, adjAvg: shares > 0 ? totalTwd / shares : avg, feeUsd, feeLabel: isEtf ? 'ETF手續費 $3' : '個股手續費 0.008%' };
-        } else {
-          const totalTwd = totalInp;
-          return { base: totalTwd, buyFee: 0, total: totalTwd, adjAvg: shares > 0 ? totalTwd / shares : 0, feeLabel: '' };
-        }
+        const baseTwd = form.inputMode === 'avg' ? avg * shares : totalInp;
+        const totalTwd = baseTwd + enteredBuyFee;
+        const feeUsd = enteredBuyFee / rate;
+        return {
+          base: baseTwd, buyFee: enteredBuyFee, total: totalTwd,
+          adjAvg: shares > 0 ? totalTwd / shares : avg, feeUsd,
+          feeLabel: '買進手續費',
+        };
       }
     }
   })();
@@ -829,7 +845,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     if (formIsTW) {
       onAdd({
         symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
-        totalCost: preview.total, brokerDiscount: discount,
+        totalCost: preview.total, brokerDiscount: 10,
+        ...(form.inputMode === 'avg' ? { buyFee: preview.buyFee } : {}),
         cashDividends: parseFloat(form.cashDividends) || 0,
         stockDividends: parseFloat(form.stockDividends) || 0,
       });
@@ -840,7 +857,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
           totalCost: 0,                        // not used for USD purchase
           totalCostUSD: preview.total,         // fixed USD cost
           purchaseCurrency: 'USD', isUsEtf: form.isUsEtf,
-          brokerDiscount: 0,
+          brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
           stockDividends: parseFloat(form.stockDividends) || 0,
         });
@@ -849,7 +866,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
           symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
           totalCost: preview.total,            // fixed TWD cost
           purchaseCurrency: 'TWD', isUsEtf: form.isUsEtf,
-          brokerDiscount: 0,
+          brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
           stockDividends: parseFloat(form.stockDividends) || 0,
         });
@@ -859,6 +876,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     setForm({ symbol: '', inputMode: 'avg', avgCostPrice: '', totalCostInput: '',
               totalShares: '', brokerDiscount: '', cashDividends: '', stockDividends: '',
               purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '' });
+    setFeeInput('');
+    setFeeTouched(false);
     setShowAddModal(false);
   };
 
@@ -976,7 +995,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     const p = prices[i.symbol];
     if (!p || p.loading || p.error) return s;
     if (isTwStock(i.symbol)) {
-      const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.brokerDiscount, i.symbol);
+      const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.symbol);
       return s + sellFee + tax;
     } else {
       const feeUsd = calcUsFee(p.price * i.totalShares, i.isUsEtf ?? false);
@@ -1191,16 +1210,26 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
                 </div>
               </div>
 
-              {/* 券商折扣（台股） */}
-              {formIsTW && (
+              {/* 手續費（台股 total 模式的總成本已包含所有費用） */}
+              {!(formIsTW && form.inputMode === 'total') && (
                 <div>
                   <label className="text-slate-300 text-sm font-medium block mb-1.5">
-                    券商折扣
-                    <span className="text-slate-500 font-normal ml-1">（例：2.8 = 2.8折）</span>
+                    手續費
+                    {!formIsTW && <span className="text-slate-500 font-normal ml-1">（{form.purchaseCurrency}）</span>}
                   </label>
-                  <input type="number" step="0.1" value={form.brokerDiscount}
-                    onChange={e => setForm(p => ({ ...p, brokerDiscount: e.target.value }))}
-                    placeholder="例：2.8" className={inputCls} />
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={feeInput}
+                    onFocus={event => event.target.select()}
+                    onChange={event => {
+                      setFeeTouched(true);
+                      setFeeInput(event.target.value);
+                    }}
+                    placeholder="0"
+                    className={inputCls}
+                  />
                 </div>
               )}
 
