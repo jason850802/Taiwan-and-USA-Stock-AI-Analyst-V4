@@ -82,6 +82,10 @@ const App: React.FC = () => {
     setPortfolioItems(prev => prev.map(item => {
       if (item.id !== id) return item;
       const u = { ...item, [field]: value };
+      if (field === 'buyFee') {
+        // totalCost 為既定事實，buyFee 僅供手續費記錄，不做交叉重算。
+        return u;
+      }
       // TW stocks: cross-field sync for TWD costs
       if (!u.purchaseCurrency || u.purchaseCurrency === 'TWD') {
         if (field === 'totalCost' && u.totalShares > 0)

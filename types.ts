@@ -103,6 +103,7 @@ export interface PortfolioItem {
   totalShares: number;        // 總股數
   totalCost: number;          // 總成本 TWD（台股 / 美股以TWD購入時使用；美股USD購入時為0）
   brokerDiscount: number;     // 券商折扣（台股專用，e.g. 2.8 = 2.8折）
+  buyFee?: number;             // 實付買入手續費（購入幣別）
   cashDividends: number;      // 已領現金股利
   stockDividends: number;     // 已領股票股利（股）
   // ── 美股專用 ───────────────────────────────────────────
