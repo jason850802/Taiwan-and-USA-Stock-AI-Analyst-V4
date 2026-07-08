@@ -72,7 +72,8 @@ Recent decisions affecting current work:
 
 [From .planning/todos/pending/ — ideas captured during sessions]
 
-None yet.
+- [ui] Add TW stock fundamentals tab（`2026-07-08-add-tw-stock-fundamentals-tab.md`）——
+  台股個股月營收/EPS/財報整合進 App；資料層（tw-fundamentals skill）與設計文件已就緒，未排入 phase
 
 ### Blockers/Concerns
 
