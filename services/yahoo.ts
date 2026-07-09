@@ -1,5 +1,6 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
+import { proxyHeaders } from './_shared/apiClient';
 
 interface YahooChartResponse {
   chart: {
@@ -194,7 +195,9 @@ const fetchFinMindRows = async (
     if (params.data_id) qs.set('data_id', params.data_id);
     if (params.start_date) qs.set('start_date', params.start_date);
 
-    const res = await fetch(`/api/finmind?${qs}`);
+    const res = await fetch(`/api/finmind?${qs}`, {
+        headers: { ...proxyHeaders },
+    });
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
         throw new Error(parsed.message || `FinMind fetch error (${res.status})`);
@@ -274,7 +277,9 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
 
 const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
     const qs = new URLSearchParams({ symbol, interval, range }).toString();
-    const res = await fetch(`/api/yahoo/chart?${qs}`);
+    const res = await fetch(`/api/yahoo/chart?${qs}`, {
+        headers: { ...proxyHeaders },
+    });
 
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
