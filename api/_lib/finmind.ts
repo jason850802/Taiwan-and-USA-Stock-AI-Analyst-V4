@@ -22,10 +22,8 @@ export class FinMindClassifiedError extends Error {
 // 僅允許前端現有實際使用的 FinMind dataset，避免成為任意資料代理。
 export const ALLOWED_DATASETS = [
   'TaiwanStockInstitutionalInvestorsBuySell',
-  'TaiwanOTCStockInstitutionalInvestorsBuySell',
   'TaiwanStockPrice',
   'TaiwanStockInfo',
-  'TaiwanOTCStockInfo',
 ] as const;
 
 type AllowedDataset = typeof ALLOWED_DATASETS[number];

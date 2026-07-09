@@ -1,5 +1,6 @@
 import { StockDataPoint } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
+import { proxyHeaders } from "./_shared/apiClient";
 
 type GeminiApiPayload = {
   prompt: string;
@@ -18,7 +19,7 @@ const callGeminiApi = async (
 ): Promise<string> => {
   const response = await fetch('/api/gemini', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...proxyHeaders },
     body: JSON.stringify(payload),
   });
   const data = await response.json().catch(() => ({})) as {

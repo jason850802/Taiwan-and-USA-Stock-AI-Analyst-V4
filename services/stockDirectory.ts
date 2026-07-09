@@ -2,6 +2,8 @@
 // 台股：FinMind TaiwanStockInfo 全清單（瀏覽器直連，快取於 localStorage）
 // 美股/海外：Yahoo Finance search 端點（透過同源後端即時查詢）
 
+import { proxyHeaders } from './_shared/apiClient';
+
 export type Market = 'TW' | 'US' | 'OTHER';
 
 export interface StockDirEntry {
@@ -36,7 +38,9 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
   if (loadingPromise) return loadingPromise;
   loadingPromise = (async () => {
     try {
-      const res = await fetch('/api/finmind?dataset=TaiwanStockInfo');
+      const res = await fetch('/api/finmind?dataset=TaiwanStockInfo', {
+        headers: { ...proxyHeaders },
+      });
       const json = await res.json();
       const map = new Map<string, StockDirEntry>();
       if (json.msg === 'success' && Array.isArray(json.data)) {
@@ -91,7 +95,9 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
   if (!q) return [];
   const qs = new URLSearchParams({ q, limit: String(limit) }).toString();
   try {
-    const res = await fetch(`/api/yahoo/search?${qs}`);
+    const res = await fetch(`/api/yahoo/search?${qs}`, {
+      headers: { ...proxyHeaders },
+    });
     if (!res.ok) return [];
     const json = await res.json();
     const quotes: any[] = json.quotes || [];

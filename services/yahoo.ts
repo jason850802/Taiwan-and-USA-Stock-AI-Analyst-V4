@@ -1,5 +1,6 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
+import { proxyHeaders } from './_shared/apiClient';
 
 interface YahooChartResponse {
   chart: {
@@ -181,10 +182,8 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
 
 type FinMindDataset =
     | 'TaiwanStockInstitutionalInvestorsBuySell'
-    | 'TaiwanOTCStockInstitutionalInvestorsBuySell'
     | 'TaiwanStockPrice'
-    | 'TaiwanStockInfo'
-    | 'TaiwanOTCStockInfo';
+    | 'TaiwanStockInfo';
 
 const fetchFinMindRows = async (
     dataset: FinMindDataset,
@@ -194,7 +193,9 @@ const fetchFinMindRows = async (
     if (params.data_id) qs.set('data_id', params.data_id);
     if (params.start_date) qs.set('start_date', params.start_date);
 
-    const res = await fetch(`/api/finmind?${qs}`);
+    const res = await fetch(`/api/finmind?${qs}`, {
+        headers: { ...proxyHeaders },
+    });
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
         throw new Error(parsed.message || `FinMind fetch error (${res.status})`);
@@ -204,11 +205,10 @@ const fetchFinMindRows = async (
     return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
 };
 
-const fetchInstitutionalData = async (stockId: string, startDate: string, isOTC = false) => {
+const fetchInstitutionalData = async (stockId: string, startDate: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    const dataset = isOTC ? 'TaiwanOTCStockInstitutionalInvestorsBuySell' : 'TaiwanStockInstitutionalInvestorsBuySell';
     try {
-        return await fetchFinMindRows(dataset, { data_id: cleanId, start_date: startDate });
+        return await fetchFinMindRows('TaiwanStockInstitutionalInvestorsBuySell', { data_id: cleanId, start_date: startDate });
     } catch (e) {
         console.warn("Failed to fetch institutional data", e);
         return null;
@@ -227,16 +227,13 @@ const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
 
 const fetchFinMindStockInfo = async (stockId: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    // Try listed (上市) first, then OTC (上櫃) if not found
-    for (const dataset of ['TaiwanStockInfo', 'TaiwanOTCStockInfo']) {
-        try {
-            const rows = await fetchFinMindRows(dataset as FinMindDataset, { data_id: cleanId });
-            if (rows.length > 0) {
-                return rows[0].stock_name as string;
-            }
-        } catch (e) {
-            console.warn(`Failed to fetch stock info from FinMind (${dataset})`, e);
+    try {
+        const rows = await fetchFinMindRows('TaiwanStockInfo', { data_id: cleanId });
+        if (rows.length > 0) {
+            return rows[0].stock_name as string;
         }
+    } catch (e) {
+        console.warn('Failed to fetch stock info from FinMind (TaiwanStockInfo)', e);
     }
     return null;
 };
@@ -274,7 +271,9 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
 
 const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
     const qs = new URLSearchParams({ symbol, interval, range }).toString();
-    const res = await fetch(`/api/yahoo/chart?${qs}`);
+    const res = await fetch(`/api/yahoo/chart?${qs}`, {
+        headers: { ...proxyHeaders },
+    });
 
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
@@ -624,10 +623,9 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       
       // We need clean ID for FinMind
       const cleanId = symbolInfo.symbol.replace('.TW', '').replace('.TWO', '');
-      const isOTC = symbolInfo.symbol.endsWith('.TWO');
 
       const [institutionalData, finMindPriceData] = await Promise.all([
-          fetchInstitutionalData(cleanId, fetchStartDateStr, isOTC),
+          fetchInstitutionalData(cleanId, fetchStartDateStr),
           fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
 

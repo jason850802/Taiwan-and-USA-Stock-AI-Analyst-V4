@@ -25,3 +25,7 @@ export function getAllowedOrigins(): string[] {
 
   return origins.length > 0 ? origins : ['http://localhost:3000'];
 }
+
+export function getSharedSecret(): string | undefined {
+  return process.env.PROXY_SHARED_SECRET;
+}
