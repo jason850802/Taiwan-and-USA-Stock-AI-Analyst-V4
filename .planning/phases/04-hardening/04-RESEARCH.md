@@ -469,17 +469,17 @@ Google Cloud Console → 選 Gemini API key 所屬 project
 
 ## Open Questions
 
-1. **共享密鑰值如何產生與保管？**
+1. **共享密鑰值如何產生與保管？（RESOLVED — 04-04 部署文件採 `openssl rand -hex 24` 步驟；header 定為 `X-Proxy-Secret`）**
    - What we know：build-time 注入、bundle 可見、後端 `timingSafeEqual` 比對。
    - What's unclear：由誰產生一組隨機值、放哪（本地 `.env` + Vercel 環境變數 + 前端 `VITE_`）。
    - Recommendation：部署文件給「產生一段隨機字串（如 `openssl rand -hex 24`）→ 同值填後端 `PROXY_SHARED_SECRET` 與前端 `VITE_PROXY_SECRET`」的步驟；planner 定 header 名稱（建議 `X-Proxy-Secret`）。
 
-2. **Upstash DB region 選哪個？**
+2. **Upstash DB region 選哪個？（RESOLVED — 04-04 文件給「選離 Vercel project region 最近者」指引；ephemeralCache 使延遲影響有限）**
    - What we know：CONTEXT 建議與 Vercel function 區域相近以降延遲。
    - What's unclear：本專案 Vercel function 實際部署區域未定（尚未部署過）。
    - Recommendation：部署文件建議選離 Vercel project region 最近者（台灣使用者＋Vercel 預設 region 常為 `sfo1`/`hnd1`；Upstash 選對應 region）；限流走 ephemeralCache 熱路徑短路，region 延遲影響有限。
 
-3. **production 網域（D-04）**
+3. **production 網域（D-04）（RESOLVED — 已鎖定「部署後回填 ALLOWED_ORIGIN」，04-04 文件列為明確步驟）**
    - What we know：尚未部署，程式不硬編。
    - Recommendation：部署後回填 `ALLOWED_ORIGIN`＝實際網域（如 `https://xxx.vercel.app`）；文件列為明確步驟。已鎖定，非阻塞。
 
