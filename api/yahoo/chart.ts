@@ -1,12 +1,12 @@
-import { applyGuards } from '../_lib/guard';
+import { applyGuards } from '../_lib/guard.js';
 import {
   YahooClassifiedError,
   classifyYahooError,
   fetchYahooWithHandshake,
   validateChartParams,
   type YahooErrorCode,
-} from '../_lib/yahoo';
-import { marketPerMin } from '../_lib/ratelimit';
+} from '../_lib/yahoo.js';
+import { marketPerMin } from '../_lib/ratelimit.js';
 
 interface YahooReq {
   method?: string;

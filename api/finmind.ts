@@ -1,12 +1,12 @@
-import { applyGuards } from './_lib/guard';
+import { applyGuards } from './_lib/guard.js';
 import {
   FinMindClassifiedError,
   classifyFinMindError,
   secondsUntilTaipeiMidnight,
   validateFinMindParams,
   type FinMindErrorCode,
-} from './_lib/finmind';
-import { marketPerMin } from './_lib/ratelimit';
+} from './_lib/finmind.js';
+import { marketPerMin } from './_lib/ratelimit.js';
 
 interface FinMindReq {
   method?: string;

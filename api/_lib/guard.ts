@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'crypto';
-import { getAllowedOrigins, getSharedSecret } from './config';
-import { checkRateLimit, getClientIp, type RateLimiter } from './ratelimit';
+import { getAllowedOrigins, getSharedSecret } from './config.js';
+import { checkRateLimit, getClientIp, type RateLimiter } from './ratelimit.js';
 
 type HeaderValue = string | string[] | undefined;
 
