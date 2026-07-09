@@ -1,8 +1,6 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 
-const FINMIND_BASE = 'https://api.finmindtrade.com/api/v4/data';
-
 interface YahooChartResponse {
   chart: {
     result: Array<{
@@ -181,27 +179,46 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
     return d.toISOString().split('T')[0];
 };
 
+type FinMindDataset =
+    | 'TaiwanStockInstitutionalInvestorsBuySell'
+    | 'TaiwanOTCStockInstitutionalInvestorsBuySell'
+    | 'TaiwanStockPrice'
+    | 'TaiwanStockInfo'
+    | 'TaiwanOTCStockInfo';
+
+const fetchFinMindRows = async (
+    dataset: FinMindDataset,
+    params: { data_id?: string; start_date?: string } = {},
+) => {
+    const qs = new URLSearchParams({ dataset });
+    if (params.data_id) qs.set('data_id', params.data_id);
+    if (params.start_date) qs.set('start_date', params.start_date);
+
+    const res = await fetch(`/api/finmind?${qs}`);
+    if (!res.ok) {
+        const parsed = await res.json().catch(() => ({})) as { message?: string };
+        throw new Error(parsed.message || `FinMind fetch error (${res.status})`);
+    }
+
+    const json = await res.json();
+    return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
+};
+
 const fetchInstitutionalData = async (stockId: string, startDate: string, isOTC = false) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
     const dataset = isOTC ? 'TaiwanOTCStockInstitutionalInvestorsBuySell' : 'TaiwanStockInstitutionalInvestorsBuySell';
-    const url = `${FINMIND_BASE}?dataset=${dataset}&data_id=${cleanId}&start_date=${startDate}`;
     try {
-        const res = await fetch(url);
-        const json = await res.json();
-        return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
+        return await fetchFinMindRows(dataset, { data_id: cleanId, start_date: startDate });
     } catch (e) {
         console.warn("Failed to fetch institutional data", e);
-        return [];
+        return null;
     }
 };
 
 const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    const url = `${FINMIND_BASE}?dataset=TaiwanStockPrice&data_id=${cleanId}&start_date=${startDate}`;
     try {
-        const res = await fetch(url);
-        const json = await res.json();
-        return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
+        return await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: startDate });
     } catch (e) {
         console.warn("Failed to fetch price/volume data from FinMind", e);
         return [];
@@ -212,12 +229,10 @@ const fetchFinMindStockInfo = async (stockId: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
     // Try listed (上市) first, then OTC (上櫃) if not found
     for (const dataset of ['TaiwanStockInfo', 'TaiwanOTCStockInfo']) {
-        const url = `${FINMIND_BASE}?dataset=${dataset}&data_id=${cleanId}`;
         try {
-            const res = await fetch(url);
-            const json = await res.json();
-            if (json.msg === 'success' && Array.isArray(json.data) && json.data.length > 0) {
-                return json.data[0].stock_name as string;
+            const rows = await fetchFinMindRows(dataset as FinMindDataset, { data_id: cleanId });
+            if (rows.length > 0) {
+                return rows[0].stock_name as string;
             }
         } catch (e) {
             console.warn(`Failed to fetch stock info from FinMind (${dataset})`, e);
@@ -233,14 +248,11 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
     const startDate = new Date();
     startDate.setFullYear(startDate.getFullYear() - 5);
     const dateStr = startDate.toISOString().split('T')[0];
+
+    const rows = await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: dateStr });
     
-    const url = `${FINMIND_BASE}?dataset=TaiwanStockPrice&data_id=${cleanId}&start_date=${dateStr}`;
-    
-    const res = await fetch(url);
-    const json = await res.json();
-    
-    if (json.msg === 'success' && Array.isArray(json.data) && json.data.length > 0) {
-        return json.data.map((d: any) => ({
+    if (rows.length > 0) {
+        return rows.map((d: any) => ({
             date: d.date,
             timestamp: new Date(d.date).getTime() / 1000,
             open: d.open,
@@ -594,6 +606,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   let taiwanStockName: string | null = null;
   const chipMap = new Map<string, { foreign: number, trust: number }>();
   const volumeMap = new Map<string, number>();
+  let chipDataUnavailable = false;
   // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
   const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
 
@@ -617,15 +630,19 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
           fetchInstitutionalData(cleanId, fetchStartDateStr, isOTC),
           fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
-      
-      institutionalData.forEach((item: any) => {
-          const date = item.date; 
-          const net = (item.buy || 0) - (item.sell || 0);
-          if (!chipMap.has(date)) chipMap.set(date, { foreign: 0, trust: 0 });
-          const record = chipMap.get(date)!;
-          if (item.name === 'Foreign_Investor') record.foreign += net;
-          else if (item.name === 'Investment_Trust') record.trust += net;
-      });
+
+      if (institutionalData === null) {
+          chipDataUnavailable = true;
+      } else {
+          institutionalData.forEach((item: any) => {
+              const date = item.date; 
+              const net = (item.buy || 0) - (item.sell || 0);
+              if (!chipMap.has(date)) chipMap.set(date, { foreign: 0, trust: 0 });
+              const record = chipMap.get(date)!;
+              if (item.name === 'Foreign_Investor') record.foreign += net;
+              else if (item.name === 'Investment_Trust') record.trust += net;
+          });
+      }
 
       finMindPriceData.forEach((item: any) => {
           volumeMap.set(item.date, item.Trading_Volume);
@@ -663,11 +680,13 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       // 收尾：移除內部標記，絕不外洩進對外 StockDataPoint（fullProcessedData 以 ...d 展開）。
       delete d._synthetic;
 
-      const chips = chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
+      const chips = chipDataUnavailable
+          ? undefined
+          : chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
       return {
           ...d,
-          foreignBuySell: chips.foreign,
-          investmentTrustBuySell: chips.trust
+          foreignBuySell: chips?.foreign,
+          investmentTrustBuySell: chips?.trust
       };
   });
 
@@ -747,7 +766,10 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   }
 
   return {
-      info: symbolInfo,
+      info: {
+          ...symbolInfo,
+          chipDataUnavailable,
+      },
       data: fullProcessedData
   };
 };

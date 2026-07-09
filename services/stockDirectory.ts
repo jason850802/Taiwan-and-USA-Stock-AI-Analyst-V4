@@ -12,7 +12,6 @@ export interface StockDirEntry {
   market: Market;
 }
 
-const FINMIND = 'https://api.finmindtrade.com/api/v4/data';
 const LS_KEY = 'tw_stock_directory_v1';
 const LS_TS = 'tw_stock_directory_ts_v1';
 const TTL = 7 * 24 * 60 * 60 * 1000; // 7 天
@@ -37,7 +36,7 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
   if (loadingPromise) return loadingPromise;
   loadingPromise = (async () => {
     try {
-      const res = await fetch(`${FINMIND}?dataset=TaiwanStockInfo`);
+      const res = await fetch('/api/finmind?dataset=TaiwanStockInfo');
       const json = await res.json();
       const map = new Map<string, StockDirEntry>();
       if (json.msg === 'success' && Array.isArray(json.data)) {
