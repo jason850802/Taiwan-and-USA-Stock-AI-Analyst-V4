@@ -74,6 +74,9 @@ Recent decisions affecting current work:
 
 - [ui] Add TW stock fundamentals tab（`2026-07-08-add-tw-stock-fundamentals-tab.md`）——
   台股個股月營收/EPS/財報整合進 App；資料層（tw-fundamentals skill）與設計文件已就緒，未排入 phase
+- [api] Fix invalid FinMind OTC dataset names（`2026-07-09-fix-invalid-finmind-otc-dataset-names.md`）——
+  `TaiwanOTCStockInstitutionalInvestorsBuySell`/`TaiwanOTCStockInfo` 非真實 dataset，上櫃股籌碼
+  一直靜默失敗；Phase 3 誠實化功能正確揭露（顯示不可用而非假0），根因未修，改用統一 dataset 即可
 
 ### Blockers/Concerns
 

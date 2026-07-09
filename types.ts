@@ -67,6 +67,7 @@ export interface StockInfo {
   name: string;
   currency: string;
   exchangeTimezoneName: string;
+  chipDataUnavailable?: boolean;
 }
 
 export interface TechnicalIndicators {

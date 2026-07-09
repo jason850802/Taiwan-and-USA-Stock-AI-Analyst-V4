@@ -385,7 +385,7 @@ const App: React.FC = () => {
                         settings={indicatorSettings}
                         setSettings={setIndicatorSettings}
                       />
-                      <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} onToggleSetting={(key: keyof IndicatorSettings) => {
+                      <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} onToggleSetting={(key: keyof IndicatorSettings) => {
                         if (key === 'maLines') return;
                         setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
                       }} />
