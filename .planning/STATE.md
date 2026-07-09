@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-07-09T13:09:11.781Z"
-last_activity: 2026-07-09 — Phase 4 planned (4 plans, 2 waves); Phases 2-3 merged to main
+status: complete
+stopped_at: Phase 4 merged to main (684453d) — milestone complete
+last_updated: "2026-07-09T15:20:00+08:00"
+last_activity: 2026-07-09 — Phase 4 executed by Codex, reviewed by Opus, merged to main; 後端代理層里程碑全數完成
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 7
-  completed_plans: 3
-  percent: 75
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-01)
 
 **Core value:** 讓使用者對任一檔台股/美股得到「客觀進場判斷 ＋ AI 中文解讀」的可信分析，而其依賴的金鑰與資料來源必須安全、穩定、不被盜用或竄改。
-**Current focus:** Phase 4 — 防濫用強化 ＋ 部署驗收
+**Current focus:** 里程碑完成 — 後端 Serverless 代理層 4 個 phase 全數合併 main
 
 ## Current Position
 
-Phase: 4 of 4 (防濫用強化 ＋ 部署驗收)
-Plan: 0 of 4 in current phase
-Status: Ready to execute
-Last activity: 2026-07-09 — Phase 4 planned (04-01..04-04, 2 waves); Phase 2 (Yahoo proxy) 與 Phase 3 (FinMind proxy) 已合併 main（a0a7767），惟其 SUMMARY/VERIFICATION 收尾文件未回寫 .planning
+Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
+Plan: 4 of 4 complete
+Status: Milestone complete（所有 phase 已合併 main）
+Last activity: 2026-07-09 — Phase 4 由 Codex 執行、Opus 覆核（獨立重跑 build 驗證 A2 密鑰注入與 AIza=0）、合併 main（684453d）
 
-Progress: [███████░░░] 75%
+Progress: [██████████] 100%
+
+**里程碑收尾待辦（使用者手動，非 phase 範圍）：**
+- 部署到 Vercel 並跑真環境驗收（需設 PROXY_SHARED_SECRET/UPSTASH_*/回填 ALLOWED_ORIGIN；無密鑰 curl→403、超限→429、CORS 無 `*`、6488/2330 籌碼正常）——詳 docs/DEPLOYMENT.md
+- 作廢舊 Gemini 金鑰（Phase 1 前曾進 bundle）
+- 文件債：Phase 2/3 缺 SUMMARY/VERIFICATION 收尾文件（功能無影響）
 
 ## Performance Metrics
 

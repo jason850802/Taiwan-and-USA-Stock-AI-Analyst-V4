@@ -14,9 +14,9 @@
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: 後端骨架 ＋ Gemini 端點（金鑰封存）** - 建 `api/_lib/` 共用層與 `/api/gemini`，移除前端金鑰注入，封住唯一 CRITICAL 金錢風險
-- [ ] **Phase 2: Yahoo 代理端點（去公用 Proxy）** - 後端實作 cookie/crumb 握手，前端 `services/yahoo.ts` 改接，移除公用 CORS proxy 依賴
-- [ ] **Phase 3: FinMind 代理端點（後端集中）** - 後端注入 token＋快取籌碼到當日，明確回傳 unavailable 狀態，前端目錄/搜尋改接
-- [ ] **Phase 4: 防濫用強化 ＋ 部署驗收** - 統一套上 Upstash 限流／CORS／共享密鑰，補 `.env.example` 與 GCP 配額財務防線
+- [x] **Phase 2: Yahoo 代理端點（去公用 Proxy）** - 後端實作 cookie/crumb 握手，前端 `services/yahoo.ts` 改接，移除公用 CORS proxy 依賴
+- [x] **Phase 3: FinMind 代理端點（後端集中）** - 後端注入 token＋快取籌碼到當日，明確回傳 unavailable 狀態，前端目錄/搜尋改接
+- [x] **Phase 4: 防濫用強化 ＋ 部署驗收** - 統一套上 Upstash 限流／CORS／共享密鑰，補 `.env.example` 與 GCP 配額財務防線
 
 ## Phase Details
 
@@ -90,13 +90,13 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — 後端防濫用 pipeline：ratelimit.ts 限流層、guard.ts 升級（CORS/OPTIONS＋共享密鑰＋applyGuards）、四端點前置套用（GUARD-01/02/03）
-- [ ] 04-02-PLAN.md — 前端共享密鑰注入：apiClient.ts proxyHeaders，三個 service fetch 帶 X-Proxy-Secret（GUARD-03）
-- [ ] 04-04-PLAN.md — 部署文件與 .env.example：Upstash／共享密鑰／GCP 每日配額（DEPLOY-01/02）
+- [x] 04-01-PLAN.md — 後端防濫用 pipeline：ratelimit.ts 限流層、guard.ts 升級（CORS/OPTIONS＋共享密鑰＋applyGuards）、四端點前置套用（GUARD-01/02/03）
+- [x] 04-02-PLAN.md — 前端共享密鑰注入：apiClient.ts proxyHeaders，三個 service fetch 帶 X-Proxy-Secret（GUARD-03）
+- [x] 04-04-PLAN.md — 部署文件與 .env.example：Upstash／共享密鑰／GCP 每日配額（DEPLOY-01/02）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-03-PLAN.md — 輸入白名單複核＋FinMind OTC dataset 修正（GUARD-04＋folded todo）
+- [x] 04-03-PLAN.md — 輸入白名單複核＋FinMind OTC dataset 修正（GUARD-04＋folded todo）
 
 ## Progress
 
@@ -106,6 +106,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 後端骨架 ＋ Gemini 端點 | 1/1 | Complete | 2026-07-05 |
-| 2. Yahoo 代理端點 | 0/TBD | Not started | - |
-| 3. FinMind 代理端點 | 0/TBD | Not started | - |
-| 4. 防濫用強化 ＋ 部署驗收 | 0/4 | Not started | - |
+| 2. Yahoo 代理端點 | 1/1 | Complete | 2026-07-06 |
+| 3. FinMind 代理端點 | 1/1 | Complete | 2026-07-09 |
+| 4. 防濫用強化 ＋ 部署驗收 | 4/4 | Complete | 2026-07-09 |
+
+**里程碑「後端 Serverless 代理層」全數完成（2026-07-09）** — 4 個 phase 皆合併 main。
+部署後手動驗收（真 Vercel＋Upstash 環境）與舊 Gemini 金鑰作廢為使用者待辦，非 phase 範圍。

@@ -90,18 +90,18 @@
 | PROXY-01 | Phase 1 | Complete |
 | PROXY-02 | Phase 1 | Complete |
 | FE-01 | Phase 1 | Complete |
-| PROXY-03 | Phase 2 | Pending |
-| PROXY-06 | Phase 2 | Pending |
-| FE-02 | Phase 2 | Pending |
-| PROXY-04 | Phase 3 | Pending |
-| PROXY-05 | Phase 3 | Pending |
-| FE-03 | Phase 3 | Pending |
-| GUARD-01 | Phase 4 | Pending |
-| GUARD-02 | Phase 4 | Pending |
-| GUARD-03 | Phase 4 | Pending |
-| GUARD-04 | Phase 4 | Pending |
-| DEPLOY-01 | Phase 4 | Pending |
-| DEPLOY-02 | Phase 4 | Pending |
+| PROXY-03 | Phase 2 | Complete |
+| PROXY-06 | Phase 2 | Complete |
+| FE-02 | Phase 2 | Complete |
+| PROXY-04 | Phase 3 | Complete |
+| PROXY-05 | Phase 3 | Complete |
+| FE-03 | Phase 3 | Complete |
+| GUARD-01 | Phase 4 | Complete |
+| GUARD-02 | Phase 4 | Complete |
+| GUARD-03 | Phase 4 | Complete |
+| GUARD-04 | Phase 4 | Complete |
+| DEPLOY-01 | Phase 4 | Complete |
+| DEPLOY-02 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
@@ -116,4 +116,4 @@
 
 ---
 *Requirements defined: 2026-06-01*
-*Last updated: 2026-07-05 after Phase 1 completion*
+*Last updated: 2026-07-09 — 全部 22 項 v1 需求完成（4 個 phase 皆合併 main）*
