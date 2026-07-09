@@ -182,10 +182,8 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
 
 type FinMindDataset =
     | 'TaiwanStockInstitutionalInvestorsBuySell'
-    | 'TaiwanOTCStockInstitutionalInvestorsBuySell'
     | 'TaiwanStockPrice'
-    | 'TaiwanStockInfo'
-    | 'TaiwanOTCStockInfo';
+    | 'TaiwanStockInfo';
 
 const fetchFinMindRows = async (
     dataset: FinMindDataset,
@@ -207,11 +205,10 @@ const fetchFinMindRows = async (
     return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
 };
 
-const fetchInstitutionalData = async (stockId: string, startDate: string, isOTC = false) => {
+const fetchInstitutionalData = async (stockId: string, startDate: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    const dataset = isOTC ? 'TaiwanOTCStockInstitutionalInvestorsBuySell' : 'TaiwanStockInstitutionalInvestorsBuySell';
     try {
-        return await fetchFinMindRows(dataset, { data_id: cleanId, start_date: startDate });
+        return await fetchFinMindRows('TaiwanStockInstitutionalInvestorsBuySell', { data_id: cleanId, start_date: startDate });
     } catch (e) {
         console.warn("Failed to fetch institutional data", e);
         return null;
@@ -230,16 +227,13 @@ const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
 
 const fetchFinMindStockInfo = async (stockId: string) => {
     const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
-    // Try listed (上市) first, then OTC (上櫃) if not found
-    for (const dataset of ['TaiwanStockInfo', 'TaiwanOTCStockInfo']) {
-        try {
-            const rows = await fetchFinMindRows(dataset as FinMindDataset, { data_id: cleanId });
-            if (rows.length > 0) {
-                return rows[0].stock_name as string;
-            }
-        } catch (e) {
-            console.warn(`Failed to fetch stock info from FinMind (${dataset})`, e);
+    try {
+        const rows = await fetchFinMindRows('TaiwanStockInfo', { data_id: cleanId });
+        if (rows.length > 0) {
+            return rows[0].stock_name as string;
         }
+    } catch (e) {
+        console.warn('Failed to fetch stock info from FinMind (TaiwanStockInfo)', e);
     }
     return null;
 };
@@ -629,10 +623,9 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       
       // We need clean ID for FinMind
       const cleanId = symbolInfo.symbol.replace('.TW', '').replace('.TWO', '');
-      const isOTC = symbolInfo.symbol.endsWith('.TWO');
 
       const [institutionalData, finMindPriceData] = await Promise.all([
-          fetchInstitutionalData(cleanId, fetchStartDateStr, isOTC),
+          fetchInstitutionalData(cleanId, fetchStartDateStr),
           fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
 
