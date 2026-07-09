@@ -20,11 +20,13 @@ import {
 import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
 import { calculateSMA } from '../utils/math';
 import { ZoomIn, ZoomOut } from 'lucide-react';
+import Badge from './ui/Badge';
 
 interface StockChartProps {
   data: StockDataPoint[];
   settings: IndicatorSettings;
   isTaiwanStock: boolean;
+  chipDataUnavailable?: boolean;
   onToggleSetting?: (key: keyof IndicatorSettings) => void;
 }
 
@@ -514,7 +516,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
   );
 });
 
-const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, onToggleSetting }) => {
+const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, onToggleSetting }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [panel1View, setPanel1View] = useState<PanelView>('foreign');
   const [panel2View, setPanel2View] = useState<PanelView>('trust');
@@ -554,9 +556,10 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   }, [handleZoom]);
 
   const hasChipData = useMemo(() => {
+      if (chipDataUnavailable) return false;
       if (!data || data.length === 0) return false;
       return data.some(d => (d.foreignBuySell !== undefined && d.foreignBuySell !== 0) || (d.investmentTrustBuySell !== undefined && d.investmentTrustBuySell !== 0));
-  }, [data]);
+  }, [data, chipDataUnavailable]);
 
   // Pre-compute MAs on full dataset (only recalc when data/settings change, NOT on zoom)
   const maResultsCache = useMemo(() => {
@@ -824,6 +827,9 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
              <div className="flex items-center justify-between mb-2">
                <h3 className="text-slate-200 font-medium text-sm">{titleMap[view]}</h3>
                <div className="flex gap-1">
+                 {chipDataUnavailable && (
+                   <Badge variant="neutral">籌碼暫時不可用</Badge>
+                 )}
                  {viewOptions.filter(o => o.show).map(o => (
                    <button
                      key={o.key}
