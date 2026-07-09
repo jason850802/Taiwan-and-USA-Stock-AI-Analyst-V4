@@ -1,4 +1,4 @@
-import { getGeminiApiKey, getModelForMode } from './_lib/config';
+import { getGeminiApiKey, getModelForMode } from './_lib/config.js';
 import {
   ClassifiedError,
   callGeminiWithTimeout,
@@ -6,9 +6,9 @@ import {
   sanitizeErrorForLog,
   validateGeminiRequest,
   type GeminiErrorCode,
-} from './_lib/http';
-import { applyGuards } from './_lib/guard';
-import { geminiPerDay, geminiPerMin } from './_lib/ratelimit';
+} from './_lib/http.js';
+import { applyGuards } from './_lib/guard.js';
+import { geminiPerDay, geminiPerMin } from './_lib/ratelimit.js';
 
 interface GeminiReq {
   method?: string;

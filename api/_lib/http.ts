@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import type { GeminiMode } from './config';
+import type { GeminiMode } from './config.js';
 
 export type GeminiErrorCode =
   | 'MODEL_NOT_FOUND'
