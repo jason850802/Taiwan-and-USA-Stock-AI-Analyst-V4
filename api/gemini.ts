@@ -7,7 +7,8 @@ import {
   validateGeminiRequest,
   type GeminiErrorCode,
 } from './_lib/http';
-import { isAllowedOrigin } from './_lib/guard';
+import { applyGuards } from './_lib/guard';
+import { geminiPerDay, geminiPerMin } from './_lib/ratelimit';
 
 interface GeminiReq {
   method?: string;
@@ -17,6 +18,8 @@ interface GeminiReq {
 
 interface GeminiRes {
   status(code: number): GeminiRes;
+  setHeader(name: string, value: string): void;
+  end(): void;
   json(data: unknown): void;
 }
 
@@ -31,18 +34,12 @@ const statusByCode: Record<GeminiErrorCode, number> = {
 export const maxDuration = 120;
 
 export default async function handler(req: GeminiReq, res: GeminiRes) {
+  if (!(await applyGuards(req, res, [geminiPerMin, geminiPerDay]))) return;
+
   if (req.method !== 'POST') {
     res.status(405).json({
       code: 'BAD_REQUEST',
       message: '僅支援 POST 請求。',
-    });
-    return;
-  }
-
-  if (!isAllowedOrigin(req)) {
-    res.status(403).json({
-      code: 'BAD_REQUEST',
-      message: '請求來源不被允許。',
     });
     return;
   }

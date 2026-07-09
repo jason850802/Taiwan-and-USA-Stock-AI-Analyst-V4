@@ -1,4 +1,4 @@
-import { isAllowedOrigin } from './_lib/guard';
+import { applyGuards } from './_lib/guard';
 import {
   FinMindClassifiedError,
   classifyFinMindError,
@@ -6,6 +6,7 @@ import {
   validateFinMindParams,
   type FinMindErrorCode,
 } from './_lib/finmind';
+import { marketPerMin } from './_lib/ratelimit';
 
 interface FinMindReq {
   method?: string;
@@ -16,6 +17,7 @@ interface FinMindReq {
 interface FinMindRes {
   status(code: number): FinMindRes;
   setHeader(name: string, value: string): void;
+  end(): void;
   json(data: unknown): void;
 }
 
@@ -28,18 +30,12 @@ const statusByCode: Record<FinMindErrorCode, number> = {
 export const maxDuration = 30;
 
 export default async function handler(req: FinMindReq, res: FinMindRes) {
+  if (!(await applyGuards(req, res, [marketPerMin]))) return;
+
   if (req.method !== 'GET') {
     res.status(405).json({
       code: 'BAD_REQUEST',
       message: '僅支援 GET 請求。',
-    });
-    return;
-  }
-
-  if (!isAllowedOrigin(req)) {
-    res.status(403).json({
-      code: 'BAD_REQUEST',
-      message: '請求來源不被允許。',
     });
     return;
   }

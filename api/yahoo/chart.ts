@@ -1,4 +1,4 @@
-import { isAllowedOrigin } from '../_lib/guard';
+import { applyGuards } from '../_lib/guard';
 import {
   YahooClassifiedError,
   classifyYahooError,
@@ -6,6 +6,7 @@ import {
   validateChartParams,
   type YahooErrorCode,
 } from '../_lib/yahoo';
+import { marketPerMin } from '../_lib/ratelimit';
 
 interface YahooReq {
   method?: string;
@@ -15,6 +16,8 @@ interface YahooReq {
 
 interface YahooRes {
   status(code: number): YahooRes;
+  setHeader(name: string, value: string): void;
+  end(): void;
   json(data: unknown): void;
 }
 
@@ -29,18 +32,12 @@ const statusByCode: Record<YahooErrorCode, number> = {
 export const maxDuration = 30;
 
 export default async function handler(req: YahooReq, res: YahooRes) {
+  if (!(await applyGuards(req, res, [marketPerMin]))) return;
+
   if (req.method !== 'GET') {
     res.status(405).json({
       code: 'BAD_REQUEST',
       message: '僅支援 GET 請求。',
-    });
-    return;
-  }
-
-  if (!isAllowedOrigin(req)) {
-    res.status(403).json({
-      code: 'BAD_REQUEST',
-      message: '請求來源不被允許。',
     });
     return;
   }
