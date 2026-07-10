@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-09 — Phase 4 由 Codex 執行、Opus 覆核（獨立重跑 build 驗證 A2 密鑰注入與 AIza=0）、合併 main（684453d）
+Last activity: 2026-07-10 - Completed quick task 260711-0hf: 更新 docs/DEPLOYMENT.md 第 6 節 GCP Gemini 每日配額，改為反映實測結果
 
 Progress: [██████████] 100%
 
@@ -108,6 +108,7 @@ Recent decisions affecting current work:
 | 260710-17a | 修正 api/ 後端 serverless function 在 Vercel production 部署時的 ERR_MODULE_NOT_FOUND 崩潰：package.json 設 "type":"module" 導致 Node 原生 ESM 執行 api/**/*.ts，但 tsconfig moduleResolution:"bundler" 允許的無副檔名相對匯入在原生 ESM 下不合法；為 6 個檔案（guard/http/finmind/gemini/yahoo-chart/yahoo-search）共 16 處相對匯入補上 .js 副檔名。今日首次真環境部署驗收時用 curl 對 production 實測發現（四個端點全 500 FUNCTION_INVOCATION_FAILED），非 Phase 4 引入、是 Phase 1 就存在的結構性 bug | 2026-07-10 | c977082 | [260710-17a-api-serverless-function-vercel-productio](./quick/260710-17a-api-serverless-function-vercel-productio/) |
 | 260710-w7y | 修正前端 7 處 `.replace('.TW','').replace('.TWO','')` 後綴剝除 bug：對上櫃股 6488.TWO 會先吃掉 .TWO 內的 .TW 留下孤兒 O 變成 6488O，導致上櫃股 FinMind 中文名/籌碼/價量/K線fallback 全查無失效；改用 `.replace(/\.TWO?$/i,'')` 錨定字尾正確剝除（上市股不受影響）。真環境部署驗收搜尋上櫃股時發現 | 2026-07-10 | c8997fd | [260710-w7y-tw-two-bug](./quick/260710-w7y-tw-two-bug/) |
 | 260710-wsq | 修正台股名錄快取中毒 bug：ensureTaiwanDirectory 抓取失敗仍把空目錄寫入 localStorage 快取 7 天（搜尋只剩 Yahoo 英文名且修好也不自癒）；改為失敗/空絕不寫入＋讀到空快取視同 miss 重抓（已中毒使用者自動痊癒）。另移除 index.html 指向不存在檔案的 /index.css 死引用（每次載入 404）。真環境部署驗收發現 | 2026-07-10 | 46a2464 | [260710-wsq-bug-index-css](./quick/260710-wsq-bug-index-css/) |
+| 260711-0hf | 更新 docs/DEPLOYMENT.md 第 6 節「GCP Gemini 每日配額」，改為反映實測結果：付費層（Tier 1/Postpay）對一般 GenerateContent 沒有可調每日配額（per day 配額只涵蓋 free tier token 數與 Search/Map grounding，本專案未用），財務防線改採 Billing → 預算與快訊（月上限 $10、50/90/100% 門檻、純 email 快訊不自動斷線） | 2026-07-10 | dd09948 | [260711-0hf-docs-deployment-md-6-gcp-gemini-billing](./quick/260711-0hf-docs-deployment-md-6-gcp-gemini-billing/) |
 
 ## Deferred Items
 
