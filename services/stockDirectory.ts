@@ -30,8 +30,13 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
     const ts = Number(localStorage.getItem(LS_TS) || 0);
     const cached = localStorage.getItem(LS_KEY);
     if (cached && Date.now() - ts < TTL) {
-      memCache = JSON.parse(cached);
-      return memCache!;
+      const parsed = JSON.parse(cached) as StockDirEntry[];
+      // 空陣列視同 cache miss：歷史版本曾把抓取失敗的空目錄快取 7 天（中毒），
+      // 這裡不採用空快取、續走重抓路徑，讓已中毒的使用者自動痊癒
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        memCache = parsed;
+        return memCache;
+      }
     }
   } catch { /* ignore */ }
 
@@ -55,11 +60,15 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
         }
       }
       const list = Array.from(map.values());
-      memCache = list;
-      try {
-        localStorage.setItem(LS_KEY, JSON.stringify(list));
-        localStorage.setItem(LS_TS, String(Date.now()));
-      } catch { /* localStorage 滿了就略過 */ }
+      // 只在真的抓到資料才快取——失敗/空結果絕不寫入，
+      // 避免把暫時性故障（403/502/限流）固化成 7 天的空目錄（快取中毒）
+      if (list.length > 0) {
+        memCache = list;
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify(list));
+          localStorage.setItem(LS_TS, String(Date.now()));
+        } catch { /* localStorage 滿了就略過 */ }
+      }
       return list;
     } catch (e) {
       console.warn('載入台股名錄失敗', e);
