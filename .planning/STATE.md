@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-10T00:55:00+08:00"
-last_activity: 2026-07-10 - Completed quick task 260710-17a: 修正 api/ 後端 ERR_MODULE_NOT_FOUND（真環境部署驗收發現的 Phase 1 結構性 bug）
+last_activity: 2026-07-10 - Completed quick task 260710-w7y: 修正上櫃股 .TW/.TWO 後綴剝除 bug（真環境部署驗收發現）
 progress:
   total_phases: 4
   completed_phases: 4
@@ -106,6 +106,7 @@ Recent decisions affecting current work:
 | 260613-ixg | 修正拖曳平移嚴重 lag：拖曳期間以 frozenSubDataRef 快照凍結兩張副圖（引用穩定→React.memo 跳過，放開才補正確視窗），主圖視窗粗化每 PAN_STEP=max(1,round(barsToShow/50)) 根才跳一步，單步成本由三圖重繪降為一圖且次數變少。build 通過；瀏覽器實測因 preview sandbox 的 Tailwind CDN 未載入（容器 0 寬）受阻，邏輯經 memo 正確性分析確認 | 2026-06-13 | 6e1ced1 | [260613-ixg-reduce-stockchart-pan-lag-freeze-sub-pan](./quick/260613-ixg-reduce-stockchart-pan-lag-freeze-sub-pan/) |
 | 260629-ag1 | 新增專案 AGENTS.md（Codex 進入指引），採單一事實來源做法指向既有 CLAUDE.md（不複製），讓 Claude 與 Codex 在本專案層級同步；摘要安全紅線（GEMINI_API_KEY 不進前端/ git）、型別相容、程式風格與 GSD 流程。註：本機環境無 node，GSD 工具鏈無法自動執行，改以手動複刻結構＋git 原子提交完成 | 2026-06-29 | ac56a24 | [260629-ag1-add-agents-md-codex-sync](./quick/260629-ag1-add-agents-md-codex-sync/) |
 | 260710-17a | 修正 api/ 後端 serverless function 在 Vercel production 部署時的 ERR_MODULE_NOT_FOUND 崩潰：package.json 設 "type":"module" 導致 Node 原生 ESM 執行 api/**/*.ts，但 tsconfig moduleResolution:"bundler" 允許的無副檔名相對匯入在原生 ESM 下不合法；為 6 個檔案（guard/http/finmind/gemini/yahoo-chart/yahoo-search）共 16 處相對匯入補上 .js 副檔名。今日首次真環境部署驗收時用 curl 對 production 實測發現（四個端點全 500 FUNCTION_INVOCATION_FAILED），非 Phase 4 引入、是 Phase 1 就存在的結構性 bug | 2026-07-10 | c977082 | [260710-17a-api-serverless-function-vercel-productio](./quick/260710-17a-api-serverless-function-vercel-productio/) |
+| 260710-w7y | 修正前端 7 處 `.replace('.TW','').replace('.TWO','')` 後綴剝除 bug：對上櫃股 6488.TWO 會先吃掉 .TWO 內的 .TW 留下孤兒 O 變成 6488O，導致上櫃股 FinMind 中文名/籌碼/價量/K線fallback 全查無失效；改用 `.replace(/\.TWO?$/i,'')` 錨定字尾正確剝除（上市股不受影響）。真環境部署驗收搜尋上櫃股時發現 | 2026-07-10 | c8997fd | [260710-w7y-tw-two-bug](./quick/260710-w7y-tw-two-bug/) |
 
 ## Deferred Items
 
