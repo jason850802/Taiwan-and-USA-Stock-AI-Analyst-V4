@@ -64,19 +64,25 @@ ALLOWED_ORIGIN=http://localhost:3000,http://localhost:3001,https://xxx.vercel.ap
 
 `FINMIND_TOKEN` 是選填。未填時仍可使用公開額度；填入後可提高額度。請到 FinMind 會員後台取得 token，填入 Vercel 的 `FINMIND_TOKEN`。
 
-## 6. GCP Gemini 每日配額（最後財務防線）
+## 6. GCP Gemini 財務防線（Billing 預算與快訊）
 
-這是手動操作，用來在共享密鑰或限流失效時封頂單日帳單：
+這是純 GCP Console 手動操作，用來在共享密鑰或限流失效時封頂每月帳單。它不是程式碼或本專案設定檔能重現的步驟，因此以下只描述 Console 操作路徑，供未來人工重做。
 
-1. 開啟 Google Cloud Console，選 Gemini API key 所屬 project。
-2. 到 APIs & Services → Enabled APIs & services。
-3. 選 Generative Language API。
-4. 到 Quotas & System Limits。
-5. 篩選 `GenerateContent` 與 `per day` / RPD。
-6. 選 Edit quota，建議填約 200 次/天（應用層限流是 100 次/天，這裡留一點 headroom）。
-7. Submit request。
+**為何不用「設每日配額（RPD）」做這件事**：本專案金鑰所屬 project 為付費層（Tier 1 / Postpay）。在 Console 的「配額與系統限制」頁面篩選 `per day` / `generatecontent` 後，可見的每日配額全部是 free tier 專屬的 input token 數限制，或僅限有接 Google Search grounding / Map grounding 的呼叫才會計入；本專案 `services/gemini.ts` 是純文字分析呼叫、未使用 Search/Map grounding，因此不受這些 per day 配額影響。付費層對一般 GenerateContent 請求並沒有可調整的每日請求配額（RPD）可設，故舊版「編輯每日配額、設約 200 次/天」的做法在此帳戶類型下找不到對應項目、實際操作不了。真正落地的財務防線改用 Billing 的每月預算與快訊。
 
-RPD 通常以太平洋時間午夜重置。若使用 AI Studio 產生 key，它仍歸屬某個 Google Cloud project，配額也在該 project 管理。
+實際操作路徑：
+
+1. 開啟 Google Cloud Console → Billing（帳單）。
+2. 左側選 Budgets & alerts（預算與快訊）。
+3. 按 Create budget（建立預算）。
+4. Scope（範圍）鎖定 Gemini API key 所屬 project（本專案為 `chuan-483103`），避免涵蓋同帳單帳戶下其他 project。
+5. Budget type 選 Specified amount（指定金額），設每月固定金額（本專案設約 $10 USD／月）。
+6. 設定 alert thresholds 門檻 50% / 90% / 100%。
+7. 通知對象勾選 email 給帳單管理員（Billing account admins/users）。
+
+不設定任何自動化斷線動作（不接 Pub/Sub 觸發關閉服務），純 email 快訊。理由是避免誤傷同 project／同帳單帳戶下其他非 Gemini 服務（例如 BigQuery、Compute Engine）。
+
+預算以「月」為週期計算與重置（非每日重置）。即使用 AI Studio 產生的 key，它仍歸屬某個 Google Cloud project，帳單與預算都在該 project／其帳單帳戶管理。
 
 ## 7. 限流數值
 
