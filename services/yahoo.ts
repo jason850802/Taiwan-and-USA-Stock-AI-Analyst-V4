@@ -206,7 +206,7 @@ const fetchFinMindRows = async (
 };
 
 const fetchInstitutionalData = async (stockId: string, startDate: string) => {
-    const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
+    const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
         return await fetchFinMindRows('TaiwanStockInstitutionalInvestorsBuySell', { data_id: cleanId, start_date: startDate });
     } catch (e) {
@@ -216,7 +216,7 @@ const fetchInstitutionalData = async (stockId: string, startDate: string) => {
 };
 
 const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
-    const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
+    const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
         return await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: startDate });
     } catch (e) {
@@ -226,7 +226,7 @@ const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
 }
 
 const fetchFinMindStockInfo = async (stockId: string) => {
-    const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
+    const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
         const rows = await fetchFinMindRows('TaiwanStockInfo', { data_id: cleanId });
         if (rows.length > 0) {
@@ -240,7 +240,7 @@ const fetchFinMindStockInfo = async (stockId: string) => {
 
 // Fallback: Fetch OHLC from FinMind when Yahoo fails
 const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]> => {
-    const cleanId = stockId.replace('.TW', '').replace('.TWO', '');
+    const cleanId = stockId.replace(/\.TWO?$/i, '');
     // Fetch last 5 years
     const startDate = new Date();
     startDate.setFullYear(startDate.getFullYear() - 5);
@@ -492,7 +492,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       };
   } catch (err: any) {
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
-      const cleanSymbol = symbol.toUpperCase().replace('.TW', '').replace('.TWO', '');
+      const cleanSymbol = symbol.toUpperCase().replace(/\.TWO?$/i, '');
       const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);
 
       if (isPotentialTaiwanStock && interval === '1d') {
@@ -622,7 +622,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
       
       // We need clean ID for FinMind
-      const cleanId = symbolInfo.symbol.replace('.TW', '').replace('.TWO', '');
+      const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
 
       const [institutionalData, finMindPriceData] = await Promise.all([
           fetchInstitutionalData(cleanId, fetchStartDateStr),

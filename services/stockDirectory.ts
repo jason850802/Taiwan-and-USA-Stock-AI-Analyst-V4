@@ -132,7 +132,7 @@ export async function searchStocks(dir: StockDirEntry[], query: string): Promise
   const seen = new Set(tw.map(e => e.id));
   const merged = [...tw];
   for (const y of yahoo) {
-    const bare = y.id.replace('.TW', '').replace('.TWO', '');
+    const bare = y.id.replace(/\.TWO?$/i, '');
     if (!seen.has(y.id) && !seen.has(bare)) { merged.push(y); seen.add(y.id); }
   }
   return merged.slice(0, 24);
