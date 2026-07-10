@@ -71,6 +71,9 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 補上美股 skill（dcf-model／comps-analysis／initiating-coverage）從 SEC 自動取得、台股缺的那層。
 使用者要台股的財報、估值、DCF、基本面時用；抓取腳本 `.claude/skills/_shared/fetch_fundamentals.py`。
 
+工作流 skills：`phase-loop`（三角開發迴圈 playbook——規劃/交 Codex/覆核/合併四階段，
+7 輪實戰驗證的格式與儀式，做任何 phase 工作先讀它）；`start-dev`（起 dev 環境固定流程＋故障對照表）。
+
 <!-- GSD:skills-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
@@ -80,6 +83,11 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 改檔前先走 GSD 入口，讓規劃產物與執行 context 同步（注意是冒號語法）：
 `/gsd:quick`（小修／文件）、`/gsd:debug`（查蟲）、`/gsd:execute-phase`（計畫內工作）。
 除非使用者明確要求繞過，不要在 GSD 流程外直接改 repo。
+
+**節省 token**：本專案已用 `/gsd:surface` 關閉 `ns_meta`／`milestone`／`research_ideate`／
+`workspace_state`／`docs`／`ui`／`ai_eval` 這 7 個 cluster（保留 core_loop／audit_review／utility，
+故 quick/debug/execute-phase 不受影響）。若任務真的需要被關掉的功能（如里程碑收尾、UI 設計稿、
+AI 評估規劃），先執行 `/gsd:surface enable <cluster>` 借回來再呼叫該指令，用完可 `disable` 關回去。
 <!-- GSD:workflow-end -->
 
 <!-- GSD:profile-start -->
