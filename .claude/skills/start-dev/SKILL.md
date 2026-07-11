@@ -1,6 +1,6 @@
 ---
 name: start-dev
-description: 起本專案完整開發環境的固定流程：先做前置檢查（殘留 node 程序、.env 變數、埠占用），再給使用者兩終端機的複製貼上指令（vercel dev 3001 後端＋Vite 3000 前端）。當使用者說「起環境」「開 dev」「給我開 localhost 的指令」「怎麼啟動 App」或人工驗證前需要環境時使用。此流程使用者已重複詢問多次，照本 skill 執行不要重新發明。
+description: 起本專案完整開發環境的固定流程：助手先做前置檢查（殘留 node 程序、.env 變數名、埠占用），再直接用 PowerShell Start-Process 開兩個使用者看得見的獨立視窗（後端 vercel dev 3001＋前端 Vite 3000），輪詢兩埠就緒後回報「瀏覽器開 http://localhost:3000」；不再只輸出複製貼上指令（保留為 Fallback）。當使用者說「起環境」「開 dev」「給我開 localhost 的指令」「怎麼啟動 App」或人工驗證前需要環境時使用。此流程使用者已重複詢問多次，照本 skill 執行不要重新發明。
 ---
 
 # 起開發環境（start-dev）
@@ -17,7 +17,60 @@ grep -oE "^[A-Z_]+=" "E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.env"
 # 需要：GEMINI_API_KEY、GEMINI_MODEL_FAST、GEMINI_MODEL_THINKING、ALLOWED_ORIGIN、FINMIND_TOKEN(選填)
 ```
 
-## 步驟 2：給使用者的指令（原樣輸出這個格式，使用者已習慣）
+```powershell
+# c. 埠占用檢查（3001 後端 / 3000 前端）
+Test-NetConnection localhost -Port 3001 -InformationLevel Quiet -WarningAction SilentlyContinue
+Test-NetConnection localhost -Port 3000 -InformationLevel Quiet -WarningAction SilentlyContinue
+```
+- 兩埠皆回 **True** → 環境可能已經開著：**跳過步驟 2**，直接進步驟 3 輪詢確認後回報使用者。
+- 埠在聽但其實是舊視窗殘留（步驟 1a 查到殘留 node）→ 先回步驟 1a 清程序，再重新起。
+- 兩埠皆 False → 正常，往步驟 2 開視窗。
+
+## 步驟 2：助手直接開兩個視窗（Start-Process，使用者看得見）
+
+助手直接執行下列兩行（不是給使用者貼，是助手自己跑），會開出兩個獨立、使用者看得見的 PowerShell 視窗：
+
+```powershell
+# 視窗 A（後端 vercel dev 3001）
+Start-Process powershell -WorkingDirectory "E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4" -ArgumentList '-NoExit','-Command','npx.cmd vercel dev --listen 3001'
+
+# 視窗 B（前端 Vite 3000）
+Start-Process powershell -WorkingDirectory "E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4" -ArgumentList '-NoExit','-Command','npm.cmd run dev'
+```
+
+- 這會開出兩個獨立 PowerShell 視窗（A 後端、B 前端），使用者可在視窗內即時看 log、要收工時各自 **Ctrl+C**。
+- `-NoExit` 讓視窗在指令跑起來後留著顯示 log，不會一閃即關。
+- 為何用 `npx.cmd` / `npm.cmd`：PowerShell execution policy 會擋 `npx.ps1` / `npm.ps1`，用 `.cmd` 版繞過。
+- 為何用 `-WorkingDirectory` 而非 `-Command` 內 `cd "..."`：專案根目錄含空格（`E:\My Project\...`），把 `cd "..."` 塞進 `-Command` 字串會踩內層引號轉義雷；用 `-WorkingDirectory` 帶路徑最乾淨。
+
+## 步驟 3：輪詢就緒後回報
+
+開完視窗後，助手輪詢兩埠，兩埠皆通才回報使用者開瀏覽器：
+
+```powershell
+$deadline = (Get-Date).AddSeconds(90)
+do {
+    $b = Test-NetConnection localhost -Port 3001 -InformationLevel Quiet -WarningAction SilentlyContinue
+    $f = Test-NetConnection localhost -Port 3000 -InformationLevel Quiet -WarningAction SilentlyContinue
+    if ($b -and $f) { break }
+    Start-Sleep -Seconds 3
+} while ((Get-Date) -lt $deadline)
+
+if ($b -and $f) {
+    Write-Host "OK：後端 3001 + 前端 3000 就緒，瀏覽器開 http://localhost:3000"
+} else {
+    Write-Host "TIMEOUT: b=$b f=$f — 看視窗 A/B 的 log 對照下方故障表"
+}
+```
+
+- `vercel dev` 首次冷啟可能 30–60 秒，故上限設 **90 秒**、每 **3 秒**輪一輪。
+- 兩埠（$b 後端 3001、$f 前端 3000）**皆通**才回報使用者開 http://localhost:3000（`/api` 由 Vite proxy 轉給 3001）。
+- 逾時就把 `b=`/`f=` 值連同「看視窗 A/B 的 log」一起回報，對照下方故障表判斷。
+- 替代法：亦可用 `Invoke-WebRequest -UseBasicParsing -Uri http://localhost:3000 -TimeoutSec 3`，但 `vercel dev` 對 `/` 會回 404，`Test-NetConnection` 只測埠、不受 HTTP 狀態影響，較穩。
+
+## Fallback：Start-Process 失敗時退回複製貼上
+
+若 `Start-Process` 因權限／環境問題失敗（開不出視窗），就把下面這兩段貼給使用者，請他自己在兩個終端機各跑一個：
 
 **終端機視窗 A（後端）**：
 ```
@@ -31,7 +84,7 @@ npx.cmd vercel dev --listen 3001
 cd "E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4"
 npm.cmd run dev
 ```
-等到顯示 `➜  Local:   http://localhost:3000/`。
+等到顯示 `➜  Local:   http://localhost:3000/`。**這個視窗不要關。**
 
 兩個都 Ready 後，瀏覽器開 **http://localhost:3000**（`/api` 由 Vite proxy 轉給 3001）。
 
