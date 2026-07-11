@@ -48,8 +48,21 @@ const CandleStickShape = (props: any) => {
   const { x, y, width, height, payload } = props;
   const { open, close, high, low } = payload;
 
-  // Guard
-  if (!open || !close || width <= 0 || height <= 0) return null;
+  // Guard（價格永不為 0，可續用；height 移出交由下方一字板分支處理）
+  if (!open || !close || width <= 0) return null;
+
+  // 一字板（漲跌停鎖死，high===low）：recharts 傳入 bar 像素 height 為 0，
+  // 若沿用舊 guard 會 return null 完全不畫。改畫一條最小可見水平線（strokeWidth=2），
+  // 顏色依「與前收比較」（priceChange）——一字板 close===open 用 close vs open 會誤判成灰。
+  if (height <= 0 || high === low) {
+    const priceChange = payload.priceChange;
+    const limitColor = priceChange > 0
+      ? '#f0405a'                                   // 漲停紅
+      : priceChange < 0 ? '#22c55e' : '#94a3b8';    // 跌停綠 / 無變化灰
+    return (
+      <line x1={x} y1={y} x2={x + width} y2={y} stroke={limitColor} strokeWidth={2} />
+    );
+  }
 
   const isUp   = close > open;
   const isDown = close < open;
