@@ -400,9 +400,16 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
 
             // 守衛 3（防重複）：若 cleanData 尾端已有同時間戳則不重複 push
             const lastClean = cleanData.length > 0 ? cleanData[cleanData.length - 1] : null;
-            if (!lastClean || lastClean.timestamp !== synthTs) {
-                const { hour: rawHour, minute: rawMinute, dateStr: rawDateStr } =
-                    getExchangeTime(synthTs, meta.exchangeTimezoneName, isTaiwanStock);
+            // 合成棒候選日期：沿用區塊內同一套 getExchangeTime 轉換（台北/紐約時區一致），勿另造轉換。
+            const { hour: rawHour, minute: rawMinute, dateStr: rawDateStr } =
+                getExchangeTime(synthTs, meta.exchangeTimezoneName, isTaiwanStock);
+            // 守衛 4（日期須前進）：只有合成棒日期嚴格晚於序列最後一根真實（非 null）棒日期時才合成。
+            // 情境：颱風日 regularMarketTime 停在 7/9（＝最後真實棒 7/9），synth 日期 7/9 不嚴格晚於 7/9 → 不合成 ✓；
+            //       正常盤中 regularMarketTime＝今日 > 昨日（最後真實棒）→ 合成，儀表板顯示最新價（原設計保留）✓。
+            // 邊界：cleanData 為空（無真實棒可比）→ 維持原合成行為（不因此退化）。
+            // 縱深防禦：即使漏網，getStockData 殭屍過濾器仍會兜底剔除平盤棒。
+            const synthDateAdvances = !lastClean || rawDateStr > lastClean.rawDateStr;
+            if ((!lastClean || lastClean.timestamp !== synthTs) && synthDateAdvances) {
                 const dateStr = formatExchangeDate(synthTs, meta.exchangeTimezoneName, interval);
 
                 cleanData.push({
