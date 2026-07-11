@@ -1,0 +1,23 @@
+# 預設：git 自動偵測文字檔，index 一律存 LF
+* text=auto
+
+# 程式碼與設定檔明確鎖 LF（跨 Claude/Codex/CI 一致）
+*.ts  text eol=lf
+*.tsx text eol=lf
+*.js  text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.py  text eol=lf
+*.json text eol=lf
+*.md  text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+
+# 二進位檔
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
