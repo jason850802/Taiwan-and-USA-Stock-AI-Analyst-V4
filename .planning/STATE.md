@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-11 - Completed quick task 260711-v9f: 修正 StockChart 一字板K棒不顯示、法人小量買賣超柱不可見、切換週期載入動畫
+Last activity: 2026-07-11 - Completed quick task 260711-wqe: 升級 start-dev skill 為助手直接 Start-Process 開兩視窗＋輪詢就緒
 
 Progress: [██████████] 100%
 
@@ -112,6 +112,7 @@ Recent decisions affecting current work:
 | 260711-unf | 修復颱風假（臨時休市日）假 K 棒污染技術指標：7/10 颱風台股休市但 Yahoo 仍回傳平盤棒（O=H=L=C=前收、量0）、App 合成邏輯亦會補出同樣假棒，KD/MACD/RSI/布林/均線全失準。兩層修法——getStockData 新增 4.5 步日線殭屍棒過濾器（FinMind 覆寫後、指標計算前剔除「量0且O=H=L=C=前一保留棒收盤」的棒；首棒不殺、連續休市正確處理、漲跌停零量棒保留），processYahooResult 合成守衛加嚴（合成日期須嚴格晚於最後真實棒日期，颱風日 regularMarketTime 停在前一交易日故不合成）。實測依據：Yahoo 對 7/10 回傳非 null 假棒、FinMind 乾淨無 7/10、Yahoo 長期歷史自清（2024 凱米/山陀兒颱風假不存在）故無歷史污染、App 無行情快取即修即生效 | 2026-07-11 | 77a088c, 39e54aa | [260711-unf-k-yahoo-ts](./quick/260711-unf-k-yahoo-ts/) |
 | 260711-v9f | 修正 StockChart 三項顯示問題：(1) 一字板 K 棒（O=H=L=C 漲跌停鎖死）因 CandleStickShape 對 height<=0 直接 return null 而完全不顯示，改畫最小 2px 可見水平線，顏色依前收漲紅跌綠平灰；(2) 外資/投信買賣超柱狀在小量時被大值主導的 YAxis 壓到 ~0px 看不見，改自訂 min-height shape 非零值撐到最小 2px、正負錨定零線、紅買綠賣；(3) 切換 K 棒週期時無任何載入回饋被誤認當機，App.tsx 在 loading 期間於圖表區疊加 Loader2 spinner＋「載入中…」覆蓋層。與 260711-unf 殭屍棒過濾器相容（漲跌停零量棒本就保留於資料層，本次僅動渲染層） | 2026-07-11 | 4cacb36, a029f8c, f534948 | [260711-v9f-stockchart-k](./quick/260711-v9f-stockchart-k/) |
 | 260711-v9f 補修 | (2) 的 ChipBar 對 recharts 負值柱（height 為負、y 為值端）誤判 height<MIN 恆成立，所有賣超柱被壓成 2px 懸浮短線；改先正規化 top/|height| 再做最小高度錨定零線。瀏覽器 DOM 實測 2330 日K：外資/投信 200 根紅綠柱全數錨定零線、綠柱高度恢復多樣（最高 81.7px、小量 2px） | 2026-07-11 | 441948a | [260711-v9f-stockchart-k](./quick/260711-v9f-stockchart-k/) |
+| 260711-wqe | 升級 start-dev skill：使用者說「起環境」時助手不再只給複製貼上指令，改直接用 PowerShell Start-Process 開兩個可見視窗（後端 vercel dev 3001＋前端 Vite 3000，-WorkingDirectory 繞開空格路徑轉義雷），新增 90 秒/3 秒間隔雙埠輪詢就緒後回報，原指令模式保留為 Fallback；sync:skills 確認 start-dev 不在 Codex 鏡像白名單（no-op），並依新流程實測啟動成功（3000/3001 皆活） | 2026-07-11 | 8b2c386 | [260711-wqe-start-dev-skill-powershell](./quick/260711-wqe-start-dev-skill-powershell/) |
 
 ## Deferred Items
 
