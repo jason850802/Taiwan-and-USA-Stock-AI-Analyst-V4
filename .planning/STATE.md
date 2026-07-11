@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-11 - Completed quick task 260711-unf: 修復颱風假臨時休市日假K棒污染技術指標（yahoo.ts 殭屍棒過濾＋合成守衛收緊）
+Last activity: 2026-07-11 - Completed quick task 260711-v9f: 修正 StockChart 一字板K棒不顯示、法人小量買賣超柱不可見、切換週期載入動畫
 
 Progress: [██████████] 100%
 
@@ -110,6 +110,7 @@ Recent decisions affecting current work:
 | 260710-wsq | 修正台股名錄快取中毒 bug：ensureTaiwanDirectory 抓取失敗仍把空目錄寫入 localStorage 快取 7 天（搜尋只剩 Yahoo 英文名且修好也不自癒）；改為失敗/空絕不寫入＋讀到空快取視同 miss 重抓（已中毒使用者自動痊癒）。另移除 index.html 指向不存在檔案的 /index.css 死引用（每次載入 404）。真環境部署驗收發現 | 2026-07-10 | 46a2464 | [260710-wsq-bug-index-css](./quick/260710-wsq-bug-index-css/) |
 | 260711-0hf | 更新 docs/DEPLOYMENT.md 第 6 節「GCP Gemini 每日配額」，改為反映實測結果：付費層（Tier 1/Postpay）對一般 GenerateContent 沒有可調每日配額（per day 配額只涵蓋 free tier token 數與 Search/Map grounding，本專案未用），財務防線改採 Billing → 預算與快訊（月上限 $10、50/90/100% 門檻、純 email 快訊不自動斷線） | 2026-07-10 | dd09948 | [260711-0hf-docs-deployment-md-6-gcp-gemini-billing](./quick/260711-0hf-docs-deployment-md-6-gcp-gemini-billing/) |
 | 260711-unf | 修復颱風假（臨時休市日）假 K 棒污染技術指標：7/10 颱風台股休市但 Yahoo 仍回傳平盤棒（O=H=L=C=前收、量0）、App 合成邏輯亦會補出同樣假棒，KD/MACD/RSI/布林/均線全失準。兩層修法——getStockData 新增 4.5 步日線殭屍棒過濾器（FinMind 覆寫後、指標計算前剔除「量0且O=H=L=C=前一保留棒收盤」的棒；首棒不殺、連續休市正確處理、漲跌停零量棒保留），processYahooResult 合成守衛加嚴（合成日期須嚴格晚於最後真實棒日期，颱風日 regularMarketTime 停在前一交易日故不合成）。實測依據：Yahoo 對 7/10 回傳非 null 假棒、FinMind 乾淨無 7/10、Yahoo 長期歷史自清（2024 凱米/山陀兒颱風假不存在）故無歷史污染、App 無行情快取即修即生效 | 2026-07-11 | 77a088c, 39e54aa | [260711-unf-k-yahoo-ts](./quick/260711-unf-k-yahoo-ts/) |
+| 260711-v9f | 修正 StockChart 三項顯示問題：(1) 一字板 K 棒（O=H=L=C 漲跌停鎖死）因 CandleStickShape 對 height<=0 直接 return null 而完全不顯示，改畫最小 2px 可見水平線，顏色依前收漲紅跌綠平灰；(2) 外資/投信買賣超柱狀在小量時被大值主導的 YAxis 壓到 ~0px 看不見，改自訂 min-height shape 非零值撐到最小 2px、正負錨定零線、紅買綠賣；(3) 切換 K 棒週期時無任何載入回饋被誤認當機，App.tsx 在 loading 期間於圖表區疊加 Loader2 spinner＋「載入中…」覆蓋層。與 260711-unf 殭屍棒過濾器相容（漲跌停零量棒本就保留於資料層，本次僅動渲染層） | 2026-07-11 | 4cacb36, a029f8c, f534948 | [260711-v9f-stockchart-k](./quick/260711-v9f-stockchart-k/) |
 
 ## Deferred Items
 
