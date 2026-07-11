@@ -59,8 +59,13 @@ const formatPromptData = (
   const brokePrevHigh = latest.close > prev.high;
   const standOn5MA = latest.ma5 ? latest.close > latest.ma5 : false;
 
+  // 基本量＝前5日均量（不含今日），供攻擊量雙軌第二軌使用
+  const baseVol5 = data.length >= 6
+    ? data.slice(-6, -1).reduce((s, d) => s + d.volume, 0) / 5
+    : 0;
   const passPriceCheck = priceChangePct > 2 && isRedCandle;
-  const passVolumeCheck = volumeRatio > 1.3;
+  // 攻擊量雙軌擇一：>昨量×1.3 或 >5日均量×1.2
+  const passVolumeCheck = volumeRatio > 1.3 || (baseVol5 > 0 && latest.volume / baseVol5 >= 1.2);
   const passBreakoutCheck = standOn5MA && brokePrevHigh;
   const isGoldenBuyPoint = passPriceCheck && passVolumeCheck && passBreakoutCheck;
 
@@ -139,7 +144,35 @@ const formatPromptData = (
   if (volumeProjection && volumeProjection.status === 'Intraday' && volumeProjection.yesterdayVolume > 0) {
     effectiveVolumeRatio = volumeProjection.projectedVolume / volumeProjection.yesterdayVolume;
   }
-  const passEffectiveVolumeCheck = effectiveVolumeRatio > 1.3;
+  // 攻擊量雙軌擇一：今量（盤中為預估量）>昨量×1.3 或 >基本量(前5日均量)×1.2
+  const effectiveTodayVol = (volumeProjection && volumeProjection.status === 'Intraday')
+    ? volumeProjection.projectedVolume : latest.volume;
+  const effectiveVolVsBase5 = baseVol5 > 0 ? effectiveTodayVol / baseVol5 : 0;
+  const passEffectiveVolumeCheck = effectiveVolumeRatio > 1.3 || effectiveVolVsBase5 >= 1.2;
+
+  // 持股健檢價位（初階CH3 大量紅K三價位；進階第三章 向上缺口四價位）
+  let keyLevelsStr = '';
+  {
+    const last20 = data.slice(-20);
+    let bigRed: StockDataPoint | undefined;
+    for (const d of last20) if (d.close > d.open && (!bigRed || d.volume > bigRed.volume)) bigRed = d;
+    if (bigRed && bigRed.volume > 0) {
+      keyLevelsStr += `
+*** KEY LEVELS（持股防守參考價位） ***
+- 近20日最大量紅K（${bigRed.date}）三價位：最高點 ${bigRed.high.toFixed(2)}（跌破＝攻擊減弱，3~5日內須站回）｜1/2價 ${((bigRed.high + bigRed.low) / 2).toFixed(2)}（跌破＝當日均成本失守、氣勢破壞）｜最低點 ${bigRed.low.toFixed(2)}（跌破＝多空易位）`;
+    }
+    const gapLines: string[] = [];
+    for (let j = Math.max(1, data.length - 60); j < data.length; j++) {
+      const gTop = data[j].low, gBot = data[j - 1].high;
+      if (gTop > gBot) {
+        let filled = false;
+        for (let t = j; t < data.length; t++) if (data[t].low <= gBot) { filled = true; break; }
+        if (!filled) gapLines.push(`${data[j].date} 上沿 ${gTop.toFixed(2)}／下沿 ${gBot.toFixed(2)}`);
+      }
+    }
+    if (gapLines.length)
+      keyLevelsStr += `\n- 未回補向上跳空缺口（四價位框架：上高＞上沿＞下沿＞下底，逐級失守意義遞增）：${gapLines.slice(-3).join('；')}`;
+  }
 
   return `
 Target Stock: ${symbol}
@@ -147,9 +180,10 @@ ${volumeProjStr}
 
 *** SYSTEM REFERENCE DATA (Strict Criteria) ***
 1. PRICE Criteria (>2% Up & Red Candle): ${passPriceCheck ? "PASS" : "FAIL"} (Actual: ${priceChangePct.toFixed(2)}%)
-2. VOLUME Criteria (Vol > 1.3x Yesterday): ${passEffectiveVolumeCheck ? "PASS" : "FAIL"} (${volumeProjection?.status === 'Intraday' ? '預估量' : '實際量'}Ratio: ${effectiveVolumeRatio.toFixed(2)}x)
+2. VOLUME Criteria (>1.3x Yesterday OR >1.2x 5D-Avg, 擇一): ${passEffectiveVolumeCheck ? "PASS" : "FAIL"} (${volumeProjection?.status === 'Intraday' ? '預估量' : '實際量'}/昨量: ${effectiveVolumeRatio.toFixed(2)}x；/5日均量: ${effectiveVolVsBase5 > 0 ? effectiveVolVsBase5.toFixed(2) + 'x' : 'N/A'})
 3. PATTERN Criteria (Stand on 5MA & Break Prev High): ${passBreakoutCheck ? "PASS" : "FAIL"}
 -> IS GOLDEN BUY POINT MET? : ${passPriceCheck && passEffectiveVolumeCheck && passBreakoutCheck ? "YES" : "NO"}
+${keyLevelsStr}
 
 *** LATEST DATA POINTS ***
 - Today's Close: ${latest.close.toFixed(2)}
@@ -181,56 +215,59 @@ export const analyzeStockWithGemini = async (
 
   const systemInstruction = `
 ### 角色定位
-你是一位精通「朱家泓 × 林穎」技術分析體系的專業交易專家。你將運用講義中的「六六大順」選股步驟與「三大黃金買點」準則，針對使用者提供的股票數據進行深度診斷。
+你是一位精通「朱家泓 × 林穎」技術分析體系的專業交易專家。你將運用講義中的「六六大順」選股步驟與「六大買點」準則，針對使用者提供的股票數據進行深度診斷。
+**定位**：本分析為「盤中快篩／濾網外補充視角」。若使用者同時取得「進場濾網（方案C）」的 GO/WAIT/NO-GO 客觀結論，一律**以濾網結論為準**，本分析不得與之矛盾。
+**只做多**：使用者只做多不做空；空方訊號僅作辨識，動作一律為出場／避開／鎖股觀望，禁止輸出做空建議。
 
-### 核心分析邏輯：六六大順
+### 核心分析邏輯：六六大順（依講義順序）
 1. **趨勢**：辨識「頭頭高/低、底底高/低」。
-2. **位置**：判斷處於打底、起漲、主升或末升段。
-3. **均線**：確認三線/六線排列，股價是否站穩 20MA。
-4. **K 線**：識別關鍵 K 棒（如：長紅突破、變盤線、組合型態）。
-5. **成交量**：檢查攻擊量（>1.3倍）或爆大量背離。
-6. **指標**：綜合 MACD (0軸位置/柱狀體)、KD (交叉/慢速/鈍化) 與布林通道 (開口方向)。
+2. **位置**：判斷處於打底、起漲、主升或末升段（起漲達一倍＝高檔；沿5均漲逾20%＝停利警戒）。
+3. **K 線**：識別關鍵 K 棒（如：長紅突破、變盤線、組合型態）。
+4. **均線**：確認三線/六線排列，股價是否站穩 20MA。
+5. **成交量**：檢查攻擊量（今量>昨量×1.3 或 >5日均量×1.2，擇一）或爆大量背離。
+6. **指標**：綜合 MACD (10,20,10：0軸位置/柱狀體)、KD (5,3,3：交叉/鈍化回歸價量) 與布林通道 (開口方向)。
 
 ---
 
 ### 輸出格式（結合舊版格式與講義深度）
 
-#### 1. 六六大順深度研判
+#### 1. 六六大順深度研判（依講義順序：趨勢→位置→K線→均線→量→指標）
 - **趨勢方向**：[多頭/空頭/盤整]。說明是否符合「頭頭高、底底高」等慣性。
-- **均線結構**：[多頭排列/空頭排列/糾結]。說明 MA5/10/20 方向及股價與 20MA 的位置關係。
 - **位置與型態**：說明目前所處波段位置，是否有 ABC 修正突破、島型反轉或底部型態確認。
-- **關鍵 K 線與成交量**：判斷今日 K 線意義，量能是否達「攻擊量」(1.3倍) 或存在「價量背離」。
+- **關鍵 K 線**：判斷今日 K 線意義（長紅突破、變盤線、組合型態）。
+- **均線結構**：[多頭排列/空頭排列/糾結]。說明 MA5/10/20 方向及股價與 20MA 的位置關係。
+- **成交量**：量能是否達「攻擊量」（>昨量×1.3 或 >5日均量×1.2，擇一）或存在「價量背離」。
 - **技術指標分析**：
-    - **KD**：數值與交叉狀態，是否進入 80/20 鈍化區。
+    - **KD (5,3,3)**：數值與交叉狀態；**多頭中 50 以下的黃金交叉為波段起漲點（50 附近比 20 附近更強）**；若進入 80~100 高檔鈍化則**回歸價量判斷、不單獨扣分**（鈍化為強勢股特徵）；背離僅在 20~80 之間有效。
     - **MACD**：OSC 柱狀體增減，DIF/DEA 是否在 0 軸之上。
     - **布林通道**：股價是否沿上軌擴張或觸碰上下軌遇壓/支撐。
 - **外資與投信**：（若有籌碼資料）解析籌碼安定度與法人態度。
 
 #### 2. 訊號檢核表 (Check List)
-- **[ ] 進場型態確認**：[✅/ ] 盤整突破、回後買上漲、或 K 線橫盤突破？。
+- **[ ] 進場型態確認**：[✅/ ] 符合六大買點之一？（①盤整突破 ②回後買上漲 ③K線橫盤突破（連3天以上收盤未過第一根K高點也未破其低點，帶量中長紅突破） ④突破ABC修正下降切線（回檔一般20天內） ⑤突破上升軌道線（<30度緩漲帶量破上軌） ⑥型態確認（W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線））。
 - **[ ] 三大黃金買點檢核**：
     - **價**：[✅/ ] 實體紅 K 且漲幅 > 2%？。
-    - **量**：[✅/ ] 成交量 > 昨日 1.3 倍 (攻擊量)？。
+    - **量**：[✅/ ] 攻擊量成立？（今量 > 昨量×1.3 或 > 5日均量×1.2，擇一）。
       ⚠️ **重要**：若資料中標示「成交量狀態：盤中（Intraday）」，則此項必須以「預估全日成交量」與昨日成交量的比較作為判斷依據，並在判定旁標注「(依預估量)」。僅在資料標示「收盤（Closed）」時才使用實際量變化。
     - **型**：[✅/ ] 趨勢完成多頭架構或型態突破？。
 - **[ ] 進場指標加持**：[✅/ ] KD 向上多排且 MACD 紅柱增長/綠柱縮短？。
 - **[ ] 出場/警戒訊號**：是否有高檔爆大量長黑、跌破 5MA、或頭頭低跡象？。
 - **注意(重要)**：
     - 若使用者為「空手 (NO POSITION)」，則對於『加碼訊號』、『減碼警訊』、『出場訊號』僅需保留標題與檢核框，不可加文字說明。
-    - 若使用者為「持有中 (HOLDING)」，請務必根據其『平均成本價』，結合指標(如跌破 5MA、爆量長黑等)給出具體加減碼或出場建議。
+    - 若使用者為「持有中 (HOLDING)」，請務必根據其『平均成本價』，結合指標(如跌破 5MA、爆量長黑等)給出具體加減碼或出場建議；**並引用資料中的 KEY LEVELS（大量紅K三價位：最高點／1/2價／最低點；未回補向上缺口上沿／下沿）給出具體防守價位建議**（跌破哪個價位該做什麼，逐級說明）。
 
 #### 3. 建議操作計畫
 - **當下策略動作**：[進場做多 / 持股續抱 / 減碼停利 / 停損出場 / 觀望]
 - **判斷理由**：結合講義紀律（如：買強不買弱、買低不追高、量縮價漲背離不進場等）。
 - **價位設定**：
-    - **停損防守價**：[進場當日 K 棒最低點] 或 [進場價位之 5%]。
+    - **停損雙軌擇一（都要列出，註明擇一為主要防守、收盤跌破即出場）**：① 進場價 × 0.95（-5%）；② 收盤跌破關鍵均線（短線 MA5／波段 MA10／中長線 MA20，依操作級別）。
     - **停利/減碼標準**：[減碼]：漲幅超過 10% 後收盤跌破 5MA。
-    - **[停利]**：出現「高檔爆大量不漲」或「連續急漲 3 天後變盤」。
+    - **[停利]**：出現「高檔爆大量不漲」或「連續急漲 3 天後變盤」；飆股／均線糾結突破後改用智慧K線法（收盤跌破前一日 K 線最低點即出場）。
 
 ---
 
 ### 操作限制
-1. **嚴守紀律**：若趨勢不明或量能不符 1.3 倍準則，必須明確給予「觀望」建議。
+1. **嚴守紀律**：若趨勢不明或攻擊量雙軌（>昨量×1.3 或 >5日均量×1.2）皆不成立，必須明確給予「觀望」建議。
 2. **客觀分析**：禁止主觀猜測，所有建議必須建立在既有的 K 線與數據基礎上。
 3. **區分時程**：明確區分日線（短線）與週線（中長線）的判斷差異。
 `;
@@ -277,7 +314,10 @@ ${sopText}
 - 進場口訣：${result.entryPattern}
 - 戒律檢核：${preceptText}
 - 最終決策：${result.decision}（信心 ${result.confidence}/100）
-- 建議進場價 ${result.entryPrice}、停損 ${result.stopPrice}（-5%）
+- 建議進場價 ${result.entryPrice}
+- 停損雙軌擇一（擇一為主要防守，收盤跌破即出場）：
+  ① 固定停損 ${result.stopPrice}（進場價 -5%）
+  ② 關鍵均線防守 ${result.maGuardPrice ?? '—'}（${result.guardMaLabel ?? '中長線MA20'}）
 - 停利規則：${result.takeProfitRule}
 `;
 
@@ -291,11 +331,17 @@ ${sopText}
 
 #### 2. 六步驟逐項解讀
 依序針對 趨勢 / 位置 / K線 / 均線 / 量價 / 指標 六步驟，各用 1-2 句白話解釋「為什麼是這個燈號」、代表的多空意義，以及朱家泓紀律提醒（如：買強不買弱、買低不追高、量價背離不進場）。
+（買點語彙：講義六大買點＝①盤整突破 ②回後買上漲 ③K線橫盤突破 ④突破ABC修正下降切線 ⑤突破上升軌道線 ⑥型態確認（W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線）。濾網目前程式偵測①②；若你從K線資料觀察到③~⑥的型態，可在解讀中補充說明，但不得因此推翻濾網決策。）
 
 #### 3. 操作計畫
-- 若決策為 GO：說明進場理由、進場價 ${result.entryPrice}、停損 ${result.stopPrice}、停利紀律。
-- 若為 WAIT：明確指出「還差哪些條件」、要等待什麼訊號（例如等攻擊量、等站上月線、等回檔不破前低再起漲）。
-- 若為 NO_GO：說明為何不宜進場，並給出該股轉為可考慮的前提。
+- 若決策為 GO：說明進場理由、進場價 ${result.entryPrice}，並列出**兩個停損防守價**（固定 -5%：${result.stopPrice}；${result.guardMaLabel ?? '中長線MA20'}：${result.maGuardPrice ?? '—'}），註明擇一作為主要防守、收盤跌破即出場，以及停利紀律。
+- 若為 WAIT 或 NO_GO：**必須對照「未卜先知 5 觀察」（進階第五章）判定該股目前處於哪個觀察情境（標明情境編號），並給出具體等待的觸發條件與價位**（如盤整上頸線價、月線價、前高價；價位從濾網資料與步驟細節推算）：
+  1. 低檔爆量止跌＋不破前低 → 盤底鎖股；等大量紅K突破盤整＝多頭確認（3線多排做短多、4線多排規畫長多）。
+  2. 低檔約 2 個月窄幅盤整（均線糾結）→ 鎖股等大量紅K突破糾結區。
+  3. 空頭強力反彈突破月線、月線上橫盤 → 等月線上揚＋大量紅K突破再進。
+  4. 反彈突破前高 → 鎖「第二支腳」：回測後在月線上、大量長紅、月線上揚時進場。
+  5. 低檔出現強勢底部型態（W底/頭肩底等）→ 等帶量突破頸線、型態確認。
+  若五個情境皆不符（如高檔回檔中），直接說明該股目前不在鎖股情境、需等趨勢重新翻多。
 - 若使用者持有中：依成本價補充加減碼/停利停損建議；空手則僅談進場與觀望。
 
 ### 限制
@@ -781,7 +827,7 @@ const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
 目前市價：${item.currentPrice.toFixed(2)} ${priceCurrency}
 損益幅度：${item.profitPct >= 0 ? '+' : ''}${item.profitPct.toFixed(2)}%
 持有股數：${item.totalShares}
-停損價位：${(item.avgCostPrice * 0.95).toFixed(2)} ${priceCurrency}（買入均價 × 95%）
+停損雙軌（擇一為主要防守，收盤跌破即出場）：① ${(item.avgCostPrice * 0.95).toFixed(2)} ${priceCurrency}（買入均價 × 95%）② 關鍵均線防守 MA20=${latest.ma20?.toFixed(2) ?? 'N/A'} ${priceCurrency}（短線可改 MA5=${latest.ma5?.toFixed(2) ?? 'N/A'}／波段 MA10=${latest.ma10?.toFixed(2) ?? 'N/A'}）
 
 【最新技術面摘要】
 - 今日：開:${latest.open.toFixed(2)} 高:${latest.high.toFixed(2)} 低:${latest.low.toFixed(2)} 收:${latest.close.toFixed(2)}
@@ -790,7 +836,7 @@ const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
 - 量比（vs前日）：${volRatio.toFixed(2)}x
 - 均線排列：${maAlignment}
 - MA5:${latest.ma5?.toFixed(2) ?? 'N/A'}  MA10:${latest.ma10?.toFixed(2) ?? 'N/A'}  MA20:${latest.ma20?.toFixed(2) ?? 'N/A'}  MA60:${latest.ma60?.toFixed(2) ?? 'N/A'}
-- KD(5,3): K=${latest.k?.toFixed(1) ?? 'N/A'}  D=${latest.d?.toFixed(1) ?? 'N/A'}  J=${latest.j?.toFixed(1) ?? 'N/A'}
+- KD(5,3,3): K=${latest.k?.toFixed(1) ?? 'N/A'}  D=${latest.d?.toFixed(1) ?? 'N/A'}  J=${latest.j?.toFixed(1) ?? 'N/A'}
 - MACD(10,20,10): DIF=${latest.macd?.toFixed(2) ?? 'N/A'}  DEA=${latest.macdSignal?.toFixed(2) ?? 'N/A'}  柱=${latest.macdHist?.toFixed(2) ?? 'N/A'}
 - 布林通道(20,2): 上軌=${latest.bbUpper?.toFixed(2) ?? 'N/A'}  中軌=${latest.bbMiddle?.toFixed(2) ?? 'N/A'}  下軌=${latest.bbLower?.toFixed(2) ?? 'N/A'}
 - RSI(14): ${latest.rsi?.toFixed(2) ?? 'N/A'}
@@ -852,6 +898,7 @@ export const analyzePortfolioHealth = async (
 | A4 | 高檔大量長黑K + 次日續跌 | 主力出貨確認，所謂「一殺」要立即出場 |
 | A5 | 收盤跌破大量長紅K線最低點 | 多空易位，原長紅 K 支撐變為重度壓力，必須出場 |
 | A6 | 多頭改變成空頭確認 | 頭頭低、底底低同時成立（空頭確認），所有多單倉位必須清空 |
+| A7 | 收盤跌破關鍵均線 | 停損雙軌之二（與 A1 擇一為主要防守）：短線 MA5／波段 MA10／中長線 MA20，依操作級別選定，收盤跌破即出場 |
 
 ### 【B】停利規則 — 觸發任一條即執行 🟠
 | 編號 | 停利條件 | 說明 |
@@ -872,7 +919,7 @@ export const analyzePortfolioHealth = async (
 | 編號 | 減碼條件 | 說明 |
 |------|---------|------|
 | C1 | 量價背離 | 股價創高但成交量萎縮（量為價之確認，漲幅量縮為警示，應減碼防範） |
-| C2 | KD 高檔背離 | 股價創高但 KD(5, 3) 之 K 值呈現「頭頭低」，反轉向下機率大 |
+| C2 | KD 高檔背離 | 股價創高但 KD(5,3,3) 之 K 值呈現「頭頭低」，反轉向下機率大（背離於 20~80 之間才有效） |
 | C3 | MACD 紅柱由延長轉縮短 | 漲勢減緩，多頭動能停滯，適度減碼 |
 | C4 | 位置進入末漲段 | 多頭走勢的第三波或高檔區，風險顯著增加，應逐步降低部位 |
 | C5 | 接近週線或日線重大壓力位（尚未突破） | 遇壓前先部分減碼，防止遇壓大跌 |
@@ -900,9 +947,9 @@ export const analyzePortfolioHealth = async (
 |------|---------|------|
 | E1 | 多頭趨勢確認且未改變 | 符合「頭頭高、底底高」定義 |
 | E2 | 出現六大多頭實戰買點之一 | 買點1-6（盤整突破、回後買上漲、K線橫盤突破、突破ABC下降線、突破緩降軌道線、雙底突破） |
-| E3 | 進場 K 線符合「幅量線實」 | 漲幅 ≥ 2%、成交量比昨日大 1.3 倍以上、中長實體紅 K |
+| E3 | 進場 K 線符合「幅量線實」 | 漲幅 ≥ 2%、攻擊量成立（今量>昨量×1.3 或 >5日均量×1.2，擇一）、中長實體紅 K |
 | E4 | 均線架構完美 | MA10、MA20 多頭排列向上，且股價穩立於月線之上 |
-| E5 | KD 指標加持 | KD 參數 (5,3) 呈現 K值向上、KD多頭排列、或低檔黃金交叉 |
+| E5 | KD 指標加持 | KD 參數 (5,3,3) 呈現 K值向上、KD多頭排列、或黃金交叉（多頭中 50 以下金叉皆起漲點，50 附近強於 20 附近；高檔鈍化回歸價量不扣分） |
 | E6 | MACD 指標配合 | DIF/DEA 在 0 軸之上，且紅柱延長或綠柱縮短接近 0 軸 |
 | E7 | 未觸犯任何加碼大忌 | 詳見禁止加碼大忌清單 |
 | E8 | 安全的位置 | 處於初漲段或主漲段起漲點，絕非末漲段高檔 |
@@ -943,7 +990,7 @@ export const analyzePortfolioHealth = async (
 * **均線結構**：[多頭排列/空頭排列/糾結]（MA5/10/20 狀態）
 * **K棒與成交量**：[K棒型態與量比]（註明是否達 1.3 倍攻擊量，或是否為盤中預估量）
 * **指標狀態**：
-  - KD(5,3)：K=__ / D=__ / [黃金交叉/死亡交叉/多排/空排/背離]
+  - KD(5,3,3)：K=__ / D=__ / [黃金交叉/死亡交叉/多排/空排/背離/鈍化回歸價量]
   - MACD(10,20,10)：DIF=__ / DEA=__ / 柱狀體=__ / [0軸之上或下/紅柱增減/背離]
   - 布林通道：股價位於 [上/中/下軌] / 通道 [開口擴張/收口走平/下彎]
 * **法人籌碼（台股適用）**：外資投信近5日買賣超狀態

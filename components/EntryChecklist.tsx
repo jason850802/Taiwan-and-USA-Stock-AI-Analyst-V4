@@ -94,7 +94,8 @@ const EntryChecklist: React.FC<{ result: EntryFilterResult }> = ({ result }) => 
           <div className="mt-3 text-sm space-y-1">
             <div>信心評分：<span className="font-bold">{result.confidence}</span>/100</div>
             <div>建議進場：<span className="font-bold">{result.entryPrice}</span></div>
-            <div>停損價：<span className="font-bold">{result.stopPrice}</span>（−5%）</div>
+            <div>停損①固定：<span className="font-bold">{result.stopPrice}</span>（−5%）</div>
+            <div>停損②均線：<span className="font-bold">{result.maGuardPrice ?? '—'}</span>（{result.guardMaLabel ?? '中長線MA20'}，擇一為主防守）</div>
           </div>
           <p className="text-[11px] opacity-90 mt-2 leading-relaxed">{result.takeProfitRule}</p>
         </div>

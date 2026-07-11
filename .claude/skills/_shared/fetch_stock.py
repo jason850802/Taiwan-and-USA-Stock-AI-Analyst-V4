@@ -14,9 +14,9 @@ fetch_stock.py — 進場分析 Skills 共用資料來源
 
 輸出: stdout 一段 JSON（給 skill 判讀）。失敗時輸出 {"error": "..."}。
 
-指標參數（textbook 預設；如需與你的 App 一致可改這裡）:
-    KD   : 9, 3, 3        (App 顯示為 K(5,3)，教學用 9)
-    MACD : 12, 26, 9      (App 用 10,20,10)
+指標參數（與講義實戰參數、App 端一致）:
+    KD   : 5, 3, 3        (講義 KD 參數；App utils/math.ts calculateKDJ period=5)
+    MACD : 10, 20, 10     (講義 MACD 參數；App utils/math.ts calculateMACD 10,20,10)
 """
 import sys, json, time, urllib.request, urllib.parse, ssl
 
@@ -27,10 +27,11 @@ except Exception:
     pass
 
 # ---------------- 參數設定 ----------------
-KD_N, KD_K, KD_D = 9, 3, 3
-MACD_FAST, MACD_SLOW, MACD_SIGNAL = 12, 26, 9
+KD_N, KD_K, KD_D = 5, 3, 3
+MACD_FAST, MACD_SLOW, MACD_SIGNAL = 10, 20, 10
 SWING_K = 2          # 轉折波 fractal 視窗（前後各 K 根）
-ATTACK_VOL_RATIO = 1.3   # 攻擊量門檻（>昨日 1.3 倍）
+ATTACK_VOL_RATIO = 1.3   # 攻擊量門檻A（>昨日 1.3 倍）
+ATTACK_VOL_BASE = 1.2    # 攻擊量門檻B（>基本量＝前5日均量 1.2 倍）；雙軌擇一成立即攻擊量
 
 YAHOO = "https://query2.finance.yahoo.com/v8/finance/chart/"
 PROXIES = ["", "https://corsproxy.io/?", "https://api.allorigins.win/raw?url="]
@@ -172,6 +173,101 @@ def classify_trend(sw):
     return "盤整", "高低點未同向（非多非空）"
 
 
+def _anchors(sw, c, ma5, dates):
+    """高檔量化錨點（進階連三紅第5/6點、淘汰法#5）：
+    起漲達一倍＝高檔；沿5日均線累計漲幅>20% 出現變盤訊號→停利警戒；連漲3根以上勿追高。"""
+    i = len(c) - 1
+    out = {}
+    lows_sw = [p for p in sw if p["type"] == "low"]
+    if lows_sw:
+        base = min(lows_sw, key=lambda p: p["price"])          # 波段大底（期間最低轉折低點）
+        if base["price"] > 0:
+            out["major_low_price"] = base["price"]
+            out["major_low_date"] = dates[base["idx"]]
+            out["rise_from_major_low_pct"] = round((c[i] - base["price"]) / base["price"] * 100, 2)
+    # 沿5均上漲：今日往回，收盤持續 >= MA5（最多回看20根）的累計漲幅
+    s = i
+    while s > 0 and i - s < 20 and ma5[s] is not None and c[s] >= ma5[s]:
+        s -= 1
+    start = s + 1
+    if start < i and ma5[i] is not None and c[i] >= ma5[i] and c[start] > 0 and c[i] > c[start]:
+        out["ma5_run_days"] = i - start + 1
+        out["ma5_run_rise_pct"] = round((c[i] - c[start]) / c[start] * 100, 2)
+    # 連續上漲根數
+    up = 0
+    j = i
+    while j > 0 and c[j] > c[j - 1]:
+        up += 1
+        j -= 1
+    out["up_streak"] = up
+    return out
+
+
+def _key_levels(o, h, l, c, v, dates, lookback=20):
+    """持股健檢價位。
+    初階 CH3：大量長紅K三支撐——最高點（跌破＝攻擊減弱，3~5日內須站回）、
+    1/2 價（跌破＝當日均成本失守、氣勢破壞）、最低點（跌破＝多空易位）。
+    進階第三章：向上缺口四價位 上高價＞上沿價＞下沿價＞下底價，逐級失守意義遞增。"""
+    n = len(c)
+    out = {}
+    # 近 lookback 日內最大量紅K
+    s = max(0, n - lookback)
+    best = None
+    for j in range(s, n):
+        if c[j] > o[j] and (best is None or v[j] > v[best]):
+            best = j
+    if best is not None and v[best] > 0:
+        out["big_red_k"] = {
+            "date": dates[best], "volume": v[best],
+            "high": round(h[best], 2),                       # 跌破＝攻擊減弱，3~5日內須站回
+            "half": round((h[best] + l[best]) / 2, 2),       # 跌破＝當日均成本失守
+            "low": round(l[best], 2),                        # 跌破＝多空易位
+        }
+    # 未回補的向上跳空缺口（近60根內；完全回補＝之後任一日 low <= 缺口下沿）
+    gaps = []
+    for j in range(max(1, n - 60), n):
+        if l[j] > h[j - 1]:
+            bottom = h[j - 1]
+            if not any(l[t] <= bottom for t in range(j, n)):
+                gaps.append({
+                    "date": dates[j],
+                    "upper_high": round(h[j], 2),    # 上高價
+                    "upper": round(l[j], 2),         # 上沿價
+                    "lower": round(bottom, 2),       # 下沿價
+                    "lower_low": round(l[j - 1], 2), # 下底價
+                })
+    if gaps:
+        out["open_gaps_up"] = gaps[-3:]
+    return out or None
+
+
+def _retrace(sw, c, ma20, i):
+    """回檔 1/2 法則（初階 CH2）：前波漲幅（前底→前高）與當前回檔比例。
+    弱勢回檔 = 回檔 < 前波漲幅 1/2 且未破月線、未破前低 → 多頭續漲（回後買上漲正宗場景）；
+    強勢回檔 = 超過 1/2 或跌破月線/前低 → 易頭頭低盤整，需站回月線再談做多。"""
+    highs_sw = [p for p in sw if p["type"] == "high"]
+    if not highs_sw:
+        return None
+    ph = highs_sw[-1]                                   # 最近轉折高（前高）
+    lows_before = [p for p in sw if p["type"] == "low" and p["idx"] < ph["idx"]]
+    if not lows_before:
+        return None
+    pl = lows_before[-1]                                # 前高之前最近轉折低（前底）
+    up_amp = ph["price"] - pl["price"]
+    pull_low = min(c[ph["idx"]:])                       # 前高以來最低收盤（含今日）
+    if up_amp <= 0 or pull_low >= ph["price"]:
+        return None
+    pull_amp = ph["price"] - pull_low
+    return {
+        "prev_low": pl["price"], "prev_high": ph["price"],
+        "prev_up_pct": round(up_amp / pl["price"] * 100, 2),      # 前波漲幅%
+        "pullback_pct": round(pull_amp / ph["price"] * 100, 2),   # 當前回檔幅度%
+        "ratio": round(pull_amp / up_amp, 2),                     # 回檔/前波漲幅；>0.5 即超過 1/2
+        "below_ma20": bool(ma20[i] and c[i] < ma20[i]),
+        "broke_prev_low": bool(pull_low < pl["price"]),
+    }
+
+
 # ---------------- 組裝 ----------------
 def build(raw):
     meta = raw["meta"]
@@ -230,7 +326,12 @@ def build(raw):
             "vol_ma5": round(vma5[i]) if vma5[i] else None,
             "vol_ma10": round(vma10[i]) if vma10[i] else None,
             "vol_ratio_vs_prev": vol_ratio,
-            "is_attack_vol": (vol_ratio is not None and vol_ratio >= ATTACK_VOL_RATIO),
+            # 攻擊量雙軌擇一（初階CH6）：>昨量×1.3 或 >基本量(前5日均量,不含今日)×1.2
+            "vol_ratio_vs_base5": (round(v[i] / vma5[i-1], 2)
+                                   if i >= 1 and vma5[i-1] else None),
+            "is_attack_vol": ((vol_ratio is not None and vol_ratio >= ATTACK_VOL_RATIO)
+                              or (i >= 1 and vma5[i-1] is not None and vma5[i-1] > 0
+                                  and v[i] / vma5[i-1] >= ATTACK_VOL_BASE)),
             "k": last(k_arr), "d": last(d_arr),
             "kd_cross": ("黃金交叉" if k_arr[i] and d_arr[i] and k_arr[i] > d_arr[i]
                          and k_arr[i-1] and d_arr[i-1] and k_arr[i-1] <= d_arr[i-1]
@@ -244,6 +345,9 @@ def build(raw):
         },
         "swings": sw_named,
         "trend": trend, "trend_reason": trend_reason,
+        "retrace": _retrace(sw, c, ma20, i),
+        "position_anchors": _anchors(sw, c, ma5, dates),
+        "key_levels": _key_levels(o, h, l, c, v, dates),
         "recent": [  # 最後 6 根 K 供 K 線型態判讀
             {"date": dates[j], "o": round(o[j], 2), "h": round(h[j], 2),
              "l": round(l[j], 2), "c": round(c[j], 2), "v": v[j],
@@ -272,6 +376,21 @@ def main():
             "daily": build(d_raw),
             "weekly": build(w_raw),
         }
+        # 週線壓力空間（戒律3 資料化）：現價上方最近的週線轉折高點與距離%
+        try:
+            cur = out["daily"]["latest"]["close"]
+            wk_highs = [p["price"] for p in out["weekly"]["swings"]
+                        if p["type"] == "high" and p["price"] > cur]
+            if wk_highs and cur:
+                res = min(wk_highs)
+                out["weekly_resistance"] = {
+                    "price": res,
+                    "distance_pct": round((res - cur) / cur * 100, 2),  # <5% 觸戒律3
+                }
+            else:
+                out["weekly_resistance"] = None  # 現價之上無週線前高（創新高），無壓力
+        except Exception:
+            out["weekly_resistance"] = None
         print(json.dumps(out, ensure_ascii=False))
     except Exception as e:
         print(json.dumps({"error": str(e), "symbol": sym}, ensure_ascii=False))
