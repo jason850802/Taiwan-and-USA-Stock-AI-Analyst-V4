@@ -118,13 +118,15 @@ const ChipBar = ({ x, y, width, height, value }: any) => {
 
   const color = value > 0 ? '#f0405a' : '#22c55e'; // 買超紅 / 賣超綠
 
-  let ry = y;
-  let rh = height;
-  if (height < MIN_CHIP_BAR_H) {
+  // recharts 不分正負都以 y 為「值端」、y + height 為零線端：
+  // 正值柱 height 為正（y 在零線上方）、負值柱 height 為負（y 在零線下方）。
+  // 先正規化成 SVG rect 需要的 top + 正高度，再對小量柱做最小高度錨定零線。
+  let ry = height < 0 ? y + height : y;
+  let rh = Math.abs(height);
+  if (rh < MIN_CHIP_BAR_H) {
     rh = MIN_CHIP_BAR_H;
-    // recharts：正值 rect 底邊貼零線（y+height）、負值 rect 頂邊貼零線（y）。
-    // 正值自零線往上撐、負值自零線往下撐，方向才正確。
-    ry = value > 0 ? y + height - MIN_CHIP_BAR_H : y;
+    // 正值底邊貼零線往上撐、負值頂邊貼零線往下撐，方向才正確
+    ry = value > 0 ? y + height - MIN_CHIP_BAR_H : y + height;
   }
 
   return <rect x={x} y={ry} width={width} height={rh} fill={color} />;
