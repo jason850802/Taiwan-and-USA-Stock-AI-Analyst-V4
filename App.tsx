@@ -15,7 +15,7 @@ import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
-import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit } from 'lucide-react';
+import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
 type AppView = 'dashboard' | 'portfolio';
@@ -385,10 +385,20 @@ const App: React.FC = () => {
                         settings={indicatorSettings}
                         setSettings={setIndicatorSettings}
                       />
-                      <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} onToggleSetting={(key: keyof IndicatorSettings) => {
-                        if (key === 'maLines') return;
-                        setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
-                      }} />
+                      <div className="relative">
+                        <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} onToggleSetting={(key: keyof IndicatorSettings) => {
+                          if (key === 'maLines') return;
+                          setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
+                        }} />
+                        {/* 切週期時的區域載入覆蓋層：蓋住 K 線與其下所有副圖，不覆蓋 ChartToolbar
+                            （z-20 > StockChart 內縮放鈕 z-10）；資料就緒 loading 轉 false 即移除 */}
+                        {loading && (
+                          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-slate-900/60 backdrop-blur-sm">
+                            <Loader2 className="animate-spin text-blue-400" size={32} />
+                            <span className="text-slate-300 text-sm">載入中…</span>
+                          </div>
+                        )}
+                      </div>
                     </Card>
                     <div id="ai-analysis-section" className="pt-4 grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
                         {entryResult && (
