@@ -8,6 +8,33 @@ function getHeaderValue(value: HeaderValue): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
+/** 從 URL 字串取出 host（含 port，如 example.com 或 localhost:3000），解析失敗回 undefined。 */
+function hostOf(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  try {
+    return new URL(url).host;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * 同源判定：請求的 Origin/Referer host 是否等於部署自己的 host。
+ * 同源請求（前端與 /api 在同一部署網域）在資安上必然安全——跨站攻擊者無法讓
+ * 瀏覽器把 Host 改成我方網域，因此不會成為濫用破口。放行同源可避免 ALLOWED_ORIGIN
+ * 未設/漏設時網站鎖死自己的 API，也讓每次變動的 Vercel preview 網址免白名單即可運作。
+ * 跨站來源仍會落到 ALLOWED_ORIGIN 白名單與 PROXY_SHARED_SECRET 檢查。
+ */
+function isSameOrigin(req: GuardReq): boolean {
+  const host = getHeaderValue(req.headers['x-forwarded-host']) || getHeaderValue(req.headers.host);
+  if (!host) return false;
+  const originHost = hostOf(getHeaderValue(req.headers.origin));
+  if (originHost) return originHost === host;
+  const refererHost = hostOf(getHeaderValue(req.headers.referer));
+  if (refererHost) return refererHost === host;
+  return false;
+}
+
 interface GuardReq {
   method?: string;
   headers: Record<string, HeaderValue>;
@@ -25,6 +52,11 @@ export function isAllowedOrigin(req: GuardReq): boolean {
   const referer = getHeaderValue(req.headers.referer);
 
   if (!origin && !referer) {
+    return true;
+  }
+
+  // 同源請求永遠放行（見 isSameOrigin 說明）：避免白名單漏設時網站鎖死自己的 API。
+  if (isSameOrigin(req)) {
     return true;
   }
 
