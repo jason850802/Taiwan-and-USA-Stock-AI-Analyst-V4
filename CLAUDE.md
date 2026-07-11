@@ -56,6 +56,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
 - 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
 - `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
+- 改 `.claude/skills/` 後執行 `npm run sync:skills` 同步 Codex 鏡像（`.agents/skills/`，白名單見 `scripts/sync_skills_mirror.py`）。
 
 <!-- GSD:skills-start source:skills/ -->
 

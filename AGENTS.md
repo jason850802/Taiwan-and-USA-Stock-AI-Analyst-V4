@@ -36,6 +36,7 @@ GSD 已為 Codex 安裝完成（代理在 `.codex/agents/`、守門 hook 在 `.c
 ## 專案技能（Skills）
 
 `.agents/skills/`（Codex 讀）與 `.claude/skills/`（Claude 讀）內含本專案的可重用技能，包括朱家泓進場分析步驟 1–7（`trend-analysis`、`position-analysis`、`kline-signal`、`ma-structure`、`volume-analysis`、`indicator-analysis`、`entry-decision`）。動工前先列出並閱讀相關 `SKILL.md`，實作時遵守其規則。
+**鏡像規則**：`.claude/skills/` 是唯一事實來源；改 `.claude/skills/` 後執行 `npm run sync:skills` 同步到 `.agents/skills/`（白名單見 `scripts/sync_skills_mirror.py`），不要手動改鏡像端。
 
 ## 全域基準
 
