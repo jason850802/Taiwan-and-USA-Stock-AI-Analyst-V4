@@ -33,6 +33,10 @@ dist-ssr
 !.claude/skills/
 .claude/skills/**/__pycache__/
 
+# GSD/Codex 安裝器產物（機器本地，由 GSD installer 重建）
+.codex/
+.agents/skills/source-command-*
+
 # Volume calibration scratch cache (not committed)
 scripts/.cache-volume-calib/
 .vercel
