@@ -1,0 +1,8 @@
+# vercel dev 啟動時會遞迴掃描專案目錄；.claude/worktrees 內可能存在
+# 執行代理留下的殘骸目錄（exFAT 上 delete-pending 造成 EPERM scandir），
+# 掃到會讓 vercel dev 直接崩潰。這些目錄也完全不需要部署。
+.claude
+.agents
+.planning
+.codex
+node_modules
