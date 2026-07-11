@@ -130,7 +130,7 @@
 
 ---
 
-## 步驟 5：總驗證＋push＋部署確認（最後做）
+## 步驟 5：總驗證＋push＋部署確認（最後做） ✅ done (2026-07-11)
 
 **目標**：三顆～四顆 commit 上 GitHub，確認 Vercel 自動部署不受影響。
 
@@ -154,6 +154,19 @@
 | 3 | GSD 產物 gitignore | 2（先入版控再 ignore，避免規則誤傷） | 清理 |
 | 4 | 同步腳本 | 2 | 防漂移 |
 | 5 | 總驗證＋push | 1~4 | 收尾 |
+
+## 執行結果摘要（2026-07-11，步驟 1–5 一次跑完）
+
+| 步驟 | Commit | 備註 |
+|---|---|---|
+| 1 換行符正規化 | `6833a50` | renormalize 後只有 .gitattributes 需 commit（index 本已 LF，幻影為純過濾器狀態差）；教訓已 append LESSONS.md |
+| 2 鏡像入版控 | `6b047ad` | 8 檔新增；tw-fundamentals 先前已入版控且與鏡像一致；diff -rq 9 目錄全數一致 |
+| 3 GSD 產物 ignore | `7d5cbc3` | check-ignore 命中 .codex 與 source-command-*；鏡像不受影響 |
+| （補）PLAN 入版控 | `732f7cc` | 讓步驟 3 驗收「0 untracked」成立 |
+| 4 同步腳本 | `64dd90d` | 漂移實測過（改字→check exit 1→sync→exit 0→還原）；Bash＋PowerShell 皆可跑；踩到 cp950 print crash 已修（stdout 強制 UTF-8）並記 LESSONS.md |
+| 5 總驗證＋push | （本摘要 commit） | tsc PASS、build 5.65s、`grep -r "AIza" dist/` 無結果、push 9680df9..64dd90d、Vercel `4iyj4t17c` Ready、正式站 2330 載入正常且 /api/yahoo/chart、/api/finmind×3、/api/yahoo/search 全 200、console 0 錯誤 |
+
+最終 `git status --short`：乾淨（0 modified、0 untracked）。
 
 ## 已拍板事項（執行時不要再問）
 - `.agents/skills/` 鏡像**入版控**、以 `.claude/skills/` 為唯一事實來源（單向同步）。
