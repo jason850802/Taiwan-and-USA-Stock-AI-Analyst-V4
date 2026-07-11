@@ -6,6 +6,9 @@ import { VolumeProjection } from './volume';
 export type StepStatus = 'pass' | 'warn' | 'fail';
 export type Decision = 'GO' | 'WAIT' | 'NO_GO';
 
+// 波段大底搜尋窗（近 N 日內最低點，避免抓到過久遠的歷史低點；與 fetch_stock.py 一致）
+const MAJOR_LOW_LOOKBACK = 60;
+
 export interface FilterStep {
   id: number;
   key: string;
@@ -174,10 +177,15 @@ export function runEntryFilter(
   }
 
   // 高檔量化錨點（進階連三紅第5/6點、淘汰法#5）
+  // 波段大底＝近 MAJOR_LOW_LOOKBACK 日內最低點（優先取轉折低，無則取最低收盤），避免抓到過久遠歷史低點
   let riseFromBase: number | undefined;          // 自波段大底以來漲幅%
-  if (lows.length) {
-    const base = lows.reduce((m, s) => (s.price < m.price ? s : m));
-    if (base.price > 0) riseFromBase = ((close - base.price) / base.price) * 100;
+  {
+    const winStart = Math.max(0, n - MAJOR_LOW_LOOKBACK);
+    const lowsInWin = lows.filter(s => s.idx >= winStart);
+    const basePrice = lowsInWin.length
+      ? lowsInWin.reduce((m, s) => (s.price < m.price ? s : m)).price
+      : Math.min(...data.slice(winStart).map(d => d.close));
+    if (basePrice > 0) riseFromBase = ((close - basePrice) / basePrice) * 100;
   }
   let ma5RunRisePct: number | undefined;         // 沿5均（收盤≥MA5）累計漲幅%（最多回看20根）
   {

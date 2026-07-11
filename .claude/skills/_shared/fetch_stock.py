@@ -32,6 +32,7 @@ MACD_FAST, MACD_SLOW, MACD_SIGNAL = 10, 20, 10
 SWING_K = 2          # 轉折波 fractal 視窗（前後各 K 根）
 ATTACK_VOL_RATIO = 1.3   # 攻擊量門檻A（>昨日 1.3 倍）
 ATTACK_VOL_BASE = 1.2    # 攻擊量門檻B（>基本量＝前5日均量 1.2 倍）；雙軌擇一成立即攻擊量
+MAJOR_LOW_LOOKBACK = 60  # 波段大底搜尋窗（近 N 日內最低點，避免抓到過久遠的歷史低點）
 
 YAHOO = "https://query2.finance.yahoo.com/v8/finance/chart/"
 PROXIES = ["", "https://corsproxy.io/?", "https://api.allorigins.win/raw?url="]
@@ -178,13 +179,21 @@ def _anchors(sw, c, ma5, dates):
     起漲達一倍＝高檔；沿5日均線累計漲幅>20% 出現變盤訊號→停利警戒；連漲3根以上勿追高。"""
     i = len(c) - 1
     out = {}
-    lows_sw = [p for p in sw if p["type"] == "low"]
-    if lows_sw:
-        base = min(lows_sw, key=lambda p: p["price"])          # 波段大底（期間最低轉折低點）
-        if base["price"] > 0:
-            out["major_low_price"] = base["price"]
-            out["major_low_date"] = dates[base["idx"]]
-            out["rise_from_major_low_pct"] = round((c[i] - base["price"]) / base["price"] * 100, 2)
+    # 波段大底＝近 MAJOR_LOW_LOOKBACK 日內最低點（優先取轉折低，無轉折低則取最低收盤）
+    win_start = max(0, len(c) - MAJOR_LOW_LOOKBACK)
+    lows_win = [p for p in sw if p["type"] == "low" and p["idx"] >= win_start]
+    if lows_win:
+        base = min(lows_win, key=lambda p: p["price"])
+        base_price, base_idx = base["price"], base["idx"]
+    else:
+        seg = c[win_start:]
+        base_price = round(min(seg), 2)
+        base_idx = win_start + seg.index(min(seg))
+    if base_price > 0:
+        out["major_low_price"] = base_price
+        out["major_low_date"] = dates[base_idx]
+        out["major_low_lookback_days"] = MAJOR_LOW_LOOKBACK
+        out["rise_from_major_low_pct"] = round((c[i] - base_price) / base_price * 100, 2)
     # 沿5均上漲：今日往回，收盤持續 >= MA5（最多回看20根）的累計漲幅
     s = i
     while s > 0 and i - s < 20 and ma5[s] is not None and c[s] >= ma5[s]:
