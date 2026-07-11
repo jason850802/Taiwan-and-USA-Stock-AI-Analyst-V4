@@ -48,8 +48,21 @@ const CandleStickShape = (props: any) => {
   const { x, y, width, height, payload } = props;
   const { open, close, high, low } = payload;
 
-  // Guard
-  if (!open || !close || width <= 0 || height <= 0) return null;
+  // Guard（價格永不為 0，可續用；height 移出交由下方一字板分支處理）
+  if (!open || !close || width <= 0) return null;
+
+  // 一字板（漲跌停鎖死，high===low）：recharts 傳入 bar 像素 height 為 0，
+  // 若沿用舊 guard 會 return null 完全不畫。改畫一條最小可見水平線（strokeWidth=2），
+  // 顏色依「與前收比較」（priceChange）——一字板 close===open 用 close vs open 會誤判成灰。
+  if (height <= 0 || high === low) {
+    const priceChange = payload.priceChange;
+    const limitColor = priceChange > 0
+      ? '#f0405a'                                   // 漲停紅
+      : priceChange < 0 ? '#22c55e' : '#94a3b8';    // 跌停綠 / 無變化灰
+    return (
+      <line x1={x} y1={y} x2={x + width} y2={y} stroke={limitColor} strokeWidth={2} />
+    );
+  }
 
   const isUp   = close > open;
   const isDown = close < open;
@@ -93,6 +106,33 @@ const CandleStickShape = (props: any) => {
     </g>
   );
 };
+
+// 法人買賣超柱自訂 shape —— 對「非零小量」強制最小可見像素高度（MIN_CHIP_BAR_H），
+// 顏色自帶（紅買綠賣，不依賴 Cell），依正負方向錨定零線撐開。
+// 根因：foreign/trust Bar 依 YAxis 自動縮放，比例被大值主導，小量柱高趨近 0px 看不見。
+const MIN_CHIP_BAR_H = 2;
+
+const ChipBar = ({ x, y, width, height, value }: any) => {
+  // 零 / 無買賣超不畫（與現況一致）
+  if (value == null || value === 0) return null;
+
+  const color = value > 0 ? '#f0405a' : '#22c55e'; // 買超紅 / 賣超綠
+
+  let ry = y;
+  let rh = height;
+  if (height < MIN_CHIP_BAR_H) {
+    rh = MIN_CHIP_BAR_H;
+    // recharts：正值 rect 底邊貼零線（y+height）、負值 rect 頂邊貼零線（y）。
+    // 正值自零線往上撐、負值自零線往下撐，方向才正確。
+    ry = value > 0 ? y + height - MIN_CHIP_BAR_H : y;
+  }
+
+  return <rect x={x} y={ry} width={width} height={rh} fill={color} />;
+};
+
+// 薄包裝：把對應 payload 欄位餵入，避免依賴 recharts 傳入的 value 型別歧義。
+const ForeignBar = (props: any) => <ChipBar {...props} value={props.payload?.foreignBuySell} />;
+const TrustBar = (props: any) => <ChipBar {...props} value={props.payload?.investmentTrustBuySell} />;
 
 // 註：主圖單根 OHLC 浮動框（原 MainTooltip）已移除，改為 header 內固定資訊列
 // （見 StockChart 的 activeData 讀數列）。副圖的 Tooltip（ChipTooltip / MACDTooltip /
@@ -428,8 +468,6 @@ interface SubPanelChartProps {
   settings: IndicatorSettings;
   isTaiwanStock: boolean;
   macdHistCells: React.ReactNode;
-  foreignCells: React.ReactNode;
-  trustCells: React.ReactNode;
   onMouseMove: (state: any) => void;
   onMouseLeave: () => void;
 }
@@ -439,8 +477,6 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
   displayData,
   settings,
   macdHistCells,
-  foreignCells,
-  trustCells,
   onMouseMove,
   onMouseLeave,
 }) => {
@@ -461,9 +497,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
           <YAxis {...COMMON_Y_AXIS_PROPS} stroke="#94a3b8" tickFormatter={(val) => (val / 1000).toFixed(0)} />
           <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Foreign" />} />
           <ReferenceLine y={0} stroke="#475569" />
-          <Bar dataKey="foreignBuySell" isAnimationActive={false}>
-            {foreignCells}
-          </Bar>
+          <Bar dataKey="foreignBuySell" shape={<ForeignBar />} isAnimationActive={false} />
         </BarChart>
       ) : view === 'trust' ? (
         <BarChart {...sharedChartProps} barCategoryGap="20%">
@@ -472,9 +506,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
           <YAxis {...COMMON_Y_AXIS_PROPS} stroke="#94a3b8" tickFormatter={(val) => (val / 1000).toFixed(0)} />
           <Tooltip cursor={<CrosshairCursor />} content={<ChipTooltip title="Trust" />} />
           <ReferenceLine y={0} stroke="#475569" />
-          <Bar dataKey="investmentTrustBuySell" isAnimationActive={false}>
-            {trustCells}
-          </Bar>
+          <Bar dataKey="investmentTrustBuySell" shape={<TrustBar />} isAnimationActive={false} />
         </BarChart>
       ) : view === 'macd' ? (
         <ComposedChart {...sharedChartProps} barCategoryGap="20%">
@@ -747,13 +779,8 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
     <Cell key={`hist-${index}`} fill={(entry.macdHist || 0) >= 0 ? '#f0405a' : '#22c55e'} />
   )), [subPanelData]);
 
-  const foreignCells = useMemo(() => subPanelData.map((entry, index) => (
-    <Cell key={`fii-${index}`} fill={(entry.foreignBuySell || 0) > 0 ? '#f0405a' : '#22c55e'} />
-  )), [subPanelData]);
-
-  const trustCells = useMemo(() => subPanelData.map((entry, index) => (
-    <Cell key={`it-${index}`} fill={(entry.investmentTrustBuySell || 0) > 0 ? '#f0405a' : '#22c55e'} />
-  )), [subPanelData]);
+  // 註：foreignCells / trustCells 已移除 —— 顏色與最小高度改由 ForeignBar / TrustBar
+  // 自訂 shape 自帶（見 Section 1），不再需要 Cell。
 
   if (!data || data.length === 0) return <div className="text-gray-400">No data available for chart</div>;
 
@@ -852,8 +879,6 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
                  settings={settings}
                  isTaiwanStock={isTaiwanStock}
                  macdHistCells={macdHistCells}
-                 foreignCells={foreignCells}
-                 trustCells={trustCells}
                  onMouseMove={handleMouseMove}
                  onMouseLeave={handleMouseLeave}
                />
