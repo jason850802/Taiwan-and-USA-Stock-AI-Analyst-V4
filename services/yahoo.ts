@@ -650,7 +650,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   }
 
   // 4. Final Enriching
-  const finalData = processedData.map(d => {
+  let finalData = processedData.map(d => {
       // If we have accurate volume from FinMind (even if we used Yahoo for price), overwrite it
       // FinMind volume is usually more reliable for TW stocks
       if (shouldFetchFinMindChips && volumeMap.has(d.rawDateStr || d.date)) {
@@ -687,6 +687,33 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
           investmentTrustBuySell: chips?.trust
       };
   });
+
+  // 4.5 日線「殭屍棒」過濾器（主修·台美股通用）
+  // 放置理由：必須在第4步 FinMind 覆寫之後執行，確保 FinMind 有真實 OHLC/量的日期已被覆寫成真值、
+  // 不會被誤殺；颱風臨時休市日 FinMind 無資料列（乾淨）→ 該棒維持 volume=0＋平盤 → 命中剔除。
+  // 此過濾器同時捕捉兩種假棒：App 用 regularMarketPrice 合成的 _synthetic 平盤棒（步驟4 已 delete 標記），
+  // 以及 Yahoo 直接回傳、通過 processYahooResult null 守衛的「非 null」平盤棒（第二根因）。
+  // 已知可接受邊界（使用者已確認接受）：極冷門股「真實零成交日」（參考價＝前收）也會被剔除——
+  // 無成交即無資訊，對指標更正確；漲跌停鎖死零成交棒（價≠前收，close!==prevKept.close）不受影響、保留。
+  // 僅 1d 執行；週線/月線/盤中（1wk/1mo/60m/15m）維持原序列不處理。
+  if (interval === '1d') {
+      const filteredData: any[] = [];
+      let prevKept: any = null; // 追蹤「上一根被保留的棒」，以正確處理連續多根殭屍棒（如連兩天休市）
+      for (const bar of finalData) {
+          // 序列第一根無 prevKept → 永遠保留，絕不剔除。
+          // 以原始欄位（open/high/low/close/volume）比較，勿用 Adj 欄位。
+          const isZombie = prevKept !== null
+              && bar.volume === 0
+              && bar.open === bar.high
+              && bar.high === bar.low
+              && bar.low === bar.close
+              && bar.close === prevKept.close;
+          if (isZombie) continue; // 殭屍棒剔除，且不更新 prevKept（連續休市棒皆與最後真實棒比對）
+          filteredData.push(bar);
+          prevKept = bar;
+      }
+      finalData = filteredData;
+  }
 
   // 5. Calculate Indicators
   const rawCloses = finalData.map(d => d.close);
