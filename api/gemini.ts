@@ -1,12 +1,11 @@
-import { getGeminiApiKey, getModelForMode } from './_lib/config.js';
 import {
   ClassifiedError,
-  callGeminiWithTimeout,
   classifyGeminiError,
   sanitizeErrorForLog,
   validateGeminiRequest,
   type GeminiErrorCode,
 } from './_lib/http.js';
+import { generateText } from './_lib/llm.js';
 import { applyGuards } from './_lib/guard.js';
 import { geminiPerDay, geminiPerMin } from './_lib/ratelimit.js';
 
@@ -45,36 +44,8 @@ export default async function handler(req: GeminiReq, res: GeminiRes) {
   }
 
   try {
-    const {
-      prompt,
-      systemInstruction,
-      mode,
-      temperature,
-      thinkingConfig,
-    } = validateGeminiRequest(req.body);
-    const apiKey = getGeminiApiKey();
-
-    if (!apiKey) {
-      res.status(500).json({
-        code: 'MISSING_KEY',
-        message: '後端尚未設定 Gemini API 金鑰，請聯絡管理員設定環境變數。',
-      });
-      return;
-    }
-
-    const model = getModelForMode(mode);
-    const contents = [{ role: 'user', parts: [{ text: prompt }] }];
-    const config = {
-      systemInstruction,
-      temperature: temperature ?? 0.1,
-      ...(thinkingConfig ? { thinkingConfig } : {}),
-    };
-    const result = await callGeminiWithTimeout({
-      apiKey,
-      model,
-      contents,
-      config,
-    });
+    const request = validateGeminiRequest(req.body);
+    const result = await generateText(request);
 
     res.status(200).json(result);
   } catch (error) {
