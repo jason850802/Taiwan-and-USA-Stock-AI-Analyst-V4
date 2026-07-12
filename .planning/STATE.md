@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-12 - Phase B 收尾完成：Sonnet 驗收（B-2/B-3 ACCEPT、B-1 ACCEPT_WITH_NOTES）＋H-1/M-1 當場修＋e2e 實測全過，PHASE-B-REVIEW.md 落檔
+last_activity: 2026-07-13 - Phase C 開跑：C-1 LLM provider adapter＋claude-cli 訂閱橋接完成併入 main（260713-1t8）
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-12 - Phase B 全部完成（三子包＋Sonnet 驗收＋findings 修復＋e2e 實測），詳 .planning/optimization/PHASE-B-REVIEW.md
+Last activity: 2026-07-13 - Phase C 進行中：C-1 完成（LLM provider adapter＋claude-cli 訂閱橋接）
 
 Progress: [██████████] 100%
 
@@ -120,6 +120,7 @@ Recent decisions affecting current work:
 | 260712-v6l | B-2 搜尋 UX 三修（Phase B 1/3）：searchStocks 改兩段式 callback 發射——local 相位本地名錄命中立即上屏（不等 Yahoo 冷握手 3-8 秒）、final 無條件恰發一次收斂（Yahoo 空/失敗即本地原樣），函式內部自行 await ensureTaiwanDirectory 根除名錄就緒競態（消費端移除 dir state、useCallback deps 清為 []、兩相位皆過 reqId 防過期）；StockSearch 下拉面板三態化——!dirReady→「載入名錄中…」、searching→不渲染、終態才顯示「找不到符合」（誤閃三情境走讀封死）；CJK 0 網路請求維持、A1 過濾/白名單/15 筆上限 diff 證明零觸碰；14 項 tsx 斷言＋tsc 三次全過 | 2026-07-12 | 811db54, 98636cb | [260712-v6l-b-2-search-ux-three-fixes-local-first-re](./quick/260712-v6l-b-2-search-ux-three-fixes-local-first-re/) |
 | 260712-vno | B-1 行情載入全套（Phase B 2/3）：新增 services/quoteCache.ts——台美各依交易時段的 TTL 純函式（盤中 10 分／收盤後沿用到下一交易日開盤，Intl 時區處理 DST）＋memory 權威層＋sessionStorage best-effort 雙層快取；yahoo.ts getStockData 加快取外殼＋SWR（stale 先渲染、背景刷新 onRevalidated）＋forceRefresh（更新報價按鈕）＋寫快取前 signal.aborted 守衛防中毒；台股三段串行改並行（中文名併入 Promise.all）；resolveTaiwanSuffix 名錄 type 預解析 .TW/.TWO（上櫃股直達零試錯，查無 fall through 原 try-chain）；App.tsx fetchData reqId＋AbortController 三處過期守衛；後端握手三段 8s AbortSignal.timeout（TimeoutError 擴列）＋chart 200 回應 s-maxage=60,swr=300；chipDataUnavailable 只享 10 分短 TTL；殭屍棒/close-null/後綴剝除/A1/B-2 全 diff 證明零退化；35 項純函式斷言＋tsc 全綠 | 2026-07-12 | 2abed37, 691dfef, 72e6204 | [260712-vno-b-1-quote-loading-speed-full-package](./quick/260712-vno-b-1-quote-loading-speed-full-package/) |
 | 260712-wa0 | B-3 拖曳體感 transform 平移（Phase B 3/3）：新增 utils/panMath.ts 四純函式（computeWindowBounds/buildPanSession/clampTranslate/commitOffset，89 項斷言含與 A2 舊公式 50 點網格逐位元全等）；StockChart 拖曳管線改接——dragStart 建 1.5×~2× 加寬緩衝層（每側 ceil(barsToShow×0.5)）、mousemove 熱路徑只讀 ref＋純算術＋一行 translate3d style 寫入（零 setState/零 Recharts 重繪/零佈局量測/零 rAF）、緩衝耗盡 mid-drag re-base 一次重繪補緩衝、mouseup commitOffset 吸附整根＋鉗位提交 re-slice 三圖同視窗；pan 模式 bare ComposedChart 顯式尺寸＋YAxis hide＋右緣 60px 遮罩；PAN_STEP 量化全廢（目的被 transform 路徑取代，吸附顆粒度反而變細至 1 根）；拖曳中縮放忽略/data 變更安全中止/游標命令式管理；260613-ixg 副圖凍結、260613-if7 十字線抑制/鉗位、260613-3ab memo、260711-v9f 一字板與 ChipBar、A2 結構全數 diff/grep 證明零退化；tsc 過 | 2026-07-12 | 78ca076, 851e3bf | [260712-wa0-b-3-drag-pan-css-transform-translate](./quick/260712-wa0-b-3-drag-pan-css-transform-translate/) |
+| 260713-1t8 | C-1 LLM provider adapter＋claude-cli 訂閱橋接（Phase C 1/3）：新增 api/_lib/llm.ts generateText 依 LLM_PROVIDER 分流——未設/gemini-api 走既有 callGeminiWithTimeout（部署行為逐字等價，僅 MISSING_KEY 改經 catch 多一行 log）、claude-cli 以 child_process spawn 本機 Claude Code CLI（-p --output-format json --tools ""，prompt 走 stdin、system 走 --system-prompt，吃 Claude 訂閱零 Gemini 帳單，僅本機 vercel dev 顯式設 env 才啟用）；執行檔三段探索（CLAUDE_CLI_PATH→PATH 跳過 .cmd→%APPDATA%\Claude\claude-code 最高版本目錄）＋子程序 env 清洗（剔 ANTHROPIC_BASE_URL/CLAUDECODE/CLAUDE_CODE_*）＋cwd=tmpdir＋100s 逾時 settled 旗標收斂＋五出口 JSON 解析（未登入→MISSING_KEY 含 claude /login 指引）；api/gemini.ts handler 改接 adapter（statusByCode/catch/maxDuration 零改動）；.env.example 新增 LLM_PROVIDER/CLAUDE_CLI_PATH/CLAUDE_CLI_MODEL_FAST/THINKING 說明。直測三情境 PASS（含未登入 e2e 1.5s settle 零殘留子程序）、tsc 綠、build 後 grep AIza 無結果 | 2026-07-13 | 0e6cb9a, ebc9655 | [260713-1t8-c-1-llm-provider-adapter-claude-cli-llm-](./quick/260713-1t8-c-1-llm-provider-adapter-claude-cli-llm-/) |
 
 ## Deferred Items
 
