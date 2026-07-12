@@ -131,7 +131,7 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
 const US_EXCHANGES = new Set(['NMS', 'NYQ', 'NGM', 'NCM', 'ASE', 'PCX', 'BTS']);
 
 export function mapYahooQuote(x: any): StockDirEntry | null {
-  if (!x || !x.symbol) return null;
+  if (!x || !x.symbol || typeof x.symbol !== 'string') return null;
   if (x.quoteType !== 'EQUITY' && x.quoteType !== 'ETF') return null;
   const sym: string = x.symbol;
   let market: Market;
