@@ -1,6 +1,7 @@
 import { StockDataPoint, TwFundamentals } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
 import { proxyHeaders } from "./_shared/apiClient";
+import { buildCacheKey, readCache, writeCache, taipeiTodayStr } from './_shared/geminiCache';
 
 type GeminiApiPayload = {
   prompt: string;
@@ -13,10 +14,18 @@ type GeminiApiPayload = {
   };
 };
 
+const FLASH_THINKING_BUDGET = 4096; // flash 模式 thinking tokens 上限（計費項），統一單點調整
+
 const callGeminiApi = async (
   payload: GeminiApiPayload,
   fallbackText = 'No analysis generated.'
 ): Promise<string> => {
+  // 透明快取：同台北日期＋同 mode＋同輸入直接回傳，0 次 API 計費；
+  // 行情一變 prompt 即變、hash 即變，快取自動失效。storage 不可用時完全退化為直接打 API。
+  const cacheKey = buildCacheKey(payload.mode, taipeiTodayStr(), payload.systemInstruction, payload.prompt);
+  const cached = readCache(cacheKey);
+  if (cached) return cached;
+
   const response = await fetch('/api/gemini', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...proxyHeaders },
@@ -31,10 +40,15 @@ const callGeminiApi = async (
     throw new Error(data.message || '分析失敗，請稍後再試。');
   }
 
+  // 僅快取非空成功回應——不快取 fallbackText、不快取錯誤（避免壞結果被釘一整天）
+  if (typeof data.text === 'string' && data.text.length > 0) {
+    writeCache(cacheKey, data.text);
+  }
+
   return data.text || fallbackText;
 };
 
-// Helper to format data for the prompt
+// 盤中量能預估資訊（供持股健檢 prompt 使用）
 interface VolumeProjectionInfo {
   currentVolume: number;
   projectedVolume: number;
@@ -42,244 +56,6 @@ interface VolumeProjectionInfo {
   changePercent: number;
   status: 'Intraday' | 'Insufficient' | 'Closed';
 }
-
-const formatPromptData = (
-  symbol: string,
-  data: StockDataPoint[],
-  userPosition?: { hasHolding: boolean; costPrice?: number },
-  volumeProjection?: VolumeProjectionInfo | null
-): string => {
-  const latest = data[data.length - 1];
-  const prev = data[data.length - 2]; 
-  const isTaiwanStock = symbol.endsWith('.TW') || symbol.endsWith('.TWO');
-  
-  const priceChangePct = ((latest.close - prev.close) / prev.close) * 100;
-  const volumeRatio = latest.volume / prev.volume;
-  const isRedCandle = latest.close > latest.open;
-  const brokePrevHigh = latest.close > prev.high;
-  const standOn5MA = latest.ma5 ? latest.close > latest.ma5 : false;
-
-  // 基本量＝前5日均量（不含今日），供攻擊量雙軌第二軌使用
-  const baseVol5 = data.length >= 6
-    ? data.slice(-6, -1).reduce((s, d) => s + d.volume, 0) / 5
-    : 0;
-  const passPriceCheck = priceChangePct > 2 && isRedCandle;
-  // 攻擊量雙軌擇一：>昨量×1.3 或 >5日均量×1.2
-  const passVolumeCheck = volumeRatio > 1.3 || (baseVol5 > 0 && latest.volume / baseVol5 >= 1.2);
-  const passBreakoutCheck = standOn5MA && brokePrevHigh;
-  const isGoldenBuyPoint = passPriceCheck && passVolumeCheck && passBreakoutCheck;
-
-  const last10 = data.slice(-10);
-  const last5 = data.slice(-5);
-  
-  const trendData = last10.map(d => {
-      const volUnit = isTaiwanStock ? Math.round(d.volume / 1000) + ' Lots' : d.volume.toLocaleString() + ' Shares';
-      let chipsStr = '';
-      if (isTaiwanStock) {
-        const foreign = d.foreignBuySell !== undefined ? Math.round(d.foreignBuySell/1000) + ' Lots' : 'N/A';
-        const trust = d.investmentTrustBuySell !== undefined ? Math.round(d.investmentTrustBuySell/1000) + ' Lots' : 'N/A';
-        chipsStr = `, Foreign: ${foreign}, Trust: ${trust}`;
-      }
-      return `Date: ${d.date}, Open: ${d.open.toFixed(2)}, High: ${d.high.toFixed(2)}, Low: ${d.low.toFixed(2)}, Close: ${d.close.toFixed(2)}, Volume: ${volUnit}${chipsStr}`;
-  }).join('\n');
-
-  let chipsLatestStr = 'N/A';
-  let chips5DaySummary = '';
-
-  if (isTaiwanStock) {
-      const foreignLots = latest.foreignBuySell !== undefined ? Math.round(latest.foreignBuySell / 1000) : 'N/A';
-      const trustLots = latest.investmentTrustBuySell !== undefined ? Math.round(latest.investmentTrustBuySell / 1000) : 'N/A';
-      chipsLatestStr = `\n- Foreign Investor Net Buy/Sell (Latest): ${foreignLots} Lots (張)\n- Investment Trust Net Buy/Sell (Latest): ${trustLots} Lots (張)`;
-
-      const foreignSum = last5.reduce((sum, d) => sum + (d.foreignBuySell || 0), 0);
-      const trustSum = last5.reduce((sum, d) => sum + (d.investmentTrustBuySell || 0), 0);
-      
-      chips5DaySummary = `
-*** CHIPS ANALYSIS DATA (Last 5 Days) ***
-- Total Foreign Investor Net Buy/Sell: ${Math.round(foreignSum / 1000)} Lots (張)
-- Total Investment Trust Net Buy/Sell: ${Math.round(trustSum / 1000)} Lots (張)
-`;
-  }
-
-  let userContextStr = `*** USER STATUS: ${userPosition?.hasHolding ? "HOLDING" : "EMPTY HANDS (NO POSITION)"} ***`;
-  if (userPosition?.hasHolding && userPosition?.costPrice) {
-      const profitPct = ((latest.close - userPosition.costPrice) / userPosition.costPrice) * 100;
-      userContextStr += `\n- Average Cost Price: ${userPosition.costPrice}\n- Current Profit/Loss: ${profitPct.toFixed(2)}%`;
-  }
-
-  // Volume projection context for AI
-  let volumeProjStr = '';
-  if (volumeProjection && volumeProjection.status !== 'Insufficient') {
-    const volUnit = isTaiwanStock ? '張' : '股';
-    const projVol = isTaiwanStock
-      ? Math.round(volumeProjection.projectedVolume / 1000).toLocaleString() + ` ${volUnit}`
-      : volumeProjection.projectedVolume.toLocaleString() + ` ${volUnit}`;
-    const curVol = isTaiwanStock
-      ? Math.round(volumeProjection.currentVolume / 1000).toLocaleString() + ` ${volUnit}`
-      : volumeProjection.currentVolume.toLocaleString() + ` ${volUnit}`;
-    const yesterVol = isTaiwanStock
-      ? Math.round(volumeProjection.yesterdayVolume / 1000).toLocaleString() + ` ${volUnit}`
-      : volumeProjection.yesterdayVolume.toLocaleString() + ` ${volUnit}`;
-    const chgSign = volumeProjection.changePercent >= 0 ? '+' : '';
-
-    if (volumeProjection.status === 'Intraday') {
-      volumeProjStr = `
-*** 成交量狀態：盤中（Intraday） ***
-- 目前實際成交量：${curVol}
-- 預估全日成交量：${projVol}
-- 昨日成交量：${yesterVol}
-- 預估量變化：${chgSign}${volumeProjection.changePercent.toFixed(1)}%（相較昨日）
-⚠️ 注意：目前為盤中，訊號檢核表中「成交量」項目請以「預估量變化」作為判斷依據。`;
-    } else {
-      volumeProjStr = `
-*** 成交量狀態：收盤（Closed） ***
-- 今日成交量：${curVol}
-- 昨日成交量：${yesterVol}
-- 量變化：${chgSign}${volumeProjection.changePercent.toFixed(1)}%（相較昨日）`;
-    }
-  }
-
-  // Recalculate volume check based on projection status
-  let effectiveVolumeRatio = volumeRatio;
-  if (volumeProjection && volumeProjection.status === 'Intraday' && volumeProjection.yesterdayVolume > 0) {
-    effectiveVolumeRatio = volumeProjection.projectedVolume / volumeProjection.yesterdayVolume;
-  }
-  // 攻擊量雙軌擇一：今量（盤中為預估量）>昨量×1.3 或 >基本量(前5日均量)×1.2
-  const effectiveTodayVol = (volumeProjection && volumeProjection.status === 'Intraday')
-    ? volumeProjection.projectedVolume : latest.volume;
-  const effectiveVolVsBase5 = baseVol5 > 0 ? effectiveTodayVol / baseVol5 : 0;
-  const passEffectiveVolumeCheck = effectiveVolumeRatio > 1.3 || effectiveVolVsBase5 >= 1.2;
-
-  // 持股健檢價位（初階CH3 大量紅K三價位；進階第三章 向上缺口四價位）
-  let keyLevelsStr = '';
-  {
-    const last20 = data.slice(-20);
-    let bigRed: StockDataPoint | undefined;
-    for (const d of last20) if (d.close > d.open && (!bigRed || d.volume > bigRed.volume)) bigRed = d;
-    if (bigRed && bigRed.volume > 0) {
-      keyLevelsStr += `
-*** KEY LEVELS（持股防守參考價位） ***
-- 近20日最大量紅K（${bigRed.date}）三價位：最高點 ${bigRed.high.toFixed(2)}（跌破＝攻擊減弱，3~5日內須站回）｜1/2價 ${((bigRed.high + bigRed.low) / 2).toFixed(2)}（跌破＝當日均成本失守、氣勢破壞）｜最低點 ${bigRed.low.toFixed(2)}（跌破＝多空易位）`;
-    }
-    const gapLines: string[] = [];
-    for (let j = Math.max(1, data.length - 60); j < data.length; j++) {
-      const gTop = data[j].low, gBot = data[j - 1].high;
-      if (gTop > gBot) {
-        let filled = false;
-        for (let t = j; t < data.length; t++) if (data[t].low <= gBot) { filled = true; break; }
-        if (!filled) gapLines.push(`${data[j].date} 上沿 ${gTop.toFixed(2)}／下沿 ${gBot.toFixed(2)}`);
-      }
-    }
-    if (gapLines.length)
-      keyLevelsStr += `\n- 未回補向上跳空缺口（四價位框架：上高＞上沿＞下沿＞下底，逐級失守意義遞增）：${gapLines.slice(-3).join('；')}`;
-  }
-
-  return `
-Target Stock: ${symbol}
-${volumeProjStr}
-
-*** SYSTEM REFERENCE DATA (Strict Criteria) ***
-1. PRICE Criteria (>2% Up & Red Candle): ${passPriceCheck ? "PASS" : "FAIL"} (Actual: ${priceChangePct.toFixed(2)}%)
-2. VOLUME Criteria (>1.3x Yesterday OR >1.2x 5D-Avg, 擇一): ${passEffectiveVolumeCheck ? "PASS" : "FAIL"} (${volumeProjection?.status === 'Intraday' ? '預估量' : '實際量'}/昨量: ${effectiveVolumeRatio.toFixed(2)}x；/5日均量: ${effectiveVolVsBase5 > 0 ? effectiveVolVsBase5.toFixed(2) + 'x' : 'N/A'})
-3. PATTERN Criteria (Stand on 5MA & Break Prev High): ${passBreakoutCheck ? "PASS" : "FAIL"}
--> IS GOLDEN BUY POINT MET? : ${passPriceCheck && passEffectiveVolumeCheck && passBreakoutCheck ? "YES" : "NO"}
-${keyLevelsStr}
-
-*** LATEST DATA POINTS ***
-- Today's Close: ${latest.close.toFixed(2)}
-- 5MA: ${latest.ma5?.toFixed(2)} | 10MA: ${latest.ma10?.toFixed(2)} | 20MA: ${latest.ma20?.toFixed(2)} | 60MA: ${latest.ma60?.toFixed(2)}
-
-Indicators:
-- RSI(14): ${latest.rsi?.toFixed(2) || 'N/A'}
-- MACD: DIF=${latest.macd?.toFixed(2) || 'N/A'}, DEA=${latest.macdSignal?.toFixed(2) || 'N/A'}, Hist=${latest.macdHist?.toFixed(2) || 'N/A'}
-- KDJ: K=${latest.k?.toFixed(2) || 'N/A'}, D=${latest.d?.toFixed(2) || 'N/A'}, J=${latest.j?.toFixed(2) || 'N/A'}
-- 布林通道(20,2): 上軌=${latest.bbUpper?.toFixed(2) || 'N/A'}, 中軌=${latest.bbMiddle?.toFixed(2) || 'N/A'}, 下軌=${latest.bbLower?.toFixed(2) || 'N/A'}${chipsLatestStr}
-
-${chips5DaySummary}
-
-Recent 10 Days Trend:
-${trendData}
-
-${userContextStr}
-`;
-};
-
-export const analyzeStockWithGemini = async (
-    symbol: string,
-    data: StockDataPoint[],
-    userPosition?: { hasHolding: boolean; costPrice?: number },
-    mode: 'fast' | 'thinking' = 'fast',
-    volumeProjection?: VolumeProjectionInfo | null
-) => {
-  const promptData = formatPromptData(symbol, data, userPosition, volumeProjection);
-
-  const systemInstruction = `
-### 角色定位
-你是一位精通「朱家泓 × 林穎」技術分析體系的專業交易專家。你將運用講義中的「六六大順」選股步驟與「六大買點」準則，針對使用者提供的股票數據進行深度診斷。
-**定位**：本分析為「盤中快篩／濾網外補充視角」。若使用者同時取得「進場濾網（方案C）」的 GO/WAIT/NO-GO 客觀結論，一律**以濾網結論為準**，本分析不得與之矛盾。
-**只做多**：使用者只做多不做空；空方訊號僅作辨識，動作一律為出場／避開／鎖股觀望，禁止輸出做空建議。
-
-### 核心分析邏輯：六六大順（依講義順序）
-1. **趨勢**：辨識「頭頭高/低、底底高/低」。
-2. **位置**：判斷處於打底、起漲、主升或末升段（起漲達一倍＝高檔；沿5均漲逾20%＝停利警戒）。
-3. **K 線**：識別關鍵 K 棒（如：長紅突破、變盤線、組合型態）。
-4. **均線**：確認三線/六線排列，股價是否站穩 20MA。
-5. **成交量**：檢查攻擊量（今量>昨量×1.3 或 >5日均量×1.2，擇一）或爆大量背離。
-6. **指標**：綜合 MACD (10,20,10：0軸位置/柱狀體)、KD (5,3,3：交叉/鈍化回歸價量) 與布林通道 (開口方向)。
-
----
-
-### 輸出格式（結合舊版格式與講義深度）
-
-#### 1. 六六大順深度研判（依講義順序：趨勢→位置→K線→均線→量→指標）
-- **趨勢方向**：[多頭/空頭/盤整]。說明是否符合「頭頭高、底底高」等慣性。
-- **位置與型態**：說明目前所處波段位置，是否有 ABC 修正突破、島型反轉或底部型態確認。
-- **關鍵 K 線**：判斷今日 K 線意義（長紅突破、變盤線、組合型態）。
-- **均線結構**：[多頭排列/空頭排列/糾結]。說明 MA5/10/20 方向及股價與 20MA 的位置關係。
-- **成交量**：量能是否達「攻擊量」（>昨量×1.3 或 >5日均量×1.2，擇一）或存在「價量背離」。
-- **技術指標分析**：
-    - **KD (5,3,3)**：數值與交叉狀態；**多頭中 50 以下的黃金交叉為波段起漲點（50 附近比 20 附近更強）**；若進入 80~100 高檔鈍化則**回歸價量判斷、不單獨扣分**（鈍化為強勢股特徵）；背離僅在 20~80 之間有效。
-    - **MACD**：OSC 柱狀體增減，DIF/DEA 是否在 0 軸之上。
-    - **布林通道**：股價是否沿上軌擴張或觸碰上下軌遇壓/支撐。
-- **外資與投信**：（若有籌碼資料）解析籌碼安定度與法人態度。
-
-#### 2. 訊號檢核表 (Check List)
-- **[ ] 進場型態確認**：[✅/ ] 符合六大買點之一？（①盤整突破 ②回後買上漲 ③K線橫盤突破（連3天以上收盤未過第一根K高點也未破其低點，帶量中長紅突破） ④突破ABC修正下降切線（回檔一般20天內） ⑤突破上升軌道線（<30度緩漲帶量破上軌） ⑥型態確認（W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線））。
-- **[ ] 三大黃金買點檢核**：
-    - **價**：[✅/ ] 實體紅 K 且漲幅 > 2%？。
-    - **量**：[✅/ ] 攻擊量成立？（今量 > 昨量×1.3 或 > 5日均量×1.2，擇一）。
-      ⚠️ **重要**：若資料中標示「成交量狀態：盤中（Intraday）」，則此項必須以「預估全日成交量」與昨日成交量的比較作為判斷依據，並在判定旁標注「(依預估量)」。僅在資料標示「收盤（Closed）」時才使用實際量變化。
-    - **型**：[✅/ ] 趨勢完成多頭架構或型態突破？。
-- **[ ] 進場指標加持**：[✅/ ] KD 向上多排且 MACD 紅柱增長/綠柱縮短？。
-- **[ ] 出場/警戒訊號**：是否有高檔爆大量長黑、跌破 5MA、或頭頭低跡象？。
-- **注意(重要)**：
-    - 若使用者為「空手 (NO POSITION)」，則對於『加碼訊號』、『減碼警訊』、『出場訊號』僅需保留標題與檢核框，不可加文字說明。
-    - 若使用者為「持有中 (HOLDING)」，請務必根據其『平均成本價』，結合指標(如跌破 5MA、爆量長黑等)給出具體加減碼或出場建議；**並引用資料中的 KEY LEVELS（大量紅K三價位：最高點／1/2價／最低點；未回補向上缺口上沿／下沿）給出具體防守價位建議**（跌破哪個價位該做什麼，逐級說明）。
-
-#### 3. 建議操作計畫
-- **當下策略動作**：[進場做多 / 持股續抱 / 減碼停利 / 停損出場 / 觀望]
-- **判斷理由**：結合講義紀律（如：買強不買弱、買低不追高、量縮價漲背離不進場等）。
-- **價位設定**：
-    - **停損雙軌擇一（都要列出，註明擇一為主要防守、收盤跌破即出場）**：① 進場價 × 0.95（-5%）；② 收盤跌破關鍵均線（短線 MA5／波段 MA10／中長線 MA20，依操作級別）。
-    - **停利/減碼標準**：[減碼]：漲幅超過 10% 後收盤跌破 5MA。
-    - **[停利]**：出現「高檔爆大量不漲」或「連續急漲 3 天後變盤」；飆股／均線糾結突破後改用智慧K線法（收盤跌破前一日 K 線最低點即出場）。
-
----
-
-### 操作限制
-1. **嚴守紀律**：若趨勢不明或攻擊量雙軌（>昨量×1.3 或 >5日均量×1.2）皆不成立，必須明確給予「觀望」建議。
-2. **客觀分析**：禁止主觀猜測，所有建議必須建立在既有的 K 線與數據基礎上。
-3. **區分時程**：明確區分日線（短線）與週線（中長線）的判斷差異。
-`;
-
-  return callGeminiApi({
-    prompt: promptData,
-    systemInstruction,
-    mode,
-    temperature: 0.1,
-    thinkingConfig: mode === 'fast' ? { thinkingLevel: 'MEDIUM' } : undefined,
-  });
-};
 
 // ───────────────────────────────────────────────────────────────
 // 方案C：吃「六六大順進場濾網」的客觀結果，產出朱家泓風格解讀報告（單次呼叫）
@@ -721,7 +497,7 @@ ${latestIndicators}${recentDataStr}
     systemInstruction,
     mode: 'fast',
     temperature: 0.3,
-    thinkingConfig: { thinkingBudget: 8192 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成分析結果。');
 };
 
@@ -1040,7 +816,7 @@ export const analyzePortfolioHealth = async (
     systemInstruction,
     mode: 'fast',
     temperature: 0.2,
-    thinkingConfig: { thinkingBudget: 10240 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成健檢結果。');
 };
 
@@ -1131,5 +907,5 @@ export const analyzeFundamentals = async (fund: TwFundamentals): Promise<string>
     systemInstruction: FUNDAMENTALS_SYSTEM_INSTRUCTION,
     mode: 'fast',
     temperature: 0.3,
-    thinkingConfig: { thinkingBudget: 8192 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成基本面解讀。');
