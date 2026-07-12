@@ -1,6 +1,7 @@
 import { StockDataPoint, TwFundamentals } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
 import { proxyHeaders } from "./_shared/apiClient";
+import { buildCacheKey, readCache, writeCache, taipeiTodayStr } from './_shared/geminiCache';
 
 type GeminiApiPayload = {
   prompt: string;
@@ -13,10 +14,18 @@ type GeminiApiPayload = {
   };
 };
 
+const FLASH_THINKING_BUDGET = 4096; // flash 模式 thinking tokens 上限（計費項），統一單點調整
+
 const callGeminiApi = async (
   payload: GeminiApiPayload,
   fallbackText = 'No analysis generated.'
 ): Promise<string> => {
+  // 透明快取：同台北日期＋同 mode＋同輸入直接回傳，0 次 API 計費；
+  // 行情一變 prompt 即變、hash 即變，快取自動失效。storage 不可用時完全退化為直接打 API。
+  const cacheKey = buildCacheKey(payload.mode, taipeiTodayStr(), payload.systemInstruction, payload.prompt);
+  const cached = readCache(cacheKey);
+  if (cached) return cached;
+
   const response = await fetch('/api/gemini', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...proxyHeaders },
@@ -29,6 +38,11 @@ const callGeminiApi = async (
 
   if (!response.ok) {
     throw new Error(data.message || '分析失敗，請稍後再試。');
+  }
+
+  // 僅快取非空成功回應——不快取 fallbackText、不快取錯誤（避免壞結果被釘一整天）
+  if (typeof data.text === 'string' && data.text.length > 0) {
+    writeCache(cacheKey, data.text);
   }
 
   return data.text || fallbackText;
@@ -483,7 +497,7 @@ ${latestIndicators}${recentDataStr}
     systemInstruction,
     mode: 'fast',
     temperature: 0.3,
-    thinkingConfig: { thinkingBudget: 8192 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成分析結果。');
 };
 
@@ -802,7 +816,7 @@ export const analyzePortfolioHealth = async (
     systemInstruction,
     mode: 'fast',
     temperature: 0.2,
-    thinkingConfig: { thinkingBudget: 10240 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成健檢結果。');
 };
 
@@ -893,5 +907,5 @@ export const analyzeFundamentals = async (fund: TwFundamentals): Promise<string>
     systemInstruction: FUNDAMENTALS_SYSTEM_INSTRUCTION,
     mode: 'fast',
     temperature: 0.3,
-    thinkingConfig: { thinkingBudget: 8192 },
+    thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
   }, '無法生成基本面解讀。');
