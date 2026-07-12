@@ -165,20 +165,32 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
 }
 
 // ── 整合搜尋：台股本地 +（英文/代碼時）Yahoo 海外 ──
-export async function searchStocks(dir: StockDirEntry[], query: string): Promise<StockDirEntry[]> {
+// 兩段式發射契約（B-2 修法1、3）：
+//   - 內部自行 await ensureTaiwanDirectory()，名錄未就緒也能等到本地結果（競態根除）
+//   - CJK 查詢：單發 final（0 網路請求，不碰 searchYahoo）
+//   - 非 CJK：本地命中 >0 先發 'local'（不等 Yahoo）；searchYahoo 到貨後 merge 發 'final'
+//   - final 相位無條件恰發一次（Yahoo 空/失敗時即本地結果原樣）——消費端靠它收斂 searching 態
+export async function searchStocks(
+  query: string,
+  onResults: (results: StockDirEntry[], phase: 'local' | 'final') => void,
+): Promise<void> {
   const q = query.trim();
-  if (!q) return [];
+  if (!q) return;
+  const dir = await ensureTaiwanDirectory();
+  // 含中文 → 只用台股本地（最快、最準；保證 0 網路請求）
+  if (hasCJK(q)) {
+    onResults(searchTaiwan(dir, q, 15), 'final');
+    return;
+  }
+  // 純英文/代碼 → 本地先上屏，再併入 Yahoo 海外結果（去重）
   const tw = searchTaiwan(dir, q, 15);
-  // 含中文 → 只用台股本地（最快、最準）
-  if (hasCJK(q)) return tw;
-  // 純英文/代碼 → 併入 Yahoo 海外結果（去重）
-  let yahoo: StockDirEntry[] = [];
-  try { yahoo = await searchYahoo(q, 8); } catch { /* ignore */ }
+  if (tw.length > 0) onResults(tw, 'local');
+  const yahoo = await searchYahoo(q, 8); // 內部 try/catch，永不 throw
   const seen = new Set(tw.map(e => e.id));
   const merged = [...tw];
   for (const y of yahoo) {
     const bare = y.id.replace(/\.TWO?$/i, '');
     if (!seen.has(y.id) && !seen.has(bare)) { merged.push(y); seen.add(y.id); }
   }
-  return merged.slice(0, 15);
+  onResults(merged.slice(0, 15), 'final');
 }

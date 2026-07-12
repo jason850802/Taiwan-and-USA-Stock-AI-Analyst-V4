@@ -30,7 +30,7 @@ const highlight = (text: string, q: string) => {
 };
 
 const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelect, loading }) => {
-  const [dir, setDir] = useState<StockDirEntry[]>([]);
+  const [dirReady, setDirReady] = useState(false);
   const [results, setResults] = useState<StockDirEntry[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -39,8 +39,8 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
   const debounceRef = useRef<number | undefined>(undefined);
   const reqIdRef = useRef(0);
 
-  // 載入台股名錄（背景，快取後極快）
-  useEffect(() => { ensureTaiwanDirectory().then(setDir).catch(() => {}); }, []);
+  // 預熱台股名錄（prefetch：多數搜尋到達時 memCache 已就緒；searchStocks 內部自行 await）
+  useEffect(() => { ensureTaiwanDirectory().then(() => setDirReady(true)).catch(() => {}); }, []);
 
   // 點擊外部關閉
   useEffect(() => {
@@ -55,16 +55,17 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
     window.clearTimeout(debounceRef.current);
     if (!q.trim()) { setResults([]); setOpen(false); setSearching(false); return; }
     setSearching(true);
+    setOpen(true); // 查詢開始即開面板——中間態（載入名錄中…）需要掛載點
     const myId = ++reqIdRef.current;
-    debounceRef.current = window.setTimeout(async () => {
-      const r = await searchStocks(dir, q);
-      if (myId !== reqIdRef.current) return; // 丟棄過期結果
-      setResults(r);
-      setActive(-1);
-      setOpen(true);
-      setSearching(false);
+    debounceRef.current = window.setTimeout(() => {
+      searchStocks(q, (r, phase) => {
+        if (myId !== reqIdRef.current) return; // local/final 兩相位皆丟棄過期結果
+        setResults(r);
+        setActive(-1);
+        if (phase === 'final') setSearching(false); // local 上屏後 spinner 續轉，final 收斂
+      });
     }, 180);
-  }, [dir]);
+  }, []);
 
   const handleChange = (v: string) => { onValueChange(v); runSearch(v); };
 
