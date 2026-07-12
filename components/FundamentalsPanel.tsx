@@ -8,6 +8,8 @@ import StockSearch from './StockSearch';
 import ValuationHeader from './fundamentals/ValuationHeader';
 import MonthlyRevenueChart from './fundamentals/MonthlyRevenueChart';
 import QuarterlyTrendCharts from './fundamentals/QuarterlyTrendCharts';
+import FinancialHealthCards from './fundamentals/FinancialHealthCards';
+import DividendTable from './fundamentals/DividendTable';
 
 interface FundamentalsPanelProps {
   initialSymbol: string; // 純代碼（呼叫端已 strip .TW/.TWO），面板掛載後自管內部搜尋狀態
@@ -15,6 +17,16 @@ interface FundamentalsPanelProps {
 
 const stripTwCode = (raw: string): string => raw.trim().toUpperCase().replace(/\.TWO?$/i, '');
 const isTwCode = (code: string): boolean => /^\d{3,6}[A-Z]?$/.test(code);
+
+const WARNING_LABELS: Record<string, string> = {
+  info: '公司基本資料',
+  income_statement: '損益表',
+  balance_sheet: '資產負債表',
+  cash_flow: '現金流量表',
+  valuation: '估值指標',
+  monthly_revenue: '月營收',
+  dividends: '股利紀錄',
+};
 
 const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) => {
   const [queryText, setQueryText] = useState(initialSymbol);
@@ -80,6 +92,16 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
         </Banner>
       )}
 
+      {!error && fundamentals && fundamentals.warnings.length > 0 && (
+        <Banner
+          variant="info"
+          onDismiss={() => setFundamentals({ ...fundamentals, warnings: [] })}
+          onRetry={() => fetchFundamentals(activeSymbol || initialSymbol, true)}
+        >
+          部分資料暫時無法取得：{fundamentals.warnings.map(w => WARNING_LABELS[w] || w).join('、')}
+        </Banner>
+      )}
+
       {loading && !fundamentals && (
         <Card>
           <Skeleton variant="lines" lines={5} />
@@ -91,6 +113,8 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
           <ValuationHeader fundamentals={fundamentals} />
           <MonthlyRevenueChart data={fundamentals.monthlyRevenue} />
           <QuarterlyTrendCharts data={fundamentals.incomeQuarters} />
+          <FinancialHealthCards balanceSheet={fundamentals.balanceSheet} cashFlow={fundamentals.cashFlow} />
+          <DividendTable data={fundamentals.dividends} />
         </>
       )}
     </div>

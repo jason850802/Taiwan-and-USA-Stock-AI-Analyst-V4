@@ -3,7 +3,7 @@ import React from 'react';
 interface StatCardProps {
   label: string;
   value: string | number;
-  tone?: 'up' | 'down' | 'neutral';
+  tone?: 'up' | 'down' | 'neutral' | 'warn';
   sub?: string;
 }
 
@@ -11,6 +11,7 @@ const toneClasses: Record<NonNullable<StatCardProps['tone']>, string> = {
   up: 'text-up',
   down: 'text-down',
   neutral: 'text-white',
+  warn: 'text-warn',
 };
 
 const StatCard: React.FC<StatCardProps> = ({ label, value, tone = 'neutral', sub }) => (
