@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-12 - Completed quick task 260712-v6l: B-2 搜尋 UX 三修（searchStocks 兩段式發射本地立即上屏＋內部自載名錄根除競態＋下拉三態化終結「找不到符合」誤閃）
+last_activity: 2026-07-12 - Completed quick task 260712-vno: B-1 行情載入全套（quoteCache 雙層快取＋SWR、台股並行化、.TW/.TWO 預解析、fetchData 防競態、後端 timeout＋CDN cache）
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-12 - Completed quick task 260712-v6l: B-2 搜尋 UX 三修（Phase B 子包 1/3）
+Last activity: 2026-07-12 - Completed quick task 260712-vno: B-1 行情載入全套（Phase B 子包 2/3）
 
 Progress: [██████████] 100%
 
@@ -118,6 +118,7 @@ Recent decisions affecting current work:
 | 260712-qyf | A2 K 棒圖拖曳平移效能快贏：handleDragMove 熱路徑不再 per-mousemove 呼叫 getBoundingClientRect（dragStart 量測一次存 dragWidthRef，消除強制 reflow）；顯示資料改為 mappedData 全量預映射（Adj/Raw、MA 欄位、priceChange，deps 不含 barsToShow/rightOffset）＋windowBounds 夾止數學單一事實來源，displayData/volumeCells 降級為 O(視窗) slice——拖曳每步元素物件參照穩定、mappedData/volumeCellsFull/maResultsCache/macdHistCells 快取全命中。行為零變化（鉗位/十字線抑制/縮放/週期歸位/260613-ixg 副圖凍結/一字板/PAN_STEP 全照舊）；priceChange 讀碼確認舊版即取全量前一根，遷移語意逐位元相同 | 2026-07-12 | c2b91b5, 70905f7 | [260712-qyf-a2-chart-pan-quick-wins-k](./quick/260712-qyf-a2-chart-pan-quick-wins-k/) |
 | 260712-rcf | A3 AI 帳單瘦身三件套：gemini.ts 刪 238 行死碼（analyzeStockWithGemini＋formatPromptData，保留 VolumeProjectionInfo）；callGeminiApi 咽喉點加 localStorage 透明分析快取（key=mode\|台北日期\|FNV-1a(systemInstruction+prompt)，同日同輸入 0 重複計費、輸入變 hash 即失效、僅非空成功回應寫入、50 筆上限＋跨日清理、storage 失敗全退化直打 API、UI 零改動）；三處 flash thinkingBudget 硬編（8192/10240/8192，第三處 analyzeFundamentals 為規格外 delta）統一 FLASH_THINKING_BUDGET=4096。裁決：免「重新分析」按鈕（hash 同＝輸入同，重打純重複計費）、批次健檢延 Phase C（regex 解析多檔合併更脆弱，JSON 結構化時一起做） | 2026-07-12 | 7bc35f1, 2c1107d | [260712-rcf-a3-ai-bill-slimming-thinkingbudget](./quick/260712-rcf-a3-ai-bill-slimming-thinkingbudget/) |
 | 260712-v6l | B-2 搜尋 UX 三修（Phase B 1/3）：searchStocks 改兩段式 callback 發射——local 相位本地名錄命中立即上屏（不等 Yahoo 冷握手 3-8 秒）、final 無條件恰發一次收斂（Yahoo 空/失敗即本地原樣），函式內部自行 await ensureTaiwanDirectory 根除名錄就緒競態（消費端移除 dir state、useCallback deps 清為 []、兩相位皆過 reqId 防過期）；StockSearch 下拉面板三態化——!dirReady→「載入名錄中…」、searching→不渲染、終態才顯示「找不到符合」（誤閃三情境走讀封死）；CJK 0 網路請求維持、A1 過濾/白名單/15 筆上限 diff 證明零觸碰；14 項 tsx 斷言＋tsc 三次全過 | 2026-07-12 | 811db54, 98636cb | [260712-v6l-b-2-search-ux-three-fixes-local-first-re](./quick/260712-v6l-b-2-search-ux-three-fixes-local-first-re/) |
+| 260712-vno | B-1 行情載入全套（Phase B 2/3）：新增 services/quoteCache.ts——台美各依交易時段的 TTL 純函式（盤中 10 分／收盤後沿用到下一交易日開盤，Intl 時區處理 DST）＋memory 權威層＋sessionStorage best-effort 雙層快取；yahoo.ts getStockData 加快取外殼＋SWR（stale 先渲染、背景刷新 onRevalidated）＋forceRefresh（更新報價按鈕）＋寫快取前 signal.aborted 守衛防中毒；台股三段串行改並行（中文名併入 Promise.all）；resolveTaiwanSuffix 名錄 type 預解析 .TW/.TWO（上櫃股直達零試錯，查無 fall through 原 try-chain）；App.tsx fetchData reqId＋AbortController 三處過期守衛；後端握手三段 8s AbortSignal.timeout（TimeoutError 擴列）＋chart 200 回應 s-maxage=60,swr=300；chipDataUnavailable 只享 10 分短 TTL；殭屍棒/close-null/後綴剝除/A1/B-2 全 diff 證明零退化；35 項純函式斷言＋tsc 全綠 | 2026-07-12 | 2abed37, 691dfef, 72e6204 | [260712-vno-b-1-quote-loading-speed-full-package](./quick/260712-vno-b-1-quote-loading-speed-full-package/) |
 
 ## Deferred Items
 
