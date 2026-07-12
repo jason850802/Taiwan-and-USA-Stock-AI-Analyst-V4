@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-12 - Completed quick task 260712-rcf: A3 AI 帳單瘦身（gemini.ts 刪 238 行死碼＋callGeminiApi 透明分析快取同日同輸入 0 重複計費＋thinkingBudget 三處統一 FLASH_THINKING_BUDGET=4096）
+last_activity: 2026-07-12 - Completed quick task 260712-v6l: B-2 搜尋 UX 三修（searchStocks 兩段式發射本地立即上屏＋內部自載名錄根除競態＋下拉三態化終結「找不到符合」誤閃）
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-11 - Completed quick task 260712-0dq: 依 10 個 SKILL.md 重寫 README.md（繁中專案說明）
+Last activity: 2026-07-12 - Completed quick task 260712-v6l: B-2 搜尋 UX 三修（Phase B 子包 1/3）
 
 Progress: [██████████] 100%
 
@@ -117,6 +117,7 @@ Recent decisions affecting current work:
 | 260712-qfi | A1 搜尋限縮：搜尋結果限縮為美股＋台股的個股＋ETF——mapYahooQuote 移除 isYahooFinance 旁路（期貨/指數/匯率/加密不再混入）＋市場白名單（美 7 所＋.TW/.TWO，其餘丟棄不標「海外」）、Market 型別收斂 TW\|US；isSearchableTaiwanEntry 依 FinMind TaiwanStockInfo 實抓值域過濾名錄（排除興櫃/權證/DR 含 4 碼特例 9110/ETN/受益證券/指數，保留 2395/3116 檔、509 檔 ETF 零誤殺）；合併結果收斂 15 筆、中文搜尋仍 0 網路請求 | 2026-07-12 | e4068c4, d32aa7b | [260712-qfi-a1-search-scope-etf](./quick/260712-qfi-a1-search-scope-etf/) |
 | 260712-qyf | A2 K 棒圖拖曳平移效能快贏：handleDragMove 熱路徑不再 per-mousemove 呼叫 getBoundingClientRect（dragStart 量測一次存 dragWidthRef，消除強制 reflow）；顯示資料改為 mappedData 全量預映射（Adj/Raw、MA 欄位、priceChange，deps 不含 barsToShow/rightOffset）＋windowBounds 夾止數學單一事實來源，displayData/volumeCells 降級為 O(視窗) slice——拖曳每步元素物件參照穩定、mappedData/volumeCellsFull/maResultsCache/macdHistCells 快取全命中。行為零變化（鉗位/十字線抑制/縮放/週期歸位/260613-ixg 副圖凍結/一字板/PAN_STEP 全照舊）；priceChange 讀碼確認舊版即取全量前一根，遷移語意逐位元相同 | 2026-07-12 | c2b91b5, 70905f7 | [260712-qyf-a2-chart-pan-quick-wins-k](./quick/260712-qyf-a2-chart-pan-quick-wins-k/) |
 | 260712-rcf | A3 AI 帳單瘦身三件套：gemini.ts 刪 238 行死碼（analyzeStockWithGemini＋formatPromptData，保留 VolumeProjectionInfo）；callGeminiApi 咽喉點加 localStorage 透明分析快取（key=mode\|台北日期\|FNV-1a(systemInstruction+prompt)，同日同輸入 0 重複計費、輸入變 hash 即失效、僅非空成功回應寫入、50 筆上限＋跨日清理、storage 失敗全退化直打 API、UI 零改動）；三處 flash thinkingBudget 硬編（8192/10240/8192，第三處 analyzeFundamentals 為規格外 delta）統一 FLASH_THINKING_BUDGET=4096。裁決：免「重新分析」按鈕（hash 同＝輸入同，重打純重複計費）、批次健檢延 Phase C（regex 解析多檔合併更脆弱，JSON 結構化時一起做） | 2026-07-12 | 7bc35f1, 2c1107d | [260712-rcf-a3-ai-bill-slimming-thinkingbudget](./quick/260712-rcf-a3-ai-bill-slimming-thinkingbudget/) |
+| 260712-v6l | B-2 搜尋 UX 三修（Phase B 1/3）：searchStocks 改兩段式 callback 發射——local 相位本地名錄命中立即上屏（不等 Yahoo 冷握手 3-8 秒）、final 無條件恰發一次收斂（Yahoo 空/失敗即本地原樣），函式內部自行 await ensureTaiwanDirectory 根除名錄就緒競態（消費端移除 dir state、useCallback deps 清為 []、兩相位皆過 reqId 防過期）；StockSearch 下拉面板三態化——!dirReady→「載入名錄中…」、searching→不渲染、終態才顯示「找不到符合」（誤閃三情境走讀封死）；CJK 0 網路請求維持、A1 過濾/白名單/15 筆上限 diff 證明零觸碰；14 項 tsx 斷言＋tsc 三次全過 | 2026-07-12 | 811db54, 98636cb | [260712-v6l-b-2-search-ux-three-fixes-local-first-re](./quick/260712-v6l-b-2-search-ux-three-fixes-local-first-re/) |
 
 ## Deferred Items
 
