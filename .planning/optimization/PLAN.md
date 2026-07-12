@@ -14,7 +14,7 @@
 
 | 階段 | 內容 | 狀態 |
 |---|---|---|
-| Phase A | A1=P3 搜尋限縮；A2=P1-A 圖表快贏；A3=P4B 帳單瘦身（刪死碼／結果快取／降 thinkingBudget／批次健檢評估） | 進行中 |
+| Phase A | A1=P3 搜尋限縮；A2=P1-A 圖表快贏；A3=P4B 帳單瘦身（刪死碼／結果快取／降 thinkingBudget／批次健檢→延 Phase C） | ✅ 完成（2026-07-12；Sonnet 驗收 0 CRITICAL/HIGH，M-1 已修；e2e 實測：搜尋過濾 4/4、縮放鏈路 OK、gemini 快取兩輪僅 1 次 API） |
 | Phase B | P2 載入速度全套（前端快取、並行化、後綴預解析、AbortController、後端 timeout＋CDN） | 待辦 |
 | Phase C | P4A LLM provider adapter＋claude-cli 橋接＋健檢 JSON 化 | 待辦 |
 | Phase D | （視情況）P1-B transform 平移；error boundary；math/entryFilter 最小測試 | 待辦 |
