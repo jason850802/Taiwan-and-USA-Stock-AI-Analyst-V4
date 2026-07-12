@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-12 - Completed quick task 260712-wa0: B-3 拖曳體感 CSS translate3d 緩衝層平移（Phase B 三子包全數完成，待 Sonnet 覆核）
+last_activity: 2026-07-12 - Phase B 收尾完成：Sonnet 驗收（B-2/B-3 ACCEPT、B-1 ACCEPT_WITH_NOTES）＋H-1/M-1 當場修＋e2e 實測全過，PHASE-B-REVIEW.md 落檔
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-12 - Completed quick task 260712-wa0: B-3 拖曳 transform 平移（Phase B 子包 3/3；待 Sonnet 覆核）
+Last activity: 2026-07-12 - Phase B 全部完成（三子包＋Sonnet 驗收＋findings 修復＋e2e 實測），詳 .planning/optimization/PHASE-B-REVIEW.md
 
 Progress: [██████████] 100%
 

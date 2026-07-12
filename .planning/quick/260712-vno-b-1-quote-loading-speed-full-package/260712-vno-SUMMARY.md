@@ -127,7 +127,7 @@ None — plan executed exactly as written. 兩點微幅補充（非偏離）：
 
 ## 已知殘餘風險（記錄，不擋）
 
-- **T-B1-01（accept）**：`s-maxage=60` 使同 URL 60 秒內由 Vercel CDN 直接回應、不過 applyGuards（PROXY_SHARED_SECRET/限流）。接受理由：公開行情資料、視窗僅 60 秒、cache miss 仍全額過 guard 與限流、CDN 命中不消耗 function invocation。
+- **T-B1-01（accept；數字經覆核 M-2 更正）**：`s-maxage=60, stale-while-revalidate=300` 使同 URL 可由 Vercel CDN 直接回應、不過 applyGuards（PROXY_SHARED_SECRET/限流）的視窗上界為 **60+300＝360 秒**（swr 命中時 CDN 先回過期資料再背景 revalidate），非原記載的 60 秒。接受理由不變：公開行情資料、cache miss 仍全額過 guard 與限流、CDN 命中不消耗 function invocation，360 秒上界仍可接受。
 - **maxDuration 邊界**：極端情境「attempt1 兩段近逾時成功＋主 fetch 401＋retry 全額 24s」理論可超 chart.ts maxDuration=30 被 Vercel 砍——先前是無界懸掛，本改動嚴格改善。
 - **sessionStorage 容量**：1d|10y 一檔約 1.5-2.5MB，~5MB 配額只放得下 1-2 檔大 entry——主要痛點（同 session 切週期/切回標的）由 memory 層全覆蓋，可接受。
 - **背景刷新 onRevalidated 去重侷限**：同 key 刷新進行中時第二個 stale 呼叫端不會另掛 callback（App 單一 fetchData 消費端，實務無影響）。
