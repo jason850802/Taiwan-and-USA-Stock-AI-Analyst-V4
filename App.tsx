@@ -11,6 +11,7 @@ import Modal from './components/ui/Modal';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import Portfolio from './components/Portfolio';
+import FundamentalsPanel from './components/FundamentalsPanel';
 import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
@@ -18,7 +19,7 @@ import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioIt
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
 
-type AppView = 'dashboard' | 'portfolio';
+type AppView = 'dashboard' | 'portfolio' | 'fundamentals';
 
 const App: React.FC = () => {
   const [symbol, setSymbol] = useState<string>('2330'); 
@@ -181,9 +182,15 @@ const App: React.FC = () => {
     }
   };
 
-  const isTaiwanStock = useMemo(() => info 
-      ? (info.symbol.endsWith('.TW') || info.symbol.endsWith('.TWO')) 
+  const isTaiwanStock = useMemo(() => info
+      ? (info.symbol.endsWith('.TW') || info.symbol.endsWith('.TWO'))
       : (symbol.endsWith('.TW') || symbol.endsWith('.TWO') || /^\d{4}$/.test(symbol)), [info, symbol]);
+
+  // 基本面分頁掛載時的起始代碼：dashboard 正在看台股就帶入（strip .TW/.TWO），否則預設 2330。
+  const fundamentalsInitialSymbol = useMemo(() => {
+    const stripped = (info?.symbol || symbol).toUpperCase().replace(/\.TWO?$/i, '');
+    return /^\d{3,6}[A-Z]?$/.test(stripped) ? stripped : '2330';
+  }, [info, symbol]);
 
   const volumeProj = useMemo(() => estimateVolumeTrend(data, isTaiwanStock, interval), [data, isTaiwanStock, interval]);
   const latestPoint = data.length > 0 ? data[data.length - 1] : null;
@@ -309,6 +316,10 @@ const App: React.FC = () => {
             onDelete={handlePortfolioDelete}
             onUpdate={handlePortfolioUpdate}
           />
+        )}
+
+        {currentView === 'fundamentals' && (
+          <FundamentalsPanel initialSymbol={fundamentalsInitialSymbol} />
         )}
 
         {currentView === 'dashboard' && (<>

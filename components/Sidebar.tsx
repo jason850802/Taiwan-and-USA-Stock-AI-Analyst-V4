@@ -1,7 +1,7 @@
 import React from 'react';
 import { Activity, BarChart2, FileBarChart, TrendingUp, Wallet } from 'lucide-react';
 
-type AppView = 'dashboard' | 'portfolio';
+type AppView = 'dashboard' | 'portfolio' | 'fundamentals';
 
 interface SidebarProps {
   currentView: AppView;
@@ -41,14 +41,14 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => (
         <Wallet size={15} /> 我的庫存
       </button>
       <button
-        type="button"
-        disabled
-        title="即將推出：台股基本面分頁"
-        className="flex items-center gap-2 w-full px-3 py-2.5 rounded-ctl text-sm font-medium border border-surface-line bg-surface-card text-slate-400 opacity-50 cursor-not-allowed"
+        onClick={() => setView('fundamentals')}
+        className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-ctl text-sm font-medium border transition-colors mb-2 ${
+          currentView === 'fundamentals'
+            ? 'bg-accent/15 border-accent text-accent'
+            : 'bg-surface-card border-surface-line text-slate-400 hover:text-white hover:bg-surface-inset'
+        }`}
       >
-        <FileBarChart size={15} />
-        <span>基本面</span>
-        <span className="ml-auto text-[10px] bg-surface-inset px-1.5 py-0.5 rounded-ctl">預留</span>
+        <FileBarChart size={15} /> 基本面
       </button>
     </div>
 
