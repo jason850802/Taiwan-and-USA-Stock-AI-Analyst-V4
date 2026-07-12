@@ -606,20 +606,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
     return results;
   }, [data, settings.useAdjusted, settings.maLines]);
 
-  // Transform Data based on Settings (Adj vs Raw) — zoom only re-slices, no SMA recalc
-  const displayData = useMemo(() => {
+  // 全量預映射（QT-qyf-PREMAP）：對整個 data 做一次 Adj/Raw 切換＋MA 欄位＋漲跌計算，
+  // deps 絕不含 barsToShow / rightOffset → 拖曳/縮放期間快取命中、元素物件參照穩定。
+  // priceChange 沿用 data[i-1] 前收：與舊切片版的 data[originalIndex-1] 語意逐位元相同
+  // （舊版本來就取全量陣列前一根，非切片內前一根）。
+  const mappedData = useMemo(() => {
     const useAdj = settings.useAdjusted;
-    // 平移夾止：clampedOffset 一律即時夾回有效範圍，縮小（barsToShow 變大）時 maxOffset
-    // 變小會自動把位移夾回，毋須額外 effect 校正。
-    const maxOffset = Math.max(0, data.length - barsToShow);
-    const clampedOffset = Math.min(Math.max(0, rightOffset), maxOffset);
-    const endIndex = data.length - clampedOffset;
-    const startIndex = Math.max(0, endIndex - barsToShow);
-    const sliced = data.slice(startIndex, endIndex);
-
-    return sliced.map((d, i) => {
-        const originalIndex = startIndex + i;
-
+    return data.map((d, i) => {
         const openVal = useAdj && d.openAdj ? d.openAdj : d.open;
         const closeVal = useAdj && d.closeAdj ? d.closeAdj : d.close;
         const highVal = useAdj && d.highAdj ? d.highAdj : d.high;
@@ -627,8 +620,8 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
         let priceChange = 0;
         let priceChangePercent = 0;
-        if (originalIndex > 0) {
-            const prevD = data[originalIndex - 1];
+        if (i > 0) {
+            const prevD = data[i - 1];
             const prevClose = useAdj && prevD.closeAdj ? prevD.closeAdj : prevD.close;
             priceChange = closeVal - prevClose;
             priceChangePercent = (priceChange / prevClose) * 100;
@@ -637,10 +630,10 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
         // Build dynamic MA fields: ma_5, ma_10, ma_5_dir, etc.
         const maFields: Record<string, any> = {};
         for (const line of settings.maLines) {
-          const val = maResultsCache[line.period]?.[originalIndex];
+          const val = maResultsCache[line.period]?.[i];
           maFields[`ma_${line.period}`] = val ?? undefined;
-          if (originalIndex > 0) {
-            const prev = maResultsCache[line.period]?.[originalIndex - 1];
+          if (i > 0) {
+            const prev = maResultsCache[line.period]?.[i - 1];
             maFields[`ma_${line.period}_dir`] = (val != null && prev != null)
               ? (val > prev ? 'up' : val < prev ? 'down' : 'flat')
               : 'flat';
@@ -671,7 +664,33 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             priceChangePercent
         };
     });
-  }, [data, barsToShow, rightOffset, settings.useAdjusted, maResultsCache]);
+  }, [data, settings.useAdjusted, settings.maLines, maResultsCache]);
+
+  // 視窗切片邊界的單一事實來源：平移夾止（clampedOffset 一律即時夾回有效範圍，
+  // 縮小時 maxOffset 變小自動夾回，毋須額外 effect 校正）。O(1)。
+  const windowBounds = useMemo(() => {
+    const maxOffset = Math.max(0, data.length - barsToShow);
+    const clampedOffset = Math.min(Math.max(0, rightOffset), maxOffset);
+    const endIndex = data.length - clampedOffset;
+    const startIndex = Math.max(0, endIndex - barsToShow);
+    return { startIndex, endIndex };
+  }, [data.length, barsToShow, rightOffset]);
+
+  // displayData 降級為純 slice：外層陣列每步新建（主圖本就要重繪），
+  // 但元素物件是 mappedData 原參照 → 拖曳期間同一根 K 棒不重建，Recharts 比對成本最低。
+  const displayData = useMemo(
+    () => mappedData.slice(windowBounds.startIndex, windowBounds.endIndex),
+    [mappedData, windowBounds]
+  );
+
+  // 量能 Cell 同樣預生全量再 slice（key 為全域索引；Cell 與 bar 對應是位置序，渲染結果不變）。
+  const volumeCellsFull = useMemo(() => mappedData.map((entry, index) => (
+    <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#f0405a' : '#22c55e'} fillOpacity={0.15} /> // token: up 紅漲 / down 綠跌
+  )), [mappedData]);
+  const volumeCells = useMemo(
+    () => volumeCellsFull.slice(windowBounds.startIndex, windowBounds.endIndex),
+    [volumeCellsFull, windowBounds]
+  );
 
   // 副圖凍結（QT-ixg-FREEZE）：拖曳期間餵給兩個 SubPanelChart 一個「參照穩定」的資料，
   // 讓 React.memo 整段跳過重繪（約 2/3 的省工）；放開後再交回即時最終視窗 → 只重繪一次。
@@ -777,10 +796,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       };
   }, [handleDragMove, handleDragEnd]);
 
-  // Pre-compute Cell arrays to avoid recreating on every render
-  const volumeCells = useMemo(() => displayData.map((entry, index) => (
-    <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#f0405a' : '#22c55e'} fillOpacity={0.15} /> // token: up 紅漲 / down 綠跌
-  )), [displayData]);
+  // 註：volumeCells 已上移為 volumeCellsFull（全量預生）＋ slice（見 windowBounds 區塊）。
 
   // 副圖 Cell 改吃 subPanelData：拖曳中凍結（與 SubPanelChart 一起跳過重繪），放開後回到即時。
   const macdHistCells = useMemo(() => subPanelData.map((entry, index) => (
