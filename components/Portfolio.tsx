@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PortfolioItem, StockDataPoint } from '../types';
 import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
+import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../utils/volume';
 import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
 import Badge from './ui/Badge';
@@ -719,6 +720,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   // 庫存健檢 狀態（per-stock）
   const [healthResults, setHealthResults] = useState<Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>>({});
   const [healthModalSymbol, setHealthModalSymbol] = useState<string | null>(null);
+  const [batchChecking, setBatchChecking] = useState(false);
 
   // 新增表單
   const [form, setForm] = useState({
@@ -918,58 +920,131 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     }
   };
 
+  // ── 庫存健檢：組單檔 PortfolioHealthItem（單檔/批次共用）──────────────
+  const buildHealthItem = useCallback(async (symbol: string): Promise<PortfolioHealthItem | null> => {
+    const lots = items.filter(item => item.symbol === symbol);
+    if (lots.length === 0) return null;
+
+    const p = prices[symbol];
+    const currentPrice = p && !p.loading && !p.error ? p.price : 0;
+
+    // 美股：currentPrice 永遠是 USD；avgCostPrice 若以 TWD 購入需先換算成 USD
+    const isUS = !isTwStock(symbol);
+    const rate = usdTwdRate > 0 ? usdTwdRate : 32;
+    const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
+    const totalCostInCurrentCurrency = lots.reduce((sum, lot) => {
+      if (!isUS) return sum + lot.totalCost;
+      if (lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null) return sum + lot.totalCostUSD;
+      return sum + lot.totalCost / rate;
+    }, 0);
+    const avgCostPriceInCurrentCurrency = totalShares > 0
+      ? totalCostInCurrentCurrency / totalShares
+      : 0;
+
+    const profitPct = avgCostPriceInCurrentCurrency > 0 && currentPrice > 0
+      ? ((currentPrice - avgCostPriceInCurrentCurrency) / avgCostPriceInCurrentCurrency) * 100 : 0;
+
+    let recentData: StockDataPoint[] = [];
+    let volProj = null;
+    try {
+      const { data } = await getStockData(symbol, '1d');
+      recentData = data;
+      volProj = estimateVolumeTrend(data, isTwStock(symbol), '1d');
+    } catch { /* continue without data */ }
+
+    return {
+      symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
+      currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj,
+    };
+  }, [items, prices, usdTwdRate]);
+
   // ── 單檔庫存健檢 ──────────────────────────────────────────────────────
   const handleSingleHealthCheck = useCallback(async (symbol: string) => {
-    const lots = items.filter(item => item.symbol === symbol);
-    if (lots.length === 0) return;
+    if (!items.some(i => i.symbol === symbol)) return;
 
     setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
 
     try {
-      const p = prices[symbol];
-      const currentPrice = p && !p.loading && !p.error ? p.price : 0;
-
-      // 美股：currentPrice 永遠是 USD；avgCostPrice 若以 TWD 購入需先換算成 USD
-      const isUS = !isTwStock(symbol);
-      const rate = usdTwdRate > 0 ? usdTwdRate : 32;
-      const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
-      const totalCostInCurrentCurrency = lots.reduce((sum, lot) => {
-        if (!isUS) return sum + lot.totalCost;
-        if (lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null) return sum + lot.totalCostUSD;
-        return sum + lot.totalCost / rate;
-      }, 0);
-      const avgCostPriceInCurrentCurrency = totalShares > 0
-        ? totalCostInCurrentCurrency / totalShares
-        : 0;
-
-      const profitPct = avgCostPriceInCurrentCurrency > 0 && currentPrice > 0
-        ? ((currentPrice - avgCostPriceInCurrentCurrency) / avgCostPriceInCurrentCurrency) * 100 : 0;
-
-      let recentData: StockDataPoint[] = [];
-      let volProj = null;
-      try {
-        const { data } = await getStockData(symbol, '1d');
-        recentData = data;
-        volProj = estimateVolumeTrend(data, isTwStock(symbol), '1d');
-      } catch { /* continue without data */ }
-
-      const healthItem: PortfolioHealthItem = {
-        symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
-        currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj,
-      };
+      const healthItem = await buildHealthItem(symbol);
+      if (!healthItem) return;
 
       const result = await analyzePortfolioHealth([healthItem]);
 
-      // 從結果中提取決策
-      // AI 實際輸出可能含【】包裹（例：**操作決策：【 🟢加碼 】**），允許可選的【/[ 與空白
-      const decisionMatch = result.match(/操作決策[：:]\s*[【\[]?\s*(🟢\s*加碼|🔵\s*續抱|🟡\s*減碼|🟠\s*停利|🔴\s*停損)/);
-      const decision = decisionMatch ? decisionMatch[1].replace(/\s+/g, '') : '分析完成';
+      // 決策：優先 json 機器區，失敗 fallback regex（舊行為是下限）
+      const parsed = parseHealthDecisions(result);
+      const entry = parsed?.decisions.find(d => d.symbol === symbol) ?? parsed?.decisions[0] ?? null;
+      const decision = entry
+        ? DECISION_EMOJI[entry.decision] + entry.decision
+        : (extractDecisionByRegex(result) ?? '分析完成');
+      const fullResult = parsed ? parsed.cleanedMarkdown : result;
 
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult: result } }));
+      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult } }));
     } catch {
       setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' } }));
     }
-  }, [items, prices, usdTwdRate]);
+  }, [items, buildHealthItem]);
+
+  // ── 一鍵批次健檢（全部持股一次 LLM 呼叫）──────────────────────────────
+  const handleBatchHealthCheck = useCallback(async () => {
+    const symbols = Array.from(new Set(items.map(i => i.symbol)));
+    if (symbols.length === 0 || batchChecking) return;
+
+    setBatchChecking(true);
+    setHealthResults(prev => {
+      const next = { ...prev };
+      symbols.forEach(s => { next[s] = { status: 'loading', decision: '', fullResult: '' }; });
+      return next;
+    });
+
+    try {
+      // 資料準備：併發上限 3 的 index 游標池（getLatestPrice 不暖 getStockData 快取，冷抓打真網路，429 是常態）
+      const results: (PortfolioHealthItem | null)[] = new Array(symbols.length).fill(null);
+      let cursor = 0;
+      const workers = Array.from({ length: Math.min(3, symbols.length) }, async () => {
+        while (true) {
+          const idx = cursor++;
+          if (idx >= symbols.length) break;
+          const it = await buildHealthItem(symbols[idx]);
+          if (it) results[idx] = it;
+        }
+      });
+      await Promise.all(workers);
+      const healthItems = results.filter((it): it is PortfolioHealthItem => it !== null);
+
+      const result = await analyzePortfolioHealth(healthItems);
+
+      // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
+      const parsed = parseHealthDecisions(result);
+      const displayText = parsed ? parsed.cleanedMarkdown : result;
+      const split = splitHealthReport(displayText, symbols);
+      const decisionMap = new Map((parsed?.decisions ?? []).map(d => [d.symbol, d.decision]));
+
+      setHealthResults(prev => {
+        const next = { ...prev };
+        symbols.forEach(symbol => {
+          const fullResult = split
+            ? split.perSymbol[symbol] + (split.overview ? '\n\n---\n\n' + split.overview : '')
+            : displayText;
+          const d = decisionMap.get(symbol);
+          const decision = d
+            ? DECISION_EMOJI[d] + d
+            : (extractDecisionByRegex(split ? split.perSymbol[symbol] : displayText) ?? '分析完成');
+          next[symbol] = { status: 'done', decision, fullResult };
+        });
+        return next;
+      });
+    } catch {
+      setHealthResults(prev => {
+        const next = { ...prev };
+        symbols.forEach(symbol => {
+          next[symbol] = { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' };
+        });
+        return next;
+      });
+    } finally {
+      setBatchChecking(false);
+    }
+  }, [items, batchChecking, buildHealthItem]);
 
   // ── 分組 ───────────────────────────────────────────────────────────────
   const twItems = items.filter(i =>  isTwStock(i.symbol));
@@ -1030,6 +1105,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
           </div>
           <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
             <RefreshCw size={15} /> 更新報價
+          </Button>
+          <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
+            {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
           </Button>
           <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus size={15} /> 新增持股
