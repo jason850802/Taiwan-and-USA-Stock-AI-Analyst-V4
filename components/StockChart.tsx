@@ -713,11 +713,15 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const startClientXRef = useRef(0);
   const startOffsetRef = useRef(0);
   const dragRafRef = useRef<number | null>(null);
+  // 拖曳期間視為固定的容器寬度快照（QT-qyf-WIDTH）：dragStart 量測一次，
+  // handleDragMove 只讀 ref → 消除 per-mousemove 的佈局量測（強制 reflow）。
+  // 視窗 resize 期間拖曳不重量測（極罕見情境），下次 dragStart 自然更新。
+  const dragWidthRef = useRef(0);
   // 註：isDragging state 已於元件頂部宣告（供 subPanelData 凍結引用）。
 
   const handleDragMove = useCallback((e: MouseEvent) => {
       if (!draggingRef.current) return;
-      const width = wrapperRef.current?.getBoundingClientRect().width ?? 0;
+      const width = dragWidthRef.current; // dragStart 快照，熱路徑零佈局量測
       const deltaX = e.clientX - startClientXRef.current;
       // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
       const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
@@ -756,6 +760,8 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       startOffsetRef.current = Math.min(Math.max(0, rightOffset), Math.max(0, data.length - barsToShow));
       // 拖曳起點當下快照副圖資料（從即時鏡像取，避免抓到舊閉包）→ 拖曳全程參照穩定
       frozenSubDataRef.current = displayDataRef.current;
+      // 量測一次容器寬度存 ref（QT-qyf-WIDTH）：mousemove 熱路徑不再觸發強制 reflow
+      dragWidthRef.current = wrapperRef.current?.getBoundingClientRect().width ?? 0;
       setIsDragging(true);
       setActiveIndex(null); // 進入拖曳即清除十字線
       window.addEventListener('mousemove', handleDragMove);
