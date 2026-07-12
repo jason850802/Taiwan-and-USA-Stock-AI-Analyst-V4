@@ -24,7 +24,22 @@ export const ALLOWED_DATASETS = [
   'TaiwanStockInstitutionalInvestorsBuySell',
   'TaiwanStockPrice',
   'TaiwanStockInfo',
+  'TaiwanStockFinancialStatements',
+  'TaiwanStockBalanceSheet',
+  'TaiwanStockCashFlowsStatement',
+  'TaiwanStockPER',
+  'TaiwanStockMonthRevenue',
+  'TaiwanStockDividend',
 ] as const;
+
+// 季更/年度公告 dataset：換 FinMind 命中率大降，用較長快取（3 天）。
+const LONG_CACHE_DATASETS = new Set<string>([
+  'TaiwanStockFinancialStatements',
+  'TaiwanStockBalanceSheet',
+  'TaiwanStockCashFlowsStatement',
+  'TaiwanStockDividend',
+]);
+const LONG_CACHE_SECONDS = 259200; // 3 天
 
 type AllowedDataset = typeof ALLOWED_DATASETS[number];
 
@@ -112,6 +127,11 @@ export function secondsUntilTaipeiMidnight(): number {
   const seconds = Math.floor((nextMidnightAsUtc - taipeiAsUtc) / 1000);
 
   return Math.max(60, seconds);
+}
+
+/** 依 dataset 決定 CDN 快取秒數：季更/年度公告類用固定 3 天，其餘沿用台北午夜到期。 */
+export function cacheSecondsForDataset(dataset: string): number {
+  return LONG_CACHE_DATASETS.has(dataset) ? LONG_CACHE_SECONDS : secondsUntilTaipeiMidnight();
 }
 
 export function classifyFinMindError(error: unknown): FinMindClassifiedError {

@@ -1,8 +1,8 @@
 import { applyGuards } from './_lib/guard.js';
 import {
   FinMindClassifiedError,
+  cacheSecondsForDataset,
   classifyFinMindError,
-  secondsUntilTaipeiMidnight,
   validateFinMindParams,
   type FinMindErrorCode,
 } from './_lib/finmind.js';
@@ -88,7 +88,7 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
 
     res.setHeader(
       'Cache-Control',
-      `public, s-maxage=${secondsUntilTaipeiMidnight()}, stale-while-revalidate=60`,
+      `public, s-maxage=${cacheSecondsForDataset(dataset)}, stale-while-revalidate=60`,
     );
     res.status(200).json(json);
   } catch (error) {
