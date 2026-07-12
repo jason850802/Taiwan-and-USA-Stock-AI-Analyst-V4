@@ -119,6 +119,77 @@ export interface MALineConfig {
   color: string;
 }
 
+// ── 台股基本面（Fundamentals Tab）──────────────────────────
+export interface TwQuarterIncome {
+  quarter: string;              // 'YYYY-MM-DD' 財報日
+  revenueYi: number | null;     // 億元
+  grossProfitYi: number | null;
+  operatingIncomeYi: number | null;
+  pretaxIncomeYi: number | null;
+  netIncomeYi: number | null;
+  eps: number | null;           // 元
+  grossMarginPct: number | null;
+  operatingMarginPct: number | null;
+  netMarginPct: number | null;
+}
+
+export interface TwBalanceSheetSummary {
+  date: string;
+  cashYi: number | null;
+  receivablesYi: number | null;
+  inventoriesYi: number | null;
+  currentAssetsYi: number | null;
+  ppeYi: number | null;
+  totalAssetsYi: number | null;
+  totalLiabilitiesYi: number | null;
+  equityYi: number | null;
+  debtRatioPct: number | null;
+}
+
+export interface TwCashFlowSummary {
+  date: string;                 // YTD 累計截止日
+  operatingCfYi: number | null;
+  investingCfYi: number | null;
+  financingCfYi: number | null;
+  capexYi: number | null;
+  freeCashFlowYi: number | null;
+}
+
+export interface TwValuation {
+  date: string;
+  per: number | null;
+  pbr: number | null;
+  dividendYieldPct: number | null;
+}
+
+export interface TwMonthlyRevenue {
+  ym: string;
+  revenueYi: number | null;
+  yoyPct: number | null;
+}
+
+export interface TwDividendRecord {
+  period: string | number;
+  announceDate: string | null;
+  cashDividend: number;
+  stockDividend: number;
+  exDate: string | null;
+}
+
+export interface TwFundamentals {
+  stockId: string;
+  name: string | null;
+  industry: string | null;
+  asOf: string;                          // 抓取日
+  valuation: TwValuation | null;
+  incomeQuarters: TwQuarterIncome[];     // 近 8 季，舊→新
+  balanceSheet: TwBalanceSheetSummary | null;
+  cashFlow: TwCashFlowSummary | null;
+  monthlyRevenue: TwMonthlyRevenue[];    // 近 13 月，舊→新
+  dividends: TwDividendRecord[];         // 近 5 期
+  warnings: string[];                    // 失敗的 dataset 標籤，供降級 UI
+}
+
 export interface IndicatorSettings {
   maLines: MALineConfig[];
   showRSI: boolean;

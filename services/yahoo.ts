@@ -1,6 +1,7 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 import { proxyHeaders } from './_shared/apiClient';
+import { fetchFinMindRows } from './finmind';
 
 interface YahooChartResponse {
   chart: {
@@ -178,31 +179,6 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
     }
     
     return d.toISOString().split('T')[0];
-};
-
-type FinMindDataset =
-    | 'TaiwanStockInstitutionalInvestorsBuySell'
-    | 'TaiwanStockPrice'
-    | 'TaiwanStockInfo';
-
-const fetchFinMindRows = async (
-    dataset: FinMindDataset,
-    params: { data_id?: string; start_date?: string } = {},
-) => {
-    const qs = new URLSearchParams({ dataset });
-    if (params.data_id) qs.set('data_id', params.data_id);
-    if (params.start_date) qs.set('start_date', params.start_date);
-
-    const res = await fetch(`/api/finmind?${qs}`, {
-        headers: { ...proxyHeaders },
-    });
-    if (!res.ok) {
-        const parsed = await res.json().catch(() => ({})) as { message?: string };
-        throw new Error(parsed.message || `FinMind fetch error (${res.status})`);
-    }
-
-    const json = await res.json();
-    return (json.msg === 'success' && Array.isArray(json.data)) ? json.data : [];
 };
 
 const fetchInstitutionalData = async (stockId: string, startDate: string) => {
