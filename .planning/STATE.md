@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-12 - Completed quick task 260712-qfi: A1 搜尋限縮為美股＋台股的個股＋ETF（移除 isYahooFinance 旁路、市場白名單、FinMind 名錄過濾、合併收斂 15 筆）
+last_activity: 2026-07-12 - Completed quick task 260712-qyf: A2 K 棒圖拖曳平移快贏（dragStart 快取容器寬度殺 per-mousemove reflow＋全量預映射 mappedData 讓拖曳每步只 slice、元素參照穩定）
 progress:
   total_phases: 4
   completed_phases: 4
@@ -115,6 +115,7 @@ Recent decisions affecting current work:
 | 260711-wqe | 升級 start-dev skill：使用者說「起環境」時助手不再只給複製貼上指令，改直接用 PowerShell Start-Process 開兩個可見視窗（後端 vercel dev 3001＋前端 Vite 3000，-WorkingDirectory 繞開空格路徑轉義雷），新增 90 秒/3 秒間隔雙埠輪詢就緒後回報，原指令模式保留為 Fallback；sync:skills 確認 start-dev 不在 Codex 鏡像白名單（no-op），並依新流程實測啟動成功（3000/3001 皆活） | 2026-07-11 | 8b2c386 | [260711-wqe-start-dev-skill-powershell](./quick/260711-wqe-start-dev-skill-powershell/) |
 | 260712-0dq | 依 .claude/skills 內 10 個 SKILL.md 重寫 README.md（繁中），取代 AI Studio 預設模板：專案介紹＋核心價值、在地執行說明（npm install、GEMINI_API_KEY 環境變數、vercel dev 3001＋Vite 3000、AIza 金鑰洩漏檢查）、10 個 skill 完整說明（朱家泓 7 步驟進場分析 pipeline＋tw-fundamentals＋phase-loop＋start-dev）；內容檢查 skills=10、AI Studio 殘留=0 | 2026-07-11 | 3421046 | [260712-0dq-claude-skills-10-skill-md-readme-md](./quick/260712-0dq-claude-skills-10-skill-md-readme-md/) |
 | 260712-qfi | A1 搜尋限縮：搜尋結果限縮為美股＋台股的個股＋ETF——mapYahooQuote 移除 isYahooFinance 旁路（期貨/指數/匯率/加密不再混入）＋市場白名單（美 7 所＋.TW/.TWO，其餘丟棄不標「海外」）、Market 型別收斂 TW\|US；isSearchableTaiwanEntry 依 FinMind TaiwanStockInfo 實抓值域過濾名錄（排除興櫃/權證/DR 含 4 碼特例 9110/ETN/受益證券/指數，保留 2395/3116 檔、509 檔 ETF 零誤殺）；合併結果收斂 15 筆、中文搜尋仍 0 網路請求 | 2026-07-12 | e4068c4, d32aa7b | [260712-qfi-a1-search-scope-etf](./quick/260712-qfi-a1-search-scope-etf/) |
+| 260712-qyf | A2 K 棒圖拖曳平移效能快贏：handleDragMove 熱路徑不再 per-mousemove 呼叫 getBoundingClientRect（dragStart 量測一次存 dragWidthRef，消除強制 reflow）；顯示資料改為 mappedData 全量預映射（Adj/Raw、MA 欄位、priceChange，deps 不含 barsToShow/rightOffset）＋windowBounds 夾止數學單一事實來源，displayData/volumeCells 降級為 O(視窗) slice——拖曳每步元素物件參照穩定、mappedData/volumeCellsFull/maResultsCache/macdHistCells 快取全命中。行為零變化（鉗位/十字線抑制/縮放/週期歸位/260613-ixg 副圖凍結/一字板/PAN_STEP 全照舊）；priceChange 讀碼確認舊版即取全量前一根，遷移語意逐位元相同 | 2026-07-12 | c2b91b5, 70905f7 | [260712-qyf-a2-chart-pan-quick-wins-k](./quick/260712-qyf-a2-chart-pan-quick-wins-k/) |
 
 ## Deferred Items
 
