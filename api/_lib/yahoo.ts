@@ -220,7 +220,9 @@ export function classifyYahooError(error: unknown): YahooClassifiedError {
   const name = typeof errorRecord.name === 'string' ? errorRecord.name : '';
   const message = error instanceof Error ? error.message : String(error || '');
 
-  // undici 對 AbortSignal.timeout 拋 DOMException name='TimeoutError'——顯式列名，不賭 message 措辭
+  // undici 對 AbortSignal.timeout 拋 DOMException name='TimeoutError'——顯式列名，不賭 message 措辭。
+  // 覆核 L-1 註記：此分支目前與下方 fallback 殊途同歸（皆 UPSTREAM_ERROR），屬前瞻性佔位——
+  // 日後若要把 timeout 獨立分類（例如回 504）就在這裡改，勿誤判此判斷式有現行分支效果。
   if (name === 'AbortError' || name === 'TimeoutError' || /aborted|aborterror|timed?\s*out/i.test(message)) {
     return new YahooClassifiedError('UPSTREAM_ERROR');
   }

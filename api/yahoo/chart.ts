@@ -65,9 +65,10 @@ export default async function handler(req: YahooReq, res: YahooRes) {
 
     // CDN 快取（僅 200 成功路徑；錯誤回應不設，分類錯誤不得被 CDN 快取）。
     // s-maxage 是 CDN 專屬指令、瀏覽器忽略——前端快取 TTL 判斷不受影響。
-    // 安全取捨（有意為之）：60 秒內同 URL 由 Vercel CDN 直接回應、不過 applyGuards——
-    // 行情為公開資料、視窗僅 60 秒、cache miss 仍全額過 guard 與限流，
-    // 且 CDN 命中不消耗 function invocation（反而降低濫用成本）。
+    // 安全取捨（有意為之，T-B1-01／覆核 M-2 更正數字）：同 URL 可能由 Vercel CDN 直接回應、
+    // 不過 applyGuards 的視窗上界是 s-maxage+swr＝60+300＝360 秒（swr 命中時 CDN 先回舊資料
+    // 再背景 revalidate），非僅 60 秒——行情為公開資料、cache miss 仍全額過 guard 與限流，
+    // 且 CDN 命中不消耗 function invocation（反而降低濫用成本），360 秒上界仍在可接受範圍。
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     res.status(200).json(json);
   } catch (error) {
