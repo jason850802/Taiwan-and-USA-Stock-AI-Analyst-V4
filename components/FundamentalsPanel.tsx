@@ -6,6 +6,8 @@ import Card from './ui/Card';
 import Skeleton from './ui/Skeleton';
 import StockSearch from './StockSearch';
 import ValuationHeader from './fundamentals/ValuationHeader';
+import MonthlyRevenueChart from './fundamentals/MonthlyRevenueChart';
+import QuarterlyTrendCharts from './fundamentals/QuarterlyTrendCharts';
 
 interface FundamentalsPanelProps {
   initialSymbol: string; // 純代碼（呼叫端已 strip .TW/.TWO），面板掛載後自管內部搜尋狀態
@@ -84,7 +86,13 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
         </Card>
       )}
 
-      {fundamentals && <ValuationHeader fundamentals={fundamentals} />}
+      {fundamentals && (
+        <>
+          <ValuationHeader fundamentals={fundamentals} />
+          <MonthlyRevenueChart data={fundamentals.monthlyRevenue} />
+          <QuarterlyTrendCharts data={fundamentals.incomeQuarters} />
+        </>
+      )}
     </div>
   );
 };
