@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Bot } from 'lucide-react';
 import { TwFundamentals } from '../types';
 import { getTwFundamentals } from '../services/finmind';
+import { analyzeFundamentals } from '../services/gemini';
+import AnalysisResult from './AnalysisResult';
 import Banner from './ui/Banner';
+import Button from './ui/Button';
 import Card from './ui/Card';
 import Skeleton from './ui/Skeleton';
 import StockSearch from './StockSearch';
@@ -36,9 +40,15 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
   const [error, setError] = useState<string | null>(null);
   const [nonTwWarning, setNonTwWarning] = useState(false);
 
+  // AI 解讀結果以 stockId 為 key 快取：切股票不污染、切回免重生成。
+  const [aiResults, setAiResults] = useState<Map<string, string>>(new Map());
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const fetchFundamentals = async (code: string, force = false) => {
     setLoading(true);
     setError(null);
+    setAiError(null);
     try {
       const data = await getTwFundamentals(code, { force });
       setFundamentals(data);
@@ -47,6 +57,20 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
       setError(err.message || '基本面資料載入失敗，請稍後再試。');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateAi = async () => {
+    if (!fundamentals) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const report = await analyzeFundamentals(fundamentals);
+      setAiResults(prev => new Map(prev).set(fundamentals.stockId, report));
+    } catch (err: any) {
+      setAiError(err.message || 'AI 解讀失敗，請稍後再試。');
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -115,6 +139,21 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
           <QuarterlyTrendCharts data={fundamentals.incomeQuarters} />
           <FinancialHealthCards balanceSheet={fundamentals.balanceSheet} cashFlow={fundamentals.cashFlow} />
           <DividendTable data={fundamentals.dividends} />
+
+          {(() => {
+            const aiContent = aiResults.get(fundamentals.stockId);
+            if (aiContent || aiLoading) {
+              return <AnalysisResult content={aiContent || ''} loading={aiLoading} title="AI 基本面解讀報告" />;
+            }
+            return (
+              <div className="border border-dashed border-surface-line rounded-card p-6 flex flex-col items-center gap-3 text-center">
+                {aiError && <p className="text-sm text-warn">{aiError}</p>}
+                <Button variant="ai" onClick={handleGenerateAi} className="inline-flex items-center gap-2">
+                  <Bot className="w-4 h-4" /> {aiError ? '重試 AI 基本面解讀' : 'AI 基本面解讀'}
+                </Button>
+              </div>
+            );
+          })()}
         </>
       )}
     </div>

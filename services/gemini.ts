@@ -1,4 +1,4 @@
-import { StockDataPoint } from "../types";
+import { StockDataPoint, TwFundamentals } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
 import { proxyHeaders } from "./_shared/apiClient";
 
@@ -1043,3 +1043,93 @@ export const analyzePortfolioHealth = async (
     thinkingConfig: { thinkingBudget: 10240 },
   }, '無法生成健檢結果。');
 };
+
+// ── 台股基本面 AI 解讀 ──────────────────────────────────────────────────────
+const na = (v: number | null | undefined, suffix = ''): string => (v == null ? 'N/A' : `${v}${suffix}`);
+const naFixed = (v: number | null | undefined, digits = 2, suffix = ''): string =>
+  (v == null ? 'N/A' : `${v.toFixed(digits)}${suffix}`);
+
+const formatFundamentalsData = (fund: TwFundamentals): string => {
+  const { name, industry, stockId, asOf, valuation, incomeQuarters, balanceSheet, cashFlow, monthlyRevenue, dividends } = fund;
+
+  const incomeTable = incomeQuarters.map(q =>
+    `${q.quarter}｜營收 ${naFixed(q.revenueYi)} 億｜毛利率 ${naFixed(q.grossMarginPct, 2, '%')}｜營益率 ${naFixed(q.operatingMarginPct, 2, '%')}｜淨利率 ${naFixed(q.netMarginPct, 2, '%')}｜EPS ${naFixed(q.eps)} 元`
+  ).join('\n');
+
+  const revenueTable = monthlyRevenue.map(m =>
+    `${m.ym}｜營收 ${naFixed(m.revenueYi)} 億｜YoY ${naFixed(m.yoyPct, 2, '%')}`
+  ).join('\n');
+
+  const dividendTable = dividends.map(d =>
+    `${d.period}｜現金股利 ${na(d.cashDividend)} 元｜股票股利 ${na(d.stockDividend)} 元｜除息日 ${d.exDate || 'N/A'}`
+  ).join('\n');
+
+  return `
+【公司基本資料】
+股名：${name || 'N/A'}　代碼：${stockId}　產業：${industry || 'N/A'}　資料日期：${asOf}
+
+【估值指標】（資料日 ${valuation?.date || 'N/A'}）
+PER：${naFixed(valuation?.per)}　PBR：${naFixed(valuation?.pbr)}　現金殖利率：${naFixed(valuation?.dividendYieldPct, 2, '%')}
+
+【近 8 季損益（季別｜營收億｜毛利率｜營益率｜淨利率｜EPS）】
+${incomeTable || 'N/A'}
+
+【近 13 月營收（月份｜營收億｜YoY）】
+${revenueTable || 'N/A'}
+
+【資產負債摘要】（資料日 ${balanceSheet?.date || 'N/A'}）
+現金 ${naFixed(balanceSheet?.cashYi)} 億｜流動資產 ${naFixed(balanceSheet?.currentAssetsYi)} 億｜總資產 ${naFixed(balanceSheet?.totalAssetsYi)} 億｜總負債 ${naFixed(balanceSheet?.totalLiabilitiesYi)} 億｜股東權益 ${naFixed(balanceSheet?.equityYi)} 億｜負債比 ${naFixed(balanceSheet?.debtRatioPct, 2, '%')}
+
+【現金流量摘要】（年度累計至 ${cashFlow?.date || 'N/A'}，非單季數字）
+營業現金流 ${naFixed(cashFlow?.operatingCfYi)} 億｜投資現金流 ${naFixed(cashFlow?.investingCfYi)} 億｜籌資現金流 ${naFixed(cashFlow?.financingCfYi)} 億｜資本支出 ${naFixed(cashFlow?.capexYi)} 億｜自由現金流(FCF) ${naFixed(cashFlow?.freeCashFlowYi)} 億
+
+【股利發放紀錄（近 5 期）】
+${dividendTable || 'N/A'}
+`;
+};
+
+const FUNDAMENTALS_SYSTEM_INSTRUCTION = `
+### 角色
+你是一位台股基本面研究助理，服務對象是「只做多、中長線」的個人投資者。使用繁體中文撰寫。
+
+### 只做多原則
+使用者只做多，不做空。你的解讀僅描述基本面資訊性判斷（如「轉強/轉弱」「偏貴/合理/偏低」），不涉及技術面買賣點——那是技術分析分頁的職責，本頁資料也不含 K 線，不得推論進出場時機。
+
+### 輸出格式（固定六段，繁體中文 Markdown，h3 標題請完全比照下方文字）
+### 一、體質總評
+2-3 句總結此公司目前的基本面體質定調。
+
+### 二、成長動能
+根據近 13 月營收 YoY 與近 8 季營收趨勢，評估成長是否加速/放緩/停滯。
+
+### 三、獲利能力與品質
+評估毛利率/營益率/淨利率趨勢；並比對「淨利」與「營業現金流」是否背離（例如淨利成長但營業現金流未跟上，需指出可能的應收帳款/存貨堆積疑慮；毛利率/營益率為 N/A 的產業〔如金融股〕不強行評論）。
+
+### 四、財務安全
+評估負債比、現金部位。**金融業（銀行/保險/證券等）負債比天然偏高（常見 85%~95%），不可套用一般產業「負債比 >60% 偏高」的標準來評判**，須先辨識產業別再給結論。
+
+### 五、估值與股利
+將 PER/PBR/現金殖利率放在「成長性」脈絡下評估「偏貴/合理/偏低」，須說明推理依據（例如：高成長搭配偏高 PER 可能仍合理；成長停滯搭配高 PER 則偏貴）；並簡評股利穩定度/趨勢。
+
+### 六、風險與觀察清單
+3-5 點條列風險或觀察重點，包含「下次應追蹤的具體數字」（例如：下一季毛利率是否守住 XX%、月營收 YoY 是否轉正等）。
+
+### 允許與禁止
+- **允許**：資訊性的基本面判斷，如「估值偏貴/合理/偏低」「基本面轉強/轉弱」「獲利品質良好/需留意」。
+- **禁止**：目標價、具體買賣點、部位大小建議、進出場時機——這些是技術面分頁的職責。
+- 結尾固定加一行：「以上為資料解讀，非投資建議。」
+
+### 資料紀律
+- 只根據使用者訊息中提供的數據作答，不得臆測或引用訓練知識中的公開財報數字。
+- 資料標示 N/A 或缺漏的欄位，須直接說「資料未提供」，不可自行估算或假設。
+- 粗體（**文字**）只用在真正的結論詞上（如「轉強」「偏貴」「需留意」），因為前端會將多空關鍵字自動著色，避免濫用粗體造成誤染。
+`;
+
+export const analyzeFundamentals = async (fund: TwFundamentals): Promise<string> =>
+  callGeminiApi({
+    prompt: formatFundamentalsData(fund),
+    systemInstruction: FUNDAMENTALS_SYSTEM_INSTRUCTION,
+    mode: 'fast',
+    temperature: 0.3,
+    thinkingConfig: { thinkingBudget: 8192 },
+  }, '無法生成基本面解讀。');
