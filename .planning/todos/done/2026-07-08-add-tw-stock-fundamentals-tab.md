@@ -1,12 +1,13 @@
 ---
 created: 2026-07-08T05:07:32.489Z
+resolved: 2026-07-12
 title: Add TW stock fundamentals tab
 area: ui
 files:
   - .claude/skills/tw-fundamentals/SKILL.md
   - .agents/skills/tw-fundamentals/SKILL.md
   - .claude/skills/_shared/fetch_fundamentals.py
-  - .planning/design/fundamentals-tab-PLAN.md
+  - .planning/design/fundamentals-tab-PLAN-v2.md
 ---
 
 ## Problem
@@ -32,10 +33,9 @@ files:
 
 ## Solution
 
-TBD——執行前建議：
-1. 先確認 `.planning/design/fundamentals-tab-PLAN.md` 的版面是否要依 UI 翻新後的
-   `components/ui/` 共用元件與色彩 token 重新順一版（多半要，因為該文件早於 UI 翻新）。
-2. 資料抓取邏輯可直接複用 `fetch_fundamentals.py` 的欄位對映與 FinMind dataset 清單，
-   不需重新研究。
-3. 需決定：資料是前端直連 FinMind（比照現有 `services/` 模式），或等後端 Phase 3
-   （FinMind 代理化）完成後走後端——若先做這個待辦，可能與 Phase 3 有工作重疊，執行前一併評估。
+依 [fundamentals-tab-PLAN-v2.md](../../design/fundamentals-tab-PLAN-v2.md) 執行完畢（取代
+本文件原引用的舊版 `fundamentals-tab-PLAN.md`）：新增 `fundamentals` 分頁，資料改走後端
+`/api/finmind` 代理白名單（非前端直連），欄位邏輯照抄 `fetch_fundamentals.py`。內容：估值卡
+（PER/PBR/殖利率）、近 13 月營收+YoY 趨勢圖、近 8 季損益三率+EPS 趨勢圖、財務體質+現金流卡、
+近 5 期股利表、AI 基本面解讀（六段固定輸出）。7 個 Step 皆已 tsc 過＋實跑驗證（2330/2882/
+6488/0050/2317），逐一 atomic commit。

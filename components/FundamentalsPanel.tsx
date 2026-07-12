@@ -154,6 +154,10 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
               </div>
             );
           })()}
+
+          <p className="text-xs text-slate-500 text-center pt-2">
+            資料來源：FinMind ・ 金額單位：新台幣億元 ・ 本頁為資料呈現與 AI 輔助解讀，非投資建議
+          </p>
         </>
       )}
     </div>

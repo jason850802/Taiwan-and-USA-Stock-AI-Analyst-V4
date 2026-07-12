@@ -1,5 +1,9 @@
 # 設計與實作計畫：台股「基本面」分頁
 
+> ⚠️ **本文件已被 [fundamentals-tab-PLAN-v2.md](./fundamentals-tab-PLAN-v2.md) 取代並執行完畢（2026-07-12）。**
+> 本文件早於 UI 大翻新（`components/ui/` 設計 token）與後端代理層（FinMind 走
+> `/api/finmind` 白名單），版面與資料流已不適用，僅保留作歷史紀錄。請改讀 v2。
+
 > 2026-07-04 撰寫。狀態：**規劃中，尚未開工**（使用者選「先只做規劃不寫碼」）。
 > 這是給人審閱的計畫，不是程式碼。核准後可走 GSD 執行（`/gsd:plan-phase` → `/gsd:execute-phase`）。
 
