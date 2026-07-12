@@ -80,6 +80,30 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
   return loadingPromise;
 }
 
+// ── 台股名錄搜尋過濾（純函式，可獨立測試）──
+// 值域依 2026-07-12 FinMind TaiwanStockInfo 實抓（4277 筆原始 / 3116 筆去重）：
+//   type ∈ {twse, tpex, emerging}——僅保留 twse/tpex，排除興櫃
+//   industry_category 黑名單涵蓋非個股非 ETF 類別：
+//     所有證券＝權證（711140 等 6 碼）、存託憑證＝DR（91 開頭 6 碼＋4 碼特例如 9110 越南控-DR，
+//     故不能只靠代碼型態、必須列入黑名單）、Index/大盤＝指數（TAIEX 等非數字代碼）、
+//     ETN/指數投資證券(ETN)（020 開頭）、受益證券（01 開頭帶 T）
+const TW_INDUSTRY_BLACKLIST = new Set([
+  '所有證券', '存託憑證', 'Index', '大盤', 'ETN', '指數投資證券(ETN)', '受益證券',
+]);
+// ETF 類 industry 標籤（twse 與 tpex 標籤不同，皆為實抓值；509 檔全數符合 ^00\d{2,4}[A-Z]?$）
+const TW_ETF_INDUSTRIES = new Set(['ETF', '上櫃ETF', '上櫃指數股票型基金(ETF)']);
+
+export function isSearchableTaiwanEntry(e: StockDirEntry): boolean {
+  if (e.type !== 'twse' && e.type !== 'tpex') return false;
+  if (e.industry && TW_INDUSTRY_BLACKLIST.has(e.industry)) return false;
+  // 4 碼純數字 → 個股保留（含創新板；DR 4 碼特例已被上方黑名單擋下）
+  if (/^\d{4}$/.test(e.id)) return true;
+  // 00 開頭、末尾可帶字母（0050/00679B 債券型/00632R 槓反型）且 industry 屬 ETF 類 → ETF 保留
+  if (/^00\d{2,4}[A-Z]?$/.test(e.id) && e.industry && TW_ETF_INDUSTRIES.has(e.industry)) return true;
+  // 其餘代碼型態丟棄（特別股 2888A、5 碼可轉債、91 開頭 DR、01 開頭受益證券、02 開頭 ETN 等）
+  return false;
+}
+
 // ── 台股本地子字串搜尋（名稱 OR 代碼）──
 export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): StockDirEntry[] {
   const q = query.trim().toLowerCase();
@@ -88,6 +112,7 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
   const nameHit: StockDirEntry[] = []; // 名稱包含
   const idIn: StockDirEntry[] = [];    // 代碼包含
   for (const e of dir) {
+    if (!isSearchableTaiwanEntry(e)) continue; // 僅個股與 ETF 可搜（§A1 改法3）
     const id = e.id.toLowerCase();
     const name = e.name.toLowerCase();
     if (id.startsWith(q)) idHit.push(e);
@@ -143,7 +168,7 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
 export async function searchStocks(dir: StockDirEntry[], query: string): Promise<StockDirEntry[]> {
   const q = query.trim();
   if (!q) return [];
-  const tw = searchTaiwan(dir, q, 20);
+  const tw = searchTaiwan(dir, q, 15);
   // 含中文 → 只用台股本地（最快、最準）
   if (hasCJK(q)) return tw;
   // 純英文/代碼 → 併入 Yahoo 海外結果（去重）
@@ -155,5 +180,5 @@ export async function searchStocks(dir: StockDirEntry[], query: string): Promise
     const bare = y.id.replace(/\.TWO?$/i, '');
     if (!seen.has(y.id) && !seen.has(bare)) { merged.push(y); seen.add(y.id); }
   }
-  return merged.slice(0, 24);
+  return merged.slice(0, 15);
 }
