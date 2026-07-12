@@ -110,6 +110,27 @@
 - `utils/math.ts`／`entryFilter.ts` 最小單元測試。
 - Rate limit fail-open：確認 Upstash env 有配（ratelimit.ts:18,79），不改碼。
 
+## 驗收後待修清單（Backlog——全部 Phase 跑完後彙整處理，暫不動工）
+
+**來源**：2026-07-13 使用者實測影片（錄製內容 2026-07-13 003306.mp4，localhost:3000）＋Gemini 影片分析回饋。
+**回饋中已確認修復**：B-3 拖曳完全流暢（掉幀/跳躍消失）、B-2 搜尋即時且無「找不到」誤閃。
+**殘留瓶頸**：首次載入個股 6-8 秒、首次切換週期 9-12 秒（皆為**冷抓**路徑；快取命中的切回已秒開——影片中的等待全發生在第一次抓取）。
+
+### 採納項（依預期效益排序）
+
+| # | 項目 | 說明 |
+|---|---|---|
+| BL-1 | **1d 兩段式載入**：先抓 2y 快繪、背景補全 10y | B-1 原「選配後評估」轉正。冷載入最大槓桿（10y 日線是最重 payload）。落地前須驗證長週期指標（MA60/MACD/KD warm-up）在 2y 首繪→10y 補全交換時的正確性與無閃爍 |
+| BL-2 | **台股 1d 籌碼三件套與 chart 並行起跑** | 現況：中文名/法人/量能三支 FinMind 在 chart 回來後才並行（yahoo.ts 管線順序）。後綴預解析已在 chart 之前確立台股身分，可投機性同時起跑、條件不符（fallback 路徑）時丟棄——實測沙盒 chart 4.1s＋FinMind 3.4s 串接，並行可省 2-3 秒 |
+| BL-3 | **1mo range=max 收斂＋首次切換體感** | 月線目前抓 `range=max`（yahoo.ts:481）；評估縮至 10y/15y。週/月首次切換的等待可配 BL-1 同款兩段式或至少骨架屏（現為整圖 blur＋轉圈） |
+| BL-4 | **Production 重測冷載入基線** | 影片數字含 `vercel dev` 本機開銷（per-endpoint 首次 esbuild 編譯、較慢代理、無 CDN——s-maxage 只在 prod 生效）。「冷抓 ≤5s」驗收最終應以 Vercel 部署環境為準 |
+
+### 不採納項（Gemini 建議，經程式碼事實排除）
+
+- **「資料庫加 Index」**：本專案無資料庫，後端是啞代理（Yahoo/FinMind 原樣轉發），無此槓桿。
+- **「檢查重複 fetch」**：Phase B e2e 已用 fetch instrumentation 證實每個 symbol|interval 恰發一次 chart 請求、無重複發送（PHASE-B-REVIEW.md e2e #4/#5）。
+- **「前端 parse 效能低落」**：資料到手後的 parse/指標計算/渲染為次要成本（沙盒實測 chart 網路往返即佔 4s+，到手後渲染即刻）；瓶頸在上游網路往返。另後端 cookie/crumb 握手已有 module 級快取（api/_lib/yahoo.ts:85-87、:161-168），非每請求重握手。
+
 ## 全案共同驗收
 
 每包：`npx tsc --noEmit` → 原子 commit。每 phase：`npm run build`＋`grep -r "AIza" dist/` 無結果＋preview（3001 單埠）實跑該 phase 驗收項＋Sonnet subagent 覆核本檔對應章節。
