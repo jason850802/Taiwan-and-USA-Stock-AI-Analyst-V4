@@ -13,7 +13,6 @@ interface StockSearchProps {
 const marketBadge: Record<Market, { label: string; cls: string }> = {
   TW: { label: '台股', cls: 'bg-surface-inset text-slate-300' },
   US: { label: '美股', cls: 'bg-surface-inset text-slate-300' },
-  OTHER: { label: '海外', cls: 'bg-surface-inset text-slate-300' },
 };
 
 // 將符合的字串片段高亮

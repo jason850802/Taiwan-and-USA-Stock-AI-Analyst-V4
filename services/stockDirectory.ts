@@ -4,7 +4,7 @@
 
 import { proxyHeaders } from './_shared/apiClient';
 
-export type Market = 'TW' | 'US' | 'OTHER';
+export type Market = 'TW' | 'US';
 
 export interface StockDirEntry {
   id: string;        // 代碼（台股純數字；美股代碼）
@@ -98,7 +98,30 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
   return [...idHit, ...nameHit, ...idIn].slice(0, limit);
 }
 
-// ── Yahoo 搜尋（美股/海外，英文名或代碼）──
+// ── Yahoo quote → StockDirEntry 過濾映射（純函式，可獨立測試）──
+// 規則（§A1 改法1、2）：
+//   1. quoteType 嚴格限定 EQUITY / ETF——移除 isYahooFinance 旁路
+//      （期貨/選擇權/指數/匯率/加密該欄位皆為 true，是雜訊混入根因）
+//   2. 市場白名單：.TW/.TWO 後綴 → TW；美股七大交易所 → US；其餘直接丟棄（回 null）
+const US_EXCHANGES = new Set(['NMS', 'NYQ', 'NGM', 'NCM', 'ASE', 'PCX', 'BTS']);
+
+export function mapYahooQuote(x: any): StockDirEntry | null {
+  if (!x || !x.symbol) return null;
+  if (x.quoteType !== 'EQUITY' && x.quoteType !== 'ETF') return null;
+  const sym: string = x.symbol;
+  let market: Market;
+  if (sym.endsWith('.TW') || sym.endsWith('.TWO')) market = 'TW';
+  else if (US_EXCHANGES.has(x.exchange)) market = 'US';
+  else return null; // 非台股非美股白名單 → 丟棄（港/日/韓等不再以「海外」顯示）
+  return {
+    id: sym,
+    name: x.shortname || x.longname || sym,
+    industry: x.exchDisp || x.exchange,
+    market,
+  };
+}
+
+// ── Yahoo 搜尋（美股/台股，英文名或代碼）──
 export async function searchYahoo(query: string, limit = 8): Promise<StockDirEntry[]> {
   const q = query.trim();
   if (!q) return [];
@@ -110,19 +133,7 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
     if (!res.ok) return [];
     const json = await res.json();
     const quotes: any[] = json.quotes || [];
-    return quotes
-      .filter(x => x.symbol && (x.quoteType === 'EQUITY' || x.quoteType === 'ETF' || x.isYahooFinance))
-      .map(x => {
-        const sym: string = x.symbol;
-        const market: Market = sym.endsWith('.TW') || sym.endsWith('.TWO') ? 'TW'
-          : (x.exchange === 'NMS' || x.exchange === 'NYQ' || x.exchange === 'PCX' || x.exchange === 'ASE') ? 'US' : 'OTHER';
-        return {
-          id: sym,
-          name: x.shortname || x.longname || sym,
-          industry: x.exchDisp || x.exchange,
-          market,
-        } as StockDirEntry;
-      });
+    return quotes.map(mapYahooQuote).filter((e): e is StockDirEntry => e !== null);
   } catch {
     return [];
   }
