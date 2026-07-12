@@ -69,16 +69,28 @@
 
 ---
 
-## Phase B（P2）切換標的載入速度
+## Phase B（P2）切換標的載入速度＋搜尋 UX（2026-07-12 依使用者實測影片擴充）
 
-- 前端行情快取：`services/yahoo.ts` 加 memory Map＋sessionStorage，key=`symbol|interval`，TTL 依決策 3；SWR 先渲染舊資料再背景刷新。
+**影片實測基線**（錄製內容 2026-07-12 215827.mp4，cv2 量化＋逐格檢視）：6488（上櫃）從選定到出圖 **12 秒**；週/月切換各 **~7 秒**（整圖 blur＋載入中）；搜尋「6449」輸入後 **~6 秒**才出現下拉（結果最終來自本地名錄——不是過濾誤殺，是被 Yahoo 請求扣住）；拖曳段畫面凍結占比 93-94%、最長單次凍結 2-3 秒。
+
+### B-1 行情載入（原 P2 全套）
+- 前端行情快取：`services/yahoo.ts` 加 memory Map＋sessionStorage，key=`symbol|interval`，TTL 依決策 3；SWR 先渲染舊資料再背景刷新。**含週期切換**（日/週/月來回切換是影片實測痛點，切回看過的週期必須秒開）。
 - 台股三段串行（chart→中文名→法人+量能，yahoo.ts:465/597/610）改並行：中文名併入 Promise.all。
-- 用 `stockDirectory` 的 `type`（twse/tpex）預解析 `.TW`/`.TWO`，消滅上櫃股先失敗一次的試錯（yahoo.ts:292-301）。
-- `App.tsx fetchData` 加 AbortController＋reqId 防競態（比照 StockSearch.tsx:59-62）。
+- 用 `stockDirectory` 的 `type`（twse/tpex）預解析 `.TW`/`.TWO`（yahoo.ts:292-301）——6488 那 12 秒有一大段是 `.TW` 先失敗的整輪握手，上櫃股受害最深。
+- `App.tsx fetchData` 加 AbortController＋reqId 防競態。
 - 後端：`api/_lib/yahoo.ts:169-204` 握手每個 upstream fetch 加 8-10s timeout；chart 回應加 `Cache-Control s-maxage=60`＋swr。
 - （選配後評估）1d 先抓 2y 快繪、背景補 10y——需驗證長週期指標正確性，不急。
 
-驗收：冷抓台股時間減半；切回看過標的 <300ms 出圖；連點 5 檔無資料錯置；Yahoo 掛時 10s 內 fallback FinMind。
+### B-2 搜尋 UX 三修（影片新發現，根因已定位）
+1. **本地結果被 Yahoo 扣住**：`searchStocks`（stockDirectory.ts）把本地名錄命中與 Yahoo 遠端結果 merge 後一次回傳——本機名錄命中是 0ms 的事，卻要等 Yahoo（冷握手 3-8 秒）才顯示。改**兩段式**：本地結果立即上屏，Yahoo 結果到了再併入（沿用既有 reqId 防過期）。
+2. **「找不到符合」誤閃**：StockSearch.tsx:138 條件 `open && !searching && 空` 會在中間態（前一個 query 空結果、名錄未就緒）誤現。改：名錄載入中顯示「載入名錄中…」、查詢進行中不判找不到、只有終態空結果才顯示。
+3. **名錄就緒競態**：`dir` 為 state（StockSearch.tsx:33,43），使用者在名錄載入完成前輸入 → 本地搜尋吃到空陣列且 dir 到貨後不重跑。改：`searchStocks` 內部自行 `await ensureTaiwanDirectory()`（有 memCache，第二次起零成本），不依賴外部傳入的 dir snapshot。
+
+### B-3 拖曳體感（P1-B 提前，影片確認 A2 快贏不足）
+- 拖曳期間改 CSS `translateX` 平移已渲染圖層（帶左右緩衝視窗），mousemove 零 React/Recharts 重繪；放開時 re-slice 提交＋吸附。副圖凍結機制保留。
+- 註：A2 的三項快贏（reflow 消除/預映射/slice）仍有效且是 B-3 的地基，但每步整張 Recharts 重繪（~550 節點×BB 開啟時更多）在實機是 100ms+ 等級，量化步幅讓體感成「突發跳躍」——必須換掉重繪路徑本身。
+
+驗收：冷抓上櫃股 ≤5 秒（消滅 .TW 試錯）；切回看過標的/週期 <300ms；搜尋輸入到本地結果上屏 <300ms；「找不到」只在真無結果時出現；拖曳 60fps（Chrome Performance 無 >50ms long task）；連點 5 檔無資料錯置。
 
 ## Phase C（P4A）LLM 訂閱橋接
 
