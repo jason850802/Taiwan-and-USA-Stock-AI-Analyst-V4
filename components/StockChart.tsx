@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   ComposedChart,
   Line,
@@ -19,6 +19,7 @@ import {
 } from 'recharts';
 import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
 import { calculateSMA } from '../utils/math';
+import { computeWindowBounds, buildPanSession, clampTranslate, commitOffset, PanSession } from '../utils/panMath';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 import Badge from './ui/Badge';
 
@@ -373,6 +374,8 @@ interface MainPriceChartProps {
   settings: IndicatorSettings;
   isTaiwanStock: boolean;
   volumeCells: React.ReactNode;
+  /** pan 模式顯式尺寸（拖曳 session 期間非 null）：緩衝層寬 × 容器高 */
+  panDims: { width: number; height: number } | null;
   onMouseMove: (state: any) => void;
   onMouseLeave: () => void;
 }
@@ -382,13 +385,18 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
   settings,
   isTaiwanStock,
   volumeCells,
+  panDims,
   onMouseMove,
   onMouseLeave,
 }) => {
-  return (
-    <ResponsiveContainer width="100%" height="100%">
+  // pan 模式（裁決 7）：不走 ResponsiveContainer —— RC 靠 ResizeObserver 非同步量測，
+  // 層寬改變會先以舊寬渲染一幀（擠壓閃爍）再二次渲染；顯式寬高讓資料與尺寸同一
+  // commit 原子生效。RC↔bare chart 元素型別切換使圖表在 session 邊界 remount ——
+  // 設計內一次性成本，亦順帶重置 recharts 內部 hover 狀態，放開後十字線乾淨恢復。
+  const chartEl = (
       <ComposedChart
         data={displayData}
+        {...(panDims ? { width: panDims.width, height: panDims.height } : {})}
         syncId={SYNC_ID}
         margin={CHART_MARGIN}
         onMouseMove={onMouseMove}
@@ -416,9 +424,14 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
           barGap is no longer needed (the bars are on different x-axes and overlap at the same center).
         */}
         <XAxis xAxisId="volume" dataKey="date" hide />
+        {/* pan 模式暫隱右軸（裁決 3）：recharts 把軸畫在 SVG 內、無法釘住讓繪圖區單獨平移；
+            拖曳期間 Y domain 凍結（全程無重繪）故軸數字本就不變。hide 時 recharts 不保留
+            60px → 繪圖區寬 = 圖寬 = bufWidthPx，bpw 與閒置模式全等（閒置 P/bars、
+            pan (bufCount×bpw)/bufCount）。容器右緣另有固定遮罩蓋住滑進軸區的緩衝 K 棒。 */}
         <YAxis
           {...COMMON_Y_AXIS_PROPS}
           yAxisId="right"
+          hide={!!panDims}
           domain={['dataMin', 'dataMax']}
           tickFormatter={(val) => val.toFixed(0)}
           textAnchor="start"
@@ -456,7 +469,9 @@ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
         {/* Hooks-based close-price tracking line (follows cursor via recharts store, not parent state) */}
         <CursorPriceLine />
       </ComposedChart>
-    </ResponsiveContainer>
+  );
+  return panDims ? chartEl : (
+    <ResponsiveContainer width="100%" height="100%">{chartEl}</ResponsiveContainer>
   );
 });
 
@@ -560,9 +575,13 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   // 向右隱藏的 K 棒數（0 = 錨定最新一根 / 右邊緣）；拖曳平移時增減
   const [rightOffset, setRightOffset] = useState(0);
 
-  // 拖曳中旗標（純樣式：grab/grabbing；亦驅動副圖凍結 subPanelData）。
+  // 拖曳中旗標（樣式 grab/grabbing＋根 div pointer-events-none；亦驅動副圖凍結 subPanelData）。
   // 在此提前宣告，讓下方 displayData 之後的 subPanelData 能引用（避免 TDZ）。
   const [isDragging, setIsDragging] = useState(false);
+
+  // 拖曳 pan session（QT-wa0-TRANSLATE）：dragStart 建立、dragEnd/abort 銷毀。
+  // 非 null 期間主圖渲染加寬緩衝層（顯式尺寸），mousemove 只寫 CSS translate 不經 React。
+  const [panSession, setPanSession] = useState<PanSession | null>(null);
 
   useEffect(() => {
      setBarsToShow(Math.min(100, data.length));
@@ -571,6 +590,7 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   }, [data.length]);
 
   const handleZoom = useCallback((direction: 'in' | 'out') => {
+      if (draggingRef.current) return; // 拖曳中忽略縮放（裁決 9：session 幾何不會失效；按鈕＋鍵盤同源擋掉）
       setBarsToShow(prev => {
           const step = Math.ceil(prev * 0.2);
           if (direction === 'in') return Math.max(20, prev - step);
@@ -668,13 +688,11 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
 
   // 視窗切片邊界的單一事實來源：平移夾止（clampedOffset 一律即時夾回有效範圍，
   // 縮小時 maxOffset 變小自動夾回，毋須額外 effect 校正）。O(1)。
-  const windowBounds = useMemo(() => {
-    const maxOffset = Math.max(0, data.length - barsToShow);
-    const clampedOffset = Math.min(Math.max(0, rightOffset), maxOffset);
-    const endIndex = data.length - clampedOffset;
-    const startIndex = Math.max(0, endIndex - barsToShow);
-    return { startIndex, endIndex };
-  }, [data.length, barsToShow, rightOffset]);
+  // 四行夾止數學已抽至 utils/panMath.computeWindowBounds（QT-wa0，A2 語意逐位元不變）。
+  const windowBounds = useMemo(
+    () => computeWindowBounds(data.length, barsToShow, rightOffset),
+    [data.length, barsToShow, rightOffset]
+  );
 
   // displayData 降級為純 slice：外層陣列每步新建（主圖本就要重繪），
   // 但元素物件是 mappedData 原參照 → 拖曳期間同一根 K 棒不重建，Recharts 比對成本最低。
@@ -687,9 +705,25 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   const volumeCellsFull = useMemo(() => mappedData.map((entry, index) => (
     <Cell key={`vol-${index}`} fill={entry.close >= entry.open ? '#f0405a' : '#22c55e'} fillOpacity={0.15} /> // token: up 紅漲 / down 綠跌
   )), [mappedData]);
-  const volumeCells = useMemo(
-    () => volumeCellsFull.slice(windowBounds.startIndex, windowBounds.endIndex),
-    [volumeCellsFull, windowBounds]
+  // 主圖專用 bounds（裁決 12，規格項 7）：pan session 期間主圖吃加寬緩衝視窗，
+  // 主圖 K 棒資料與量能 Cell 一律從「同一組 bounds」切片 → 結構上不可能錯位。
+  // 閒置時 mainBounds === windowBounds（同參照），memo 穩定性與 A2 現況不變。
+  const mainBounds = useMemo(
+    () => panSession ? { startIndex: panSession.bufStart, endIndex: panSession.bufEnd } : windowBounds,
+    [panSession, windowBounds]
+  );
+  const mainDisplayData = useMemo(
+    () => mappedData.slice(mainBounds.startIndex, mainBounds.endIndex),
+    [mappedData, mainBounds]
+  );
+  const mainVolumeCells = useMemo(
+    () => volumeCellsFull.slice(mainBounds.startIndex, mainBounds.endIndex),
+    [volumeCellsFull, mainBounds]
+  );
+  // pan 模式顯式尺寸（裁決 7）：非 null 時 MainPriceChart 繞過 ResponsiveContainer
+  const panDims = useMemo(
+    () => panSession ? { width: panSession.bufWidthPx, height: panSession.heightPx } : null,
+    [panSession]
   );
 
   // 副圖凍結（QT-ixg-FREEZE）：拖曳期間餵給兩個 SubPanelChart 一個「參照穩定」的資料，
@@ -724,79 +758,149 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
       setActiveIndex(null);
   }, []);
 
-  // ----- Drag-to-pan（拖曳平移）-----
-  // wrapperRef 量測繪圖區寬度以換算每根 K 棒像素寬；draggingRef 為拖曳閘門（同步、不觸發重繪）。
-  // isDragging state 僅用來切換 grab/grabbing 游標（純樣式，不影響記憶化圖表 props）。
+  // ----- Drag-to-pan（拖曳平移，QT-wa0-TRANSLATE）-----
+  // 拖曳期間不再 setState 重繪：dragStart 建立加寬緩衝層（panSession），mousemove 熱路徑
+  // 只讀 ref＋純算術＋直接寫緩衝層 style.transform（不經 React），mouseup 才把累積位移
+  // 用 commitOffset 換算成 rightOffset 提交 re-slice＋吸附到整根 K 棒。
+  // draggingRef 為拖曳閘門（同步、不觸發重繪）；isDragging state 驅動游標樣式、
+  // 根 div pointer-events-none 與副圖凍結。
   const wrapperRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
   const startClientXRef = useRef(0);
-  const startOffsetRef = useRef(0);
-  const dragRafRef = useRef<number | null>(null);
-  // 拖曳期間視為固定的容器寬度快照（QT-qyf-WIDTH）：dragStart 量測一次，
-  // handleDragMove 只讀 ref → 消除 per-mousemove 的佈局量測（強制 reflow）。
-  // 視窗 resize 期間拖曳不重量測（極罕見情境），下次 dragStart 自然更新。
-  const dragWidthRef = useRef(0);
+  // pan session 權威來源：事件 handler 同步讀寫；與 panSession state 在四個變異點
+  // （dragStart / re-base / dragEnd / abort）同步更新（T-wa0-02）。
+  const panSessionRef = useRef<PanSession | null>(null);
+  // 緩衝層 DOM 節點：handleDragMove 直接寫 style.transform 的對象
+  const panLayerRef = useRef<HTMLDivElement>(null);
+  // 最後一次夾止後 translate（dragEnd 提交用）
+  const lastTranslateRef = useRef(0);
+  // re-base 已發起、等 React commit 新緩衝層期間抑制 transform 寫入（畫面凍在鉗位點）
+  const rebasePendingRef = useRef(false);
+  // session 流水號
+  const nextSessionIdRef = useRef(1);
   // 註：isDragging state 已於元件頂部宣告（供 subPanelData 凍結引用）。
 
+  // mousemove 熱路徑：只讀 ref＋純函式＋一行 DOM style 寫入 —— 無佈局量測、無 rAF、
+  // 無 setState（緩衝耗盡的 re-base 分支除外，屬設計內一次性提交）。
+  // deps [] → 函式身分穩定 → window listeners add/remove 恆配對。
   const handleDragMove = useCallback((e: MouseEvent) => {
       if (!draggingRef.current) return;
-      const width = dragWidthRef.current; // dragStart 快照，熱路徑零佈局量測
+      const session = panSessionRef.current;
+      if (!session || rebasePendingRef.current) return;
       const deltaX = e.clientX - startClientXRef.current;
-      // 扣掉價格軸寬，換算每根 K 棒像素寬（最新 barsToShow / data.length 就地重算，避免閉包抓舊值）
-      const barPixelWidth = Math.max(1, (width - Y_AXIS_WIDTH) / barsToShow);
-      // 量化平移步幅（QT-ixg-COARSEN）：依目前視窗縮放，視窗越大步幅越粗（重繪越貴），
-      // 讓主圖以「整塊」跳動而非每根 K 棒都 setState，降低重繪頻率。≈2 @ 100 根。
-      const PAN_STEP = Math.max(1, Math.round(barsToShow / 50));
-      const rawDelta = deltaX / barPixelWidth;
-      const barsDelta = Math.round(rawDelta / PAN_STEP) * PAN_STEP;
-      // 向右拖（deltaX>0）露出較舊的 K 棒 → rightOffset 增加
-      const maxOffset = Math.max(0, data.length - barsToShow);
-      const newOffset = Math.min(Math.max(0, startOffsetRef.current + barsDelta), maxOffset);
-      if (dragRafRef.current) return; // 已排程
-      dragRafRef.current = requestAnimationFrame(() => {
-          dragRafRef.current = null;
-          setRightOffset(prev => (prev === newOffset ? prev : newOffset));
-      });
-  }, [barsToShow, data.length]);
+      const { t, exhausted } = clampTranslate(session, deltaX);
+      lastTranslateRef.current = t;
+      if (exhausted) {
+          // mid-drag re-base（裁決 2）：緩衝耗盡但該側還有資料 → 以當下位移提交一次
+          // rightOffset、以提交點重建 session（緩衝重新置中）、重設拖曳錨點；
+          // 等新層 commit 期間 rebasePendingRef 抑制 transform 寫入（凍在鉗位點），
+          // useLayoutEffect 歸零 transform 後放行 → 一次重繪後繼續平滑拖曳。
+          rebasePendingRef.current = true;
+          const committed = commitOffset(session, t);
+          const next = buildPanSession({
+              id: session.id + 1,
+              dataLength: session.dataLength,
+              barsToShow: session.barsToShow,
+              rightOffset: committed,
+              containerWidth: session.containerWidth,
+              containerHeight: session.heightPx,
+              yAxisWidth: Y_AXIS_WIDTH,
+          });
+          panSessionRef.current = next; // 同步更新權威 ref（後續 mousemove 用新幾何）
+          startClientXRef.current = e.clientX; // 重設拖曳錨點
+          lastTranslateRef.current = 0;
+          setRightOffset(committed);
+          setPanSession(next);
+          return;
+      }
+      const el = panLayerRef.current;
+      if (el) el.style.transform = `translate3d(${t}px,0,0)`;
+  }, []);
 
   const handleDragEnd = useCallback(() => {
       draggingRef.current = false;
-      setIsDragging(false);
       window.removeEventListener('mousemove', handleDragMove);
       window.removeEventListener('mouseup', handleDragEnd);
-      if (dragRafRef.current) {
-          cancelAnimationFrame(dragRafRef.current);
-          dragRafRef.current = null;
+      document.body.style.cursor = '';
+      const session = panSessionRef.current;
+      if (session) {
+          // 放開提交：吸附到整根＋鉗位（utils/panMath.commitOffset，已直測）。
+          // React 18 batching → 單次重繪：主圖 remount 回閒置模式（提交後視窗）、
+          // 副圖解凍拿同一 displayData → 三圖同視窗。
+          const committed = commitOffset(session, lastTranslateRef.current);
+          setRightOffset(committed);
+          panSessionRef.current = null;
+          setPanSession(null);
       }
+      setIsDragging(false);
   }, [handleDragMove]);
 
   const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       if (e.button !== 0) return; // 只處理左鍵
       e.preventDefault(); // 避免拖曳時選取文字
+      // 全檔唯一一次佈局量測：session 幾何以此為準，拖曳中不重量測（裁決 10）
+      const rect = wrapperRef.current?.getBoundingClientRect();
       draggingRef.current = true;
       startClientXRef.current = e.clientX;
-      // 以目前實際夾止後的位移為起點（避免縮放後 rightOffset 超出範圍導致跳動）
-      startOffsetRef.current = Math.min(Math.max(0, rightOffset), Math.max(0, data.length - barsToShow));
+      lastTranslateRef.current = 0;
+      rebasePendingRef.current = false;
       // 拖曳起點當下快照副圖資料（從即時鏡像取，避免抓到舊閉包）→ 拖曳全程參照穩定
       frozenSubDataRef.current = displayDataRef.current;
-      // 量測一次容器寬度存 ref（QT-qyf-WIDTH）：mousemove 熱路徑不再觸發強制 reflow
-      dragWidthRef.current = wrapperRef.current?.getBoundingClientRect().width ?? 0;
       setIsDragging(true);
       setActiveIndex(null); // 進入拖曳即清除十字線
+      // pointer-events-none 下元素 cursor 失效 → 命令式設 body 游標（裁決 8），
+      // dragEnd / abort / 卸載時還原
+      document.body.style.cursor = 'grabbing';
+      if (rect && data.length > barsToShow && rect.width > Y_AXIS_WIDTH) {
+          const session = buildPanSession({
+              id: nextSessionIdRef.current++,
+              dataLength: data.length,
+              barsToShow,
+              rightOffset,
+              containerWidth: rect.width,
+              containerHeight: rect.height,
+              yAxisWidth: Y_AXIS_WIDTH,
+          });
+          panSessionRef.current = session;
+          setPanSession(session);
+      }
+      // 否則不建 session：拖曳自然 no-op（與現況 maxOffset=0 行為一致）
       window.addEventListener('mousemove', handleDragMove);
       window.addEventListener('mouseup', handleDragEnd);
   }, [rightOffset, data.length, barsToShow, handleDragMove, handleDragEnd]);
 
-  // 卸載時清掉殘留的 window 監聽與 rAF（guard 避免洩漏）
+  // 緩衝層 transform 歸零（T-wa0-02）：re-base / session 建立後，命令式寫入的殘留
+  // transform 可能與 React style diff 的同值寫入相消 → 用 layout effect 強制重設，
+  // 並在 paint 前放行 rebasePendingRef（無中間幀）。
+  useLayoutEffect(() => {
+      if (panLayerRef.current) panLayerRef.current.style.transform = panSession ? 'translate3d(0px,0,0)' : '';
+      rebasePendingRef.current = false;
+  }, [panSession]);
+
+  // 拖曳中資料變更（SWR 背景刷新 / 週期切換）→ 安全中止 session（裁決 9）：
+  // 移除 listeners、清 session/旗標、還原游標；使用者重按即可，不嘗試跨資料集續拖。
+  // handleDragMove / handleDragEnd 身分穩定，closure 引用恆有效。
+  useEffect(() => {
+      if (!draggingRef.current) return;
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      draggingRef.current = false;
+      document.body.style.cursor = '';
+      panSessionRef.current = null;
+      setPanSession(null);
+      setIsDragging(false);
+  }, [data]);
+
+  // 卸載時清掉殘留的 window 監聽與命令式游標（guard 避免洩漏）
   useEffect(() => {
       return () => {
           window.removeEventListener('mousemove', handleDragMove);
           window.removeEventListener('mouseup', handleDragEnd);
-          if (dragRafRef.current) cancelAnimationFrame(dragRafRef.current);
+          document.body.style.cursor = '';
       };
   }, [handleDragMove, handleDragEnd]);
 
-  // 註：volumeCells 已上移為 volumeCellsFull（全量預生）＋ slice（見 windowBounds 區塊）。
+  // 註：量能 Cell 已上移為 volumeCellsFull（全量預生）＋ mainVolumeCells slice（見 mainBounds 區塊）。
 
   // 副圖 Cell 改吃 subPanelData：拖曳中凍結（與 SubPanelChart 一起跳過重繪），放開後回到即時。
   const macdHistCells = useMemo(() => subPanelData.map((entry, index) => (
@@ -809,7 +913,9 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   if (!data || data.length === 0) return <div className="text-gray-400">No data available for chart</div>;
 
   return (
-    <div className="flex flex-col gap-4 w-full relative group">
+    // 拖曳期間 pointer-events-none（裁決 8）：一次擋掉主圖 recharts 內部 hover/Tooltip、
+    // 滑過副圖時 syncId 廣播回主圖的內部重繪、縮放按鈕誤點。游標由 body cursor 命令式接手。
+    <div className={`flex flex-col gap-4 w-full relative group${isDragging ? ' pointer-events-none' : ''}`}>
       
       {/* 1. Price Chart Section */}
       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg relative outline-none">
@@ -839,16 +945,33 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
         <div
           ref={wrapperRef}
           onMouseDown={handleDragStart}
-          className={`h-[450px] max-md:h-[320px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          className={`relative overflow-hidden h-[450px] max-md:h-[320px] w-full select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         >
-          <MainPriceChart
-            displayData={displayData}
-            settings={settings}
-            isTaiwanStock={isTaiwanStock}
-            volumeCells={volumeCells}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-          />
+          {/* 緩衝層（QT-wa0-TRANSLATE）：拖曳 session 期間 handleDragMove 直接寫本層
+              style.transform 平移（不經 React）。幾何對齊證明：t=0 時 bar[startIndex]
+              在層內偏移 leftPx px，被 left:-leftPx 抵銷 → 落在容器 x=0；bar[endIndex-1]
+              右緣 = barsToShow×bpw = P = W−Y_AXIS_WIDTH；右緣遮罩恰蓋 [P, W]，緩衝的
+              較新 K 棒藏遮罩下、較舊 K 棒在容器左緣外被 overflow-hidden 裁掉。
+              閒置時本層即普通 100% 寬容器，對非拖曳路徑零影響（裁決 11）。 */}
+          <div
+            ref={panLayerRef}
+            className="absolute top-0 left-0 h-full"
+            style={panSession
+              ? { left: -panSession.leftPx, width: panSession.bufWidthPx, willChange: 'transform', transform: 'translate3d(0px,0,0)' }
+              : { width: '100%' }}
+          >
+            <MainPriceChart
+              displayData={mainDisplayData}
+              settings={settings}
+              isTaiwanStock={isTaiwanStock}
+              volumeCells={mainVolumeCells}
+              panDims={panDims}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            />
+          </div>
+          {/* pan 模式右緣遮罩（裁決 3）：YAxis 暫隱期間蓋住滑進軸區的緩衝 K 棒（同面板底色） */}
+          {panSession && <div className="absolute top-0 bottom-0 right-0 bg-slate-800" style={{ width: Y_AXIS_WIDTH }} />}
         </div>
       </div>
 
