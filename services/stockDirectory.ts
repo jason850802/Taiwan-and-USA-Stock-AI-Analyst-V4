@@ -4,7 +4,7 @@
 
 import { proxyHeaders } from './_shared/apiClient';
 
-export type Market = 'TW' | 'US' | 'OTHER';
+export type Market = 'TW' | 'US';
 
 export interface StockDirEntry {
   id: string;        // 代碼（台股純數字；美股代碼）
@@ -80,6 +80,30 @@ export async function ensureTaiwanDirectory(): Promise<StockDirEntry[]> {
   return loadingPromise;
 }
 
+// ── 台股名錄搜尋過濾（純函式，可獨立測試）──
+// 值域依 2026-07-12 FinMind TaiwanStockInfo 實抓（4277 筆原始 / 3116 筆去重）：
+//   type ∈ {twse, tpex, emerging}——僅保留 twse/tpex，排除興櫃
+//   industry_category 黑名單涵蓋非個股非 ETF 類別：
+//     所有證券＝權證（711140 等 6 碼）、存託憑證＝DR（91 開頭 6 碼＋4 碼特例如 9110 越南控-DR，
+//     故不能只靠代碼型態、必須列入黑名單）、Index/大盤＝指數（TAIEX 等非數字代碼）、
+//     ETN/指數投資證券(ETN)（020 開頭）、受益證券（01 開頭帶 T）
+const TW_INDUSTRY_BLACKLIST = new Set([
+  '所有證券', '存託憑證', 'Index', '大盤', 'ETN', '指數投資證券(ETN)', '受益證券',
+]);
+// ETF 類 industry 標籤（twse 與 tpex 標籤不同，皆為實抓值；509 檔全數符合 ^00\d{2,4}[A-Z]?$）
+const TW_ETF_INDUSTRIES = new Set(['ETF', '上櫃ETF', '上櫃指數股票型基金(ETF)']);
+
+export function isSearchableTaiwanEntry(e: StockDirEntry): boolean {
+  if (e.type !== 'twse' && e.type !== 'tpex') return false;
+  if (e.industry && TW_INDUSTRY_BLACKLIST.has(e.industry)) return false;
+  // 4 碼純數字 → 個股保留（含創新板；DR 4 碼特例已被上方黑名單擋下）
+  if (/^\d{4}$/.test(e.id)) return true;
+  // 00 開頭、末尾可帶字母（0050/00679B 債券型/00632R 槓反型）且 industry 屬 ETF 類 → ETF 保留
+  if (/^00\d{2,4}[A-Z]?$/.test(e.id) && e.industry && TW_ETF_INDUSTRIES.has(e.industry)) return true;
+  // 其餘代碼型態丟棄（特別股 2888A、5 碼可轉債、91 開頭 DR、01 開頭受益證券、02 開頭 ETN 等）
+  return false;
+}
+
 // ── 台股本地子字串搜尋（名稱 OR 代碼）──
 export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): StockDirEntry[] {
   const q = query.trim().toLowerCase();
@@ -88,6 +112,7 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
   const nameHit: StockDirEntry[] = []; // 名稱包含
   const idIn: StockDirEntry[] = [];    // 代碼包含
   for (const e of dir) {
+    if (!isSearchableTaiwanEntry(e)) continue; // 僅個股與 ETF 可搜（§A1 改法3）
     const id = e.id.toLowerCase();
     const name = e.name.toLowerCase();
     if (id.startsWith(q)) idHit.push(e);
@@ -98,7 +123,30 @@ export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): S
   return [...idHit, ...nameHit, ...idIn].slice(0, limit);
 }
 
-// ── Yahoo 搜尋（美股/海外，英文名或代碼）──
+// ── Yahoo quote → StockDirEntry 過濾映射（純函式，可獨立測試）──
+// 規則（§A1 改法1、2）：
+//   1. quoteType 嚴格限定 EQUITY / ETF——移除 isYahooFinance 旁路
+//      （期貨/選擇權/指數/匯率/加密該欄位皆為 true，是雜訊混入根因）
+//   2. 市場白名單：.TW/.TWO 後綴 → TW；美股七大交易所 → US；其餘直接丟棄（回 null）
+const US_EXCHANGES = new Set(['NMS', 'NYQ', 'NGM', 'NCM', 'ASE', 'PCX', 'BTS']);
+
+export function mapYahooQuote(x: any): StockDirEntry | null {
+  if (!x || !x.symbol) return null;
+  if (x.quoteType !== 'EQUITY' && x.quoteType !== 'ETF') return null;
+  const sym: string = x.symbol;
+  let market: Market;
+  if (sym.endsWith('.TW') || sym.endsWith('.TWO')) market = 'TW';
+  else if (US_EXCHANGES.has(x.exchange)) market = 'US';
+  else return null; // 非台股非美股白名單 → 丟棄（港/日/韓等不再以「海外」顯示）
+  return {
+    id: sym,
+    name: x.shortname || x.longname || sym,
+    industry: x.exchDisp || x.exchange,
+    market,
+  };
+}
+
+// ── Yahoo 搜尋（美股/台股，英文名或代碼）──
 export async function searchYahoo(query: string, limit = 8): Promise<StockDirEntry[]> {
   const q = query.trim();
   if (!q) return [];
@@ -110,19 +158,7 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
     if (!res.ok) return [];
     const json = await res.json();
     const quotes: any[] = json.quotes || [];
-    return quotes
-      .filter(x => x.symbol && (x.quoteType === 'EQUITY' || x.quoteType === 'ETF' || x.isYahooFinance))
-      .map(x => {
-        const sym: string = x.symbol;
-        const market: Market = sym.endsWith('.TW') || sym.endsWith('.TWO') ? 'TW'
-          : (x.exchange === 'NMS' || x.exchange === 'NYQ' || x.exchange === 'PCX' || x.exchange === 'ASE') ? 'US' : 'OTHER';
-        return {
-          id: sym,
-          name: x.shortname || x.longname || sym,
-          industry: x.exchDisp || x.exchange,
-          market,
-        } as StockDirEntry;
-      });
+    return quotes.map(mapYahooQuote).filter((e): e is StockDirEntry => e !== null);
   } catch {
     return [];
   }
@@ -132,7 +168,7 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
 export async function searchStocks(dir: StockDirEntry[], query: string): Promise<StockDirEntry[]> {
   const q = query.trim();
   if (!q) return [];
-  const tw = searchTaiwan(dir, q, 20);
+  const tw = searchTaiwan(dir, q, 15);
   // 含中文 → 只用台股本地（最快、最準）
   if (hasCJK(q)) return tw;
   // 純英文/代碼 → 併入 Yahoo 海外結果（去重）
@@ -144,5 +180,5 @@ export async function searchStocks(dir: StockDirEntry[], query: string): Promise
     const bare = y.id.replace(/\.TWO?$/i, '');
     if (!seen.has(y.id) && !seen.has(bare)) { merged.push(y); seen.add(y.id); }
   }
-  return merged.slice(0, 24);
+  return merged.slice(0, 15);
 }
