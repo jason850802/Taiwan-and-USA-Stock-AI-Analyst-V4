@@ -55,7 +55,7 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
     window.clearTimeout(debounceRef.current);
     if (!q.trim()) { setResults([]); setOpen(false); setSearching(false); return; }
     setSearching(true);
-    setOpen(true); // 查詢開始即開面板——中間態（載入名錄中…）需要掛載點
+    setOpen(true); // 查詢開始即開面板——名錄載入等中間態面板需要掛載點
     const myId = ++reqIdRef.current;
     debounceRef.current = window.setTimeout(() => {
       searchStocks(q, (r, phase) => {
@@ -136,10 +136,18 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
             })}
           </ul>
         )}
-        {open && !searching && results.length === 0 && value.trim() && (
-          <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
-            找不到符合「{value}」的股票
-          </div>
+        {/* 空結果三態決策鏈：名錄未就緒（!dirReady）／查詢中不渲染（searching）／終態才見「找不到」 */}
+        {open && value.trim() && results.length === 0 && (
+          !dirReady ? (
+            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
+              <Loader2 className="animate-spin shrink-0" size={14} />
+              載入名錄中…
+            </div>
+          ) : searching ? null : (
+            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
+              找不到符合「{value}」的股票
+            </div>
+          )
         )}
       </div>
 
