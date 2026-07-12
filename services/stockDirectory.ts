@@ -104,6 +104,22 @@ export function isSearchableTaiwanEntry(e: StockDirEntry): boolean {
   return false;
 }
 
+// ── .TW/.TWO 後綴預解析（純函式，可獨立測試）──
+// 依名錄 type 直接判定上市/上櫃後綴，消滅上櫃股（如 6488）冷抓時整輪 .TW 失敗握手。
+// 注意：查的是原始名錄、不過 isSearchableTaiwanEntry 濾網——特別股 2888A 等
+// 使用者仍可能直接輸入代碼，必須能解析。emerging（興櫃）/其他/查無 → null，
+// 由呼叫端保留既有 .TW→.TWO try-fallback（行為不劣於今日）。
+export function resolveTaiwanSuffix(coreCode: string, dir: StockDirEntry[]): '.TW' | '.TWO' | null {
+  for (const e of dir) {
+    if (e.id === coreCode) {
+      if (e.type === 'twse') return '.TW';
+      if (e.type === 'tpex') return '.TWO';
+      return null;
+    }
+  }
+  return null;
+}
+
 // ── 台股本地子字串搜尋（名稱 OR 代碼）──
 export function searchTaiwan(dir: StockDirEntry[], query: string, limit = 20): StockDirEntry[] {
   const q = query.trim().toLowerCase();
