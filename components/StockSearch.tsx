@@ -30,7 +30,7 @@ const highlight = (text: string, q: string) => {
 };
 
 const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelect, loading }) => {
-  const [dir, setDir] = useState<StockDirEntry[]>([]);
+  const [dirReady, setDirReady] = useState(false);
   const [results, setResults] = useState<StockDirEntry[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -39,8 +39,8 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
   const debounceRef = useRef<number | undefined>(undefined);
   const reqIdRef = useRef(0);
 
-  // 載入台股名錄（背景，快取後極快）
-  useEffect(() => { ensureTaiwanDirectory().then(setDir).catch(() => {}); }, []);
+  // 預熱台股名錄（prefetch：多數搜尋到達時 memCache 已就緒；searchStocks 內部自行 await）
+  useEffect(() => { ensureTaiwanDirectory().then(() => setDirReady(true)).catch(() => {}); }, []);
 
   // 點擊外部關閉
   useEffect(() => {
@@ -55,16 +55,17 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
     window.clearTimeout(debounceRef.current);
     if (!q.trim()) { setResults([]); setOpen(false); setSearching(false); return; }
     setSearching(true);
+    setOpen(true); // 查詢開始即開面板——名錄載入等中間態面板需要掛載點
     const myId = ++reqIdRef.current;
-    debounceRef.current = window.setTimeout(async () => {
-      const r = await searchStocks(dir, q);
-      if (myId !== reqIdRef.current) return; // 丟棄過期結果
-      setResults(r);
-      setActive(-1);
-      setOpen(true);
-      setSearching(false);
+    debounceRef.current = window.setTimeout(() => {
+      searchStocks(q, (r, phase) => {
+        if (myId !== reqIdRef.current) return; // local/final 兩相位皆丟棄過期結果
+        setResults(r);
+        setActive(-1);
+        if (phase === 'final') setSearching(false); // local 上屏後 spinner 續轉，final 收斂
+      });
     }, 180);
-  }, [dir]);
+  }, []);
 
   const handleChange = (v: string) => { onValueChange(v); runSearch(v); };
 
@@ -135,10 +136,18 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
             })}
           </ul>
         )}
-        {open && !searching && results.length === 0 && value.trim() && (
-          <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
-            找不到符合「{value}」的股票
-          </div>
+        {/* 空結果三態決策鏈：名錄未就緒（!dirReady）／查詢中不渲染（searching）／終態才見「找不到」 */}
+        {open && value.trim() && results.length === 0 && (
+          !dirReady ? (
+            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
+              <Loader2 className="animate-spin shrink-0" size={14} />
+              載入名錄中…
+            </div>
+          ) : searching ? null : (
+            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
+              找不到符合「{value}」的股票
+            </div>
+          )
         )}
       </div>
 
