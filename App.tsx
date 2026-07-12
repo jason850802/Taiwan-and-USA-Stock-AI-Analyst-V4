@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
 import QuoteHeader from './components/QuoteHeader';
@@ -106,21 +106,43 @@ const App: React.FC = () => {
     }));
   };
 
+  // 防競態（B-1）：連點多檔股票時，reqId＋AbortController 保證畫面只反映最後一次請求。
+  const fetchSeqRef = useRef(0);
+  const fetchAbortRef = useRef<AbortController | null>(null);
+
   const fetchData = async (sym: string, intvl: TimeInterval) => {
+    const reqId = ++fetchSeqRef.current;
+    fetchAbortRef.current?.abort(); // 中止前一請求（主要成本在 Yahoo chart 握手）
+    const controller = new AbortController();
+    fetchAbortRef.current = controller;
+
     setLoading(true);
     setError(null);
     try {
-      const { info, data } = await getStockData(sym, intvl);
+      const { info, data } = await getStockData(sym, intvl, {
+        signal: controller.signal,
+        // SWR 背景刷新到貨：過期 reqId 丟棄；不清 analysis/entryResult——
+        // 背景刷新是同標的微幅更新，清掉是退化。
+        onRevalidated: (r) => {
+          if (fetchSeqRef.current !== reqId) return;
+          setData(r.data);
+          setInfo(r.info);
+        },
+      });
+      if (fetchSeqRef.current !== reqId) return; // 過期請求的成功結果不落地
       setData(data);
       setInfo(info);
       setAnalysis('');
       setEntryResult(null);
     } catch (err: any) {
+      // 舊請求的錯誤（含被 abort 拋出的 AbortError）不得污染新請求的狀態機
+      if (fetchSeqRef.current !== reqId) return;
       setError(err.message || 'Failed to fetch stock data.');
       setData([]);
       setInfo(null);
     } finally {
-      setLoading(false);
+      // loading 歸屬最新請求，舊請求不得提前熄燈
+      if (fetchSeqRef.current === reqId) setLoading(false);
     }
   };
 
@@ -172,7 +194,8 @@ const App: React.FC = () => {
     if (data.length === 0 || refreshing || loading) return;
     setRefreshing(true);
     try {
-      const result = await getStockData(info?.symbol || symbol, interval);
+      // forceRefresh：否則「更新報價」在快取 TTL 內變 no-op（planner_rulings #5）
+      const result = await getStockData(info?.symbol || symbol, interval, { forceRefresh: true });
       setData(result.data);
       setInfo(result.info);
     } catch (err: any) {

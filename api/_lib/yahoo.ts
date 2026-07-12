@@ -74,6 +74,9 @@ export function validateSearchParams(query: {
 
 const CRUMB_TTL_MS = 10 * 60 * 1000;
 const RETRY_DELAY_MS = 500;
+// upstream fetch 逾時上界：最壞串行 cookie+crumb+main = 24s，留在 chart.ts maxDuration=30 內。
+// 逾時 → classifyYahooError → UPSTREAM_ERROR（不重試）→ 前端走既有 FinMind fallback，整條請求有界。
+const UPSTREAM_TIMEOUT_MS = 8000;
 const BROWSER_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -104,6 +107,7 @@ function clearCrumbCache(): void {
 async function fetchCookie(): Promise<string> {
   const response = await fetch('https://fc.yahoo.com', {
     headers: BROWSER_HEADERS,
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
 
   const cookieHeaders = response.headers as Headers & {
@@ -133,6 +137,7 @@ async function fetchCrumb(cookie: string): Promise<string> {
         ...BROWSER_HEADERS,
         Cookie: cookie,
       },
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     },
   );
 
@@ -177,6 +182,7 @@ export async function fetchYahooWithHandshake(
           ...BROWSER_HEADERS,
           Cookie: cookie,
         },
+        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
       });
 
       if (response.status === 401 || response.status === 429) {
@@ -214,7 +220,8 @@ export function classifyYahooError(error: unknown): YahooClassifiedError {
   const name = typeof errorRecord.name === 'string' ? errorRecord.name : '';
   const message = error instanceof Error ? error.message : String(error || '');
 
-  if (name === 'AbortError' || /aborted|aborterror|timed?\s*out/i.test(message)) {
+  // undici 對 AbortSignal.timeout 拋 DOMException name='TimeoutError'——顯式列名，不賭 message 措辭
+  if (name === 'AbortError' || name === 'TimeoutError' || /aborted|aborterror|timed?\s*out/i.test(message)) {
     return new YahooClassifiedError('UPSTREAM_ERROR');
   }
 

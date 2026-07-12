@@ -2,6 +2,15 @@ import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 import { proxyHeaders } from './_shared/apiClient';
 import { fetchFinMindRows } from './finmind';
+import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
+import {
+  marketForSymbol,
+  isQuoteCacheFresh,
+  readQuoteCache,
+  writeQuoteCache,
+  writeMemoryAlias,
+  type QuoteCacheEntry,
+} from './quoteCache';
 
 interface YahooChartResponse {
   chart: {
@@ -245,10 +254,11 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
     throw new Error('FinMind data not found');
 };
 
-const queryYahoo = async (symbol: string, interval: string, range: string): Promise<YahooChartResponse> => {
+const queryYahoo = async (symbol: string, interval: string, range: string, signal?: AbortSignal): Promise<YahooChartResponse> => {
     const qs = new URLSearchParams({ symbol, interval, range }).toString();
     const res = await fetch(`/api/yahoo/chart?${qs}`, {
         headers: { ...proxyHeaders },
+        signal,
     });
 
     if (!res.ok) {
@@ -273,9 +283,9 @@ const queryYahoo = async (symbol: string, interval: string, range: string): Prom
     return json;
 };
 
-const fetchRawData = async (symbol: string, interval: string, range: string) => {
+const fetchRawData = async (symbol: string, interval: string, range: string, signal?: AbortSignal) => {
   const clean = symbol.trim().toUpperCase();
-  const performQuery = async (s: string) => queryYahoo(s, interval, range);
+  const performQuery = async (s: string) => queryYahoo(s, interval, range, signal);
 
   // 1. Check for Explicit Numeric Code (e.g. "2330", "0050", "00631L", "00679B", "00981A")
   // Taiwan ETF codes: digits optionally followed by a single letter (L, R, B, C, U, V, A, D, T, K, M, S...)
@@ -287,6 +297,21 @@ const fetchRawData = async (symbol: string, interval: string, range: string) => 
       if (clean.includes('.TW') || clean.includes('.TWO')) {
           return await performQuery(clean);
       }
+
+      // 1.5 名錄 .TW/.TWO 後綴預解析：上櫃股（如 6488）名錄命中即後綴直達，
+      // 消滅整輪 .TW 失敗握手（冷抓 12 秒的大宗）。名錄有 memCache＋localStorage，常態 0ms。
+      try {
+          const dir = await ensureTaiwanDirectory();
+          const suffix = resolveTaiwanSuffix(coreCode, dir);
+          if (suffix) {
+              try {
+                  return await performQuery(coreCode + suffix);
+              } catch {
+                  // 名錄與 Yahoo 不一致的極罕見情境：fall through 回既有 try-chain，
+                  // 行為不劣於今日（planner_rulings #6）
+              }
+          }
+      } catch { /* 名錄載入失敗即跳過預解析，走既有 try-fallback */ }
 
       // Implicit Code "2330" / "00981A" -> Try .TW then .TWO
       try {
@@ -438,8 +463,10 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
   return { price: latestPrice, name };
 };
 
-export const getStockData = async (symbol: string, interval: TimeInterval = '1d'): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
-  
+// 原 getStockData 函式體整段搬移（內容零改動，除：fetchRawData 透傳 signal、
+// 步驟 3 台股中文名併入 Promise.all 並行）。快取整合在下方 getStockData 外殼。
+const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '1d', signal?: AbortSignal): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
+
   let mainInterval = interval as string;
   let mainRange = '5y';
   
@@ -462,7 +489,7 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   // 1. Try Fetching Data (Primary: Yahoo, Fallback: FinMind)
   try {
       // Attempt Yahoo First
-      const mainResponse = await fetchRawData(symbol, mainInterval, mainRange);
+      const mainResponse = await fetchRawData(symbol, mainInterval, mainRange, signal);
       const resultMeta = mainResponse.chart.result![0].meta;
       isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
 
@@ -592,25 +619,28 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
   // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
   const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
 
-  if (isTaiwanStock && !usedFallback) {
-      // Always try to fetch FinMind name to ensure Traditional Chinese for TW stocks
-      const fetchedName = await fetchFinMindStockInfo(symbolInfo.symbol);
-      if (fetchedName) taiwanStockName = fetchedName;
-  }
+  // 台股中文名抓取（條件：isTaiwanStock && !usedFallback，所有 interval）——
+  // 三段串行改兩段：不再先 await，改併入下方籌碼/量能的 Promise.all 並行。
+  // fetchFinMindStockInfo 內部 try/catch 回 null、永不 reject，Promise.all 安全。
+  const namePromise: Promise<string | null> = (isTaiwanStock && !usedFallback)
+      ? fetchFinMindStockInfo(symbolInfo.symbol)
+      : Promise.resolve(null);
 
   const shouldFetchFinMindChips = isTaiwanStock && interval === '1d';
   if (shouldFetchFinMindChips) {
       let fetchStartDate = new Date();
-      fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5); 
+      fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5);
       const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
-      
+
       // We need clean ID for FinMind
       const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
 
-      const [institutionalData, finMindPriceData] = await Promise.all([
+      const [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
+          namePromise,
           fetchInstitutionalData(cleanId, fetchStartDateStr),
           fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
       ]);
+      if (fetchedName) taiwanStockName = fetchedName;
 
       if (institutionalData === null) {
           chipDataUnavailable = true;
@@ -630,6 +660,10 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
           // FinMind 欄位：high=max、low=min（比照 fetchFinMindDailyData）。
           ohlcMap.set(item.date, { open: item.open, high: item.max, low: item.min, close: item.close });
       });
+  } else {
+      // 非籌碼路徑（US／TW 週月線／fallback）：只需等中文名，絕不誤設 chipDataUnavailable
+      const fetchedName = await namePromise;
+      if (fetchedName) taiwanStockName = fetchedName;
   }
 
   // 4. Final Enriching
@@ -780,4 +814,107 @@ export const getStockData = async (symbol: string, interval: TimeInterval = '1d'
       },
       data: fullProcessedData
   };
+};
+
+// ── 行情快取外殼（B-1，quick-260712-vno）──
+// 快取語意：快取的是 getStockData 管線終點的最終資料——殭屍棒過濾（4.5）、
+// close-null 補值（_synthetic/FinMind OHLC 取代）、FinMind 量能覆寫全部已在管線內完成，
+// 命中路徑與新抓路徑逐位元同源，後處理不可能被跳過或重複執行。
+// TTL 政策見 .planning/optimization/PLAN.md 已拍板決策 3（盤中 10 分／收盤後沿用到下一交易日開盤）。
+
+type StockDataResult = { info: StockInfo; data: StockDataPoint[] };
+
+export interface GetStockDataOpts {
+  forceRefresh?: boolean;                       // 更新報價按鈕：略過快取真重抓
+  signal?: AbortSignal;                         // 只 plumb 到 queryYahoo（planner_rulings #4）
+  onRevalidated?: (r: StockDataResult) => void; // SWR 背景刷新到貨回呼
+}
+
+// SWR 背景刷新去重：同 key 已在刷新則不重複發
+const inflightRevalidate = new Map<string, Promise<StockDataResult | null>>();
+
+// 淺拷貝防禦：防呼叫端意外 mutate 陣列污染快取（資料點物件共享，消費端本就視為 immutable）
+const cloneResult = (r: StockDataResult): StockDataResult => ({ info: { ...r.info }, data: r.data.slice() });
+
+const writeQuoteCacheResult = (key: string, interval: string, result: StockDataResult): void => {
+    const entry: QuoteCacheEntry = {
+        cachedAt: Date.now(),
+        // planner_rulings #3：籌碼不可用可能是暫時性 429，只享 10 分鐘短 TTL、不享收盤後沿用
+        shortTtlOnly: result.info.chipDataUnavailable === true,
+        result,
+    };
+    writeQuoteCache(key, entry);
+    // canonical 解析失敗但 Yahoo try-chain 成功的殘餘情境：以最終 symbol 建 memory 別名
+    const resultKey = `${result.info.symbol}|${interval}`;
+    if (resultKey !== key) writeMemoryAlias(resultKey, entry);
+};
+
+const revalidateInBackground = (key: string, canon: string, interval: TimeInterval, onRevalidated?: (r: StockDataResult) => void): void => {
+    if (inflightRevalidate.has(key)) return; // 去重
+    // 不傳呼叫端 signal——刷新 promise 可能被多消費端共享，中止會誤傷（planner_rulings #4）
+    const p = fetchStockDataUncached(canon, interval)
+        .then((result) => {
+            writeQuoteCacheResult(key, interval, result);
+            onRevalidated?.(cloneResult(result));
+            return result;
+        })
+        .catch((err) => {
+            // 刷新失敗吞掉、保留舊快取不清除
+            console.warn(`Background quote revalidation failed for ${key}:`, err);
+            return null;
+        })
+        .finally(() => { inflightRevalidate.delete(key); });
+    inflightRevalidate.set(key, p);
+};
+
+export const getStockData = async (
+  symbol: string,
+  interval: TimeInterval = '1d',
+  opts?: GetStockDataOpts,
+): Promise<StockDataResult> => {
+  // 正規化＋canonical key：裸台股碼先經名錄預解析成 .TW/.TWO 完整代碼，
+  // 讓 `2330` 與 `2330.TW` 命中同一份快取
+  const clean = symbol.trim().toUpperCase();
+  let canon = clean;
+  if (/^\d{3,6}[A-Z]?$/.test(clean)) {
+      try {
+          const dir = await ensureTaiwanDirectory();
+          const suffix = resolveTaiwanSuffix(clean, dir);
+          if (suffix) canon = clean + suffix;
+      } catch { /* 名錄失敗即以原字串為 key */ }
+  }
+  const key = `${canon}|${interval}`;
+
+  if (!opts?.forceRefresh) {
+      const entry = readQuoteCache(key);
+      if (entry) {
+          const cached = entry.result as StockDataResult;
+          if (isQuoteCacheFresh(entry.cachedAt, Date.now(), marketForSymbol(canon), entry.shortTtlOnly)) {
+              // fresh：0 網路請求即回傳
+              return cloneResult(cached);
+          }
+          // stale → SWR：立即回傳舊資料，背景刷新到貨後經 onRevalidated 更新
+          revalidateInBackground(key, canon, interval, opts?.onRevalidated);
+          return cloneResult(cached);
+      }
+  }
+
+  // forceRefresh 且同 key 已有 inflight 刷新 → 直接 await 共用（避免重複網路請求）
+  if (opts?.forceRefresh) {
+      const inflight = inflightRevalidate.get(key);
+      if (inflight) {
+          const shared = await inflight;
+          if (shared) return cloneResult(shared);
+      }
+  }
+
+  // miss / forceRefresh：全新抓取
+  const result = await fetchStockDataUncached(canon, interval, opts?.signal);
+
+  // 寫快取前守衛（planner_rulings #4）：abort 打在 FinMind 階段會被內部 try/catch 吞成
+  // 降級結果（chipDataUnavailable:true）照常完成——不攔截會把降級結果毒進快取。
+  if (opts?.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+
+  writeQuoteCacheResult(key, interval, result);
+  return result;
 };
