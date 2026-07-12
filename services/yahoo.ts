@@ -306,21 +306,28 @@ const fetchRawData = async (symbol: string, interval: string, range: string, sig
           if (suffix) {
               try {
                   return await performQuery(coreCode + suffix);
-              } catch {
+              } catch (e: any) {
+                  // H-1：使用者主動取消不是「名錄不一致」，直接上拋、不得 fall through 重試
+                  if (e?.name === 'AbortError') throw e;
                   // 名錄與 Yahoo 不一致的極罕見情境：fall through 回既有 try-chain，
                   // 行為不劣於今日（planner_rulings #6）
               }
           }
-      } catch { /* 名錄載入失敗即跳過預解析，走既有 try-fallback */ }
+      } catch (e: any) {
+          if (e?.name === 'AbortError') throw e; // H-1
+          /* 名錄載入失敗即跳過預解析，走既有 try-fallback */
+      }
 
       // Implicit Code "2330" / "00981A" -> Try .TW then .TWO
       try {
           return await performQuery(`${coreCode}.TW`);
       } catch (e: any) {
+          if (e?.name === 'AbortError') throw e; // H-1：取消不得觸發 .TWO 重試
           try {
               // Fallback to OTC (TWO)
               return await performQuery(`${coreCode}.TWO`);
-          } catch (e2) {
+          } catch (e2: any) {
+             if (e2?.name === 'AbortError') throw e2; // H-1
              throw new Error(`找不到台股代號: ${coreCode}`);
           }
       }
@@ -501,6 +508,9 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
           exchangeTimezoneName: resultMeta.exchangeTimezoneName
       };
   } catch (err: any) {
+      // H-1：使用者主動取消（AbortError）直接上拋——不得觸發不可中止的 FinMind fallback
+      // （fetchFinMindDailyData/fetchFinMindStockInfo 不吃 signal，429 限流是常態，白打放大風險）
+      if (err?.name === 'AbortError') throw err;
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
       const cleanSymbol = symbol.toUpperCase().replace(/\.TWO?$/i, '');
       const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);

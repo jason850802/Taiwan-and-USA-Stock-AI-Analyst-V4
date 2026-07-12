@@ -193,9 +193,13 @@ const App: React.FC = () => {
   const handleRefreshQuote = async () => {
     if (data.length === 0 || refreshing || loading) return;
     setRefreshing(true);
+    // M-1：刷新納入 fetchSeqRef 同一防競態序列——刷新在飛行中若使用者切換標的/週期
+    // （fetchData 會遞增序號），舊刷新結果不得回頭覆蓋新標的畫面
+    const reqId = ++fetchSeqRef.current;
     try {
       // forceRefresh：否則「更新報價」在快取 TTL 內變 no-op（planner_rulings #5）
       const result = await getStockData(info?.symbol || symbol, interval, { forceRefresh: true });
+      if (fetchSeqRef.current !== reqId) return; // 已被較新請求取代
       setData(result.data);
       setInfo(result.info);
     } catch (err: any) {
