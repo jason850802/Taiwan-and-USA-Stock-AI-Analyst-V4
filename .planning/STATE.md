@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 進行中：D-1a/D-1b/D-1c 完成（twCDN＋importmap 皆除，依賴單軌化達成），剩 D-1d 分包＋D-2/D-3/D-4
+Last activity: 2026-07-13 - Phase D 進行中：D-1 依賴單軌化全套完成（D-1a~D-1e，主 chunk -83.9%），剩 D-2/D-3/D-4 體質小項
 
 Progress: [██████████] 100%
 
@@ -126,6 +126,7 @@ Recent decisions affecting current work:
 | 260713-kq2 | D-1a 基線量測與風險稽核（Phase D 1/7）：importmap 雙環境（dev＋prod preview）0 esm.sh 請求＝休眠死重、D-1c 純刪除綠燈；Tailwind Play CDN 活（407KB raw／123KB gzip 每次載入）＋console 官方警告；bundle 基線單 chunk 967.60KB raw／294.26KB gzip（2563 modules）；51 行模板字串 className 逐行分類全安全（插值進 class token 內部的危險模式 0 條、無需 safelist），非模板動態組類名 5 類模式 0 命中；D-1b content globs／D-1d -40% 錨點已備妥。附註：repo 級 grep 曾測得 160 行係 .claude/worktrees/ 陳舊 agent 複本汙染（109 行），真源 51 行與 optimization/PLAN.md 一致 | 2026-07-13 | 037d326 | [260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class](./quick/260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class/) |
 | 260713-len | D-1b Tailwind 改建置期（Phase D 2/7）：Play CDN（407KB raw／123KB gzip 執行時 JIT）改 tailwindcss@3.4.19＋postcss＋autoprefixer 建置期靜態 CSS——dist CSS 26.7KB raw／5.5KB gzip（首屏淨省 ~118KB gzip）；內聯 config 逐鍵遷 tailwind.config.js（colors 8 組/fontFamily 2/borderRadius 3）、內聯 style 遷 index.css、index.html 摘 CDN script（importmap＋Google Fonts 原封不動）；purge 抽查 12/12 命中、瀏覽器驗證 dev＋preview 雙環境 0 twCDN 請求、自訂色/卷軸/hidden 規則全存在、三分頁＋三圖表零回歸、console 無 CDN 警告；偏差：發現基底 lockfile 缺 @upstash 兩件（既有脫鉤），npm install 同步隨包入庫 | 2026-07-13 | 24a8135 | [260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss](./quick/260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss/) |
 | 260713-mi1 | D-1c importmap 移除＋文件單軌化（Phase D 3/7）：刪 index.html esm.sh importmap 區塊 12 行（D-1a 已證雙環境休眠死重，行為中性純刪除）；npm ci 乾淨通過（驗證 D-1b lockfile 修復）；CLAUDE.md 關鍵事實改單軌敘述、STACK.md 四處同步（含 D-1b 遺留的 Tailwind CDN 敘述順手修正＋@google/genai 誤列消除）；驗證：tsc 綠、build 綠、index.html 與 dist/index.html 0 esm.sh（before 6 處）、dist 0 AIza、瀏覽器 dev＋preview 雙環境 0 esm.sh 請求＋importmap tag 消失＋App 正常渲染 | 2026-07-13 | e6e4140 | [260713-mi1-d-1c-importmap-index-html-esm-sh-importm](./quick/260713-mi1-d-1c-importmap-index-html-esm-sh-importm/) |
+| 260713-n11 | D-1d 分包＋D-1e fonts 記錄（Phase D 4/7）：vite manualChunks 三分組（vendor=react+react-dom 含 React 19 子路徑 react-dom/client＋jsx-runtime／recharts／markdown=react-markdown+remark-gfm）＋React.lazy 懶載 Portfolio 與 FundamentalsPanel（Suspense fallback 沿用 Loader2 覆蓋層）——主 chunk 967.60KB→155.58KB raw（**-83.9%**，門檻 -40%）；首屏 gzip JS 294.26→276.6KB（-5.9%，Portfolio+基本面 ~16KB gzip 移出首屏）；快取粒度改善（改業務碼只重下 entry ~55KB）；Vite >500kB 警告消失；瀏覽器實測 preview 首屏恰 4 chunk、兩分頁按需載入渲染無白屏、市場分析三圖不受影響；JS 總和 -0.19% 證無重複打包；D-1e 拍板記錄：Google Fonts 保留 CDN（display=swap 漸進降級）。兩獨立 commit 可各自回滾 | 2026-07-13 | aa9dd4f, 0dcb98b | [260713-n11-d-1d-manualchunks-vendor-recharts-markdo](./quick/260713-n11-d-1d-manualchunks-vendor-recharts-markdo/) |
 
 ## Deferred Items
 
