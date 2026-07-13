@@ -19,4 +19,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, '.'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime'],
+          recharts: ['recharts'],
+          markdown: ['react-markdown', 'remark-gfm'],
+        },
+      },
+    },
+  },
 });
