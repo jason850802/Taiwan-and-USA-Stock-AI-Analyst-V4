@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 進行中：D-1a 基線（260713-kq2）＋D-1b Tailwind 建置期（260713-len，24a8135）完成，twCDN 已除
+Last activity: 2026-07-13 - Phase D 進行中：D-1a/D-1b/D-1c 完成（twCDN＋importmap 皆除，依賴單軌化達成），剩 D-1d 分包＋D-2/D-3/D-4
 
 Progress: [██████████] 100%
 
@@ -125,6 +125,7 @@ Recent decisions affecting current work:
 | 260713-buv | C-3 規則庫 systemInstruction 靜態化＋快取策略落地（Phase C 3/3）：services/gemini.ts 三個函式內 systemInstruction hoist 為 module const（ENTRY/TRADE_DECISION/HEALTH_CHECK_SYSTEM_INSTRUCTION），entry 版去除 5 處個股動態內插（decision/entryPrice/stopPrice/maGuardPrice/guardMaLabel 全數已在 promptData，改指涉輸入資料、恰 2 行改寫）——前綴位元組穩定＝Gemini implicit caching 可命中＋A3 hash 穩定；機制層偏差（已數字化文件化）：拒絕 PLAN 原名的 explicit context caching——本 App 呼叫間隔以小時計 >> TTL，儲存費（~$0.005-0.008/hr）＞命中省（~$0.001-0.002/次）需 ≥4-5 次/hr 才回本、entry SI ~1k tokens 低於 1024 門檻、serverless cache name 跨實例查找複雜度，無任何子情境划算；claude-cli 路徑（C-1）訂閱計費天然不看 token。位元組級驗證 14 項全過（trade 16,905B/health 14,470B 全等、promptData 全等含 5 值）、tsc 綠、build 後 grep AIza 無結果 | 2026-07-13 | 2d40726 | [260713-buv-c-3-systeminstruction](./quick/260713-buv-c-3-systeminstruction/) |
 | 260713-kq2 | D-1a 基線量測與風險稽核（Phase D 1/7）：importmap 雙環境（dev＋prod preview）0 esm.sh 請求＝休眠死重、D-1c 純刪除綠燈；Tailwind Play CDN 活（407KB raw／123KB gzip 每次載入）＋console 官方警告；bundle 基線單 chunk 967.60KB raw／294.26KB gzip（2563 modules）；51 行模板字串 className 逐行分類全安全（插值進 class token 內部的危險模式 0 條、無需 safelist），非模板動態組類名 5 類模式 0 命中；D-1b content globs／D-1d -40% 錨點已備妥。附註：repo 級 grep 曾測得 160 行係 .claude/worktrees/ 陳舊 agent 複本汙染（109 行），真源 51 行與 optimization/PLAN.md 一致 | 2026-07-13 | 037d326 | [260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class](./quick/260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class/) |
 | 260713-len | D-1b Tailwind 改建置期（Phase D 2/7）：Play CDN（407KB raw／123KB gzip 執行時 JIT）改 tailwindcss@3.4.19＋postcss＋autoprefixer 建置期靜態 CSS——dist CSS 26.7KB raw／5.5KB gzip（首屏淨省 ~118KB gzip）；內聯 config 逐鍵遷 tailwind.config.js（colors 8 組/fontFamily 2/borderRadius 3）、內聯 style 遷 index.css、index.html 摘 CDN script（importmap＋Google Fonts 原封不動）；purge 抽查 12/12 命中、瀏覽器驗證 dev＋preview 雙環境 0 twCDN 請求、自訂色/卷軸/hidden 規則全存在、三分頁＋三圖表零回歸、console 無 CDN 警告；偏差：發現基底 lockfile 缺 @upstash 兩件（既有脫鉤），npm install 同步隨包入庫 | 2026-07-13 | 24a8135 | [260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss](./quick/260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss/) |
+| 260713-mi1 | D-1c importmap 移除＋文件單軌化（Phase D 3/7）：刪 index.html esm.sh importmap 區塊 12 行（D-1a 已證雙環境休眠死重，行為中性純刪除）；npm ci 乾淨通過（驗證 D-1b lockfile 修復）；CLAUDE.md 關鍵事實改單軌敘述、STACK.md 四處同步（含 D-1b 遺留的 Tailwind CDN 敘述順手修正＋@google/genai 誤列消除）；驗證：tsc 綠、build 綠、index.html 與 dist/index.html 0 esm.sh（before 6 處）、dist 0 AIza、瀏覽器 dev＋preview 雙環境 0 esm.sh 請求＋importmap tag 消失＋App 正常渲染 | 2026-07-13 | e6e4140 | [260713-mi1-d-1c-importmap-index-html-esm-sh-importm](./quick/260713-mi1-d-1c-importmap-index-html-esm-sh-importm/) |
 
 ## Deferred Items
 
