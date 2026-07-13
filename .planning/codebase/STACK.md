@@ -17,7 +17,7 @@
 
 **Environment:**
 - Node.js (version unpinned - no `.nvmrc` or `engines` field). Required only for the Vite dev/build toolchain. `@types/node` `^22.14.0` is installed, implying a Node 22 target.
-- Browser runtime: modern ES2022 browser with native ES module and import-map support. In the deployed `index.html` the app loads its npm dependencies from a CDN import map (`esm.sh`) rather than a bundle.
+- Browser runtime: modern ES2022 browser. 所有 npm 依賴由 Vite 打包進 bundle（自 node_modules 解析），不依賴 CDN 載入模組。
 
 **Package Manager:**
 - npm
@@ -48,8 +48,8 @@
 - `react-markdown` `^10.1.0` - Renders Gemini's markdown analysis text (`components/AnalysisResult.tsx`).
 - `remark-gfm` `^4.0.1` - GitHub-Flavored Markdown plugin for `react-markdown` (tables, etc.).
 
-**Styling (not in package.json):**
-- Tailwind CSS - Loaded at runtime via CDN `<script src="https://cdn.tailwindcss.com">` in `index.html` (Play CDN, not a build dependency). Inter font loaded from Google Fonts. Dark slate theme set inline.
+**Styling:**
+- Tailwind CSS v3 (`tailwindcss` `^3.4.19`, build-time devDependency) - 經 PostCSS（`postcss` `^8.5.18`＋`autoprefixer` `^10.5.2`）於建置期產出靜態 CSS；設定在 `tailwind.config.js`，入口樣式 `index.css`（由 `index.tsx` import）。Inter font loaded from Google Fonts (CDN，D-1e 既定決策保留)。Dark slate theme set inline.
 
 **Type Definitions (dev):**
 - `@types/node` `^22.14.0` - Node typings for build config (`vite.config.ts` uses `path`).
@@ -67,7 +67,7 @@
 **Build:**
 - `vite.config.ts` - Vite config (server port/host, env injection, `@` alias).
 - `tsconfig.json` - `target: ES2022`, `module: ESNext`, `moduleResolution: bundler`, `jsx: react-jsx`, `allowImportingTsExtensions`, `noEmit`, `experimentalDecorators`, `isolatedModules`.
-- `index.html` - Defines an `importmap` pointing React, `@google/genai`, `recharts`, `lucide-react`, `react-markdown`, `remark-gfm` to `https://esm.sh/...`. References `/index.css` (no such file in repo root - likely generated/absent).
+- `index.html` - 入口文件僅含 meta（charset/viewport）、title、Google Fonts link、`<div id="root">`、`/index.tsx` module script；無 importmap（依賴一律由 Vite 從 node_modules 解析打包）。
 - `metadata.json` - AI Studio app metadata (English name/description mentioning MA/RSI/MACD/KDJ and "Gemini Pro"; `requestFramePermissions: []`).
 - Build output: `dist/` directory (present/committed).
 
@@ -85,9 +85,10 @@
 - `npm install` then `npm run dev` (or `start-stock-analyst.bat` on Windows, which hardcodes the project path `D:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`).
 
 **Production:**
-- Static build (`vite build` → `dist/`). Project originates from Google AI Studio (README links ai.studio app). Deployable to any static host. Note: runtime depends on third-party CDNs (`esm.sh`, `cdn.tailwindcss.com`, public CORS proxies) being reachable.
+- Static build (`vite build` → `dist/`). Project originates from Google AI Studio (README links ai.studio app). Deployable to any static host. Note: runtime third-party CDN 依賴僅剩 Google Fonts 與 public CORS proxies（行情鏈）。
 - UI language is Traditional Chinese (`<html lang="zh-TW">`, app title "Taiwan Stock AI Analyst"; many in-code comments and the prompt template are in Chinese).
 
 ---
 
 *Stack analysis: 2026-05-31*
+*Updated 2026-07-13: D-1b build-time Tailwind + D-1c importmap removal（依賴單軌化）*

@@ -51,7 +51,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 
 ## 本專案關鍵事實（易錯）
 
-- 依賴要同時維護兩處：`package.json` 與 `index.html` 的 esm.sh importmap。
+- 依賴單軌：只維護 `package.json`＋`package-lock.json`（index.html 的 esm.sh importmap 已移除，Vite 從 node_modules 解析）。
 - 無測試跑道：無 test runner／lint，tsconfig 非 strict。驗證靠 tsc＋preview 實跑。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
 - 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
