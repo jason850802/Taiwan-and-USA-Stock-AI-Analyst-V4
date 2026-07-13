@@ -52,7 +52,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 ## 本專案關鍵事實（易錯）
 
 - 依賴單軌：只維護 `package.json`＋`package-lock.json`（index.html 的 esm.sh importmap 已移除，Vite 從 node_modules 解析）。
-- 無測試跑道：無 test runner／lint，tsconfig 非 strict。驗證靠 tsc＋preview 實跑。
+- 測試跑道＝最小 vitest（`npm run test`）：只涵蓋 `utils/math.ts`／`entryFilter.ts`（32 案例、行為鎖）；仍無 lint、tsconfig 非 strict。改這兩檔前先跑 test，其餘檔驗證靠 tsc＋preview 實跑。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
 - 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
 - `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
