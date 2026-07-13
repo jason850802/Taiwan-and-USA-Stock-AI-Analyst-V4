@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-13 - Phase C 三子包（C-1 LLM adapter／C-2 健檢 JSON 化＋批次／C-3 SI 靜態化）全部完成併入 main，待 Sonnet 驗收
+last_activity: 2026-07-13 - Phase C 完成：三子包併 main＋Sonnet 驗收（C-3 ACCEPT、C-1/C-2 ACCEPT_WITH_NOTES）＋CR-01/H-1/M-1/M-2 當場修（b49bd30），PHASE-C-REVIEW.md 落檔；待使用者 claude /login 後做端到端與品質對照
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase C 三子包全部完成併入 main（C-1／C-2／C-3），待 Sonnet 驗收
+Last activity: 2026-07-13 - Phase C 完成（三子包＋Sonnet 驗收＋findings 當場修），詳 .planning/optimization/PHASE-C-REVIEW.md
 
 Progress: [██████████] 100%
 
