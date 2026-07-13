@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Suspense, lazy } from 'react';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
 import QuoteHeader from './components/QuoteHeader';
@@ -10,14 +10,24 @@ import Card from './components/ui/Card';
 import Modal from './components/ui/Modal';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
-import Portfolio from './components/Portfolio';
-import FundamentalsPanel from './components/FundamentalsPanel';
 import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
+
+// 非首屏分頁懶載（D-1d）：切頁時才下載對應 chunk，首屏不 modulepreload
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const FundamentalsPanel = lazy(() => import('./components/FundamentalsPanel'));
+
+// 懶載分頁切換時的 Suspense fallback（沿用專案 Loader2 載入覆蓋層 pattern，禁止空白）
+const tabFallback = (
+  <div className="flex flex-col items-center justify-center gap-2 py-24">
+    <Loader2 className="animate-spin text-blue-400" size={32} />
+    <span className="text-slate-300 text-sm">載入中…</span>
+  </div>
+);
 
 type AppView = 'dashboard' | 'portfolio' | 'fundamentals';
 
@@ -337,16 +347,20 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-6">
 
         {currentView === 'portfolio' && (
-          <Portfolio
-            items={portfolioItems}
-            onAdd={handlePortfolioAdd}
-            onDelete={handlePortfolioDelete}
-            onUpdate={handlePortfolioUpdate}
-          />
+          <Suspense fallback={tabFallback}>
+            <Portfolio
+              items={portfolioItems}
+              onAdd={handlePortfolioAdd}
+              onDelete={handlePortfolioDelete}
+              onUpdate={handlePortfolioUpdate}
+            />
+          </Suspense>
         )}
 
         {currentView === 'fundamentals' && (
-          <FundamentalsPanel initialSymbol={fundamentalsInitialSymbol} />
+          <Suspense fallback={tabFallback}>
+            <FundamentalsPanel initialSymbol={fundamentalsInitialSymbol} />
+          </Suspense>
         )}
 
         {currentView === 'dashboard' && (<>
