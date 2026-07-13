@@ -1,8 +1,14 @@
+/// <reference types="vitest/config" />
 import path from 'path';
 import { defineConfig } from 'vite';
+import { configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  test: {
+    // agent worktree 內的測試複本不屬於本專案測試母體（曾致 32 案例被重複計成 64）
+    exclude: [...configDefaults.exclude, '**/.claude/**'],
+  },
   server: {
     port: 3000,
     host: '0.0.0.0',
