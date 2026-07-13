@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-13 - Phase C 開跑：C-1 LLM provider adapter＋claude-cli 訂閱橋接完成併入 main（260713-1t8）
+last_activity: 2026-07-13 - Phase C 進行中：C-1（LLM adapter）＋C-2（健檢 JSON 化＋批次健檢）完成併入 main
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase C 進行中：C-1 完成（LLM provider adapter＋claude-cli 訂閱橋接）
+Last activity: 2026-07-13 - Phase C 進行中：C-1（LLM adapter）＋C-2（健檢 JSON 化＋批次健檢）完成
 
 Progress: [██████████] 100%
 
@@ -121,6 +121,7 @@ Recent decisions affecting current work:
 | 260712-vno | B-1 行情載入全套（Phase B 2/3）：新增 services/quoteCache.ts——台美各依交易時段的 TTL 純函式（盤中 10 分／收盤後沿用到下一交易日開盤，Intl 時區處理 DST）＋memory 權威層＋sessionStorage best-effort 雙層快取；yahoo.ts getStockData 加快取外殼＋SWR（stale 先渲染、背景刷新 onRevalidated）＋forceRefresh（更新報價按鈕）＋寫快取前 signal.aborted 守衛防中毒；台股三段串行改並行（中文名併入 Promise.all）；resolveTaiwanSuffix 名錄 type 預解析 .TW/.TWO（上櫃股直達零試錯，查無 fall through 原 try-chain）；App.tsx fetchData reqId＋AbortController 三處過期守衛；後端握手三段 8s AbortSignal.timeout（TimeoutError 擴列）＋chart 200 回應 s-maxage=60,swr=300；chipDataUnavailable 只享 10 分短 TTL；殭屍棒/close-null/後綴剝除/A1/B-2 全 diff 證明零退化；35 項純函式斷言＋tsc 全綠 | 2026-07-12 | 2abed37, 691dfef, 72e6204 | [260712-vno-b-1-quote-loading-speed-full-package](./quick/260712-vno-b-1-quote-loading-speed-full-package/) |
 | 260712-wa0 | B-3 拖曳體感 transform 平移（Phase B 3/3）：新增 utils/panMath.ts 四純函式（computeWindowBounds/buildPanSession/clampTranslate/commitOffset，89 項斷言含與 A2 舊公式 50 點網格逐位元全等）；StockChart 拖曳管線改接——dragStart 建 1.5×~2× 加寬緩衝層（每側 ceil(barsToShow×0.5)）、mousemove 熱路徑只讀 ref＋純算術＋一行 translate3d style 寫入（零 setState/零 Recharts 重繪/零佈局量測/零 rAF）、緩衝耗盡 mid-drag re-base 一次重繪補緩衝、mouseup commitOffset 吸附整根＋鉗位提交 re-slice 三圖同視窗；pan 模式 bare ComposedChart 顯式尺寸＋YAxis hide＋右緣 60px 遮罩；PAN_STEP 量化全廢（目的被 transform 路徑取代，吸附顆粒度反而變細至 1 根）；拖曳中縮放忽略/data 變更安全中止/游標命令式管理；260613-ixg 副圖凍結、260613-if7 十字線抑制/鉗位、260613-3ab memo、260711-v9f 一字板與 ChipBar、A2 結構全數 diff/grep 證明零退化；tsc 過 | 2026-07-12 | 78ca076, 851e3bf | [260712-wa0-b-3-drag-pan-css-transform-translate](./quick/260712-wa0-b-3-drag-pan-css-transform-translate/) |
 | 260713-1t8 | C-1 LLM provider adapter＋claude-cli 訂閱橋接（Phase C 1/3）：新增 api/_lib/llm.ts generateText 依 LLM_PROVIDER 分流——未設/gemini-api 走既有 callGeminiWithTimeout（部署行為逐字等價，僅 MISSING_KEY 改經 catch 多一行 log）、claude-cli 以 child_process spawn 本機 Claude Code CLI（-p --output-format json --tools ""，prompt 走 stdin、system 走 --system-prompt，吃 Claude 訂閱零 Gemini 帳單，僅本機 vercel dev 顯式設 env 才啟用）；執行檔三段探索（CLAUDE_CLI_PATH→PATH 跳過 .cmd→%APPDATA%\Claude\claude-code 最高版本目錄）＋子程序 env 清洗（剔 ANTHROPIC_BASE_URL/CLAUDECODE/CLAUDE_CODE_*）＋cwd=tmpdir＋100s 逾時 settled 旗標收斂＋五出口 JSON 解析（未登入→MISSING_KEY 含 claude /login 指引）；api/gemini.ts handler 改接 adapter（statusByCode/catch/maxDuration 零改動）；.env.example 新增 LLM_PROVIDER/CLAUDE_CLI_PATH/CLAUDE_CLI_MODEL_FAST/THINKING 說明。直測三情境 PASS（含未登入 e2e 1.5s settle 零殘留子程序）、tsc 綠、build 後 grep AIza 無結果 | 2026-07-13 | 0e6cb9a, ebc9655 | [260713-1t8-c-1-llm-provider-adapter-claude-cli-llm-](./quick/260713-1t8-c-1-llm-provider-adapter-claude-cli-llm-/) |
+| 260713-2am | C-2 健檢決策 JSON 結構化＋一鍵批次健檢（Phase C 2/3）：新增 services/_shared/healthDecision.ts 純模組（parseHealthDecisions 取最後一個 ```json 圍欄→shape 驗證五值枚舉→回 decisions＋剝除 json 區塊的顯示文本；splitHealthReport 按「### 📋 持股健檢報告」切段、symbols 長度降冪認領防子字串誤配；extractDecisionByRegex 沿用舊 regex 當 fallback 下限）；analyzePortfolioHealth systemInstruction 末尾新增機器可讀決策區契約（報告末尾 json 圍欄、每檔恰一筆、五值不含 emoji）；Portfolio.tsx 抽 buildHealthItem 共用 helper、handleSingleHealthCheck 改接解析器（JSON 失敗退 regex 再退「分析完成」）、新增 header「全部健檢」按鈕（3-worker 併發池組全持股資料→一次 analyzePortfolioHealth→切段各給各的、總覽段附每檔段尾）；A3 快取因 systemInstruction 變更 hash 自然失效無中毒。解析器直測 29/29 PASS、tsc 綠、build 後 grep AIza 無結果；已知限制：>8 檔未 chunk（截斷時解析器回 null 退 regex 全文，可退化不會壞） | 2026-07-13 | 49bba67, 9ee609c | [260713-2am-c-2-json-regex](./quick/260713-2am-c-2-json-regex/) |
 
 ## Deferred Items
 
