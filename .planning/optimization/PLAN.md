@@ -16,7 +16,7 @@
 |---|---|---|
 | Phase A | A1=P3 搜尋限縮；A2=P1-A 圖表快贏；A3=P4B 帳單瘦身（刪死碼／結果快取／降 thinkingBudget／批次健檢→延 Phase C） | ✅ 完成（2026-07-12；Sonnet 驗收 0 CRITICAL/HIGH，M-1 已修；e2e 實測：搜尋過濾 4/4、縮放鏈路 OK、gemini 快取兩輪僅 1 次 API） |
 | Phase B | P2 載入速度全套（前端快取、並行化、後綴預解析、AbortController、後端 timeout＋CDN）＋搜尋 UX 三修＋拖曳 transform 平移 | ✅ 完成（2026-07-12；三包 260712-v6l/vno/wa0 全併 main；Sonnet 驗收 B-2/B-3 ACCEPT、B-1 ACCEPT_WITH_NOTES——H-1/M-1 當場修（49d5ac8）、M-2/L-1 更正（5c1866e）；e2e 實測：搜尋兩段式本地先上屏/CJK 0 請求/找不到僅終態、6488→.TWO 直達零試錯、週期切回 0 請求、2317 冷抓中切 2330 AbortError 取消無錯置且快取無中毒、拖曳 translate3d→放開提交正確、0 console errors、build+grep AIza 乾淨；待人工：60fps Performance 量測＋pan 模式 YAxis hide 視覺核對，步驟見 PHASE-B-REVIEW.md） |
-| Phase C | P4A LLM provider adapter＋claude-cli 橋接＋健檢 JSON 化 | ✅ 完成（2026-07-13；三包 260713-1t8/2am/buv 全併 main；Sonnet 驗收 C-3 ACCEPT、C-1/C-2 ACCEPT_WITH_NOTES——CR-01/H-1/M-1/M-2 當場修（b49bd30，CR-01 修復期直測另揭露 Windows spawn 同步 throw 路徑一併處理）；C-3 機制層偏差經覆核 ACCEPT：拒 explicit context caching（儲存費＞命中省、entry SI 低於 1024 門檻、流量差兩個數量級），改 SI 靜態化＋依 implicit caching；**待使用者**：終端跑一次 `claude /login` 後 .env 設 `LLM_PROVIDER=claude-cli` 才吃訂閱（登入前橋接回明確指引錯誤），與三功能報告品質人工對照 3-5 檔——步驟見 PHASE-C-REVIEW.md「需人工實跑驗證」） |
+| Phase C | P4A LLM provider adapter＋claude-cli 橋接＋健檢 JSON 化 | ✅ 完成（2026-07-13；三包 260713-1t8/2am/buv 全併 main；Sonnet 驗收 C-3 ACCEPT、C-1/C-2 ACCEPT_WITH_NOTES——CR-01/H-1/M-1/M-2 當場修（b49bd30，CR-01 修復期直測另揭露 Windows spawn 同步 throw 路徑一併處理）；C-3 機制層偏差經覆核 ACCEPT：拒 explicit context caching（儲存費＞命中省、entry SI 低於 1024 門檻、流量差兩個數量級），改 SI 靜態化＋依 implicit caching；**2026-07-13 後記**：使用者已完成 `claude /login`，橋接 live e2e 跑通（fast→sonnet／thinking→opus 皆成功回應），`.env` 已設 `LLM_PROVIDER=claude-cli`；live e2e 另揪出健檢分段 bug 當場修（8f901e6）。**尚待人工**：三功能報告品質對照 3-5 檔——步驟見 PHASE-C-REVIEW.md「需人工實跑驗證」） |
 | Phase D | D-1 依賴單軌化（Tailwind 建置期＋importmap 移除＋分包）；D-2 error boundary；D-3 math/entryFilter 最小測試；D-4 ratelimit env 檢查 | ✅ 完成（2026-07-13；七包 260713-kq2/len/mi1/n11/nvg/ob4/oxf 全併 main；Sonnet 驗收 **ACCEPT，0 CRITICAL/0 HIGH**——WR-01 當場修（6aa5735，vitest exclude 入 config）；硬指標全過：preview network 0 esm.sh＋0 cdn.tailwindcss.com、雙環境視覺零回歸、grep AIza dist 無結果、tsc/build/test 32 案例全綠；成果：twCDN 407KB→建置期 CSS 26.8KB/5.5KB gzip、importmap 死重移除＋文件單軌化、主 chunk 967.6→156.6KB（-83.8%）＋Portfolio/基本面懶載、error boundary throw 實測過、vitest 跑道落地、production UPSTASH env 實查已配；本案特例 Fable 規劃＋執行、Sonnet 驗收；另修驗收期發現的 Vite watcher EBUSY 崩潰（f98aa56，dev watch 忽略 .claude/**）；詳 PHASE-D-REVIEW.md） |
 
 ---
@@ -154,6 +154,8 @@ tsc；`npm run build`＋`grep -r "AIza" dist/` 無結果；preview network **0 e
 **衝突警告**：D 動建置底座（index.html/vite.config/新增 CSS），**不要與 BL-1~4 或其他改碼視窗同時執行**；D 完成後再做 BL。
 
 ## 驗收後待修清單（Backlog——全部 Phase 跑完後彙整處理，暫不動工）
+
+**→ 2026-07-13 已另立完整執行計畫：`BL-PLAN.md`（本節四項採納項的展開規格＋執行順序＋驗收標準，執行以該檔為準）。Phase A～D 成果統整見 `PHASE-A-D-REPORT.md`。**
 
 **來源**：2026-07-13 使用者實測影片（錄製內容 2026-07-13 003306.mp4，localhost:3000）＋Gemini 影片分析回饋。
 **回饋中已確認修復**：B-3 拖曳完全流暢（掉幀/跳躍消失）、B-2 搜尋即時且無「找不到」誤閃。

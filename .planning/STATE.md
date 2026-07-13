@@ -5,7 +5,7 @@ milestone_name: milestone
 status: complete
 stopped_at: Phase 4 merged to main (684453d) — milestone complete
 last_updated: "2026-07-11T22:30:00+08:00"
-last_activity: 2026-07-13 - Phase C 完成：三子包併 main＋Sonnet 驗收（C-3 ACCEPT、C-1/C-2 ACCEPT_WITH_NOTES）＋CR-01/H-1/M-1/M-2 當場修（b49bd30），PHASE-C-REVIEW.md 落檔；待使用者 claude /login 後做端到端與品質對照
+last_activity: 2026-07-13 - claude /login 完成＋橋接 live e2e 跑通（sonnet/opus 皆回應，.env 已設 claude-cli，健檢分段 bug 修 8f901e6）；BL-1~4 冷載入收尾計畫立案（optimization/BL-PLAN.md，執行以該檔為準）＋Phase A~D 成果報告落檔（PHASE-A-D-REPORT.md）
 progress:
   total_phases: 4
   completed_phases: 4
