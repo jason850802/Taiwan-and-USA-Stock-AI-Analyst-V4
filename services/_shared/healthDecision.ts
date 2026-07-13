@@ -93,8 +93,10 @@ export interface SplitHealthReport {
  * 任何認領失敗（0 標頭／缺段／歧義）→ 回傳 null（呼叫端 fallback 整份全文）。
  */
 export function splitHealthReport(markdown: string, symbols: string[]): SplitHealthReport | null {
-  // 📋 是 surrogate pair，`📋?` 在無 u flag 下只會讓低位代理可選——必須用非捕獲組包裹
-  const headerRe = /^###\s*(?:📋)?\s*持股健檢報告[：:].*$/gm;
+  // 📋 是 surrogate pair，`📋?` 在無 u flag 下只會讓低位代理可選——必須用非捕獲組包裹。
+  // 井號放寬為 1-6（#{1,6}）：不同 provider／不同次生成的標題階層會變動——實測 Gemini 吐 ###、
+  // claude-cli 吐 #，硬綁 ### 會讓 claude 路徑的批次切段永遠 fallback 全文，分檔檢視形同失效。
+  const headerRe = /^#{1,6}\s*(?:📋)?\s*持股健檢報告[：:].*$/gm;
   const headers: { index: number; text: string }[] = [];
   let m: RegExpExecArray | null;
   while ((m = headerRe.exec(markdown)) !== null) {
@@ -110,9 +112,10 @@ export function splitHealthReport(markdown: string, symbols: string[]): SplitHea
   }
 
   // 總覽切割：在最後一段內搜尋 📊/💡 標頭，找到則該段在此截止、其後全部為 overview
+  // （井號同樣放寬 1-6，與 headerRe 一致，容忍 provider 間標題階層差異）
   let overview = '';
   const lastSection = sections[sections.length - 1];
-  const overviewMatch = lastSection.body.match(/^###\s*(?:📊|💡)/m);
+  const overviewMatch = lastSection.body.match(/^#{1,6}\s*(?:📊|💡)/m);
   if (overviewMatch && overviewMatch.index != null) {
     overview = lastSection.body.slice(overviewMatch.index);
     lastSection.body = lastSection.body.slice(0, overviewMatch.index);
