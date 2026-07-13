@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 開跑：D-1a 基線量測與風險稽核完成（260713-kq2，037d326）
+Last activity: 2026-07-13 - Phase D 進行中：D-1a 基線（260713-kq2）＋D-1b Tailwind 建置期（260713-len，24a8135）完成，twCDN 已除
 
 Progress: [██████████] 100%
 
@@ -124,6 +124,7 @@ Recent decisions affecting current work:
 | 260713-2am | C-2 健檢決策 JSON 結構化＋一鍵批次健檢（Phase C 2/3）：新增 services/_shared/healthDecision.ts 純模組（parseHealthDecisions 取最後一個 ```json 圍欄→shape 驗證五值枚舉→回 decisions＋剝除 json 區塊的顯示文本；splitHealthReport 按「### 📋 持股健檢報告」切段、symbols 長度降冪認領防子字串誤配；extractDecisionByRegex 沿用舊 regex 當 fallback 下限）；analyzePortfolioHealth systemInstruction 末尾新增機器可讀決策區契約（報告末尾 json 圍欄、每檔恰一筆、五值不含 emoji）；Portfolio.tsx 抽 buildHealthItem 共用 helper、handleSingleHealthCheck 改接解析器（JSON 失敗退 regex 再退「分析完成」）、新增 header「全部健檢」按鈕（3-worker 併發池組全持股資料→一次 analyzePortfolioHealth→切段各給各的、總覽段附每檔段尾）；A3 快取因 systemInstruction 變更 hash 自然失效無中毒。解析器直測 29/29 PASS、tsc 綠、build 後 grep AIza 無結果；已知限制：>8 檔未 chunk（截斷時解析器回 null 退 regex 全文，可退化不會壞） | 2026-07-13 | 49bba67, 9ee609c | [260713-2am-c-2-json-regex](./quick/260713-2am-c-2-json-regex/) |
 | 260713-buv | C-3 規則庫 systemInstruction 靜態化＋快取策略落地（Phase C 3/3）：services/gemini.ts 三個函式內 systemInstruction hoist 為 module const（ENTRY/TRADE_DECISION/HEALTH_CHECK_SYSTEM_INSTRUCTION），entry 版去除 5 處個股動態內插（decision/entryPrice/stopPrice/maGuardPrice/guardMaLabel 全數已在 promptData，改指涉輸入資料、恰 2 行改寫）——前綴位元組穩定＝Gemini implicit caching 可命中＋A3 hash 穩定；機制層偏差（已數字化文件化）：拒絕 PLAN 原名的 explicit context caching——本 App 呼叫間隔以小時計 >> TTL，儲存費（~$0.005-0.008/hr）＞命中省（~$0.001-0.002/次）需 ≥4-5 次/hr 才回本、entry SI ~1k tokens 低於 1024 門檻、serverless cache name 跨實例查找複雜度，無任何子情境划算；claude-cli 路徑（C-1）訂閱計費天然不看 token。位元組級驗證 14 項全過（trade 16,905B/health 14,470B 全等、promptData 全等含 5 值）、tsc 綠、build 後 grep AIza 無結果 | 2026-07-13 | 2d40726 | [260713-buv-c-3-systeminstruction](./quick/260713-buv-c-3-systeminstruction/) |
 | 260713-kq2 | D-1a 基線量測與風險稽核（Phase D 1/7）：importmap 雙環境（dev＋prod preview）0 esm.sh 請求＝休眠死重、D-1c 純刪除綠燈；Tailwind Play CDN 活（407KB raw／123KB gzip 每次載入）＋console 官方警告；bundle 基線單 chunk 967.60KB raw／294.26KB gzip（2563 modules）；51 行模板字串 className 逐行分類全安全（插值進 class token 內部的危險模式 0 條、無需 safelist），非模板動態組類名 5 類模式 0 命中；D-1b content globs／D-1d -40% 錨點已備妥。附註：repo 級 grep 曾測得 160 行係 .claude/worktrees/ 陳舊 agent 複本汙染（109 行），真源 51 行與 optimization/PLAN.md 一致 | 2026-07-13 | 037d326 | [260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class](./quick/260713-kq2-d-1a-importmap-tailwind-cdn-bundle-class/) |
+| 260713-len | D-1b Tailwind 改建置期（Phase D 2/7）：Play CDN（407KB raw／123KB gzip 執行時 JIT）改 tailwindcss@3.4.19＋postcss＋autoprefixer 建置期靜態 CSS——dist CSS 26.7KB raw／5.5KB gzip（首屏淨省 ~118KB gzip）；內聯 config 逐鍵遷 tailwind.config.js（colors 8 組/fontFamily 2/borderRadius 3）、內聯 style 遷 index.css、index.html 摘 CDN script（importmap＋Google Fonts 原封不動）；purge 抽查 12/12 命中、瀏覽器驗證 dev＋preview 雙環境 0 twCDN 請求、自訂色/卷軸/hidden 規則全存在、三分頁＋三圖表零回歸、console 無 CDN 警告；偏差：發現基底 lockfile 缺 @upstash 兩件（既有脫鉤），npm install 同步隨包入庫 | 2026-07-13 | 24a8135 | [260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss](./quick/260713-len-d-1b-tailwind-tailwindcss-v3-4-x-postcss/) |
 
 ## Deferred Items
 
