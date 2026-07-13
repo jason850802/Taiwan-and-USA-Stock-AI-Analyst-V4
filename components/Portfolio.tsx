@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PortfolioItem, StockDataPoint } from '../types';
 import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
@@ -721,6 +721,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   const [healthResults, setHealthResults] = useState<Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>>({});
   const [healthModalSymbol, setHealthModalSymbol] = useState<string | null>(null);
   const [batchChecking, setBatchChecking] = useState(false);
+  // 健檢寫回世代守衛（per-symbol 單調遞增，比照 App.tsx fetchSeqRef 模式）：
+  // 單檔與批次對同一 symbol 重疊在飛行時，較早起跑者的落地結果不得覆蓋較晚起跑者
+  const healthSeqRef = useRef<Record<string, number>>({});
 
   // 新增表單
   const [form, setForm] = useState({
@@ -962,11 +965,18 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   const handleSingleHealthCheck = useCallback(async (symbol: string) => {
     if (!items.some(i => i.symbol === symbol)) return;
 
+    const gen = healthSeqRef.current[symbol] = (healthSeqRef.current[symbol] ?? 0) + 1;
     setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
 
     try {
       const healthItem = await buildHealthItem(symbol);
       if (!healthItem) return;
+      if (healthItem.recentData.length === 0) {
+        // 行情抓取失敗：空資料送 LLM 只會在 formatHealthCheckData 拋錯，直接誠實標記可重試
+        if (healthSeqRef.current[symbol] !== gen) return;
+        setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '資料取得失敗', fullResult: '**行情資料暫時無法取得**\n\n（Yahoo／FinMind 可能限流中）請稍後再試。' } }));
+        return;
+      }
 
       const result = await analyzePortfolioHealth([healthItem]);
 
@@ -978,8 +988,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
         : (extractDecisionByRegex(result) ?? '分析完成');
       const fullResult = parsed ? parsed.cleanedMarkdown : result;
 
+      if (healthSeqRef.current[symbol] !== gen) return;
       setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult } }));
     } catch {
+      if (healthSeqRef.current[symbol] !== gen) return;
       setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' } }));
     }
   }, [items, buildHealthItem]);
@@ -990,11 +1002,16 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     if (symbols.length === 0 || batchChecking) return;
 
     setBatchChecking(true);
+    const gens: Record<string, number> = {};
+    symbols.forEach(s => { gens[s] = healthSeqRef.current[s] = (healthSeqRef.current[s] ?? 0) + 1; });
     setHealthResults(prev => {
       const next = { ...prev };
       symbols.forEach(s => { next[s] = { status: 'loading', decision: '', fullResult: '' }; });
       return next;
     });
+
+    // 本輪實際送 LLM 的檔位（資料失敗者剔除後個別標記；catch 只回收這份名單）
+    let attemptedSymbols: string[] = symbols;
 
     try {
       // 資料準備：併發上限 3 的 index 游標池（getLatestPrice 不暖 getStockData 快取，冷抓打真網路，429 是常態）
@@ -1009,19 +1026,43 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
         }
       });
       await Promise.all(workers);
-      const healthItems = results.filter((it): it is PortfolioHealthItem => it !== null);
+
+      // 行情抓取失敗（recentData 空）的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——
+      // 空資料會讓 formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮
+      const healthItems: PortfolioHealthItem[] = [];
+      const failedSymbols: string[] = [];
+      symbols.forEach((symbol, idx) => {
+        const it = results[idx];
+        if (it && it.recentData.length > 0) healthItems.push(it);
+        else failedSymbols.push(symbol);
+      });
+      if (failedSymbols.length > 0) {
+        setHealthResults(prev => {
+          const next = { ...prev };
+          failedSymbols.forEach(symbol => {
+            if (healthSeqRef.current[symbol] !== gens[symbol]) return;
+            next[symbol] = { status: 'error', decision: '資料取得失敗', fullResult: '**行情資料暫時無法取得**\n\n（Yahoo／FinMind 可能限流中）請稍後再試，或單獨對此檔重跑健檢。' };
+          });
+          return next;
+        });
+      }
+      const okSymbols = healthItems.map(it => it.symbol);
+      attemptedSymbols = okSymbols;
+      if (healthItems.length === 0) return; // 全部失敗：已逐檔標記，本輪不打 LLM
 
       const result = await analyzePortfolioHealth(healthItems);
 
       // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
+      // 切段只對實際送 LLM 的 okSymbols 做（splitHealthReport 要求每個 symbol 都認領到段落）
       const parsed = parseHealthDecisions(result);
       const displayText = parsed ? parsed.cleanedMarkdown : result;
-      const split = splitHealthReport(displayText, symbols);
+      const split = splitHealthReport(displayText, okSymbols);
       const decisionMap = new Map((parsed?.decisions ?? []).map(d => [d.symbol, d.decision]));
 
       setHealthResults(prev => {
         const next = { ...prev };
-        symbols.forEach(symbol => {
+        okSymbols.forEach(symbol => {
+          if (healthSeqRef.current[symbol] !== gens[symbol]) return;
           const fullResult = split
             ? split.perSymbol[symbol] + (split.overview ? '\n\n---\n\n' + split.overview : '')
             : displayText;
@@ -1036,7 +1077,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
     } catch {
       setHealthResults(prev => {
         const next = { ...prev };
-        symbols.forEach(symbol => {
+        attemptedSymbols.forEach(symbol => {
+          if (healthSeqRef.current[symbol] !== gens[symbol]) return;
           next[symbol] = { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' };
         });
         return next;

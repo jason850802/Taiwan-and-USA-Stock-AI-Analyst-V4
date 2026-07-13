@@ -156,6 +156,10 @@ function getClaudeCliModel(mode: GeminiRequest['mode']): string {
 function buildChildEnv(): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...process.env };
   delete env.ANTHROPIC_BASE_URL;
+  // 訂閱紅線：宿主環境若殘留 API 金鑰/token，CLI 會優先改走 API 直接計費而非訂閱 OAuth——
+  // 呼叫仍成功、回應正確，但計費對象悄悄改變且無任何徵兆，必須一併清除
+  delete env.ANTHROPIC_API_KEY;
+  delete env.ANTHROPIC_AUTH_TOKEN;
   delete env.CLAUDECODE;
   for (const key of Object.keys(env)) {
     if (key.startsWith('CLAUDE_CODE_')) {
@@ -191,11 +195,30 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
     let stdout = '';
     let stderr = '';
 
-    const child = spawn(exePath, args, {
-      cwd: os.tmpdir(), // 避免載入專案 hooks/CLAUDE.md/skills
-      env: buildChildEnv(),
-      windowsHide: true,
-    });
+    // Windows 對部分 spawn 失敗（如非 PE 執行檔 → ERROR_BAD_EXE_FORMAT）是同步 throw 而非 'error' 事件，
+    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(exePath, args, {
+        cwd: os.tmpdir(), // 避免載入專案 hooks/CLAUDE.md/skills
+        env: buildChildEnv(),
+        windowsHide: true,
+      });
+    } catch (err) {
+      cachedClaudeCliPath = null; // 探索快取可能已 stale——下一次請求重新探索
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        `無法啟動 claude CLI：${truncateForMessage(sanitizeErrorForLog(err))}`,
+      ));
+      return;
+    }
+
+    // spawn 失敗（TOCTOU／EACCES／app 更新移除舊版本目錄）時各 stdio pipe 會獨立 emit 'error'；
+    // 無監聽器的 stream error 會以未捕捉例外打死整個 vercel dev 行程——一律接住，
+    // 結果收斂統一由 child 的 'error'/'close' 事件負責
+    child.stdin.on('error', () => {});
+    child.stdout.on('error', () => {});
+    child.stderr.on('error', () => {});
 
     const timeoutId = setTimeout(() => {
       if (settled) return;
@@ -217,6 +240,8 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
     child.stderr.on('data', (chunk: string) => { stderr += chunk; });
 
     child.on('error', (err) => {
+      // 探索快取可能已 stale（如 app 更新後舊版本目錄被移除）——清空讓下一次請求重新探索
+      cachedClaudeCliPath = null;
       settle(() => {
         reject(new ClassifiedError(
           'UPSTREAM_ERROR',
@@ -225,9 +250,12 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
       });
     });
 
-    // CLI 對 piped stdin 3 秒無資料會發警告——spawn 後立即寫入避開
-    child.stdin.write(req.prompt);
-    child.stdin.end();
+    // CLI 對 piped stdin 3 秒無資料會發警告——spawn 後立即寫入避開；
+    // spawn 失敗時 stdin 可能已 destroyed，同步拋錯在此攔下（結果由 'error'/'close' 收斂）
+    try {
+      child.stdin.write(req.prompt);
+      child.stdin.end();
+    } catch { /* 由 child 'error'/'close' 事件收斂結果 */ }
 
     child.on('close', () => {
       settle(() => {
