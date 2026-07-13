@@ -8,7 +8,7 @@
 1. P4 LLM：本機預設 `claude-cli`（Claude 訂閱、Agent SDK/headless），雲端部署保留 `gemini-api` fallback；任何 OAuth token 不進 repo／不進 Vercel env。
 2. P1 圖表：兩段式——先做低風險 A，量測後不夠再做 B（transform 平移）。
 3. 行情快取 TTL：**盤中 10 分鐘／收盤後沿用到下一交易日開盤**（台美各依自己交易時段）；過期採 stale-while-revalidate（先顯示舊資料、背景刷新）。
-4. 依賴單軌化（esm.sh importmap → Vite 單軌 bundle）：**留到下個里程碑**，本波不做。
+4. 依賴單軌化（esm.sh importmap → Vite 單軌 bundle）：~~留到下個里程碑~~ → **2026-07-13 使用者改判：納入 Phase D 完整執行**（規格見 §Phase D）。
 
 ## 執行順序
 
@@ -17,7 +17,7 @@
 | Phase A | A1=P3 搜尋限縮；A2=P1-A 圖表快贏；A3=P4B 帳單瘦身（刪死碼／結果快取／降 thinkingBudget／批次健檢→延 Phase C） | ✅ 完成（2026-07-12；Sonnet 驗收 0 CRITICAL/HIGH，M-1 已修；e2e 實測：搜尋過濾 4/4、縮放鏈路 OK、gemini 快取兩輪僅 1 次 API） |
 | Phase B | P2 載入速度全套（前端快取、並行化、後綴預解析、AbortController、後端 timeout＋CDN）＋搜尋 UX 三修＋拖曳 transform 平移 | ✅ 完成（2026-07-12；三包 260712-v6l/vno/wa0 全併 main；Sonnet 驗收 B-2/B-3 ACCEPT、B-1 ACCEPT_WITH_NOTES——H-1/M-1 當場修（49d5ac8）、M-2/L-1 更正（5c1866e）；e2e 實測：搜尋兩段式本地先上屏/CJK 0 請求/找不到僅終態、6488→.TWO 直達零試錯、週期切回 0 請求、2317 冷抓中切 2330 AbortError 取消無錯置且快取無中毒、拖曳 translate3d→放開提交正確、0 console errors、build+grep AIza 乾淨；待人工：60fps Performance 量測＋pan 模式 YAxis hide 視覺核對，步驟見 PHASE-B-REVIEW.md） |
 | Phase C | P4A LLM provider adapter＋claude-cli 橋接＋健檢 JSON 化 | ✅ 完成（2026-07-13；三包 260713-1t8/2am/buv 全併 main；Sonnet 驗收 C-3 ACCEPT、C-1/C-2 ACCEPT_WITH_NOTES——CR-01/H-1/M-1/M-2 當場修（b49bd30，CR-01 修復期直測另揭露 Windows spawn 同步 throw 路徑一併處理）；C-3 機制層偏差經覆核 ACCEPT：拒 explicit context caching（儲存費＞命中省、entry SI 低於 1024 門檻、流量差兩個數量級），改 SI 靜態化＋依 implicit caching；**待使用者**：終端跑一次 `claude /login` 後 .env 設 `LLM_PROVIDER=claude-cli` 才吃訂閱（登入前橋接回明確指引錯誤），與三功能報告品質人工對照 3-5 檔——步驟見 PHASE-C-REVIEW.md「需人工實跑驗證」） |
-| Phase D | （視情況）P1-B transform 平移；error boundary；math/entryFilter 最小測試 | 待辦 |
+| Phase D | D-1 依賴單軌化（Tailwind 建置期＋importmap 移除＋分包）；D-2 error boundary；D-3 math/entryFilter 最小測試；D-4 ratelimit env 檢查 | 待辦（規格 2026-07-13 完成，可開工） |
 
 ---
 
@@ -103,12 +103,55 @@
 
 驗收：本機日常分析 Gemini 帳單趨近 0；三種分析功能報告品質人工對照 3-5 檔；雲端部署行為不變；金鑰驗證 grep AIza 無結果。
 
-## Phase D（視情況）
+## Phase D：依賴單軌化＋體質小項（2026-07-13 補完整規格）
 
-- P1-B transform 平移（若 A2 後仍不順）。
-- React error boundary（index.tsx:11）。
-- `utils/math.ts`／`entryFilter.ts` 最小單元測試。
-- Rate limit fail-open：確認 Upstash env 有配（ratelimit.ts:18,79），不改碼。
+註：原列「P1-B transform 平移」已於 B-3 完成，移除。
+
+### 現況事實（2026-07-13 核實）
+
+- `index.html:7-30`：Tailwind 走 **cdn.tailwindcss.com Play CDN（執行時 JIT）**＋內聯 `tailwind.config`（自訂 colors：surface/accent/ai/up/down/ok/danger/warn、fontFamily：Inter+Noto Sans TC/JetBrains Mono、borderRadius：ctl/card/modal）。prod console 有官方警告，CDN 掛掉＝全站無樣式。
+- `index.html:54-65`：esm.sh importmap（react/react-dom/recharts/lucide-react/react-markdown，皆 `^` 範圍——esm.sh 於請求時解析 semver，有版本漂移風險）。**注意**：Vite 會改寫裸模組匯入，importmap 在 dev/prod 可能都是休眠狀態——D-1a 要先量測證實，但無論活死都該移除（休眠＝供應鏈死重＋誤導維護者）。
+- `package.json`：importmap 五件套**都已在 dependencies**（版本範圍一致）＋remark-gfm；**package-lock.json 存在**——單軌化的依賴基礎已齊，不需補裝核心依賴。
+- `index.html:31`：Google Fonts CDN（Inter/JetBrains Mono）。
+- `index.html:32-53`：內聯 `<style>`（body 底色/字體＋自訂卷軸）。
+- 全 repo 無根 CSS 檔；build 為單一 chunk（07-12 基線 954KB，以 D-1a 重測為準）；`className={\``（模板字串類名）**約 51 處**——Tailwind 改建置期 purge 的頭號風險點。
+
+### D-1a 基線量測與風險稽核（先做，不改碼）
+1. dev＋`npm run build`+preview 各一次，記錄 network：esm.sh 是否有實際請求（判定 importmap 活/死）、cdn.tailwindcss.com 請求大小、bundle 大小與 gzip 首屏 JS 總量 → 全部寫進 SUMMARY 當 before 基線。
+2. 稽核 51 處模板字串 className：找出「插值出現在 class token 內部」的動態組類名（如 `text-${x}-500`）——這種建置期掃描器抓不到，逐一改為完整字面量映射或列入 safelist。條件切換（`${cond ? 'a' : 'b'}`，字面量完整）不受影響、不用改。
+
+### D-1b Tailwind 改建置期（最大工項，獨立 commit）
+1. 裝 **tailwindcss v3.4.x**＋postcss＋autoprefixer（**明確不用 v4**：v4 是 CSS-first 設定、與現行內聯 config 語法不相容，遷移風險無謂）。
+2. 內聯 `tailwind.config` 全量遷至 `tailwind.config.js`（theme.extend 逐鍵照搬）；content globs 涵蓋 `./index.html`、`./*.{ts,tsx}`、`./components/**/*.{ts,tsx}`——以 grep className 的實際檔案分布為準，寧廣勿漏。
+3. 建 `index.css`：`@tailwind base/components/utilities`＋把 index.html 內聯 `<style>`（body/卷軸）移入；`index.tsx` 頂部 import。
+4. 移除 index.html 的 CDN script＋內聯 config。
+5. 驗收：dev＋prod preview 逐頁視覺比對（市場分析/我的庫存/基本面/AI modal/圖表含 hover/拖曳/縮放/自訂卷軸/紅漲綠跌色）零回歸；console 無 Tailwind CDN 警告；D-1a 稽核出的動態類名全數有效。
+
+### D-1c importmap 移除＋文件單軌化（獨立 commit）
+1. 刪 `index.html` importmap 區塊；`npm ci` 後 dev/build 均正常（Vite 從 node_modules＋lockfile 解析）。
+2. 同步文件：`CLAUDE.md`「依賴要同時維護兩處」關鍵事實改為單軌敘述；`.planning/codebase/STACK.md` 如有 importmap 敘述一併更新。
+3. 驗收：dist/index.html 無 esm.sh 字樣；preview network 0 個 esm.sh 請求；App 全功能 smoke。
+
+### D-1d 分包（code splitting，獨立 commit）
+1. `vite.config.ts` 加 `build.rollupOptions.output.manualChunks`：`react`+`react-dom`（vendor）、`recharts`（最大宗）、`react-markdown`+`remark-gfm`（僅 AI 報告用）。
+2. 選配（做完 1 量測後再決定）：`React.lazy`＋Suspense 懶載 `Portfolio`／`FundamentalsPanel`（非首屏分頁）。
+3. 驗收：主 chunk 較 D-1a 基線 **-40% 以上**；首屏 gzip JS 總量記入 SUMMARY；切換分頁無白屏閃爍（lazy 有 fallback）。
+
+### D-1e Google Fonts：**保留 CDN**（display=swap 漸進降級可接受，不在本包自托管）——記錄此決定即可。
+
+### D-2 React error boundary
+`index.tsx:11` 直掛 `<App/>`——包一層可恢復 fallback（顯示錯誤摘要＋「重新載入」鈕），任何 render throw 不再整頁白屏。驗收：手動在子元件丟一次 throw 驗證 fallback，移除後正常。
+
+### D-3 最小單元測試
+`utils/math.ts`（非標準 MACD 10,20,10／KD 5,3）與 `entryFilter.ts` 加最小斷言（node 直跑或 vitest 擇一，傾向 vitest 但不強制；≥每個關鍵函式 2-3 個已知輸入輸出案例）。驗收：npm script 一鍵可跑、全綠。
+
+### D-4 Rate limit fail-open 確認
+確認部署環境 Upstash env 有配（`ratelimit.ts:18,79` 未配時 fail-open）——查證並記錄，不改碼。
+
+### Phase D 共同驗收
+tsc；`npm run build`＋`grep -r "AIza" dist/` 無結果；preview network **0 esm.sh＋0 cdn.tailwindcss.com**；逐頁視覺 smoke；Sonnet 覆核本章節。
+**執行順序**：D-1a→D-1b→D-1c→D-1d→D-2→D-3→D-4，每步獨立 commit 可單獨回滾。
+**衝突警告**：D 動建置底座（index.html/vite.config/新增 CSS），**不要與 BL-1~4 或其他改碼視窗同時執行**；D 完成後再做 BL。
 
 ## 驗收後待修清單（Backlog——全部 Phase 跑完後彙整處理，暫不動工）
 
