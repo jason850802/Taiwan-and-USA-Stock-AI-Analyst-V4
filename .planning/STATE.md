@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 七包全數完成（D-1a~D-4），進入共同驗收＋Sonnet 覆核
+Last activity: 2026-07-13 - Phase D 完成：七包全併 main＋共同驗收硬指標全過＋Sonnet 覆核 ACCEPT（0 CRITICAL/0 HIGH；WR-01 當場修 6aa5735），PHASE-D-REVIEW.md 落檔；另修 Vite watcher EBUSY 崩潰（f98aa56）
 
 Progress: [██████████] 100%
 
