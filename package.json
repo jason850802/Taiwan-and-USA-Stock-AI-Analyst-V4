@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --exclude .claude/**",
     "sync:skills": "python scripts/sync_skills_mirror.py"
   },
   "dependencies": {
