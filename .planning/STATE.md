@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 進行中：D-1 全套＋D-2＋D-3 完成（vitest 32 案例全綠），剩 D-4 查證＋共同驗收
+Last activity: 2026-07-13 - Phase D 七包全數完成（D-1a~D-4），進入共同驗收＋Sonnet 覆核
 
 Progress: [██████████] 100%
 
@@ -129,6 +129,7 @@ Recent decisions affecting current work:
 | 260713-n11 | D-1d 分包＋D-1e fonts 記錄（Phase D 4/7）：vite manualChunks 三分組（vendor=react+react-dom 含 React 19 子路徑 react-dom/client＋jsx-runtime／recharts／markdown=react-markdown+remark-gfm）＋React.lazy 懶載 Portfolio 與 FundamentalsPanel（Suspense fallback 沿用 Loader2 覆蓋層）——主 chunk 967.60KB→155.58KB raw（**-83.9%**，門檻 -40%）；首屏 gzip JS 294.26→276.6KB（-5.9%，Portfolio+基本面 ~16KB gzip 移出首屏）；快取粒度改善（改業務碼只重下 entry ~55KB）；Vite >500kB 警告消失；瀏覽器實測 preview 首屏恰 4 chunk、兩分頁按需載入渲染無白屏、市場分析三圖不受影響；JS 總和 -0.19% 證無重複打包；D-1e 拍板記錄：Google Fonts 保留 CDN（display=swap 漸進降級）。兩獨立 commit 可各自回滾 | 2026-07-13 | aa9dd4f, 0dcb98b | [260713-n11-d-1d-manualchunks-vendor-recharts-markdo](./quick/260713-n11-d-1d-manualchunks-vendor-recharts-markdo/) |
 | 260713-nvg | D-2 React error boundary（Phase D 5/7）：新增 components/ErrorBoundary.tsx（class component 合理例外——componentDidCatch 無 hooks 等價物），index.tsx StrictMode 內層包住 <App/>；fallback 全 inline style 深色滿版（不依賴 CSS 健在）：「頁面發生錯誤」＋error.message 摘要（stack 只進 console.error 防資訊揭露）＋「重新載入」鈕 location.reload()——恰為 D-1d lazy chunk 載入失敗的正確恢復動作；orchestrator dev 實測：Sidebar 手動 throw→fallback 完整呈現非白屏→移除 throw＋按鈕 reload→App 完整恢復（三圖＋行情），驗畢零殘碼 | 2026-07-13 | d06bcb2 | [260713-nvg-d-2-react-error-boundary-index-tsx-fallb](./quick/260713-nvg-d-2-react-error-boundary-index-tsx-fallb/) |
 | 260713-ob4 | D-3 最小單元測試（Phase D 6/7）：專案首建測試跑道 vitest ~3.2.7（吃現有 vite.config、tsconfig 零改動、顯式 import 不用 globals）＋`npm run test` 一鍵；utils/math.test.ts（235 行）＋utils/entryFilter.test.ts（111 行）共 32 案例全綠——誠實分層：解析層 28（手算可驗：KD 值域/常數序列/warm-up null/GO fixture 6/6 SOP 手算推導）vs 黃金值回歸鎖 4（LCG seed-42 快照鎖現行為）；非標準參數鎖法：MACD 10,20,10 用 warm-up 邊界 idx18/19+idx27/28＋預設參數等值斷言、KD period=5 用 idx0..3 恆 50＋等值斷言；紅線遵守：本體零改動，3 個疑似 bug 只記不修（RSI 常數序列 NaN→100、初始窗 diff>=0 判準不一致、KDJ 註解與實作參數不符）；orchestrator 補修 d5d8f57：vitest exclude .claude/**（殘留 worktree 複本曾致 32×2 重複計數） | 2026-07-13 | 6ed7713, d5d8f57 | [260713-ob4-d-3-utils-math-ts-macd-10-20-10-kd-5-3-e](./quick/260713-ob4-d-3-utils-math-ts-macd-10-20-10-kd-5-3-e/) |
+| 260713-oxf | D-4 ratelimit fail-open 查證（Phase D 7/7，不改碼）：`npx vercel env ls production` 實查——UPSTASH_REDIS_REST_URL＋TOKEN 皆存在（Encrypted，Preview＋Production，部署當天建立），ratelimit.ts:18 的 config 缺失 fail-open 不適用，production 限流（gemini 10/min＋100/day、market 60/min）啟用中；Phase 4 全套 env（PROXY_SHARED_SECRET/ALLOWED_ORIGIN/FINMIND_TOKEN 等）一併確認就位；殘餘風險記錄：憑證有效性未實測（:78 catch 失效仍靜默 fail-open）、429 突發實測屬使用者手動待辦既有項；純查證包由 orchestrator inline 執行（需本機 Vercel CLI 登入態） | 2026-07-13 | （docs-only） | [260713-oxf-d-4-ratelimit-fail-open-vercel-productio](./quick/260713-oxf-d-4-ratelimit-fail-open-vercel-productio/) |
 
 ## Deferred Items
 
