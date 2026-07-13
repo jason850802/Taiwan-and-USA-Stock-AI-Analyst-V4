@@ -216,3 +216,20 @@ _Depth: deep（含跨檔案呼叫鏈追蹤：api/gemini.ts↔api/_lib/llm.ts↔a
 | M-2（單檔×批次健檢對同 symbol 重疊在飛缺世代守衛） | **已修**：新增 `healthSeqRef` per-symbol 單調遞增世代（比照 App.tsx `fetchSeqRef` 模式）；單檔與批次的 done/error/資料失敗寫回逐 symbol 過世代檢查，較早起跑者的落地結果不覆蓋較晚起跑者 | b49bd30 |
 
 修復後 `npx tsc --noEmit` 通過、`npm run build` 後 `grep -r "AIza" dist/` 無結果。
+
+## 登入後 live e2e（orchestrator，2026-07-13，使用者完成 claude /login 後）
+
+使用者 MSIX 桌面版 Claude 登入（Max 訂閱、jason70445@gmail.com）後，orchestrator 直接以出貨橋接程式碼實跑：
+
+| 測項 | 結果 |
+|---|---|
+| 裸 CLI auth status（MSIX 路徑） | `loggedIn:true`、`subscriptionType:max`、`firstParty` |
+| 出貨橋接 generateText｜fast→sonnet | PASS：`claude-sonnet-5`、`is_error:false`、回應「測試成功」UTF-8 乾淨（Node stdin 天生 UTF-8，無 PowerShell 手動管道的亂碼問題） |
+| 出貨橋接 generateText｜thinking→opus | PASS：`claude-opus-4-8`、布林通道說明正確 |
+| C-1×C-2×C-3 整合（真實 6442 字元健檢 SI＋兩檔擬真持股 → 橋接 sonnet → 真實 parseHealthDecisions） | PASS（契約）：Claude 照 C-2 契約在末尾吐 ```json 決策區 `[{2330.TW:續抱},{2603.TW:停損}]`——symbol 齊全、五值枚舉、決策合理（2330 多頭獲利續抱／2603 套牢空排跌破月線停損）；cleanedMarkdown 正確剝除 json 區塊 |
+
+**live 新發現並當場修（commit 8f901e6）**：整合測試中 `splitHealthReport` 回 null——Claude（sonnet）把每檔標頭吐成 `# 📋`（H1）而非健檢 SI 指示的 `### 📋`（H3），切段正則硬綁 `###` 導致 claude-cli 路徑批次健檢每檔 fallback 全文、分檔檢視實質失效（Gemini 當初照吐 ### 故 C-2 原測未暴露）。修法：`headerRe` 與總覽 regex 井號放寬 `#{1,6}`；回歸測試確認 `#`（Claude）與 `###`（Gemini）兩種階層皆正確切段無串位。核心 json 決策契約不受此影響（決策走 JSON 主路徑，與標頭階層無關）。
+
+**PowerShell 5.1 手動測 CLI 的兩個雷（已記入 agent-dual-core/LESSONS.md）**：(1) 管道 `|` 送中文進原生程式 stdin 時 `$OutputEncoding` 預設 ASCII → 中文變亂碼（模型會回「訊息似乎有亂碼」），須先 `$OutputEncoding=[Text.Encoding]::UTF8`；(2) `Invoke-RestMethod` 打 vercel dev（undici）的 `Expect:100-continue` 與 UTF-8 body 問題。此二者僅影響手動 PowerShell 測試，出貨橋接走 Node stdin 不受影響。
+
+**仍待使用者人工項**：三功能在真實 UI＋真實股票資料的品質對照 3-5 檔（本次整合測試用擬真資料驗證了「格式契約與解析」，UI 實跑驗證「真實行情下的報告品質與 provider 間差異」仍建議由使用者親跑）；批次健檢在真實限流（429）下的 H-1 誠實降級實機重現；M-2 單檔×批次重疊競態實機重現。
