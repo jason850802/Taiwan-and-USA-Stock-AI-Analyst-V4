@@ -493,6 +493,27 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
   let isTaiwanStock = false;
   let usedFallback = false;
 
+  // BL-2 投機起跑：台股 1d 且 symbol 已帶後綴（名錄已解析）時，籌碼三件套與 chart 同刻起跑，
+  // 不再被 chart 網路往返＋前端處理間隙串行扣住。條件不符（美股／週月線／裸代碼）→ null，
+  // 步驟 3 照舊當場起跑，零行為差。內部三支函式皆 try/catch 吞錯回 null/[]，永不 reject。
+  type ChipSpec = {
+    name: Promise<string | null>;
+    inst: Promise<any[] | null>;
+    pv: Promise<any[]>;
+  } | null;
+  let chipSpec: ChipSpec = null;
+  if (interval === '1d' && /\.TWO?$/i.test(symbol)) {
+      const specStart = new Date();
+      specStart.setFullYear(specStart.getFullYear() - 5);
+      const specStartStr = specStart.toISOString().split('T')[0];
+      const specCleanId = symbol.replace(/\.TWO?$/i, '');
+      chipSpec = {
+          name: fetchFinMindStockInfo(specCleanId, signal),
+          inst: fetchInstitutionalData(specCleanId, specStartStr, signal),
+          pv: fetchFinMindPriceVolume(specCleanId, specStartStr, signal),
+      };
+  }
+
   // 1. Try Fetching Data (Primary: Yahoo, Fallback: FinMind)
   try {
       // Attempt Yahoo First
@@ -632,24 +653,42 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
   // 台股中文名抓取（條件：isTaiwanStock && !usedFallback，所有 interval）——
   // 三段串行改兩段：不再先 await，改併入下方籌碼/量能的 Promise.all 並行。
   // fetchFinMindStockInfo 內部 try/catch 回 null、永不 reject，Promise.all 安全。
-  const namePromise: Promise<string | null> = (isTaiwanStock && !usedFallback)
-      ? fetchFinMindStockInfo(symbolInfo.symbol)
-      : Promise.resolve(null);
+  // 有投機 chipSpec → 直接消費其 name promise（進場已起跑）；
+  // 無 → 照舊條件當場起跑（補傳 signal），非台股／fallback → null。
+  const namePromise: Promise<string | null> = chipSpec
+      ? chipSpec.name
+      : ((isTaiwanStock && !usedFallback)
+          ? fetchFinMindStockInfo(symbolInfo.symbol, signal)
+          : Promise.resolve(null));
 
   const shouldFetchFinMindChips = isTaiwanStock && interval === '1d';
   if (shouldFetchFinMindChips) {
-      let fetchStartDate = new Date();
-      fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5);
-      const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
+      let fetchedName: string | null;
+      let institutionalData: any[] | null;
+      let finMindPriceData: any[];
 
-      // We need clean ID for FinMind
-      const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
+      if (chipSpec) {
+          // 投機起跑結果直接收割（含 usedFallback 路徑：cleanId 相同、必為台股 1d，沿用不重抓）。
+          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
+              chipSpec.name,
+              chipSpec.inst,
+              chipSpec.pv,
+          ]);
+      } else {
+          // 罕見：名錄未命中的裸碼但 Yahoo 解析為台股 → 無投機結果，照舊當場起跑（補傳 signal）。
+          let fetchStartDate = new Date();
+          fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5);
+          const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
 
-      const [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
-          namePromise,
-          fetchInstitutionalData(cleanId, fetchStartDateStr),
-          fetchFinMindPriceVolume(cleanId, fetchStartDateStr),
-      ]);
+          // We need clean ID for FinMind
+          const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
+
+          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
+              namePromise,
+              fetchInstitutionalData(cleanId, fetchStartDateStr, signal),
+              fetchFinMindPriceVolume(cleanId, fetchStartDateStr, signal),
+          ]);
+      }
       if (fetchedName) taiwanStockName = fetchedName;
 
       if (institutionalData === null) {
