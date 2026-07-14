@@ -26,6 +26,7 @@ export type FinMindDataset =
 export const fetchFinMindRows = async (
   dataset: FinMindDataset,
   params: { data_id?: string; start_date?: string } = {},
+  signal?: AbortSignal,
 ): Promise<any[]> => {
   const qs = new URLSearchParams({ dataset });
   if (params.data_id) qs.set('data_id', params.data_id);
@@ -33,6 +34,7 @@ export const fetchFinMindRows = async (
 
   const res = await fetch(`/api/finmind?${qs}`, {
     headers: { ...proxyHeaders },
+    signal,
   });
   if (!res.ok) {
     const parsed = await res.json().catch(() => ({})) as { message?: string };

@@ -190,30 +190,30 @@ const getPeriodStartDate = (timestamp: number, interval: string, timezone: strin
     return d.toISOString().split('T')[0];
 };
 
-const fetchInstitutionalData = async (stockId: string, startDate: string) => {
+const fetchInstitutionalData = async (stockId: string, startDate: string, signal?: AbortSignal) => {
     const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
-        return await fetchFinMindRows('TaiwanStockInstitutionalInvestorsBuySell', { data_id: cleanId, start_date: startDate });
+        return await fetchFinMindRows('TaiwanStockInstitutionalInvestorsBuySell', { data_id: cleanId, start_date: startDate }, signal);
     } catch (e) {
         console.warn("Failed to fetch institutional data", e);
         return null;
     }
 };
 
-const fetchFinMindPriceVolume = async (stockId: string, startDate: string) => {
+const fetchFinMindPriceVolume = async (stockId: string, startDate: string, signal?: AbortSignal) => {
     const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
-        return await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: startDate });
+        return await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: startDate }, signal);
     } catch (e) {
         console.warn("Failed to fetch price/volume data from FinMind", e);
         return [];
     }
 }
 
-const fetchFinMindStockInfo = async (stockId: string) => {
+const fetchFinMindStockInfo = async (stockId: string, signal?: AbortSignal) => {
     const cleanId = stockId.replace(/\.TWO?$/i, '');
     try {
-        const rows = await fetchFinMindRows('TaiwanStockInfo', { data_id: cleanId });
+        const rows = await fetchFinMindRows('TaiwanStockInfo', { data_id: cleanId }, signal);
         if (rows.length > 0) {
             return rows[0].stock_name as string;
         }
