@@ -470,6 +470,266 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
   return { price: latestPrice, name };
 };
 
+// BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。
+type ChipSpec = {
+  name: Promise<string | null>;
+  inst: Promise<any[] | null>;
+  pv: Promise<any[]>;
+} | null;
+
+// 步驟 3 產出的籌碼上下文：一次解析、供兩段式（2y/10y）共用同一批籌碼，不重抓。
+type ChipContext = {
+  taiwanStockName: string | null;
+  chipMap: Map<string, { foreign: number; trust: number }>;
+  volumeMap: Map<string, number>;
+  ohlcMap: Map<string, { open: number; high: number; low: number; close: number }>;
+  chipDataUnavailable: boolean;
+  chipsApplied: boolean; // ＝原 shouldFetchFinMindChips，步驟4 的 volume 覆寫與 chips 欄位開關
+};
+
+// 步驟 3 本體：消費 chipSpec 或當場起跑（含 BL-2 的雙分支與 fallback 沿用語意），await 一次。
+const resolveChipContext = async (
+    chipSpec: ChipSpec,
+    symbolInfo: any,
+    isTaiwanStock: boolean,
+    usedFallback: boolean,
+    interval: TimeInterval,
+    signal?: AbortSignal,
+): Promise<ChipContext> => {
+  // 3. Stock Info & Chips (Always enrich Taiwan stocks with FinMind Chips if possible)
+  let taiwanStockName: string | null = null;
+  const chipMap = new Map<string, { foreign: number, trust: number }>();
+  const volumeMap = new Map<string, number>();
+  let chipDataUnavailable = false;
+  // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
+  const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
+
+  // 台股中文名抓取（條件：isTaiwanStock && !usedFallback，所有 interval）——
+  // 三段串行改兩段：不再先 await，改併入下方籌碼/量能的 Promise.all 並行。
+  // fetchFinMindStockInfo 內部 try/catch 回 null、永不 reject，Promise.all 安全。
+  // 有投機 chipSpec → 直接消費其 name promise（進場已起跑）；
+  // 無 → 照舊條件當場起跑（補傳 signal），非台股／fallback → null。
+  const namePromise: Promise<string | null> = chipSpec
+      ? chipSpec.name
+      : ((isTaiwanStock && !usedFallback)
+          ? fetchFinMindStockInfo(symbolInfo.symbol, signal)
+          : Promise.resolve(null));
+
+  const shouldFetchFinMindChips = isTaiwanStock && interval === '1d';
+  if (shouldFetchFinMindChips) {
+      let fetchedName: string | null;
+      let institutionalData: any[] | null;
+      let finMindPriceData: any[];
+
+      if (chipSpec) {
+          // 投機起跑結果直接收割（含 usedFallback 路徑：cleanId 相同、必為台股 1d，沿用不重抓）。
+          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
+              chipSpec.name,
+              chipSpec.inst,
+              chipSpec.pv,
+          ]);
+      } else {
+          // 罕見：名錄未命中的裸碼但 Yahoo 解析為台股 → 無投機結果，照舊當場起跑（補傳 signal）。
+          let fetchStartDate = new Date();
+          fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5);
+          const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
+
+          // We need clean ID for FinMind
+          const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
+
+          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
+              namePromise,
+              fetchInstitutionalData(cleanId, fetchStartDateStr, signal),
+              fetchFinMindPriceVolume(cleanId, fetchStartDateStr, signal),
+          ]);
+      }
+      if (fetchedName) taiwanStockName = fetchedName;
+
+      if (institutionalData === null) {
+          chipDataUnavailable = true;
+      } else {
+          institutionalData.forEach((item: any) => {
+              const date = item.date;
+              const net = (item.buy || 0) - (item.sell || 0);
+              if (!chipMap.has(date)) chipMap.set(date, { foreign: 0, trust: 0 });
+              const record = chipMap.get(date)!;
+              if (item.name === 'Foreign_Investor') record.foreign += net;
+              else if (item.name === 'Investment_Trust') record.trust += net;
+          });
+      }
+
+      finMindPriceData.forEach((item: any) => {
+          volumeMap.set(item.date, item.Trading_Volume);
+          // FinMind 欄位：high=max、low=min（比照 fetchFinMindDailyData）。
+          ohlcMap.set(item.date, { open: item.open, high: item.max, low: item.min, close: item.close });
+      });
+  } else {
+      // 非籌碼路徑（US／TW 週月線／fallback）：只需等中文名，絕不誤設 chipDataUnavailable
+      const fetchedName = await namePromise;
+      if (fetchedName) taiwanStockName = fetchedName;
+  }
+
+  return { taiwanStockName, chipMap, volumeMap, ohlcMap, chipDataUnavailable, chipsApplied: shouldFetchFinMindChips };
+};
+
+// 步驟 4 → 4.5 → 5 ＋ name/info 打包：純同步、無 await。
+// info 打包採非 mutate 版（不改 symbolInfo），故雙次呼叫（2y/10y）安全。
+const enrichChartData = (
+    processedData: any[],
+    symbolInfo: any,
+    interval: TimeInterval,
+    ctx: ChipContext,
+): { info: StockInfo; data: StockDataPoint[] } => {
+  // 4. Final Enriching
+  let finalData = processedData.map(d => {
+      // If we have accurate volume from FinMind (even if we used Yahoo for price), overwrite it
+      // FinMind volume is usually more reliable for TW stocks
+      if (ctx.chipsApplied && ctx.volumeMap.has(d.rawDateStr || d.date)) {
+          d.volume = ctx.volumeMap.get(d.rawDateStr || d.date)!;
+      }
+
+      // 以 FinMind 當日真實 OHLC 取代平盤合成棒：
+      // 僅當這根是步驟前段補的 _synthetic 平盤棒、且 FinMind 該日已有真實 OHLC 時觸發。
+      // 美股 / 台股盤中 FinMind 無當日資料 → ohlcMap.has 為 false → 維持平盤補值（不退化）。
+      // FinMind fallback 路徑 / 非 1d → 無 _synthetic 標記 → 不觸發。
+      if (d._synthetic === true && ctx.ohlcMap.has(d.rawDateStr)) {
+          const o = ctx.ohlcMap.get(d.rawDateStr)!;
+          d.open = o.open;
+          d.high = o.high;
+          d.low = o.low;
+          d.close = o.close;
+          // FinMind 無還原值、ratio=1，Adj 全等於原值（比照 fetchFinMindDailyData）。
+          d.openAdj = o.open;
+          d.highAdj = o.high;
+          d.lowAdj = o.low;
+          d.closeAdj = o.close;
+          // volume 已由上面既有 volumeMap 機制處理，勿在此重複。
+      }
+
+      // 收尾：移除內部標記，絕不外洩進對外 StockDataPoint（fullProcessedData 以 ...d 展開）。
+      delete d._synthetic;
+
+      const chips = ctx.chipDataUnavailable
+          ? undefined
+          : ctx.chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
+      return {
+          ...d,
+          foreignBuySell: chips?.foreign,
+          investmentTrustBuySell: chips?.trust
+      };
+  });
+
+  // 4.5 日線「殭屍棒」過濾器（主修·台美股通用）
+  // 放置理由：必須在第4步 FinMind 覆寫之後執行，確保 FinMind 有真實 OHLC/量的日期已被覆寫成真值、
+  // 不會被誤殺；颱風臨時休市日 FinMind 無資料列（乾淨）→ 該棒維持 volume=0＋平盤 → 命中剔除。
+  // 此過濾器同時捕捉兩種假棒：App 用 regularMarketPrice 合成的 _synthetic 平盤棒（步驟4 已 delete 標記），
+  // 以及 Yahoo 直接回傳、通過 processYahooResult null 守衛的「非 null」平盤棒（第二根因）。
+  // 已知可接受邊界（使用者已確認接受）：極冷門股「真實零成交日」（參考價＝前收）也會被剔除——
+  // 無成交即無資訊，對指標更正確；漲跌停鎖死零成交棒（價≠前收，close!==prevKept.close）不受影響、保留。
+  // 僅 1d 執行；週線/月線/盤中（1wk/1mo/60m/15m）維持原序列不處理。
+  if (interval === '1d') {
+      const filteredData: any[] = [];
+      let prevKept: any = null; // 追蹤「上一根被保留的棒」，以正確處理連續多根殭屍棒（如連兩天休市）
+      for (const bar of finalData) {
+          // 序列第一根無 prevKept → 永遠保留，絕不剔除。
+          // 以原始欄位（open/high/low/close/volume）比較，勿用 Adj 欄位。
+          const isZombie = prevKept !== null
+              && bar.volume === 0
+              && bar.open === bar.high
+              && bar.high === bar.low
+              && bar.low === bar.close
+              && bar.close === prevKept.close;
+          if (isZombie) continue; // 殭屍棒剔除，且不更新 prevKept（連續休市棒皆與最後真實棒比對）
+          filteredData.push(bar);
+          prevKept = bar;
+      }
+      finalData = filteredData;
+  }
+
+  // 5. Calculate Indicators
+  const rawCloses = finalData.map(d => d.close);
+  const rawHighs = finalData.map(d => d.high);
+  const rawLows = finalData.map(d => d.low);
+  const adjCloses = finalData.map(d => d.closeAdj);
+
+  // Set A: RAW
+  const ma5 = calculateSMA(rawCloses, 5);
+  const ma10 = calculateSMA(rawCloses, 10);
+  const ma20 = calculateSMA(rawCloses, 20);
+  const ma60 = calculateSMA(rawCloses, 60);
+  const rsi = calculateRSI(rawCloses, 14);
+  const { macdLine, signalLine, histogram } = calculateMACD(rawCloses);
+  const { K, D, J } = calculateKDJ(rawHighs, rawLows, rawCloses);
+  const bbRaw = calculateBollingerBands(rawCloses, 20, 2);
+
+  // Set B: ADJUSTED
+  const ma5Adj = calculateSMA(adjCloses, 5);
+  const ma10Adj = calculateSMA(adjCloses, 10);
+  const ma20Adj = calculateSMA(adjCloses, 20);
+  const ma60Adj = calculateSMA(adjCloses, 60);
+  const rsiAdj = calculateRSI(adjCloses, 14);
+  const macdDataAdj = calculateMACD(adjCloses);
+  const bbAdj = calculateBollingerBands(adjCloses, 20, 2);
+
+  const fullProcessedData: StockDataPoint[] = finalData.map((d: any, i: number) => {
+      const getDir = (current: number | undefined, prev: number | undefined) => {
+          if (current === undefined || prev === undefined) return 'flat';
+          return current > prev ? 'up' : current < prev ? 'down' : 'flat';
+      };
+
+      const prevClose = i > 0 ? finalData[i-1].close : d.open;
+      const priceChange = d.close - prevClose;
+      const priceChangePercent = prevClose !== 0 ? (priceChange / prevClose) * 100 : 0;
+
+      return {
+          ...d,
+          ma5: ma5[i] ?? undefined,
+          ma10: ma10[i] ?? undefined,
+          ma20: ma20[i] ?? undefined,
+          ma60: ma60[i] ?? undefined,
+          ma5Dir: i > 0 ? getDir(ma5[i], ma5[i-1]) : 'flat',
+          ma10Dir: i > 0 ? getDir(ma10[i], ma10[i-1]) : 'flat',
+          ma20Dir: i > 0 ? getDir(ma20[i], ma20[i-1]) : 'flat',
+          ma60Dir: i > 0 ? getDir(ma60[i], ma60[i-1]) : 'flat',
+          rsi: rsi[i] ?? undefined,
+          macd: macdLine[i] ?? undefined,
+          macdSignal: signalLine[i] ?? undefined,
+          macdHist: histogram[i] ?? undefined,
+          k: K[i],
+          d: D[i],
+          j: J[i],
+          ma5Adj: ma5Adj[i] ?? undefined,
+          ma10Adj: ma10Adj[i] ?? undefined,
+          ma20Adj: ma20Adj[i] ?? undefined,
+          ma60Adj: ma60Adj[i] ?? undefined,
+          rsiAdj: rsiAdj[i] ?? undefined,
+          macdAdj: macdDataAdj.macdLine[i] ?? undefined,
+          macdSignalAdj: macdDataAdj.signalLine[i] ?? undefined,
+          macdHistAdj: macdDataAdj.histogram[i] ?? undefined,
+          bbUpper: bbRaw.upper[i] ?? undefined,
+          bbMiddle: bbRaw.middle[i] ?? undefined,
+          bbLower: bbRaw.lower[i] ?? undefined,
+          bbUpperAdj: bbAdj.upper[i] ?? undefined,
+          bbMiddleAdj: bbAdj.middle[i] ?? undefined,
+          bbLowerAdj: bbAdj.lower[i] ?? undefined,
+          priceChange,
+          priceChangePercent
+      };
+  });
+
+  // info 打包：非 mutate 版（不改入參 symbolInfo），雙次呼叫（2y/10y）輸出逐位元等價。
+  const info = { ...symbolInfo };
+  if (ctx.taiwanStockName) info.name = ctx.taiwanStockName;
+
+  return {
+      info: {
+          ...info,
+          chipDataUnavailable: ctx.chipDataUnavailable,
+      },
+      data: fullProcessedData
+  };
+};
+
 // 原 getStockData 函式體整段搬移（內容零改動，除：fetchRawData 透傳 signal、
 // 步驟 3 台股中文名併入 Promise.all 並行）。快取整合在下方 getStockData 外殼。
 const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '1d', signal?: AbortSignal): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
@@ -496,11 +756,7 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
   // BL-2 投機起跑：台股 1d 且 symbol 已帶後綴（名錄已解析）時，籌碼三件套與 chart 同刻起跑，
   // 不再被 chart 網路往返＋前端處理間隙串行扣住。條件不符（美股／週月線／裸代碼）→ null，
   // 步驟 3 照舊當場起跑，零行為差。內部三支函式皆 try/catch 吞錯回 null/[]，永不 reject。
-  type ChipSpec = {
-    name: Promise<string | null>;
-    inst: Promise<any[] | null>;
-    pv: Promise<any[]>;
-  } | null;
+  // （ChipSpec 型別已提升為模組層，供 resolveChipContext 共用。）
   let chipSpec: ChipSpec = null;
   if (interval === '1d' && /\.TWO?$/i.test(symbol)) {
       const specStart = new Date();
@@ -642,227 +898,11 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
       }
   }
 
-  // 3. Stock Info & Chips (Always enrich Taiwan stocks with FinMind Chips if possible)
-  let taiwanStockName: string | null = null;
-  const chipMap = new Map<string, { foreign: number, trust: number }>();
-  const volumeMap = new Map<string, number>();
-  let chipDataUnavailable = false;
-  // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
-  const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
+  // 3. 籌碼上下文解析（步驟 3 抽出）：一次解析、await 一次。
+  const ctx = await resolveChipContext(chipSpec, symbolInfo, isTaiwanStock, usedFallback, interval, signal);
 
-  // 台股中文名抓取（條件：isTaiwanStock && !usedFallback，所有 interval）——
-  // 三段串行改兩段：不再先 await，改併入下方籌碼/量能的 Promise.all 並行。
-  // fetchFinMindStockInfo 內部 try/catch 回 null、永不 reject，Promise.all 安全。
-  // 有投機 chipSpec → 直接消費其 name promise（進場已起跑）；
-  // 無 → 照舊條件當場起跑（補傳 signal），非台股／fallback → null。
-  const namePromise: Promise<string | null> = chipSpec
-      ? chipSpec.name
-      : ((isTaiwanStock && !usedFallback)
-          ? fetchFinMindStockInfo(symbolInfo.symbol, signal)
-          : Promise.resolve(null));
-
-  const shouldFetchFinMindChips = isTaiwanStock && interval === '1d';
-  if (shouldFetchFinMindChips) {
-      let fetchedName: string | null;
-      let institutionalData: any[] | null;
-      let finMindPriceData: any[];
-
-      if (chipSpec) {
-          // 投機起跑結果直接收割（含 usedFallback 路徑：cleanId 相同、必為台股 1d，沿用不重抓）。
-          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
-              chipSpec.name,
-              chipSpec.inst,
-              chipSpec.pv,
-          ]);
-      } else {
-          // 罕見：名錄未命中的裸碼但 Yahoo 解析為台股 → 無投機結果，照舊當場起跑（補傳 signal）。
-          let fetchStartDate = new Date();
-          fetchStartDate.setFullYear(fetchStartDate.getFullYear() - 5);
-          const fetchStartDateStr = fetchStartDate.toISOString().split('T')[0];
-
-          // We need clean ID for FinMind
-          const cleanId = symbolInfo.symbol.replace(/\.TWO?$/i, '');
-
-          [fetchedName, institutionalData, finMindPriceData] = await Promise.all([
-              namePromise,
-              fetchInstitutionalData(cleanId, fetchStartDateStr, signal),
-              fetchFinMindPriceVolume(cleanId, fetchStartDateStr, signal),
-          ]);
-      }
-      if (fetchedName) taiwanStockName = fetchedName;
-
-      if (institutionalData === null) {
-          chipDataUnavailable = true;
-      } else {
-          institutionalData.forEach((item: any) => {
-              const date = item.date; 
-              const net = (item.buy || 0) - (item.sell || 0);
-              if (!chipMap.has(date)) chipMap.set(date, { foreign: 0, trust: 0 });
-              const record = chipMap.get(date)!;
-              if (item.name === 'Foreign_Investor') record.foreign += net;
-              else if (item.name === 'Investment_Trust') record.trust += net;
-          });
-      }
-
-      finMindPriceData.forEach((item: any) => {
-          volumeMap.set(item.date, item.Trading_Volume);
-          // FinMind 欄位：high=max、low=min（比照 fetchFinMindDailyData）。
-          ohlcMap.set(item.date, { open: item.open, high: item.max, low: item.min, close: item.close });
-      });
-  } else {
-      // 非籌碼路徑（US／TW 週月線／fallback）：只需等中文名，絕不誤設 chipDataUnavailable
-      const fetchedName = await namePromise;
-      if (fetchedName) taiwanStockName = fetchedName;
-  }
-
-  // 4. Final Enriching
-  let finalData = processedData.map(d => {
-      // If we have accurate volume from FinMind (even if we used Yahoo for price), overwrite it
-      // FinMind volume is usually more reliable for TW stocks
-      if (shouldFetchFinMindChips && volumeMap.has(d.rawDateStr || d.date)) {
-          d.volume = volumeMap.get(d.rawDateStr || d.date)!;
-      }
-
-      // 以 FinMind 當日真實 OHLC 取代平盤合成棒：
-      // 僅當這根是步驟前段補的 _synthetic 平盤棒、且 FinMind 該日已有真實 OHLC 時觸發。
-      // 美股 / 台股盤中 FinMind 無當日資料 → ohlcMap.has 為 false → 維持平盤補值（不退化）。
-      // FinMind fallback 路徑 / 非 1d → 無 _synthetic 標記 → 不觸發。
-      if (d._synthetic === true && ohlcMap.has(d.rawDateStr)) {
-          const o = ohlcMap.get(d.rawDateStr)!;
-          d.open = o.open;
-          d.high = o.high;
-          d.low = o.low;
-          d.close = o.close;
-          // FinMind 無還原值、ratio=1，Adj 全等於原值（比照 fetchFinMindDailyData）。
-          d.openAdj = o.open;
-          d.highAdj = o.high;
-          d.lowAdj = o.low;
-          d.closeAdj = o.close;
-          // volume 已由上面既有 volumeMap 機制處理，勿在此重複。
-      }
-
-      // 收尾：移除內部標記，絕不外洩進對外 StockDataPoint（fullProcessedData 以 ...d 展開）。
-      delete d._synthetic;
-
-      const chips = chipDataUnavailable
-          ? undefined
-          : chipMap.get(d.rawDateStr || d.date) || { foreign: 0, trust: 0 };
-      return {
-          ...d,
-          foreignBuySell: chips?.foreign,
-          investmentTrustBuySell: chips?.trust
-      };
-  });
-
-  // 4.5 日線「殭屍棒」過濾器（主修·台美股通用）
-  // 放置理由：必須在第4步 FinMind 覆寫之後執行，確保 FinMind 有真實 OHLC/量的日期已被覆寫成真值、
-  // 不會被誤殺；颱風臨時休市日 FinMind 無資料列（乾淨）→ 該棒維持 volume=0＋平盤 → 命中剔除。
-  // 此過濾器同時捕捉兩種假棒：App 用 regularMarketPrice 合成的 _synthetic 平盤棒（步驟4 已 delete 標記），
-  // 以及 Yahoo 直接回傳、通過 processYahooResult null 守衛的「非 null」平盤棒（第二根因）。
-  // 已知可接受邊界（使用者已確認接受）：極冷門股「真實零成交日」（參考價＝前收）也會被剔除——
-  // 無成交即無資訊，對指標更正確；漲跌停鎖死零成交棒（價≠前收，close!==prevKept.close）不受影響、保留。
-  // 僅 1d 執行；週線/月線/盤中（1wk/1mo/60m/15m）維持原序列不處理。
-  if (interval === '1d') {
-      const filteredData: any[] = [];
-      let prevKept: any = null; // 追蹤「上一根被保留的棒」，以正確處理連續多根殭屍棒（如連兩天休市）
-      for (const bar of finalData) {
-          // 序列第一根無 prevKept → 永遠保留，絕不剔除。
-          // 以原始欄位（open/high/low/close/volume）比較，勿用 Adj 欄位。
-          const isZombie = prevKept !== null
-              && bar.volume === 0
-              && bar.open === bar.high
-              && bar.high === bar.low
-              && bar.low === bar.close
-              && bar.close === prevKept.close;
-          if (isZombie) continue; // 殭屍棒剔除，且不更新 prevKept（連續休市棒皆與最後真實棒比對）
-          filteredData.push(bar);
-          prevKept = bar;
-      }
-      finalData = filteredData;
-  }
-
-  // 5. Calculate Indicators
-  const rawCloses = finalData.map(d => d.close);
-  const rawHighs = finalData.map(d => d.high);
-  const rawLows = finalData.map(d => d.low);
-  const adjCloses = finalData.map(d => d.closeAdj);
-  
-  // Set A: RAW
-  const ma5 = calculateSMA(rawCloses, 5);
-  const ma10 = calculateSMA(rawCloses, 10);
-  const ma20 = calculateSMA(rawCloses, 20);
-  const ma60 = calculateSMA(rawCloses, 60);
-  const rsi = calculateRSI(rawCloses, 14);
-  const { macdLine, signalLine, histogram } = calculateMACD(rawCloses);
-  const { K, D, J } = calculateKDJ(rawHighs, rawLows, rawCloses);
-  const bbRaw = calculateBollingerBands(rawCloses, 20, 2);
-
-  // Set B: ADJUSTED
-  const ma5Adj = calculateSMA(adjCloses, 5);
-  const ma10Adj = calculateSMA(adjCloses, 10);
-  const ma20Adj = calculateSMA(adjCloses, 20);
-  const ma60Adj = calculateSMA(adjCloses, 60);
-  const rsiAdj = calculateRSI(adjCloses, 14);
-  const macdDataAdj = calculateMACD(adjCloses);
-  const bbAdj = calculateBollingerBands(adjCloses, 20, 2);
-
-  const fullProcessedData: StockDataPoint[] = finalData.map((d: any, i: number) => {
-      const getDir = (current: number | undefined, prev: number | undefined) => {
-          if (current === undefined || prev === undefined) return 'flat';
-          return current > prev ? 'up' : current < prev ? 'down' : 'flat';
-      };
-      
-      const prevClose = i > 0 ? finalData[i-1].close : d.open;
-      const priceChange = d.close - prevClose;
-      const priceChangePercent = prevClose !== 0 ? (priceChange / prevClose) * 100 : 0;
-
-      return {
-          ...d,
-          ma5: ma5[i] ?? undefined,
-          ma10: ma10[i] ?? undefined,
-          ma20: ma20[i] ?? undefined,
-          ma60: ma60[i] ?? undefined,
-          ma5Dir: i > 0 ? getDir(ma5[i], ma5[i-1]) : 'flat',
-          ma10Dir: i > 0 ? getDir(ma10[i], ma10[i-1]) : 'flat',
-          ma20Dir: i > 0 ? getDir(ma20[i], ma20[i-1]) : 'flat',
-          ma60Dir: i > 0 ? getDir(ma60[i], ma60[i-1]) : 'flat',
-          rsi: rsi[i] ?? undefined,
-          macd: macdLine[i] ?? undefined,
-          macdSignal: signalLine[i] ?? undefined,
-          macdHist: histogram[i] ?? undefined,
-          k: K[i],
-          d: D[i],
-          j: J[i],
-          ma5Adj: ma5Adj[i] ?? undefined,
-          ma10Adj: ma10Adj[i] ?? undefined,
-          ma20Adj: ma20Adj[i] ?? undefined,
-          ma60Adj: ma60Adj[i] ?? undefined,
-          rsiAdj: rsiAdj[i] ?? undefined,
-          macdAdj: macdDataAdj.macdLine[i] ?? undefined,
-          macdSignalAdj: macdDataAdj.signalLine[i] ?? undefined,
-          macdHistAdj: macdDataAdj.histogram[i] ?? undefined,
-          bbUpper: bbRaw.upper[i] ?? undefined,
-          bbMiddle: bbRaw.middle[i] ?? undefined,
-          bbLower: bbRaw.lower[i] ?? undefined,
-          bbUpperAdj: bbAdj.upper[i] ?? undefined,
-          bbMiddleAdj: bbAdj.middle[i] ?? undefined,
-          bbLowerAdj: bbAdj.lower[i] ?? undefined,
-          priceChange,
-          priceChangePercent
-      };
-  });
-
-  if (taiwanStockName) {
-      symbolInfo.name = taiwanStockName;
-  }
-
-  return {
-      info: {
-          ...symbolInfo,
-          chipDataUnavailable,
-      },
-      data: fullProcessedData
-  };
+  // 4 → 4.5 → 5 ＋ name/info 打包（步驟 4/4.5/5 抽出）：純同步。
+  return enrichChartData(processedData, symbolInfo, interval, ctx);
 };
 
 // ── 行情快取外殼（B-1，quick-260712-vno）──

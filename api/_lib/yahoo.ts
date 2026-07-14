@@ -25,7 +25,7 @@ export class YahooClassifiedError extends Error {
 
 // 每個週期只允許既有前端實際使用的封閉區間集合，避免成為任意行情代理。
 const INTERVAL_RANGE_MAP: Record<string, string[]> = {
-  '1d': ['10y', '5d'],
+  '1d': ['10y', '5d', '2y'], // 2y 供前端兩段式首繪（BL-1）
   '1wk': ['5y'],
   '1mo': ['max'],
   '60m': ['1y'],
