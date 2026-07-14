@@ -438,7 +438,7 @@ const App: React.FC = () => {
                         setSettings={setIndicatorSettings}
                       />
                       <div className="relative">
-                        <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} onToggleSetting={(key: keyof IndicatorSettings) => {
+                        <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} onToggleSetting={(key: keyof IndicatorSettings) => {
                           if (key === 'maLines') return;
                           setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
                         }} />

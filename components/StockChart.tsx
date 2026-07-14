@@ -28,6 +28,9 @@ interface StockChartProps {
   settings: IndicatorSettings;
   isTaiwanStock: boolean;
   chipDataUnavailable?: boolean;
+  // 「標的|週期」identity——變更＝換了一條 K 線序列，觸發視窗重置。
+  // 兩段式補全交換（2y→10y 同標的）identity 不變 → 不重置 → 天然零跳動。
+  seriesKey: string;
   onToggleSetting?: (key: keyof IndicatorSettings) => void;
 }
 
@@ -565,7 +568,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
   );
 });
 
-const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, onToggleSetting }) => {
+const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, seriesKey, onToggleSetting }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [panel1View, setPanel1View] = useState<PanelView>('foreign');
   const [panel2View, setPanel2View] = useState<PanelView>('trust');
@@ -587,7 +590,9 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
      setBarsToShow(Math.min(100, data.length));
      // 切換股票 / 週期 → 快照回最新一根
      setRightOffset(0);
-  }, [data.length]);
+     // dep 改 seriesKey（標的|週期 identity）：兩段式 10y 補全只在左端加歷史棒、identity 不變 →
+     // 不重置＝交換天然零跳動；SWR 刷新多一根新棒也不再重置使用者縮放/平移（附帶修好既有小毛病）。
+  }, [seriesKey]);
 
   const handleZoom = useCallback((direction: 'in' | 'out') => {
       if (draggingRef.current) return; // 拖曳中忽略縮放（裁決 9：session 幾何不會失效；按鈕＋鍵盤同源擋掉）
