@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-14 - BL 統測全綠（build＋dist 無 AIza＋vitest 32/32＋preview 實跑 9 情境）＋Sonnet 覆核 ACCEPT WITH FINDINGS→HIGH-1 當場修（4005108：兩段式 onRevalidated 閘門＋健檢買入日誠實化），BL-REVIEW.md 落檔；剩 BL-4b production 後測（需 push 部署）
+Last activity: 2026-07-14 - **BL 冷載入收尾全案完結**：BL-4b production 後測三硬指標全達標（全冷首繪 2.25s／日常 <1s／切回即時；對照表與原始數據在 optimization/BL-4AB-REPORT.md）；優化案（Phase A~D＋BL-1~4）至此全部收尾。註：BL-4b 後的 docs commit 未推送（push 會觸發重部署清 CDN，留使用者決定時機）
 
 Progress: [██████████] 100%
 

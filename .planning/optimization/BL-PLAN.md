@@ -25,11 +25,11 @@
 
 | 包 | 內容 | 改碼 | 狀態 |
 |---|---|---|---|
-| BL-4a | Production 冷載入基線**前測**（不改碼） | ✗ | ☐ |
-| BL-2 | 台股 1d 籌碼三件套與 chart 並行起跑 | `services/finmind.ts`、`services/yahoo.ts` | ☐ |
-| BL-1 | 1d 兩段式載入（2y 快繪 → 背景補全 10y） | `services/yahoo.ts`、`components/StockChart.tsx`、（近零）`App.tsx` | ☐ |
-| BL-3 | 1mo range 收斂（max→15y）＋載入骨架屏 | `services/yahoo.ts`、`App.tsx` | ☐ |
-| BL-4b | Production **後測**驗收（不改碼） | ✗ | ☐ |
+| BL-4a | Production 冷載入基線**前測**（不改碼） | ✗ | ✅ 2026-07-14（報告：BL-4AB-REPORT.md） |
+| BL-2 | 台股 1d 籌碼三件套與 chart 並行起跑 | `services/finmind.ts`、`services/yahoo.ts` | ✅ 260714-nfn（2619d87, c098491） |
+| BL-1 | 1d 兩段式載入（2y 快繪 → 背景補全 10y） | `services/yahoo.ts`、`components/StockChart.tsx`、（近零）`App.tsx`、＋`api/_lib/yahoo.ts`（drift 補列） | ✅ 260714-ns3（da5c890, 630b805, 2ff59dc） |
+| BL-3 | 1mo range 收斂（max→15y）＋載入骨架屏 | `services/yahoo.ts`、`App.tsx`、＋`api/_lib/yahoo.ts`（drift 補列） | ✅ 260714-o6l（a589911, 03dac9e） |
+| BL-4b | Production **後測**驗收（不改碼） | ✗ | ✅ 2026-07-14 三硬指標全達標（BL-4AB-REPORT.md；Sonnet 覆核 BL-REVIEW.md，HIGH-1 修於 4005108） |
 
 順序理由：BL-4a 先把 before 基線釘死，之後每包的效益都有對照組。BL-2 diff 小、獨立可出貨，且是 BL-1 首繪速度的**地基**——兩段式的 stage-1 首繪要等籌碼一起上屏，籌碼不先並行，2y 快繪就被 3.4s 的籌碼扣住，BL-1 效益出不來。BL-3 的骨架屏放在 BL-1 之後，才能量到真實的殘餘等待長度。
 
