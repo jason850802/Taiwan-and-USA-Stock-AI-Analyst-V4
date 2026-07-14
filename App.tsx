@@ -162,6 +162,9 @@ const App: React.FC = () => {
 
   const handleOpenAnalysisModal = () => {
       if (data.length === 0) return;
+      if (interval === '1d') {
+        getStockData(info?.symbol || symbol, '1wk').catch(() => {});
+      }
       setHasHolding(null);
       setCostPrice('');
       setAnalysisMode('fast');
