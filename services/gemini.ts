@@ -458,8 +458,17 @@ export const analyzeTradeDecision = async (
       );
     }).join('\n');
 
-    // 買入當天指標摘要（方便 AI 對照規則）
-    const entry = recentData.find(d => d.date === buyDate.split('T')[0]) ?? latest;
+    // 買入當天指標摘要（方便 AI 對照規則）。
+    // 查無當日（非交易日、或買入日早於資料視窗起點）不得以今日棒靜默頂替——
+    // 那會把「買入當天技術面」偷換成完全不同日期的數字（Sonnet 覆核 HIGH-1）。
+    const buyDay = buyDate.split('T')[0];
+    const entry = recentData.find(d => d.date === buyDay);
+    if (!entry) {
+      latestIndicators = `
+【買入當天技術面摘要】
+- 查無買入當日（${buyDay}）的日K資料（可能為非交易日，或早於本次取得的資料範圍）。
+- 本節從缺；請勿以今日或其他日期的技術面推斷買入當日狀況。`;
+    } else {
     const prevEntry = recentData[Math.max(0, recentData.indexOf(entry) - 1)];
     const volRatio = prevEntry?.volume > 0 ? entry.volume / prevEntry.volume : null;
     const priceChgPct = prevEntry ? ((entry.close - prevEntry.close) / prevEntry.close) * 100 : null;
@@ -480,6 +489,7 @@ export const analyzeTradeDecision = async (
     ? (entry.ma5 > entry.ma10 && entry.ma10 > entry.ma20 ? 'MA5>MA10>MA20（多頭排列）' : 'MA5≤MA10 或 MA10≤MA20（非多頭排列）')
     : 'N/A'
 }`;
+    }
   }
 
   const promptText = `

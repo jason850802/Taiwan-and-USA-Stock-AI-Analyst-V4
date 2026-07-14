@@ -1056,7 +1056,10 @@ export const getStockData = async (
   }
 
   // miss 且 1d 冷抓（非 forceRefresh）：兩段式協調——2y partial 先 resolve、10y 補全走 onRevalidated。
-  if (!opts?.forceRefresh && interval === '1d') {
+  // onRevalidated 閘門（Sonnet 覆核 HIGH-1）：呼叫端沒有接收補全的管道（如 Portfolio 一次性
+  // 背景分析）就不得吃兩段式——否則 partial resolve 後 full 被靜默丟棄，呼叫端永遠只拿到
+  // 2y 截斷資料。無回呼的呼叫端走下方單段 10y，語意與 BL-1 之前完全相同。
+  if (!opts?.forceRefresh && interval === '1d' && opts?.onRevalidated) {
       return await new Promise<StockDataResult>((resolve, reject) => {
           let settled = false;
           const completion = fetchStockDataUncached(canon, interval, opts?.signal, (partial) => {
