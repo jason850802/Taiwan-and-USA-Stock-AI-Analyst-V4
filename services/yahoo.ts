@@ -743,7 +743,7 @@ const fetchStockDataUncached = async (
   let mainRange = '5y';
   
   if (interval === '1wk') mainRange = '5y';
-  else if (interval === '1mo') mainRange = 'max';
+  else if (interval === '1mo') mainRange = '15y'; // BL-3 收斂——max 對 2330/AAPL 拉 380-550 根月棒，絕大多數在預設視窗外
   else if (interval === '1d') mainRange = '10y';
   else if (interval === '60m') {
       mainInterval = '60m';

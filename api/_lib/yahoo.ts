@@ -27,7 +27,7 @@ export class YahooClassifiedError extends Error {
 const INTERVAL_RANGE_MAP: Record<string, string[]> = {
   '1d': ['10y', '5d', '2y'], // 2y 供前端兩段式首繪（BL-1）
   '1wk': ['5y'],
-  '1mo': ['max'],
+  '1mo': ['max', '15y'], // 15y 為前端現行請求值（BL-3 收斂）；max 保留供部署過渡期舊 bundle
   '60m': ['1y'],
   '15m': ['60d'],
 };
