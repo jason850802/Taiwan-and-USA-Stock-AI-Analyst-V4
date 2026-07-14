@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-13 - Phase D 完成：七包全併 main＋共同驗收硬指標全過＋Sonnet 覆核 ACCEPT（0 CRITICAL/0 HIGH；WR-01 當場修 6aa5735），PHASE-D-REVIEW.md 落檔；另修 Vite watcher EBUSY 崩潰（f98aa56）
+Last activity: 2026-07-14 - BL-4a production 前測完成（before 基線：三硬指標改碼前已達標，全冷天花板 3.1s）＋BL-2 並行起跑落地（260714-nfn，2 commits，tsc 綠）；BL 冷載入收尾進行中（順序 BL-4a→2→1→3→4b）
 
 Progress: [██████████] 100%
 
@@ -130,6 +130,7 @@ Recent decisions affecting current work:
 | 260713-nvg | D-2 React error boundary（Phase D 5/7）：新增 components/ErrorBoundary.tsx（class component 合理例外——componentDidCatch 無 hooks 等價物），index.tsx StrictMode 內層包住 <App/>；fallback 全 inline style 深色滿版（不依賴 CSS 健在）：「頁面發生錯誤」＋error.message 摘要（stack 只進 console.error 防資訊揭露）＋「重新載入」鈕 location.reload()——恰為 D-1d lazy chunk 載入失敗的正確恢復動作；orchestrator dev 實測：Sidebar 手動 throw→fallback 完整呈現非白屏→移除 throw＋按鈕 reload→App 完整恢復（三圖＋行情），驗畢零殘碼 | 2026-07-13 | d06bcb2 | [260713-nvg-d-2-react-error-boundary-index-tsx-fallb](./quick/260713-nvg-d-2-react-error-boundary-index-tsx-fallb/) |
 | 260713-ob4 | D-3 最小單元測試（Phase D 6/7）：專案首建測試跑道 vitest ~3.2.7（吃現有 vite.config、tsconfig 零改動、顯式 import 不用 globals）＋`npm run test` 一鍵；utils/math.test.ts（235 行）＋utils/entryFilter.test.ts（111 行）共 32 案例全綠——誠實分層：解析層 28（手算可驗：KD 值域/常數序列/warm-up null/GO fixture 6/6 SOP 手算推導）vs 黃金值回歸鎖 4（LCG seed-42 快照鎖現行為）；非標準參數鎖法：MACD 10,20,10 用 warm-up 邊界 idx18/19+idx27/28＋預設參數等值斷言、KD period=5 用 idx0..3 恆 50＋等值斷言；紅線遵守：本體零改動，3 個疑似 bug 只記不修（RSI 常數序列 NaN→100、初始窗 diff>=0 判準不一致、KDJ 註解與實作參數不符）；orchestrator 補修 d5d8f57：vitest exclude .claude/**（殘留 worktree 複本曾致 32×2 重複計數） | 2026-07-13 | 6ed7713, d5d8f57 | [260713-ob4-d-3-utils-math-ts-macd-10-20-10-kd-5-3-e](./quick/260713-ob4-d-3-utils-math-ts-macd-10-20-10-kd-5-3-e/) |
 | 260713-oxf | D-4 ratelimit fail-open 查證（Phase D 7/7，不改碼）：`npx vercel env ls production` 實查——UPSTASH_REDIS_REST_URL＋TOKEN 皆存在（Encrypted，Preview＋Production，部署當天建立），ratelimit.ts:18 的 config 缺失 fail-open 不適用，production 限流（gemini 10/min＋100/day、market 60/min）啟用中；Phase 4 全套 env（PROXY_SHARED_SECRET/ALLOWED_ORIGIN/FINMIND_TOKEN 等）一併確認就位；殘餘風險記錄：憑證有效性未實測（:78 catch 失效仍靜默 fail-open）、429 突發實測屬使用者手動待辦既有項；純查證包由 orchestrator inline 執行（需本機 Vercel CLI 登入態） | 2026-07-13 | （docs-only） | [260713-oxf-d-4-ratelimit-fail-open-vercel-productio](./quick/260713-oxf-d-4-ratelimit-fail-open-vercel-productio/) |
+| 260714-nfn | BL-2 台股 1d 籌碼三件套與 chart 並行起跑（冷載入收尾 1/3）：fetchFinMindRows＋三支籌碼函式加選配 AbortSignal 透傳（既有呼叫端零改動）；fetchStockDataUncached 進場即投機起跑三件套（條件 interval==='1d' && /\.TWO?$/i.test(symbol)，名錄已預解析故台股身分先於 chart 確立），步驟 3 有 chipSpec 直接收割、無則照舊當場起跑（裸代碼/美股/週月線零行為差）；fallback（usedFallback）沿用投機結果不重抓；abort 語意升級——冷抓中切標的可中止已起跑的 FinMind 請求，:926 寫快取前守衛不動保證降級結果不落快取。BL-4a 實測依據：prod 串行鏈 chart ~0.4s＋間隙 0.2-0.6s＋三件套（全冷 1.5-2.4s／CDN 熱 ~0.1s）；並行後全冷估 3.1s→~1.9s。tsc 雙 commit 全綠 | 2026-07-14 | 2619d87, c098491 | [260714-nfn-bl-2-1d-chart](./quick/260714-nfn-bl-2-1d-chart/) |
 
 ## Deferred Items
 
