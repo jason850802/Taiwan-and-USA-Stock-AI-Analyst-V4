@@ -437,17 +437,28 @@ const App: React.FC = () => {
                         settings={indicatorSettings}
                         setSettings={setIndicatorSettings}
                       />
-                      <div className="relative">
+                      <div className="relative min-h-[420px]">
                         <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} onToggleSetting={(key: keyof IndicatorSettings) => {
                           if (key === 'maLines') return;
                           setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
                         }} />
-                        {/* 切週期時的區域載入覆蓋層：蓋住 K 線與其下所有副圖，不覆蓋 ChartToolbar
-                            （z-20 > StockChart 內縮放鈕 z-10）；資料就緒 loading 轉 false 即移除 */}
+                        {/* 切週期／換標的載入覆蓋層：不透明底遮住舊週期的圖（不再 blur 透出誤導），
+                            蓋住 K 線與其下所有副圖，不覆蓋 ChartToolbar（z-20 > StockChart 內縮放鈕 z-10）；
+                            快取命中切回 loading 不觸發 → 骨架屏自然不出現。資料就緒 loading 轉 false 即移除 */}
                         {loading && (
-                          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-slate-900/60 backdrop-blur-sm">
-                            <Loader2 className="animate-spin text-blue-400" size={32} />
-                            <span className="text-slate-300 text-sm">載入中…</span>
+                          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-surface">
+                            {/* K 線骨架：一排交錯高度的垂直棒，Tailwind 內建 animate-pulse＋每根 inline
+                                animationDelay 交錯，產生 shimmer 流動感（不新增 keyframes、不改 tailwind.config） */}
+                            <div className="flex items-end gap-1.5 h-32">
+                              {[55, 72, 40, 68, 48, 78, 44, 62, 52, 70].map((h, i) => (
+                                <div
+                                  key={i}
+                                  className="w-2.5 rounded-sm bg-slate-700 animate-pulse"
+                                  style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-slate-400 text-sm">載入 K 線中…</span>
                           </div>
                         )}
                       </div>
