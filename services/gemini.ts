@@ -48,6 +48,92 @@ const callGeminiApi = async (
   return data.text || fallbackText;
 };
 
+const callGeminiApiStream = async (
+  payload: GeminiApiPayload,
+  onChunk: (partial: string) => void,
+): Promise<string> => {
+  const cacheKey = buildCacheKey(payload.mode, taipeiTodayStr(), payload.systemInstruction, payload.prompt);
+  const cached = readCache(cacheKey);
+  if (cached) return cached;
+
+  const response = await fetch('/api/gemini-stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...proxyHeaders },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({})) as { message?: string };
+    throw new Error(data.message || '分析失敗，請稍後再試。');
+  }
+
+  if (!response.body) {
+    throw new Error('分析串流無法讀取，請稍後再試。');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let accumulated = '';
+  let doneText: string | undefined;
+  let streamErrorMessage = '';
+
+  const processLine = (line: string) => {
+    const raw = line.trim();
+    if (!raw) return;
+
+    let event: { t?: string; text?: unknown; message?: unknown };
+    try {
+      event = JSON.parse(raw);
+    } catch {
+      return;
+    }
+
+    if (event.t === 'delta' && typeof event.text === 'string') {
+      accumulated += event.text;
+      onChunk(accumulated);
+      return;
+    }
+
+    if (event.t === 'done' && typeof event.text === 'string') {
+      doneText = event.text;
+      return;
+    }
+
+    if (event.t === 'error' && typeof event.message === 'string') {
+      streamErrorMessage = event.message;
+    }
+  };
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      lines.forEach(processLine);
+    }
+  } catch (error) {
+    streamErrorMessage = error instanceof Error ? error.message : '';
+  }
+
+  buffer += decoder.decode();
+  if (buffer) processLine(buffer);
+
+  if (doneText !== undefined) {
+    writeCache(cacheKey, doneText);
+    return doneText;
+  }
+
+  if (accumulated) {
+    return `${accumulated}\n\n> ⚠️ 報告生成中斷——以上為部分內容，可按「AI 分析」重試。`;
+  }
+
+  throw new Error(streamErrorMessage || '分析串流中斷，請稍後再試。');
+};
+
 // 盤中量能預估資訊（供持股健檢 prompt 使用）
 interface VolumeProjectionInfo {
   currentVolume: number;
@@ -112,7 +198,8 @@ const ENTRY_SYSTEM_INSTRUCTION_FAST = `
 export const analyzeEntryWithGemini = async (
   result: EntryFilterResult,
   userPosition?: { hasHolding: boolean; costPrice?: number },
-  mode: 'fast' | 'thinking' = 'fast'
+  mode: 'fast' | 'thinking' = 'fast',
+  onChunk?: (partial: string) => void,
 ): Promise<string> => {
   const stepsText = result.steps
     .map(s => `步驟${s.id} ${s.name}：[${s.status === 'pass' ? '✅通過' : s.status === 'warn' ? '⚠️警示' : '❌不符'}] ${s.verdict}｜${s.details.join('；')}`)
@@ -144,13 +231,17 @@ ${sopText}
 - 停利規則：${result.takeProfitRule}
 `;
 
-  return callGeminiApi({
+  const payload: GeminiApiPayload = {
     prompt: promptData,
     systemInstruction: mode === 'fast' ? ENTRY_SYSTEM_INSTRUCTION_FAST : ENTRY_SYSTEM_INSTRUCTION_FULL,
     mode,
     temperature: 0.2,
     thinkingConfig: mode === 'fast' ? { thinkingLevel: 'MEDIUM' } : undefined,
-  });
+  };
+
+  return onChunk
+    ? callGeminiApiStream(payload, onChunk)
+    : callGeminiApi(payload);
 };
 
 const TRADE_DECISION_SYSTEM_INSTRUCTION = `

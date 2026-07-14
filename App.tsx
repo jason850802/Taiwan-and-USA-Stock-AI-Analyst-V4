@@ -191,7 +191,7 @@ const App: React.FC = () => {
       }, 100);
 
       // ── AI 解讀層（依濾網客觀結論寫報告，單次呼叫）──
-      const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode);
+      const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode, (partial) => setAnalysis(partial));
       setAnalysis(report);
     } catch (err: any) {
       setAnalysis(err.message || '分析失敗，請稍後再試。');
