@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-14 - BL-2/BL-1/BL-3 三改碼包全落地（260714-nfn/ns3/o6l，tsc 皆綠）；進統測（build＋金鑰 grep＋test＋preview 實跑）→ Sonnet 覆核 → BL-4b 後測
+Last activity: 2026-07-14 - BL 統測全綠（build＋dist 無 AIza＋vitest 32/32＋preview 實跑 9 情境）＋Sonnet 覆核 ACCEPT WITH FINDINGS→HIGH-1 當場修（4005108：兩段式 onRevalidated 閘門＋健檢買入日誠實化），BL-REVIEW.md 落檔；剩 BL-4b production 後測（需 push 部署）
 
 Progress: [██████████] 100%
 
