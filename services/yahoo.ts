@@ -732,7 +732,12 @@ const enrichChartData = (
 
 // 原 getStockData 函式體整段搬移（內容零改動，除：fetchRawData 透傳 signal、
 // 步驟 3 台股中文名併入 Promise.all 並行）。快取整合在下方 getStockData 外殼。
-const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '1d', signal?: AbortSignal): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
+const fetchStockDataUncached = async (
+    symbol: string,
+    interval: TimeInterval = '1d',
+    signal?: AbortSignal,
+    onPartial?: (r: { info: StockInfo; data: StockDataPoint[] }) => void,
+): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
 
   let mainInterval = interval as string;
   let mainRange = '5y';
@@ -770,24 +775,76 @@ const fetchStockDataUncached = async (symbol: string, interval: TimeInterval = '
       };
   }
 
+  // 兩段式旗標：2y partial 已上屏後，10y 補全失敗絕不回退 FinMind fallback（見下方 catch）。
+  let partialFired = false;
+
   // 1. Try Fetching Data (Primary: Yahoo, Fallback: FinMind)
   try {
-      // Attempt Yahoo First
-      const mainResponse = await fetchRawData(symbol, mainInterval, mainRange, signal);
-      const resultMeta = mainResponse.chart.result![0].meta;
-      isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+      // 兩段式（僅 1d 冷抓且呼叫端要 partial 時啟動）：t0 同發 2y+10y，
+      // 2y 先到即完整上屏（含籌碼副圖與指標），10y 到貨後用「同一批籌碼 ctx」重 enrich 無感交換。
+      if (interval === '1d' && onPartial) {
+          const p2y = fetchRawData(symbol, mainInterval, '2y', signal);
+          const p10y = fetchRawData(symbol, mainInterval, mainRange, signal); // mainRange='10y'
+          const t2y = p2y.then(r => ({ which: '2y' as const, res: r }), () => null); // 2y 失敗靜默等 10y
+          const t10y = p10y.then(r => ({ which: '10y' as const, res: r }));          // 10y 失敗走 catch
+          const first = await Promise.race([t10y, t2y]);
 
-      processedData = processYahooResult(mainResponse, mainInterval);
-      symbolInfo = {
-          symbol: resultMeta.symbol,
-          name: resultMeta.longName || resultMeta.shortName || resultMeta.symbol,
-          currency: resultMeta.currency,
-          exchangeTimezoneName: resultMeta.exchangeTimezoneName
-      };
+          if (first && first.which === '2y') {
+              // 2y 先到：解析 meta → 籌碼解析一次 → 完整 enrich → 發射 partial → 等 10y 用同一 ctx 重 enrich。
+              const meta2y = first.res.chart.result![0].meta;
+              isTaiwanStock = meta2y.symbol.endsWith('.TW') || meta2y.symbol.endsWith('.TWO');
+              symbolInfo = {
+                  symbol: meta2y.symbol,
+                  name: meta2y.longName || meta2y.shortName || meta2y.symbol,
+                  currency: meta2y.currency,
+                  exchangeTimezoneName: meta2y.exchangeTimezoneName
+              };
+              const processedData2y = processYahooResult(first.res, mainInterval);
+              const ctx = await resolveChipContext(chipSpec, symbolInfo, isTaiwanStock, usedFallback, interval, signal);
+              if (!signal?.aborted) {
+                  onPartial(enrichChartData(processedData2y, symbolInfo, interval, ctx));
+                  partialFired = true;
+              }
+              const fullRes = await p10y;
+              const processedData10y = processYahooResult(fullRes, mainInterval);
+              return enrichChartData(processedData10y, symbolInfo, interval, ctx); // 同一批 chipMap，不重抓
+          }
+
+          // 2y 失敗靜默（first===null）→ 等 p10y；10y 先到（CDN 熱）→ 用其結果。兩者收斂到單段尾流程。
+          const fullRes = (first && first.which === '10y') ? first.res : await p10y;
+          const resultMeta = fullRes.chart.result![0].meta;
+          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+          processedData = processYahooResult(fullRes, mainInterval);
+          symbolInfo = {
+              symbol: resultMeta.symbol,
+              name: resultMeta.longName || resultMeta.shortName || resultMeta.symbol,
+              currency: resultMeta.currency,
+              exchangeTimezoneName: resultMeta.exchangeTimezoneName
+          };
+      } else {
+          // 單段（原路徑不動）：非 1d／無 onPartial／forceRefresh／背景刷新皆走此。
+          const mainResponse = await fetchRawData(symbol, mainInterval, mainRange, signal);
+          const resultMeta = mainResponse.chart.result![0].meta;
+          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+
+          processedData = processYahooResult(mainResponse, mainInterval);
+          symbolInfo = {
+              symbol: resultMeta.symbol,
+              name: resultMeta.longName || resultMeta.shortName || resultMeta.symbol,
+              currency: resultMeta.currency,
+              exchangeTimezoneName: resultMeta.exchangeTimezoneName
+          };
+      }
   } catch (err: any) {
       // H-1：使用者主動取消（AbortError）直接上拋——不得觸發不可中止的 FinMind fallback
       // （fetchFinMindDailyData/fetchFinMindStockInfo 不吃 signal，429 限流是常態，白打放大風險）
       if (err?.name === 'AbortError') throw err;
+      // partial 已上屏：10y 補全失敗絕不進 FinMind fallback（保留 2y 視圖、不寫快取，由外殼 console.warn）
+      if (partialFired) {
+          const e = new Error(`10y completion failed: ${err.message}`) as any;
+          e.partialDelivered = true;
+          throw e;
+      }
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
       const cleanSymbol = symbol.toUpperCase().replace(/\.TWO?$/i, '');
       const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);
@@ -988,8 +1045,9 @@ export const getStockData = async (
       }
   }
 
-  // forceRefresh 且同 key 已有 inflight 刷新 → 直接 await 共用（避免重複網路請求）
-  if (opts?.forceRefresh) {
+  // 統一 inflight 檢查（forceRefresh 與「partial 上屏後切走再切回的 miss」共享同一補全，
+  // 防重複兩段式／重複網路請求）：同 key 已有補全在跑 → 直接 await 共用。
+  {
       const inflight = inflightRevalidate.get(key);
       if (inflight) {
           const shared = await inflight;
@@ -997,7 +1055,35 @@ export const getStockData = async (
       }
   }
 
-  // miss / forceRefresh：全新抓取
+  // miss 且 1d 冷抓（非 forceRefresh）：兩段式協調——2y partial 先 resolve、10y 補全走 onRevalidated。
+  if (!opts?.forceRefresh && interval === '1d') {
+      return await new Promise<StockDataResult>((resolve, reject) => {
+          let settled = false;
+          const completion = fetchStockDataUncached(canon, interval, opts?.signal, (partial) => {
+              // partial 上屏：立即 resolve，但不寫快取（快取只寫 full）
+              if (!settled && !opts?.signal?.aborted) { settled = true; resolve(cloneResult(partial)); }
+          })
+              .then((full) => {
+                  if (opts?.signal?.aborted) {
+                      if (!settled) { settled = true; reject(new DOMException('Aborted', 'AbortError')); }
+                      return null; // abort：不寫快取、不發 onRevalidated
+                  }
+                  writeQuoteCacheResult(key, interval, full);
+                  if (!settled) { settled = true; resolve(cloneResult(full)); }        // 10y 先到：一次到位
+                  else { opts?.onRevalidated?.(cloneResult(full)); }                   // partial 已上屏：走既有回呼換 full
+                  return full;
+              })
+              .catch((err) => {
+                  if (!settled) { settled = true; reject(err); return null; }          // 無 partial：錯誤照舊上拋
+                  if (err?.name !== 'AbortError') console.warn(`Full-range completion failed for ${key}:`, err); // 停留 2y 視圖，無錯誤 UI
+                  return null;
+              })
+              .finally(() => { inflightRevalidate.delete(key); });
+          inflightRevalidate.set(key, completion); // forceRefresh／切回的 miss 共享補全
+      });
+  }
+
+  // 其餘 interval 與 forceRefresh：維持現行單段（不傳 onPartial）
   const result = await fetchStockDataUncached(canon, interval, opts?.signal);
 
   // 寫快取前守衛（planner_rulings #4）：abort 打在 FinMind 階段會被內部 try/catch 吞成
