@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-14 - BL-4a 前測＋BL-2 並行起跑（260714-nfn）＋BL-1 兩段式載入（260714-ns3，3 commits，tsc 綠）皆落地；BL 冷載入收尾進行中（剩 BL-3→統測→Sonnet 覆核→BL-4b）
+Last activity: 2026-07-14 - BL-2/BL-1/BL-3 三改碼包全落地（260714-nfn/ns3/o6l，tsc 皆綠）；進統測（build＋金鑰 grep＋test＋preview 實跑）→ Sonnet 覆核 → BL-4b 後測
 
 Progress: [██████████] 100%
 
@@ -132,6 +132,7 @@ Recent decisions affecting current work:
 | 260713-oxf | D-4 ratelimit fail-open 查證（Phase D 7/7，不改碼）：`npx vercel env ls production` 實查——UPSTASH_REDIS_REST_URL＋TOKEN 皆存在（Encrypted，Preview＋Production，部署當天建立），ratelimit.ts:18 的 config 缺失 fail-open 不適用，production 限流（gemini 10/min＋100/day、market 60/min）啟用中；Phase 4 全套 env（PROXY_SHARED_SECRET/ALLOWED_ORIGIN/FINMIND_TOKEN 等）一併確認就位；殘餘風險記錄：憑證有效性未實測（:78 catch 失效仍靜默 fail-open）、429 突發實測屬使用者手動待辦既有項；純查證包由 orchestrator inline 執行（需本機 Vercel CLI 登入態） | 2026-07-13 | （docs-only） | [260713-oxf-d-4-ratelimit-fail-open-vercel-productio](./quick/260713-oxf-d-4-ratelimit-fail-open-vercel-productio/) |
 | 260714-nfn | BL-2 台股 1d 籌碼三件套與 chart 並行起跑（冷載入收尾 1/3）：fetchFinMindRows＋三支籌碼函式加選配 AbortSignal 透傳（既有呼叫端零改動）；fetchStockDataUncached 進場即投機起跑三件套（條件 interval==='1d' && /\.TWO?$/i.test(symbol)，名錄已預解析故台股身分先於 chart 確立），步驟 3 有 chipSpec 直接收割、無則照舊當場起跑（裸代碼/美股/週月線零行為差）；fallback（usedFallback）沿用投機結果不重抓；abort 語意升級——冷抓中切標的可中止已起跑的 FinMind 請求，:926 寫快取前守衛不動保證降級結果不落快取。BL-4a 實測依據：prod 串行鏈 chart ~0.4s＋間隙 0.2-0.6s＋三件套（全冷 1.5-2.4s／CDN 熱 ~0.1s）；並行後全冷估 3.1s→~1.9s。tsc 雙 commit 全綠 | 2026-07-14 | 2619d87, c098491 | [260714-nfn-bl-2-1d-chart](./quick/260714-nfn-bl-2-1d-chart/) |
 | 260714-ns3 | BL-1 1d 兩段式載入（冷載入收尾 2/3）：t0 同發 2y+10y 兩個 chart 請求（Promise.race 標記競速，2y 失敗靜默等 10y、10y 先到跳過 partial）——2y 先到即完整 enrich（含籌碼副圖與指標）發射 onPartial 上屏，10y 到貨用**同一批** ChipContext 重 enrich 無感交換（一次籌碼、兩次 chart，FinMind 流量不翻倍）；前置純重構抽 resolveChipContext＋enrichChartData（步驟 3/4/4.5/5 逐行搬移、info 打包改非 mutate、行為零變）；getStockData 外殼 miss 路徑改 Promise 協調（partial 立即 resolve 不寫快取、full 寫快取後依 settled 走 resolve/onRevalidated、abort 三態不中毒、補全註冊 inflightRevalidate 統一共享防切走切回重複兩段式）；catch 順序 AbortError→partialDelivered（絕不回退 FinMind fallback）→fallback；StockChart 視窗重置 dep 由 data.length 改 seriesKey identity（App 傳 `${info?.symbol ?? symbol}\|${interval}`），補全交換零跳動＋附帶修好 SWR 刷新重置縮放的舊毛病；forceRefresh／SWR 背景刷新／1wk／1mo／60m／15m／FinMind fallback 全維持單段。Deviations：(1) BL-PLAN 檔案清單漏列 api/_lib/yahoo.ts——INTERVAL_RANGE_MAP 1d 白名單補 '2y'（不加則 2y 被 400 擋、兩段式靜默退化）；(2) PLAN race 骨架「2y 先失敗→first=null→空指標」邊角由 executor 修正。tsc 三 commit 全綠 | 2026-07-14 | da5c890, 630b805, 2ff59dc | [260714-ns3-bl-1-1d-2y-10y](./quick/260714-ns3-bl-1-1d-2y-10y/) |
+| 260714-o6l | BL-3 1mo range 收斂＋載入骨架屏（冷載入收尾 3/3）：1mo 主圖 range max→15y（~180 根月棒，2330/AAPL 的 380-550 根 max payload 收斂；1wk 5y 不動）；後端 INTERVAL_RANGE_MAP 1mo 加 15y 並保留 max（部署過渡期 CDN 舊 bundle 不被 400——BL-PLAN 未列檔 drift 比照 BL-1 補上）；切週期/換標的載入覆蓋層由半透明 backdrop-blur（透出舊週期圖誤導）改不透明 bg-surface K 線骨架屏——10 根交錯高度垂直棒＋animate-pulse＋inline animationDelay shimmer＋「載入 K 線中…」，容器 min-h-[420px] 防首載塌陷；快取命中切回 loading 不觸發、骨架屏自然不出現；明確不做週月線兩段式（BL-4b 後測仍 >5s 才另立條目）。tsc 雙 commit 全綠 | 2026-07-14 | a589911, 03dac9e | [260714-o6l-bl-3-1mo-range-max-15y](./quick/260714-o6l-bl-3-1mo-range-max-15y/) |
 
 ## Deferred Items
 
