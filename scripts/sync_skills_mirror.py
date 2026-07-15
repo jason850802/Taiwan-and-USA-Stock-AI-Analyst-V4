@@ -2,7 +2,7 @@
 """同步朱家泓技能鏡像：.claude/skills（唯一事實來源）→ .agents/skills（Codex 讀取）。
 
 用法：
-  python scripts/sync_skills_mirror.py          # 同步（先清後拷，僅白名單）＋驗證
+  python scripts/sync_skills_mirror.py          # 同步（原地覆寫，僅白名單，無變更零寫入）＋驗證
   python scripts/sync_skills_mirror.py --check  # 只驗證不複製（給 CI 或覆核用）
 
 任何不一致以非零 exit code 失敗並列出檔名。
@@ -41,10 +41,36 @@ def iter_files(base: Path):
 
 
 def sync_dir(name: str) -> None:
+    """原地覆寫鏡像（不對整個 dst rmtree 後 copytree 重建同路徑）。
+
+    Windows 上「rmtree 整目錄→立刻 copytree 重建同一路徑」會撞上「已標記刪除
+    但尚未消失的目錄」→間歇 WinError 5 存取被拒。改逐檔比對只寫有差異的檔、
+    清來源已無的殘檔、移除 EXCLUDE_DIRS 與清空後的空目錄，從原理消除競態。
+    """
     src, dst = SRC_BASE / name, DST_BASE / name
-    if dst.exists():
-        shutil.rmtree(dst)
-    shutil.copytree(src, dst, ignore=shutil.ignore_patterns(*EXCLUDE_DIRS))
+    dst.mkdir(parents=True, exist_ok=True)
+
+    src_files = set(iter_files(src))
+
+    # 逐檔覆寫：內容相同不寫（無變更零寫入）
+    for rel in sorted(src_files):
+        s, d = src / rel, dst / rel
+        if not d.is_file() or s.read_bytes() != d.read_bytes():
+            d.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(s, d)
+
+    # 清殘檔：鏡像多出（髒狀態多塞／來源已刪）的檔
+    for rel in set(iter_files(dst)) - src_files:
+        (dst / rel).unlink()
+
+    # 清 EXCLUDE_DIRS 與空目錄以維持與舊 rmtree 等效（由深到淺走訪）
+    for p in sorted(dst.rglob("*"), key=lambda q: len(q.parts), reverse=True):
+        if not p.is_dir():
+            continue
+        if p.name in EXCLUDE_DIRS:
+            shutil.rmtree(p, ignore_errors=True)
+        elif not any(p.iterdir()):
+            p.rmdir()
 
 
 def compare_dir(name: str) -> list[str]:
