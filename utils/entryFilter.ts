@@ -305,7 +305,7 @@ export function runEntryFilter(
   // ---------- 選股SOP 6 必要條件 ----------
   const sop: SopCheck[] = [
     { label: '①趨勢：日線頭頭高底底高', ok: dayTrend.trend === '多頭' },
-    { label: '②均線：MA10/MA20多排向上', ok: align3Long && maUp },
+    { label: '②均線：MA5/MA10/MA20三線多排向上', ok: align3Long && maUp },
     { label: '③位置：收盤站上MA10、MA20', ok: aboveMa20 && (last.ma10 !== undefined && close > last.ma10) },
     { label: '④量：攻擊量(>昨1.3倍或>5日均量1.2倍)', ok: isAttackVol },
     { label: '⑤進場K線：價漲>2%突破5均過昨高', ok: chgPct > 2 && isRedK && overMa5 && overPrevHigh },
