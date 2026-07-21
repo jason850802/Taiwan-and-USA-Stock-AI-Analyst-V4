@@ -111,6 +111,43 @@ export interface PortfolioItem {
   purchaseCurrency?: 'TWD' | 'USD'; // 購入幣別（undefined = TWD 向下相容）
   totalCostUSD?: number;            // 總成本 USD（美股以USD購入時，固定值）
   isUsEtf?: boolean;                // true = 美股ETF（$3固定費）；false = 個股（0.008%）
+  // ── 歷史損益（Phase 10）────────────────────────────────
+  buyDate?: string;                 // 'YYYY-MM-DD'（本地日期）。undefined＝舊資料/未填→回推排除該批
+}
+
+// ── 庫存歷史損益：已實現帳本（Phase 10）─────────────────────
+export interface RealizedTrade {
+  id: string;              // `${Date.now().toString(36)}-${隨機4碼}`（同日多筆不撞）
+  lotId: string;           // 來源批次 id（批次刪除後帳仍留存，僅供追溯）
+  symbol: string;
+  market: 'TW' | 'US';
+  sellDate: string;        // 'YYYY-MM-DD' 使用者輸入（可回填歷史日期）
+  sharesSold: number;
+  sellPrice: number;       // 成交單價（市場幣別：TW=TWD、US=USD）
+  grossProceeds: number;   // sellPrice × sharesSold（US 入帳 round2）
+  sellFee: number;         // TW: max(1,floor(v×0.001425))；US: calcUsFee 後 round2
+  sellTax: number;         // TW: floor(v×taxRate)；US: 0
+  costBasis: number;       // 等比成本基礎（市場幣別；乘先除後）
+  realizedPnl: number;     // grossProceeds − sellFee − sellTax − costBasis
+  divCarried: number;      // 隨賣出移轉到已實現側的現金股利（等比；市場幣別）
+  currency: 'TWD' | 'USD'; // 冗餘＝market 幣別，防未來改市場判定規則時帳本失義
+  usdTwdRateUsed?: number; // 僅美股 TWD 計價批次賣出時記錄（審計用）
+  createdAt: number;
+}
+
+// ── 庫存歷史損益：每日快照（Phase 10）───────────────────────
+// 存「可加成的分解量」不存算好的損益——含息/不含息在渲染期組合（CONTEXT D-05）。
+export interface DailyPnlSnapshot {
+  date: string;            // 該市場交易日（＝最後一根有效 close 的交易所當地日期）
+  market: 'TW' | 'US';
+  source: 'live' | 'backfill';
+  marketValue: number;     // Σ lot(close × shares)；TW=TWD、US=USD
+  totalCost: number;       // Σ 持有批次成本（含買費）；US 為 USD（TWD 計價批次以當時匯率換算）
+  estSellCosts: number;    // Σ per-lot 預估賣出費稅（per-lot floor，對齊 StatCards）
+  cashDividends: number;   // 快照時點持有批次現金股利累計（US 已換 USD）
+  usdTwdRate?: number;     // 有做任何 TWD→USD 換算時必填（審計用）
+  symbolCount: number;     // 當日檔數（組成變動偵測／除錯）
+  capturedAt: number;      // 寫入時刻 Date.now()
 }
 
 export interface MALineConfig {
