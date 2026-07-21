@@ -44,6 +44,6 @@
 4. 回推曲線語意＝「以今日帳務結構套當日價格」（§3.4 逆推只能還原賣出，還原不了股利入帳時點/手改成本時點）。
 5. 無 buyDate 的 lot 排除於回推（UI 明示），排除造成回推/live 邊界跳階——誠實呈現不平滑。
 
-## 與 Phase 09 的關係
+## 與 Phase 09 的關係（已解除）
 
-Phase 09（gsd/phase-llm-latency，已部分執行未合併）動 App.tsx:163-201＋services/gemini.ts＋api/**。本案 App.tsx 只准動 :71-117 鄰域（庫存 state/handler），與 09 區塊不重疊但 import 區可能小撞。**建議：Phase 09 先合併 main，本分支 rebase 後再進覆核**；若順序相反，合併時 import 區手解即可。
+Phase 09 已於 2026-07-21 合併回 main（merge commit b9a7ccd），執行分支 gsd/phase-portfolio-history 已重指合併後 main。合併後 App.tsx 的進場分析串流區為 :163-204（handleOpenAnalysisModal＋handleRunAnalysis）＝本案禁區；庫存 state/handler 區 :71-117 未受 09 影響。Phase 09 未動 Portfolio.tsx／services/yahoo.ts／types.ts，本計畫其餘行號快照全部有效（PLAN 行號基準：main @ b9a7ccd）。

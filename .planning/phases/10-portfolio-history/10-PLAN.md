@@ -19,7 +19,7 @@ files_modified:
   - App.tsx                                    # 只准庫存區（:71-117 鄰域）：realizedTrades state＋handlePortfolioSell＋handlePortfolioUpdateMeta
 must_haves:
   - GEMINI_API_KEY 不進前端 bundle：npm run build 後 `grep -r "AIza" dist/` 必須無結果
-  - services/gemini.ts、services/finmind.ts、api/**：git diff 必須為 0；App.tsx:163-201（Phase 09 串流區）零接觸
+  - services/gemini.ts、services/finmind.ts、api/**：git diff 必須為 0；App.tsx:163-204（進場分析串流區）零接觸
   - 既有表格/StatCards 損益數字行為零變化（T1 純搬移）；npm run test 既有 32 案例全綠
   - 快照公式與 StatCards 同語意：per-lot floor 費稅、totalCost 含買費、股利分開存不混進未實現
   - 新程式禁用 toISOString()；日期一律本地 getter＋padStart 或 formatExchangeDate；日期比較用 'YYYY-MM-DD' 字串比較
@@ -43,7 +43,7 @@ must_haves:
 3. `.env` 不碰；不動任何 api/**、services/gemini.ts。
 4. 每任務收尾 `npx.cmd tsc --noEmit` 0 錯誤才 commit；一任務一 commit；T1 起每任務 `npm run test` 全綠。
 5. git 大動作前確認無殘留 node 子程序（`tasklist //FI "IMAGENAME eq node.exe"`）。
-6. 下列行號為 2026-07-21 快照（branch base: main @ de87543 之後）——**動手前開檔確認，對不上就先停下回報，不要猜**。
+6. 下列行號為 2026-07-21 快照（Phase 09 合併後之 main @ b9a7ccd）——**動手前開檔確認，對不上就先停下回報，不要猜**。
 7. 新寫的日期程式碼 grep 自檢：`toISOString` 在本 phase 新增/修改的行中必須 0 命中（Portfolio.tsx:895 是既有債，不碰不修）。
 
 ### 既有程式碼事實（行號快照，動手前開檔確認）
@@ -57,7 +57,7 @@ must_haves:
   - `:160-405` `TwGroupTable`（表頭 per-lot 費稅 `:181-186`；symbol 列 pnl `:242-244`；lot 明細列 `:315-317` 一帶）
   - `:407-700` `UsGroupTable`（`toDisplay` `:426`；`itemCostInDisplay` `:429-435` 用當前匯率；美股股利 TWD 計價註記 `:448-449`；pnl `:526-528`）
   - `:706` 主元件起點；`:711` `includeDividend`；`:740-741` AI 用 `form.buyDate`（datetime-local，**不動**）；`:747-762` `fetchPrice`／`fetchExchangeRate`（`USDTWD=X`，fallback 32）；`:764-773` `fetchAllPrices`＋symbol 清單變動 effect；`:846-887` `handleAdd`（totalCost=base+buyFee）；`:1019-1028` 健檢 3-worker 游標池（回推併發照抄此 pattern）；`:1092-1127` 全局 aggregate；`:1164-1182` StatCards；`:1199`／`:1207` 兩張表；`:1216-1469` 新增 Modal
-- `App.tsx:71-82` portfolio_items 讀寫鏡射（lazy useState initializer＋useEffect）；`:84-117` CRUD handlers（handlePortfolioAdd/Delete/Update）；**`:163-201` Phase 09 串流區＝禁區，diff 必須為 0**
+- `App.tsx:71-82` portfolio_items 讀寫鏡射（lazy useState initializer＋useEffect）；`:84-117` CRUD handlers（handlePortfolioAdd/Delete/Update）；**`:163-204` 進場分析串流區（handleOpenAnalysisModal＋handleRunAnalysis，Phase 09 產物）＝禁區，diff 必須為 0**（已對合併後 main 實讀驗證）
 - `services/yahoo.ts:48` `formatExchangeDate`；`:286` `fetchRawData`；`:454-471` `getLatestPrice`（fetchRawData '1d','5d' 取最後有效 close，現只回 {price, name}；result 內有 `timestamp[]` 與 `meta.exchangeTimezoneName` 可用）
 - `components/fundamentals/MonthlyRevenueChart.tsx`：圖表範本（ui/Card 包裹、ResponsiveContainer h-72、grid `#334155`、軸 `#94a3b8` fontSize 11、自訂 Tooltip bg-slate-900、`isAnimationActive={false}`、紅漲 `#f0405a` 綠跌 `#22c55e`）
 - localStorage 既有 keys：`portfolio_items`、`tw_stock_directory_v1`(+`_ts_v1`)；sessionStorage 為行情快取（勿混用）
@@ -65,7 +65,7 @@ must_haves:
 ### 雷區（用 diff 形狀定義，改完 git diff 自檢，出現不允許的形狀即回退）
 1. **T1 的 Portfolio.tsx**：只准兩類 diff——「刪除本地函式定義（isTwStock/getTwStockType/getTaxRate/calcTwBuyFee/calcTwSellFeeAndTax/calcUsFee）」與「新增 import 行」。出現任何邏輯改寫行即回退。
 2. **services/yahoo.ts**：只准 `getLatestPrice` 函式體內新增取日期邏輯與回傳物件加 `date` 欄位；其他任何函式 diff=0。既有兩個呼叫端不改也能跑（解構容忍新欄位）。
-3. **App.tsx**：只准 (a) `:71-117` 鄰域新增 state/handler、(b) 對 `<Portfolio …>` 傳 props 的行、(c) import 行。`:163-201` diff=0。
+3. **App.tsx**：只准 (a) `:71-117` 鄰域新增 state/handler、(b) 對 `<Portfolio …>` 傳 props 的行、(c) import 行。`:163-204` diff=0。
 4. **utils/math.ts、utils/entryFilter.ts、StockChart.tsx**：diff=0（改前先跑 `npm run test` 確認基線 32 案例綠）。
 
 ---
@@ -264,7 +264,7 @@ S6 全部：PnlHistoryChart.tsx(新)、PnlHistorySection.tsx(新)（含回推按
 <review_checklist>
 覆核模型逐條執行，每條 PASS/FAIL＋證據（指令輸出或檔案:行號）。必修項退 Codex 附行號；同一問題最多退 2 輪，第 3 輪升級回報使用者。
 
-1. 範圍紀律：`git diff main --stat` 檔案清單 ⊆ frontmatter files_modified；`git diff main -- App.tsx` 變更行不落在 163-201；`git diff main -- services/gemini.ts services/finmind.ts api/ package.json package-lock.json` 為空。
+1. 範圍紀律：`git diff main --stat` 檔案清單 ⊆ frontmatter files_modified；`git diff main -- App.tsx` 變更行不落在 163-204；`git diff main -- services/gemini.ts services/finmind.ts api/ package.json package-lock.json` 為空。
 2. 雷區形狀：T1 的 Portfolio.tsx diff 只有刪函式＋import；services/yahoo.ts diff 只在 getLatestPrice 函式體。
 3. 手算案例獨立重算：不看實作，沿 utils 純函式碼徒手重算 Case 1/1b/2/3/3b/4/5，與測試斷言逐一對照（floor/max(1,·)/乘先除後/round2 順序重點檢查）。
 4. 快照↔StatCards 一致性：computeLiveSnapshot 組合結果 vs Portfolio.tsx 全局 aggregate（:1096-1127 現後行號）逐項對照：per-lot floor、totalCost 含買費、含息語意、美股換匯路徑；確認**沒有**順手統一 symbol 列的既有 1 元差。
@@ -284,4 +284,4 @@ S6 全部：PnlHistoryChart.tsx(新)、PnlHistorySection.tsx(新)（含回推按
 2. 全賣 lot 不參與回推重算（D-12）；v2 選項＝全賣時在 trade 內留 lot 快照。
 3. 盤中快照非收盤價；live 世代缺日不回填（稀疏連線）。
 4. 回推曲線＝「今日帳務結構套當日價格」；台股 split 極罕見但 FinMind fallback 為原始價（D-14 記載）。
-5. Phase 09 未合併：本分支自 main 切出，App.tsx import 區與 09 可能小撞；建議 09 先合併、本分支 rebase 再進覆核（CONTEXT 末節）。
+5. （已解除，2026-07-21）Phase 09 已合併 main（b9a7ccd），本分支重指合併後 main；App.tsx 禁區 :163-204 與庫存區 :71-117 均已對合併後程式碼實讀驗證，Phase 09 未動 Portfolio.tsx／services/yahoo.ts／types.ts。
