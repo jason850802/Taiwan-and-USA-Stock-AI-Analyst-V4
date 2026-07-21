@@ -10,7 +10,7 @@ interface AnalysisResultProps {
 }
 
 const AnalysisResult: React.FC<AnalysisResultProps> = ({ content, loading, title = 'AI 技術分析報告' }) => {
-  if (loading) {
+  if (loading && !content) {
     return (
       <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 min-h-[300px]">
         <Skeleton variant="lines" lines={6} />

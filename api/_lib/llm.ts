@@ -11,6 +11,8 @@ import {
 } from './http.js';
 
 const CLAUDE_CLI_TIMEOUT_MS = 100_000;
+const CLAUDE_CLI_STREAM_TIMEOUT_MS = 180_000;
+const CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS = 45_000;
 
 /**
  * LLM provider adapter：依 LLM_PROVIDER 環境變數分流。
@@ -30,6 +32,27 @@ export async function generateText(req: GeminiRequest): Promise<{ text: string }
     // 未來擴充點（僅註記，不實作）：
     // case 'codex-cli':   // OpenAI Codex CLI 橋接
     // case 'gemini-cli':  // Google Gemini CLI 橋接
+    default:
+      throw new ClassifiedError(
+        'MISSING_KEY',
+        'LLM_PROVIDER 設定值無效（支援 gemini-api、claude-cli），請修正環境變數。',
+      );
+  }
+}
+
+export async function generateTextStream(
+  req: GeminiRequest,
+  onDelta: (text: string) => void,
+  cancelRef: { cancel?: () => void },
+): Promise<{ text: string }> {
+  const provider = (process.env.LLM_PROVIDER ?? '').trim();
+
+  switch (provider) {
+    case '':
+    case 'gemini-api':
+      return callGeminiApiProvider(req);
+    case 'claude-cli':
+      return callClaudeCliStream(req, onDelta, cancelRef);
     default:
       throw new ClassifiedError(
         'MISSING_KEY',
@@ -149,6 +172,14 @@ function getClaudeCliModel(mode: GeminiRequest['mode']): string {
   return (process.env.CLAUDE_CLI_MODEL_FAST ?? '').trim() || 'sonnet';
 }
 
+/** 模式對應 CLI effort；env 可覆寫 */
+function getClaudeCliEffort(mode: GeminiRequest['mode']): string {
+  if (mode === 'thinking') {
+    return (process.env.CLAUDE_CLI_EFFORT_THINKING ?? '').trim() || 'max';
+  }
+  return (process.env.CLAUDE_CLI_EFFORT_FAST ?? '').trim() || 'medium';
+}
+
 /**
  * 建立子程序環境：process.env 淺拷貝後剔除宿主 Claude Code 會話變數，
  * 避免從 Claude Code 會話啟動的 vercel dev 讓子 CLI 繼承宿主閘道／遞迴旗標。
@@ -179,6 +210,7 @@ function buildChildEnv(): NodeJS.ProcessEnv {
 function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
   const exePath = findClaudeExecutable();
   const model = getClaudeCliModel(req.mode);
+  const effort = getClaudeCliEffort(req.mode);
 
   const args = [
     '-p',
@@ -187,6 +219,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
     '--no-session-persistence',
     '--disable-slash-commands',
     '--model', model,
+    '--effort', effort,
     '--system-prompt', req.systemInstruction,
   ];
 
@@ -297,6 +330,192 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
         }
 
         resolve({ text: String(json.result ?? '') });
+      });
+    });
+  });
+}
+
+function callClaudeCliStream(
+  req: GeminiRequest,
+  onDelta: (text: string) => void,
+  cancelRef: { cancel?: () => void },
+): Promise<{ text: string }> {
+  const exePath = findClaudeExecutable();
+  const model = getClaudeCliModel(req.mode);
+  const effort = getClaudeCliEffort(req.mode);
+
+  const args = [
+    '-p',
+    '--output-format', 'stream-json',
+    '--include-partial-messages',
+    '--verbose',
+    '--tools', '',
+    '--no-session-persistence',
+    '--disable-slash-commands',
+    '--model', model,
+    '--effort', effort,
+    '--system-prompt', req.systemInstruction,
+  ];
+
+  return new Promise<{ text: string }>((resolve, reject) => {
+    let settled = false;
+    let stdoutBuffer = '';
+    let streamedText = '';
+    let stderr = '';
+    let resultEvent: {
+      type?: string;
+      subtype?: string;
+      is_error?: boolean;
+      result?: unknown;
+    } | null = null;
+
+    // Windows 對部分 spawn 失敗（如非 PE 執行檔 → ERROR_BAD_EXE_FORMAT）是同步 throw 而非 'error' 事件，
+    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(exePath, args, {
+        cwd: os.tmpdir(), // 避免載入專案 hooks/CLAUDE.md/skills
+        env: buildChildEnv(),
+        windowsHide: true,
+      });
+    } catch (err) {
+      cachedClaudeCliPath = null; // 探索快取可能已 stale——下一次請求重新探索
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        `無法啟動 claude CLI：${truncateForMessage(sanitizeErrorForLog(err))}`,
+      ));
+      return;
+    }
+
+    // spawn 失敗時三條 stdio pipe 可能各自 emit 'error'；空監聽避免未捕捉例外打死 vercel dev。
+    child.stdin.on('error', () => {});
+    child.stdout.on('error', () => {});
+    child.stderr.on('error', () => {});
+
+    const totalTimeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(firstChunkTimeoutId);
+      child.kill();
+      reject(new ClassifiedError('UPSTREAM_ERROR'));
+    }, CLAUDE_CLI_STREAM_TIMEOUT_MS);
+
+    const firstChunkTimeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(totalTimeoutId);
+      child.kill();
+      reject(new ClassifiedError('UPSTREAM_ERROR'));
+    }, CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS);
+
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(totalTimeoutId);
+      clearTimeout(firstChunkTimeoutId);
+      fn();
+    };
+
+    cancelRef.cancel = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(totalTimeoutId);
+      clearTimeout(firstChunkTimeoutId);
+      child.kill();
+    };
+
+    const parseLine = (line: string) => {
+      const raw = line.trim();
+      if (!raw) return;
+
+      let event: {
+        type?: string;
+        subtype?: string;
+        is_error?: boolean;
+        result?: unknown;
+        event?: {
+          type?: string;
+          delta?: { text?: unknown };
+        };
+      };
+      try {
+        event = JSON.parse(raw);
+      } catch {
+        return;
+      }
+
+      if (
+        event.type === 'stream_event'
+        && event.event?.type === 'content_block_delta'
+        && typeof event.event.delta?.text === 'string'
+      ) {
+        clearTimeout(firstChunkTimeoutId);
+        streamedText += event.event.delta.text;
+        onDelta(event.event.delta.text);
+        return;
+      }
+
+      if (event.type === 'result') {
+        clearTimeout(firstChunkTimeoutId);
+        resultEvent = event;
+      }
+    };
+
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => {
+      stdoutBuffer += chunk;
+      const lines = stdoutBuffer.split('\n');
+      stdoutBuffer = lines.pop() ?? '';
+      lines.forEach(parseLine);
+    });
+    child.stderr.on('data', (chunk: string) => { stderr += chunk; });
+
+    child.on('error', (err) => {
+      cachedClaudeCliPath = null;
+      settle(() => {
+        reject(new ClassifiedError(
+          'UPSTREAM_ERROR',
+          `無法啟動 claude CLI：${truncateForMessage(sanitizeErrorForLog(err))}`,
+        ));
+      });
+    });
+
+    // prompt 走 stdin，spawn 後立即寫入；失敗由 child 'error'/'close' 統一收斂。
+    try {
+      child.stdin.write(req.prompt);
+      child.stdin.end();
+    } catch { /* 由 child 'error'/'close' 事件收斂結果 */ }
+
+    child.on('close', () => {
+      if (stdoutBuffer) parseLine(stdoutBuffer);
+
+      settle(() => {
+        if (!resultEvent) {
+          reject(new ClassifiedError(
+            'UPSTREAM_ERROR',
+            `claude CLI 串流無 result：${truncateForMessage(sanitizeErrorForLog(stderr || streamedText || '(stderr 空)'))}`,
+          ));
+          return;
+        }
+
+        if (resultEvent.is_error === true) {
+          const resultText = String(resultEvent.result ?? '');
+          if (resultText.includes('Not logged in')) {
+            reject(new ClassifiedError(
+              'MISSING_KEY',
+              '本機 Claude CLI 未登入：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
+            ));
+            return;
+          }
+          reject(new ClassifiedError(
+            'UPSTREAM_ERROR',
+            `claude CLI 回報錯誤：${truncateForMessage(sanitizeErrorForLog(resultText))}`,
+          ));
+          return;
+        }
+
+        resolve({ text: String(resultEvent.result ?? '') });
       });
     });
   });
