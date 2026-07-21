@@ -17,6 +17,7 @@ import Modal from './ui/Modal';
 import Skeleton from './ui/Skeleton';
 import SellModal from './portfolio/SellModal';
 import RealizedLedger from './portfolio/RealizedLedger';
+import PnlHistorySection from './portfolio/PnlHistorySection';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -1225,6 +1226,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           </Button>
         </div>
       )}
+
+      {/* ── 歷史損益折線圖（Phase 10）────────────────────────────────────── */}
+      <PnlHistorySection items={items} realizedTrades={realizedTrades}
+        includeDividend={includeDividend} usdTwdRate={usdTwdRate} historyTick={historyTick} />
 
       {/* ── 台股 ────────────────────────────────────────────────────────── */}
       {twItems.length > 0 && (
