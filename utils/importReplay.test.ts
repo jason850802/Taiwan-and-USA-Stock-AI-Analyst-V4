@@ -116,7 +116,7 @@ describe('Case D/E/G｜美股（USD 計價、費用取帳單實數）', () => {
     expect(r.newTrades[0].realizedPnl).toBeCloseTo(56.33, 2);
   });
 
-  it('Case G 碎股 MU 2.3209 股 → 已實現 +90.77 USD', () => {
+  it('Case G 碎股 MU 2.3209 股（無其他費用）→ 已實現 +90.77 USD', () => {
     const r = replayStatement({
       txns: [
         us({ symbol: 'MU', kind: 'buy', date: '2026-05-26', shares: 2.3209, price: 861.7368, gross: 2000, fee: 1.6 }),
@@ -126,6 +126,19 @@ describe('Case D/E/G｜美股（USD 計價、費用取帳單實數）', () => {
     });
     expect(r.newTrades[0].realizedPnl).toBeCloseTo(90.77, 2);
     expect(r.lots).toHaveLength(0);
+  });
+
+  it('Case G 真檔版：帳單「其他費用」0.05（SEC/TAF）必須扣除 → +90.72 USD', () => {
+    // T6 真檔端到端發現：規劃期 Case G 手算漏計此欄，實作正確扣除，於此鎖住行為
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'MU', kind: 'buy', date: '2026-05-26', shares: 2.3209, price: 861.7368, gross: 2000, fee: 1.6 }),
+        us({ symbol: 'MU', kind: 'sell', date: '2026-05-27', shares: 2.3209, price: 902.2611, gross: 2094.05, fee: 1.68, tax: 0.05 }),
+      ],
+      existingLots: [], now: T,
+    });
+    expect(r.newTrades[0].sellTax).toBeCloseTo(0.05, 2);
+    expect(r.newTrades[0].realizedPnl).toBeCloseTo(90.72, 2);
   });
 });
 
