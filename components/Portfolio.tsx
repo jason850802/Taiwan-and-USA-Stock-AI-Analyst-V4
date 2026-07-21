@@ -8,13 +8,15 @@ import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../util
 import { SellInput } from '../utils/portfolioLedger';
 import { computeLiveSnapshot, upsertSnapshots } from '../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../utils/portfolioHistoryStore';
-import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
+import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Banknote } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
 import MarkdownReport from './ui/MarkdownReport';
 import Modal from './ui/Modal';
 import Skeleton from './ui/Skeleton';
+import SellModal from './portfolio/SellModal';
+import RealizedLedger from './portfolio/RealizedLedger';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -68,6 +70,20 @@ const EditableCell: React.FC<{
     />
   );
 };
+
+// ── 買進日期儲存格（Phase 10：回推歷史用；未填以琥珀色框提示）──────────────
+const EditableDateCell: React.FC<{
+  value?: string;
+  onSave: (v: string) => void;
+}> = ({ value, onSave }) => (
+  <input type="date" value={value ?? ''}
+    onChange={e => { if (e.target.value) onSave(e.target.value); }}
+    title="買進日期（歷史損益回推用；未填的批次不參與回推）"
+    className={`mt-1 bg-surface-inset border rounded-ctl px-1.5 py-0.5 text-[11px] font-mono
+      ${value ? 'border-surface-line text-slate-400' : 'border-amber-500/60 text-amber-300'}
+      hover:border-slate-500 focus:outline-none focus:ring-1 focus:ring-accent cursor-text transition-colors`}
+  />
+);
 
 // ── 損益儲存格 ─────────────────────────────────────────────────────────────
 const PnLCell: React.FC<{
@@ -124,10 +140,13 @@ interface TwGroupTableProps extends HealthCheckProps {
   setDeleteConfirm: (id: string | null) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, field: keyof Omit<PortfolioItem, 'id'>, value: number) => void;
+  onUpdateMeta: (id: string, patch: { buyDate?: string }) => void;
+  onSellClick: (item: PortfolioItem) => void;
 }
 
 const TwGroupTable: React.FC<TwGroupTableProps> = ({
   items, prices, includeDividend, deleteConfirm, setDeleteConfirm, onDelete, onUpdate,
+  onUpdateMeta, onSellClick,
   healthResults, onHealthCheck, onShowDetail,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -291,6 +310,7 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                     <td className="p-3">
                       <p className="font-bold text-white">{item.symbol}</p>
                       {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
+                      <EditableDateCell value={item.buyDate} onSave={v => onUpdateMeta(item.id, { buyDate: v })} />
                     </td>
                     <td className="p-3 text-right font-mono tabular-nums">
                       <EditableCell value={item.avgCostPrice} digits={2}
@@ -339,10 +359,16 @@ const TwGroupTable: React.FC<TwGroupTableProps> = ({
                             className="text-xs bg-slate-700 text-slate-400 px-2 py-1 rounded-lg hover:bg-slate-600 transition-colors">取消</button>
                         </div>
                       ) : (
-                        <button onClick={() => setDeleteConfirm(item.id)}
-                          className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center ml-auto">
-                          <Trash2 size={15} />
-                        </button>
+                        <div className="flex gap-1 justify-end">
+                          <button onClick={() => onSellClick(item)} title="賣出（記入已實現帳本）"
+                            className="text-slate-500 hover:text-up transition-colors p-1.5 rounded-ctl hover:bg-surface-inset flex items-center justify-center">
+                            <Banknote size={15} />
+                          </button>
+                          <button onClick={() => setDeleteConfirm(item.id)}
+                            className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -371,11 +397,14 @@ interface UsGroupTableProps extends HealthCheckProps {
   setDeleteConfirm: (id: string | null) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, field: keyof Omit<PortfolioItem, 'id'>, value: number) => void;
+  onUpdateMeta: (id: string, patch: { buyDate?: string }) => void;
+  onSellClick: (item: PortfolioItem) => void;
 }
 
 const UsGroupTable: React.FC<UsGroupTableProps> = ({
   items, prices, includeDividend, displayCurrency, onToggleCurrency, usdTwdRate,
   deleteConfirm, setDeleteConfirm, onDelete, onUpdate,
+  onUpdateMeta, onSellClick,
   healthResults, onHealthCheck, onShowDetail,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -590,6 +619,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                           <span className="ml-1.5 text-slate-500">買入:{item.purchaseCurrency}</span>
                         )}
                       </p>
+                      <EditableDateCell value={item.buyDate} onSave={v => onUpdateMeta(item.id, { buyDate: v })} />
                     </td>
                     <td className="p-3 text-right text-slate-200 text-sm font-mono tabular-nums">
                       {dc === 'USD' ? fmtUsd(dispAvgCost) : dispAvgCost.toFixed(2)}
@@ -651,10 +681,16 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
                             className="text-xs bg-slate-700 text-slate-400 px-2 py-1 rounded-lg hover:bg-slate-600 transition-colors">取消</button>
                         </div>
                       ) : (
-                        <button onClick={() => setDeleteConfirm(item.id)}
-                          className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center ml-auto">
-                          <Trash2 size={15} />
-                        </button>
+                        <div className="flex gap-1 justify-end">
+                          <button onClick={() => onSellClick(item)} title="賣出（記入已實現帳本）"
+                            className="text-slate-500 hover:text-up transition-colors p-1.5 rounded-ctl hover:bg-surface-inset flex items-center justify-center">
+                            <Banknote size={15} />
+                          </button>
+                          <button onClick={() => setDeleteConfirm(item.id)}
+                            className="text-slate-500 hover:text-danger transition-colors p-1.5 rounded-ctl hover:bg-danger-muted flex items-center justify-center">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -678,6 +714,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const [usdTwdRate,      setUsdTwdRate]      = useState<number>(0);
   const [showAddModal,    setShowAddModal]    = useState(false);
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
+  const [sellTarget,      setSellTarget]      = useState<PortfolioItem | null>(null);   // 賣出 Modal 目標批次
   const [includeDividend, setIncludeDividend] = useState(true);
   const [displayCurrency, setDisplayCurrency] = useState<'TWD' | 'USD'>('USD');
 
@@ -709,6 +746,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     isUsEtf:          false,
     buyDate:          '',     // 買入時間（分析用）
     buyReason:        '',     // 買入原因（分析用）
+    buyDateRecord:    '',     // 買進日期（存入持股，回推歷史用；與上面 AI 分析欄位無關）
   });
   const [feeInput, setFeeInput] = useState('');
   const [feeTouched, setFeeTouched] = useState(false);
@@ -844,6 +882,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         ...(form.inputMode === 'avg' ? { buyFee: preview.buyFee } : {}),
         cashDividends: parseFloat(form.cashDividends) || 0,
         stockDividends: parseFloat(form.stockDividends) || 0,
+        ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
       });
     } else {
       if (form.purchaseCurrency === 'USD') {
@@ -855,6 +894,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
           stockDividends: parseFloat(form.stockDividends) || 0,
+          ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
         });
       } else {
         onAdd({
@@ -864,13 +904,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
           stockDividends: parseFloat(form.stockDividends) || 0,
+          ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
         });
       }
     }
 
     setForm({ symbol: '', inputMode: 'avg', avgCostPrice: '', totalCostInput: '',
               totalShares: '', brokerDiscount: '', cashDividends: '', stockDividends: '',
-              purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '' });
+              purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '', buyDateRecord: '' });
     setFeeInput('');
     setFeeTouched(false);
     setShowAddModal(false);
@@ -1190,6 +1231,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         <TwGroupTable items={twItems} prices={prices} includeDividend={includeDividend}
           deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm}
           onDelete={onDelete} onUpdate={onUpdate}
+          onUpdateMeta={onUpdateMeta} onSellClick={setSellTarget}
           healthResults={healthResults} onHealthCheck={handleSingleHealthCheck} onShowDetail={setHealthModalSymbol} />
       )}
 
@@ -1199,8 +1241,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           displayCurrency={displayCurrency} onToggleCurrency={() => setDisplayCurrency(d => d === 'USD' ? 'TWD' : 'USD')}
           usdTwdRate={usdTwdRate} deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm}
           onDelete={onDelete} onUpdate={onUpdate}
+          onUpdateMeta={onUpdateMeta} onSellClick={setSellTarget}
           healthResults={healthResults} onHealthCheck={handleSingleHealthCheck} onShowDetail={setHealthModalSymbol} />
       )}
+
+      {/* ── 已實現損益帳本（Phase 10）─────────────────────────────────────── */}
+      <RealizedLedger trades={realizedTrades} onDeleteTrade={onDeleteTrade} />
+
+      {/* ── 賣出 Modal（Phase 10）────────────────────────────────────────── */}
+      <SellModal lot={sellTarget} usdTwdRate={usdTwdRate}
+        priceHint={sellTarget ? prices[sellTarget.symbol]?.price : undefined}
+        onConfirm={onSell} onClose={() => setSellTarget(null)} />
 
       {/* ── 新增 Modal ───────────────────────────────────────────────────── */}
       <Modal
@@ -1407,6 +1458,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                     onChange={e => setForm(p => ({ ...p, stockDividends: e.target.value }))}
                     placeholder="0" className={inputCls} />
                 </div>
+              </div>
+
+              {/* 買進日期（Phase 10：回推歷史損益用，選填） */}
+              <div>
+                <label className="text-slate-300 text-sm font-medium block mb-1.5 flex items-center gap-1.5">
+                  <CalendarDays size={14} className="text-slate-400" /> 買進日期
+                  <span className="text-xs text-slate-500 font-normal">（選填；填了才能回推這批的歷史損益）</span>
+                </label>
+                <input type="date" value={form.buyDateRecord}
+                  onChange={e => setForm(p => ({ ...p, buyDateRecord: e.target.value }))}
+                  className={inputCls} />
               </div>
 
               {/* 買入時間與原因（分析模式專用） */}
