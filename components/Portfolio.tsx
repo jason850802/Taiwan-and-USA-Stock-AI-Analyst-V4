@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PortfolioItem, StockDataPoint } from '../types';
+import { PortfolioItem, StockDataPoint, RealizedTrade } from '../types';
 import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
 import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../utils/volume';
 import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
+import { SellInput } from '../utils/portfolioLedger';
+import { computeLiveSnapshot, upsertSnapshots } from '../utils/portfolioHistory';
+import { loadSnapshots, saveSnapshots } from '../utils/portfolioHistoryStore';
 import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -18,9 +21,13 @@ interface PortfolioProps {
   onAdd: (item: Omit<PortfolioItem, 'id'>) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, field: keyof Omit<PortfolioItem, 'id'>, value: number) => void;
+  realizedTrades: RealizedTrade[];
+  onSell: (lotId: string, input: SellInput, usdTwdRate?: number) => string | null;   // 回傳錯誤訊息；null＝成功
+  onUpdateMeta: (id: string, patch: { buyDate?: string }) => void;
+  onDeleteTrade: (tradeId: string) => void;
 }
 
-interface PriceData { price: number; name: string; loading: boolean; error: boolean }
+interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string }
 
 // lots 維持逐筆儲存，只在渲染時依 symbol 保序分組。
 const groupLotsBySymbol = (items: PortfolioItem[]): Map<string, PortfolioItem[]> => {
@@ -665,8 +672,9 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
 };
 
 // ── 主元件 ─────────────────────────────────────────────────────────────────
-const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate }) => {
+const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade }) => {
   const [prices,          setPrices]          = useState<Record<string, PriceData>>({});
+  const [historyTick,     setHistoryTick]     = useState(0);   // 快照落地 → 通知歷史圖表重讀 localStorage
   const [usdTwdRate,      setUsdTwdRate]      = useState<number>(0);
   const [showAddModal,    setShowAddModal]    = useState(false);
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
@@ -733,6 +741,26 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate 
   useEffect(() => {
     if (items.length > 0) fetchAllPrices();
   }, [items.map(i => i.symbol).join(',')]);
+
+  // ── 每日損益快照（Phase 10 S3/D-12）─────────────────────────────────────
+  // 單一 debounced effect 涵蓋所有時點：首抓完成、手動更新報價、增刪改/賣出、匯率到貨。
+  // 守衛 A/B 內建於 computeLiveSnapshot（部分報價/缺匯率 → 該市場跳過，寧缺勿錯）。
+  // fallback 32 只准表格顯示用——這裡把無效匯率轉 undefined，禁入持久化快照。
+  useEffect(() => {
+    if (items.length === 0) return;
+    const timer = setTimeout(() => {
+      const capturedAt = Date.now();
+      const rate = usdTwdRate > 0 ? usdTwdRate : undefined;
+      const twSnap = computeLiveSnapshot('TW', items.filter(i => isTwStock(i.symbol)), prices, rate, capturedAt);
+      const usSnap = computeLiveSnapshot('US', items.filter(i => !isTwStock(i.symbol)), prices, rate, capturedAt);
+      if (!twSnap && !usSnap) return;
+      const incoming = [twSnap, usSnap].filter((s): s is NonNullable<typeof s> => s !== null);
+      if (saveSnapshots(upsertSnapshots(loadSnapshots(), incoming))) {
+        setHistoryTick(t => t + 1);
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [items, prices, usdTwdRate]);
 
   // ── 表單輔助 ───────────────────────────────────────────────────────────
   const formIsTW = isTwStock(form.symbol);
