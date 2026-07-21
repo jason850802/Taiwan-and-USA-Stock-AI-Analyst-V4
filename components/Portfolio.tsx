@@ -455,8 +455,10 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
 
   return (
     <div className="bg-surface-card rounded-card border border-surface-line overflow-hidden">
-      <button onClick={() => setCollapsed(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/30 transition-colors">
+      {/* HTML 不允許 button 巢狀 button（內有幣別切換鈕）——外層改 div+role=button，保留可鍵盤操作 */}
+      <div role="button" tabIndex={0} onClick={() => setCollapsed(v => !v)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setCollapsed(v => !v); } }}
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-700/30 transition-colors cursor-pointer">
         <div className="flex items-center gap-3">
           <Badge variant="neutral">美股</Badge>
           <span className="text-white font-semibold">美國股票</span>
@@ -487,7 +489,7 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
           )}
           {collapsed ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronUp size={16} className="text-slate-400" />}
         </div>
-      </button>
+      </div>
 
       {!collapsed && (
         <div className="overflow-x-auto border-t border-surface-line">
