@@ -4,6 +4,7 @@ import { getLatestPrice, getStockData } from '../services/yahoo';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
 import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../utils/volume';
+import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -20,45 +21,6 @@ interface PortfolioProps {
 }
 
 interface PriceData { price: number; name: string; loading: boolean; error: boolean }
-
-// ── 判斷台股 ───────────────────────────────────────────────────────────────
-const isTwStock = (symbol: string): boolean => {
-  const s = symbol.toUpperCase();
-  // 台股：含 .TW / .TWO 後綴，或數字代號（可加單一英文字母結尾，如 00631L、00679B、00981A）
-  return s.endsWith('.TW') || s.endsWith('.TWO') || /^\d{3,6}[A-Z]?$/.test(s);
-};
-
-// ── 台股類型 ────────────────────────────────────────────────────────────────
-type TwStockType = 'stock' | 'etf' | 'bond-etf';
-const getTwStockType = (symbol: string): TwStockType => {
-  const clean = symbol.replace(/\.(TW|TWO)$/i, '').toUpperCase();
-  if (clean.startsWith('00')) {
-    // B = 台幣計價債券ETF；C = 外幣計價債券ETF → 皆免證交稅
-    return (clean.endsWith('B') || clean.endsWith('C')) ? 'bond-etf' : 'etf';
-  }
-  return 'stock';
-};
-const getTaxRate = (symbol: string): number => {
-  const t = getTwStockType(symbol);
-  if (t === 'bond-etf') return 0;
-  if (t === 'etf') return 0.001;
-  return 0.003;
-};
-
-// ── 台股手續費 ──────────────────────────────────────────────────────────────
-const calcTwBuyFee = (base: number): number =>
-  base > 0 ? Math.max(1, Math.floor(base * 0.001425)) : 0;
-const calcTwSellFeeAndTax = (value: number, symbol: string) => {
-  if (value <= 0) return { sellFee: 0, tax: 0 };
-  const sellFee = Math.max(1, Math.floor(value * 0.001425));
-  const tax = Math.floor(value * getTaxRate(symbol));
-  return { sellFee, tax };
-};
-
-// ── 美股手續費 ──────────────────────────────────────────────────────────────
-// 個股：0.008%（無最低）；ETF：統一 $3 USD；無交易稅
-const calcUsFee = (valueUsd: number, isEtf: boolean): number =>
-  isEtf ? 3 : valueUsd * 0.00008;
 
 // lots 維持逐筆儲存，只在渲染時依 symbol 保序分組。
 const groupLotsBySymbol = (items: PortfolioItem[]): Map<string, PortfolioItem[]> => {
