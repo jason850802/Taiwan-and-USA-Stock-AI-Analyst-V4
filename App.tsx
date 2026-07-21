@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, Suspense, lazy } from 'react';
+import { RealizedTrade } from './types';
+import { buildSellResult, SellInput } from './utils/portfolioLedger';
+import { loadRealizedTrades, saveRealizedTrades } from './utils/portfolioHistoryStore';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
 import QuoteHeader from './components/QuoteHeader';
@@ -114,6 +117,38 @@ const App: React.FC = () => {
       }
       return u;
     }));
+  };
+
+  // ── 庫存歷史損益（Phase 10）：已實現帳本 state＋賣出/補日期 handler ──────
+  const [realizedTrades, setRealizedTrades] = useState<RealizedTrade[]>(() => loadRealizedTrades());
+
+  useEffect(() => {
+    saveRealizedTrades(realizedTrades);
+  }, [realizedTrades]);
+
+  // 回傳錯誤訊息（null＝成功）；計算走 utils/portfolioLedger 純函式，手算案例見 10-PLAN
+  const handlePortfolioSell = (lotId: string, input: SellInput, usdTwdRate?: number): string | null => {
+    const lot = portfolioItems.find(i => i.id === lotId);
+    if (!lot) return '找不到該批持股';
+    try {
+      const { trade, updatedLot } = buildSellResult(lot, input, usdTwdRate);
+      setRealizedTrades(prev => [...prev, trade]);
+      setPortfolioItems(prev =>
+        updatedLot === null ? prev.filter(i => i.id !== lotId) : prev.map(i => (i.id === lotId ? updatedLot : i)));
+      return null;
+    } catch (e: any) {
+      return e?.message || '賣出計算失敗';
+    }
+  };
+
+  // 既有 onUpdate 是 number-only 簽名（不動）；buyDate 等字串欄位走這支
+  const handlePortfolioUpdateMeta = (id: string, patch: { buyDate?: string }) => {
+    setPortfolioItems(prev => prev.map(i => (i.id === id ? { ...i, ...patch } : i)));
+  };
+
+  // 僅刪帳面紀錄，不回復持股（UI 有二段確認＋警語）
+  const handleRealizedTradeDelete = (tradeId: string) => {
+    setRealizedTrades(prev => prev.filter(t => t.id !== tradeId));
   };
 
   // 防競態（B-1）：連點多檔股票時，reqId＋AbortController 保證畫面只反映最後一次請求。
@@ -356,6 +391,10 @@ const App: React.FC = () => {
               onAdd={handlePortfolioAdd}
               onDelete={handlePortfolioDelete}
               onUpdate={handlePortfolioUpdate}
+              realizedTrades={realizedTrades}
+              onSell={handlePortfolioSell}
+              onUpdateMeta={handlePortfolioUpdateMeta}
+              onDeleteTrade={handleRealizedTradeDelete}
             />
           </Suspense>
         )}

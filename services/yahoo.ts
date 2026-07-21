@@ -451,13 +451,26 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
     return cleanData;
 };
 
-export const getLatestPrice = async (symbol: string): Promise<{ price: number; name: string }> => {
+export const getLatestPrice = async (symbol: string): Promise<{ price: number; name: string; date?: string }> => {
   const response = await fetchRawData(symbol, '1d', '5d');
   const result = response.chart.result![0];
   const meta = result.meta;
   const closes = result.indicators.quote[0].close;
   const validCloses = (closes as (number | null)[]).filter((c) => c !== null) as number[];
   const latestPrice = validCloses.length > 0 ? validCloses[validCloses.length - 1] : meta.regularMarketPrice;
+
+  // Phase 10（D-13）：取最後一根有效 close 同 index 的 timestamp，轉交易所當地日期，
+  // 供庫存每日快照定日。對位失敗/缺失 → undefined，快照守衛 A 會跳過該市場（寧缺勿錯）。
+  let date: string | undefined;
+  const timestamps = result.timestamp;
+  if (Array.isArray(timestamps)) {
+    for (let i = Math.min(closes.length, timestamps.length) - 1; i >= 0; i--) {
+      if (closes[i] !== null && timestamps[i] != null) {
+        date = formatExchangeDate(timestamps[i], meta.exchangeTimezoneName, '1d');
+        break;
+      }
+    }
+  }
 
   // For TW stocks, fetch Chinese name from FinMind
   const isTW = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
@@ -467,7 +480,7 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
     if (chineseName) name = chineseName;
   }
 
-  return { price: latestPrice, name };
+  return { price: latestPrice, name, date };
 };
 
 // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。
