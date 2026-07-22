@@ -24,8 +24,18 @@ interface PnlHistorySectionProps {
 }
 
 type Market = 'TW' | 'US';
-interface BackfillState { running: boolean; done: number; total: number; error: string | null }
+interface BackfillState {
+  running: boolean; done: number; total: number; error: string | null;
+  retrying?: number;   // 待重試檔數（限流退避中）
+  waitSec?: number;    // 退避等待秒數
+}
 const IDLE: BackfillState = { running: false, done: 0, total: 0, error: null };
+
+/** 進度文字：一般抓取 vs 限流退避等待 */
+const progressLabel = (st: BackfillState): string =>
+  st.waitSec ? `限流中，${st.waitSec} 秒後重試 ${st.retrying} 檔…`
+    : st.retrying ? `重試 ${st.retrying} 檔…`
+      : `回推中 ${st.done}/${st.total} 檔…`;
 
 const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   items, realizedTrades, includeDividend, usdTwdRate, historyTick,
@@ -60,27 +70,45 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       : [...new Set(datedLots.map(l => l.symbol))];
     setBfState(s => ({ ...s, [market]: { running: true, done: 0, total: symbols.length, error: null } }));
 
-    // 3-worker 游標池（沿批次健檢先例；避免打爆 marketPerMin 限流）
+    // 併發游標池（沿批次健檢先例）。台股每檔會連帶抓籌碼三件套，
+    // 檔數多時容易觸及後端 marketPerMin=60 → 失敗批次自動退避重試，
+    // 不讓整輪（可能已跑數分鐘）因少數 429 全數作廢。
     const closeSeries: Record<string, { date: string; close: number }[]> = {};
-    const failed: string[] = [];
-    let cursor = 0;
-    await Promise.all(Array.from({ length: Math.min(3, symbols.length) }, async () => {
-      while (cursor < symbols.length) {
-        const sym = symbols[cursor++];
-        try {
-          const { data } = await getStockData(sym, '1d');
-          closeSeries[sym] = data
-            .filter(d => d.close !== null && d.close !== undefined)
-            .map(d => ({ date: d.date, close: d.close as number }));
-        } catch {
-          failed.push(sym);
-        }
-        setBfState(s => ({ ...s, [market]: { ...s[market], done: s[market].done + 1 } }));
-      }
-    }));
+    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
+    const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
+      const missed: string[] = [];
+      let cursor = 0;
+      await Promise.all(Array.from({ length: Math.min(workers, list.length) }, async () => {
+        while (cursor < list.length) {
+          const sym = list[cursor++];
+          try {
+            const { data } = await getStockData(sym, '1d');
+            closeSeries[sym] = data
+              .filter(d => d.close !== null && d.close !== undefined)
+              .map(d => ({ date: d.date, close: d.close as number }));
+          } catch {
+            missed.push(sym);
+          }
+          setBfState(s => ({ ...s, [market]: { ...s[market], done: Math.min(s[market].done + 1, s[market].total) } }));
+        }
+      }));
+      return missed;
+    };
+
+    let pending = await fetchBatch(symbols, 3);
+    // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
+    for (let round = 0; round < 2 && pending.length > 0; round++) {
+      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 45 } }));
+      await sleep(45000);
+      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 0, done: Math.max(0, s[market].total - pending.length) } }));
+      pending = await fetchBatch(pending, 1);
+    }
+
+    const failed = pending;
     if (failed.length > 0) {
-      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${failed.join('、')} 行情抓取失敗（可能限流 429），稍後再試` } }));
+      const shown = failed.slice(0, 8).join('、') + (failed.length > 8 ? ` 等 ${failed.length} 檔` : '');
+      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗（已自動重試 2 次仍被限流），請稍等幾分鐘再按一次重算` } }));
       return;
     }
 
@@ -158,7 +186,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 <button onClick={() => runBackfill(market)} disabled={st.running}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-ctl border border-surface-line text-slate-400 hover:text-white hover:border-slate-500 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={12} className="animate-spin" /> : <History size={12} />}
-                  {st.running ? `回推中 ${st.done}/${st.total} 檔…` : (hasBackfill ? '重算歷史回推' : '建立歷史曲線（回推）')}
+                  {st.running ? progressLabel(st) : (hasBackfill ? '重算歷史回推' : '建立歷史曲線（回推）')}
                 </button>
               )}
               {undatedLots.length > 0 && (
@@ -177,7 +205,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 <button onClick={() => runBackfill(market)} disabled={st.running}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
-                  {st.running ? `回推中 ${st.done}/${st.total} 檔…` : '建立歷史曲線'}
+                  {st.running ? progressLabel(st) : '建立歷史曲線'}
                 </button>
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>
