@@ -103,15 +103,18 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const bfRows = useTxnMode
       ? buildBackfillFromTxns({
           market,
-          txns: allTxns.map((t): TxnForBackfill => {
-            // US 的金額換算成 USD（TWD 計價批次沿 D-10 用當下匯率）
-            const conv = (v: number) => (market === 'US' && rate ? v : v);
-            return {
-              date: t.date, symbol: t.symbol, market: t.market, kind: t.kind,
-              shares: t.shares, gross: conv(t.gross), fee: conv(t.fee), tax: conv(t.tax),
-              divAmount: t.kind === 'dividend' ? (t.market === 'US' ? (t.netTwd ?? 0) : t.gross) : undefined,
-            };
-          }),
+          // 流水金額本就是市場幣別（TW=TWD、US=USD，解析器保證），無需換算。
+          // 例外：美股配息在帳單上是「應收台幣」，須換成 USD 才與同列其他欄位同幣別
+          // （對齊 computeLiveSnapshot 對 cashDividends 的 /rate 處理）。
+          txns: allTxns.map((t): TxnForBackfill => ({
+            date: t.date, symbol: t.symbol, market: t.market, kind: t.kind,
+            shares: t.shares, gross: t.gross, fee: t.fee, tax: t.tax,
+            divAmount: t.kind !== 'dividend'
+              ? undefined
+              : t.market === 'US'
+                ? (rate ? (t.netTwd ?? 0) / rate : 0)
+                : t.gross,
+          })),
           closeSeries,
           boundaryDate: liveDates[0],
           usdTwdRate: market === 'US' ? rate : undefined,
