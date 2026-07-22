@@ -11,6 +11,7 @@ import {
 } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
 import { loadTxns } from '../../utils/txnStore';
+import { getCachedSeries, putCachedSeries } from '../../utils/closeSeriesCache';
 import Card from '../ui/Card';
 import PnlHistoryChart from './PnlHistoryChart';
 import { History, Loader2 } from 'lucide-react';
@@ -75,6 +76,18 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     // 不讓整輪（可能已跑數分鐘）因少數 429 全數作廢。
     const closeSeries: Record<string, { date: string; close: number }[]> = {};
     const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+    const firstTxnDate = allTxns.length > 0
+      ? allTxns.reduce((m, t) => (t.date < m ? t.date : m), allTxns[0].date)
+      : undefined;
+
+    // 歷史收盤價是不變的事實 → 先吃快取，只有沒快取／過期的才打網路（大幅降低 429 機率）
+    const toFetch: string[] = [];
+    for (const sym of symbols) {
+      const cached = getCachedSeries(sym);
+      if (cached && cached.length > 0) closeSeries[sym] = cached;
+      else toFetch.push(sym);
+    }
+    setBfState(s => ({ ...s, [market]: { ...s[market], done: symbols.length - toFetch.length } }));
 
     const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
       const missed: string[] = [];
@@ -84,9 +97,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
           const sym = list[cursor++];
           try {
             const { data } = await getStockData(sym, '1d');
-            closeSeries[sym] = data
+            const bars = data
               .filter(d => d.close !== null && d.close !== undefined)
               .map(d => ({ date: d.date, close: d.close as number }));
+            closeSeries[sym] = bars;
+            putCachedSeries(sym, bars, firstTxnDate);
           } catch {
             missed.push(sym);
           }
@@ -96,7 +111,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       return missed;
     };
 
-    let pending = await fetchBatch(symbols, 3);
+    let pending = await fetchBatch(toFetch, 3);
     // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
     for (let round = 0; round < 2 && pending.length > 0; round++) {
       setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 45 } }));
