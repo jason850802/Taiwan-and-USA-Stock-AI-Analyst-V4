@@ -8,7 +8,7 @@ import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../util
 import { SellInput } from '../utils/portfolioLedger';
 import { computeLiveSnapshot, upsertSnapshots } from '../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../utils/portfolioHistoryStore';
-import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Banknote } from 'lucide-react';
+import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Banknote, Upload } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
@@ -18,6 +18,7 @@ import Skeleton from './ui/Skeleton';
 import SellModal from './portfolio/SellModal';
 import RealizedLedger from './portfolio/RealizedLedger';
 import PnlHistorySection from './portfolio/PnlHistorySection';
+import ImportStatementModal, { ImportApplyPayload } from './portfolio/ImportStatementModal';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -28,6 +29,7 @@ interface PortfolioProps {
   onSell: (lotId: string, input: SellInput, usdTwdRate?: number) => string | null;   // 回傳錯誤訊息；null＝成功
   onUpdateMeta: (id: string, patch: { buyDate?: string }) => void;
   onDeleteTrade: (tradeId: string) => void;
+  onStatementImport: (payload: ImportApplyPayload) => void;
 }
 
 interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string }
@@ -711,13 +713,14 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
 };
 
 // ── 主元件 ─────────────────────────────────────────────────────────────────
-const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade }) => {
+const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade, onStatementImport }) => {
   const [prices,          setPrices]          = useState<Record<string, PriceData>>({});
   const [historyTick,     setHistoryTick]     = useState(0);   // 快照落地 → 通知歷史圖表重讀 localStorage
   const [usdTwdRate,      setUsdTwdRate]      = useState<number>(0);
   const [showAddModal,    setShowAddModal]    = useState(false);
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
   const [sellTarget,      setSellTarget]      = useState<PortfolioItem | null>(null);   // 賣出 Modal 目標批次
+  const [showImportModal, setShowImportModal] = useState(false);                        // 對帳單匯入 Modal
   const [includeDividend, setIncludeDividend] = useState(true);
   const [displayCurrency, setDisplayCurrency] = useState<'TWD' | 'USD'>('USD');
 
@@ -1182,6 +1185,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
             <RefreshCw size={15} /> 更新報價
           </Button>
+          <Button variant="ghost" onClick={() => setShowImportModal(true)} className="flex items-center gap-2">
+            <Upload size={15} /> 匯入對帳單
+          </Button>
           <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
             {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
           </Button>
@@ -1256,6 +1262,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       <RealizedLedger trades={realizedTrades} onDeleteTrade={onDeleteTrade} />
 
       {/* ── 賣出 Modal（Phase 10）────────────────────────────────────────── */}
+      {/* ── 對帳單匯入 Modal（Phase 11）──────────────────────────────────── */}
+      <ImportStatementModal open={showImportModal} onClose={() => setShowImportModal(false)}
+        existingLots={items} onApply={onStatementImport} />
+
       <SellModal lot={sellTarget} usdTwdRate={usdTwdRate}
         priceHint={sellTarget ? prices[sellTarget.symbol]?.price : undefined}
         onConfirm={onSell} onClose={() => setSellTarget(null)} />

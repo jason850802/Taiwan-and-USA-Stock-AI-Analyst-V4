@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo, useRef, Suspense, lazy } from 'rea
 import { RealizedTrade } from './types';
 import { buildSellResult, SellInput } from './utils/portfolioLedger';
 import { loadRealizedTrades, saveRealizedTrades } from './utils/portfolioHistoryStore';
+import { loadImportLog, saveImportLog, appendImportBatch } from './utils/importStore';
+import { loadTxns, saveTxns, appendTxns, fromParsedTxn, fromManualLot, fromManualTrade } from './utils/txnStore';
+import type { ImportApplyPayload } from './components/portfolio/ImportStatementModal';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
 import QuoteHeader from './components/QuoteHeader';
@@ -85,7 +88,11 @@ const App: React.FC = () => {
   }, [portfolioItems]);
 
   const handlePortfolioAdd = (item: Omit<PortfolioItem, 'id'>) => {
-    setPortfolioItems(prev => [...prev, { ...item, id: Date.now().toString() }]);
+    const lot: PortfolioItem = { ...item, id: Date.now().toString() };
+    setPortfolioItems(prev => [...prev, lot]);
+    // 同步寫入交易流水，讓歷史回推能重建這筆買進（無買進日期者略過）
+    const txn = fromManualLot(lot);
+    if (txn) saveTxns(appendTxns(loadTxns(), [txn]));
   };
 
   const handlePortfolioDelete = (id: string) => {
@@ -133,6 +140,7 @@ const App: React.FC = () => {
     try {
       const { trade, updatedLot } = buildSellResult(lot, input, usdTwdRate);
       setRealizedTrades(prev => [...prev, trade]);
+      saveTxns(appendTxns(loadTxns(), [fromManualTrade(trade)]));
       setPortfolioItems(prev =>
         updatedLot === null ? prev.filter(i => i.id !== lotId) : prev.map(i => (i.id === lotId ? updatedLot : i)));
       return null;
@@ -149,6 +157,22 @@ const App: React.FC = () => {
   // 僅刪帳面紀錄，不回復持股（UI 有二段確認＋警語）
   const handleRealizedTradeDelete = (tradeId: string) => {
     setRealizedTrades(prev => prev.filter(t => t.id !== tradeId));
+  };
+
+  // 對帳單匯入（Phase 11）：重播結果一次性套用——庫存以重播後的完整清單取代
+  // （引擎已把既有 lot 的縮減/移除算進去），已實現紀錄追加，去重鍵寫入匯入紀錄。
+  const handleStatementImport = (payload: ImportApplyPayload) => {
+    setPortfolioItems(payload.lots);
+    if (payload.newTrades.length > 0) {
+      setRealizedTrades(prev => [...prev, ...payload.newTrades]);
+    }
+    saveImportLog(appendImportBatch(loadImportLog(), payload.importedKeys, {
+      at: Date.now(), broker: payload.broker, fileName: payload.fileName,
+    }));
+    // 保存完整買賣流水：歷史回推靠它重建已清倉部位的持有期間
+    if (payload.txns?.length) {
+      saveTxns(appendTxns(loadTxns(), payload.txns.map(fromParsedTxn)));
+    }
   };
 
   // 防競態（B-1）：連點多檔股票時，reqId＋AbortController 保證畫面只反映最後一次請求。
@@ -395,6 +419,7 @@ const App: React.FC = () => {
               onSell={handlePortfolioSell}
               onUpdateMeta={handlePortfolioUpdateMeta}
               onDeleteTrade={handleRealizedTradeDelete}
+              onStatementImport={handleStatementImport}
             />
           </Suspense>
         )}

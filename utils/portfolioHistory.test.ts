@@ -243,11 +243,25 @@ describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () 
     expect(pts[1]).toEqual({ date: '2026-07-02', unrealized: 188, realizedCum: 105, total: 293, source: 'live' });
   });
 
-  it('含息：未實現＋持有側股利（帳本 divCarried 已在已實現側，兩側不重複計）', () => {
-    const pts = buildChartSeries(rows, trades, 'TW', true);
-    expect(pts[0].unrealized).toBe(110);
-    expect(pts[1].unrealized).toBe(208);
-    expect(pts[1].total).toBe(313);
+  it('含息（Phase 11 語意）：配息計入已實現側，未實現維持純價差', () => {
+    // 舊語意把 snapshot.cashDividends 加進未實現側，清倉後會消失；
+    // 新語意由呼叫端傳入配息流水，累計進已實現側，不隨賣股蒸發。
+    const divs = [{ date: '2026-07-01', amount: 20 }, { date: '2026-07-02', amount: 30 }];
+    const off = buildChartSeries(rows, trades, 'TW', false, divs);
+    const on = buildChartSeries(rows, trades, 'TW', true, divs);
+
+    expect(off[0].unrealized).toBe(90);          // 未實現不受含息影響
+    expect(on[0].unrealized).toBe(90);
+    expect(off[0].realizedCum).toBe(0);
+    expect(on[0].realizedCum).toBe(20);          // 含息 → 加上當日前的累計配息
+    expect(on[1].realizedCum).toBe(105 + 50);    // 賣出 105 ＋ 配息 20+30
+    expect(on[1].total).toBe(188 + 155);
+  });
+
+  it('配息不因清倉而消失（與舊語意的關鍵差異）', () => {
+    const divs = [{ date: '2026-07-01', amount: 500 }];
+    const pts = buildChartSeries(rows, trades, 'TW', true, divs);
+    expect(pts.every(p => p.realizedCum >= 500)).toBe(true);
   });
 
   it('補登早於首快照的歷史賣出：首點 cum 已含', () => {

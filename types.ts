@@ -135,6 +135,52 @@ export interface RealizedTrade {
   createdAt: number;
 }
 
+// ── 券商對帳單匯入（Phase 11）───────────────────────────────
+export type TxnKind = 'buy' | 'sell' | 'dividend';
+export type BrokerId = 'sinopac' | 'cathay' | 'cathayTw';
+
+/** 券商無關的中間格式：解析器產出、重播引擎消費（換券商只需新增解析器） */
+export interface ParsedTxn {
+  broker: BrokerId;
+  market: 'TW' | 'US';
+  date: string;        // 'YYYY-MM-DD'
+  symbol: string;      // '2327' / 'NVDA'（台股不含 .TW 後綴，與既有庫存一致）
+  name: string;
+  kind: TxnKind;
+  shares: number;      // 可為小數（美股碎股）
+  price: number;       // 市場幣別單價
+  gross: number;       // 成交金額／價金（市場幣別）
+  fee: number;         // 帳單實付手續費（不重算，D-06）
+  tax: number;         // 帳單實付交易稅（美股恆 0；除息時為代扣稅）
+  netTwd?: number;     // 應收/付台幣（美股除息寫入 cashDividends 用）
+  dedupeKey: string;   // 台股＝委託單號；美股＝複合鍵（D-11）
+  orderRef?: string;   // 台股委託單號（跨 lot 拆帳回溯）
+  rawLine: string;     // 原始列摘要（預覽顯示用，不落 localStorage）
+}
+
+/** 找不到買進紀錄的賣出（期初部位缺口，D-02：列出讓使用者補成本，不猜數字） */
+export interface ImportGap {
+  txnIndex: number;
+  symbol: string;
+  name: string;
+  market: 'TW' | 'US';
+  sellDate: string;
+  sharesMissing: number;
+  sellPrice: number;
+  costPerShare?: number;   // 使用者填入；未填則該筆賣出略過
+  buyDate?: string;        // 預設賣出日前一日（D-13），可改
+}
+
+export interface ImportPlan {
+  broker: BrokerId;
+  txns: ParsedTxn[];                                   // 已去重、已依日期排序
+  skippedDuplicates: number;
+  unsupported: { rawLine: string; reason: string }[];
+  gaps: ImportGap[];
+  preview: { buys: number; sells: number; dividends: number };
+  dateRange: { from: string; to: string } | null;
+}
+
 // ── 庫存歷史損益：每日快照（Phase 10）───────────────────────
 // 存「可加成的分解量」不存算好的損益——含息/不含息在渲染期組合（CONTEXT D-05）。
 export interface DailyPnlSnapshot {

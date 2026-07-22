@@ -5,8 +5,18 @@ import React, { useMemo, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../../types';
 import { getStockData } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
-import { buildBackfillRows, buildChartSeries, upsertSnapshots, BackfillLotInput } from '../../utils/portfolioHistory';
+import {
+  buildBackfillRows, buildBackfillFromTxns, buildChartSeries, upsertSnapshots,
+  BackfillLotInput, TxnForBackfill,
+} from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
+import { loadTxns, saveTxns, appendTxns } from '../../utils/txnStore';
+import { getCachedSeries, putCachedSeriesMany } from '../../utils/closeSeriesCache';
+import { fetchFinMindRows } from '../../services/finmind';
+import {
+  estimateDividends, toDividendTxns, type DividendAnnouncement,
+} from '../../utils/dividendEstimator';
+import { Coins } from 'lucide-react';
 import Card from '../ui/Card';
 import PnlHistoryChart from './PnlHistoryChart';
 import { History, Loader2 } from 'lucide-react';
@@ -20,22 +30,83 @@ interface PnlHistorySectionProps {
 }
 
 type Market = 'TW' | 'US';
-interface BackfillState { running: boolean; done: number; total: number; error: string | null }
+interface BackfillState {
+  running: boolean; done: number; total: number; error: string | null;
+  retrying?: number;   // 待重試檔數（限流退避中）
+  waitSec?: number;    // 退避等待秒數
+}
 const IDLE: BackfillState = { running: false, done: 0, total: 0, error: null };
+
+/** 進度文字：一般抓取 vs 限流退避等待 */
+const progressLabel = (st: BackfillState): string =>
+  st.waitSec ? `限流中，${st.waitSec} 秒後重試 ${st.retrying} 檔…`
+    : st.retrying ? `重試 ${st.retrying} 檔…`
+      : `回推中 ${st.done}/${st.total} 檔…`;
 
 const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   items, realizedTrades, includeDividend, usdTwdRate, historyTick,
 }) => {
   const [refreshTick, setRefreshTick] = useState(0);
   const [bfState, setBfState] = useState<Record<Market, BackfillState>>({ TW: IDLE, US: IDLE });
+  const [divState, setDivState] = useState<{ running: boolean; done: number; total: number; msg: string | null }>(
+    { running: false, done: 0, total: 0, msg: null });
+
+  /**
+   * 估算歷史配息：券商交易對帳單不含配息，改用公開除權息公告 × 交易流水推算。
+   * 只做台股（美股複委託帳單本身就有除息列）。金額為稅前，未扣二代健保補充保費。
+   */
+  const runDividendEstimate = async () => {
+    if (divState.running) return;
+    const txns = loadTxns().filter(t => t.market === 'TW');
+    const symbols = [...new Set(txns.filter(t => t.kind === 'buy').map(t => t.symbol))];
+    if (symbols.length === 0) return;
+
+    setDivState({ running: true, done: 0, total: symbols.length, msg: null });
+    const firstDate = txns.reduce((m, t) => (t.date < m ? t.date : m), txns[0].date);
+    const anns: Record<string, DividendAnnouncement[]> = {};
+    const failed: string[] = [];
+    let cursor = 0;
+    await Promise.all(Array.from({ length: Math.min(3, symbols.length) }, async () => {
+      while (cursor < symbols.length) {
+        const sym = symbols[cursor++];
+        try {
+          const rows = await fetchFinMindRows('TaiwanStockDividend', { data_id: sym, start_date: firstDate });
+          anns[sym] = rows as DividendAnnouncement[];
+        } catch {
+          failed.push(sym);
+        }
+        setDivState(s => ({ ...s, done: s.done + 1 }));
+      }
+    }));
+
+    const { dividends, stockDividendNotes, skipped } = estimateDividends(txns, anns);
+    if (dividends.length > 0) {
+      saveTxns(appendTxns(loadTxns(), toDividendTxns(dividends, 'TW')));
+    }
+    const total = dividends.reduce((s, d) => s + d.amount, 0);
+    const parts = [`估算 ${dividends.length} 筆配息，合計 ${total.toLocaleString('zh-TW')} 元（稅前）`];
+    if (stockDividendNotes.length > 0) parts.push(`另有 ${stockDividendNotes.length} 筆配股需自行確認股數`);
+    if (skipped.length > 0) parts.push(`${skipped.length} 筆公告資料不全已略過`);
+    if (failed.length > 0) parts.push(`${failed.length} 檔查詢失敗`);
+    parts.push('請按「重算歷史回推」讓曲線納入');
+    setDivState({ running: false, done: symbols.length, total: symbols.length, msg: parts.join('；') });
+    setRefreshTick(t => t + 1);
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const rows = useMemo(() => loadSnapshots(), [historyTick, refreshTick]);
+  // 配息流水（含已清倉部位的歷史配息）——供圖表以「已實現側累計」計入
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const dividendTxns = useMemo(() => loadTxns().filter(t => t.kind === 'dividend'), [historyTick, refreshTick]);
 
   const runBackfill = async (market: Market) => {
     const mLots = items.filter(i => (market === 'TW') === isTwStock(i.symbol));
     const datedLots = mLots.filter(l => !!l.buyDate);
-    if (datedLots.length === 0 || bfState[market].running) return;
+    // 有交易流水時以流水為準（可含已清倉部位）；沒有流水才退回「現存持股逆推」
+    const allTxns = loadTxns().filter(t => t.market === market);
+    const useTxnMode = allTxns.length > 0;
+    if (!useTxnMode && datedLots.length === 0) return;
+    if (bfState[market].running) return;
 
     const rate = usdTwdRate > 0 ? usdTwdRate : undefined;
     if (market === 'US') {
@@ -47,30 +118,77 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       }
     }
 
-    const symbols = [...new Set(datedLots.map(l => l.symbol))];
+    const symbols = useTxnMode
+      ? [...new Set(allTxns.map(t => t.symbol))]           // 含已清倉部位（完整歷史）
+      : [...new Set(datedLots.map(l => l.symbol))];
     setBfState(s => ({ ...s, [market]: { running: true, done: 0, total: symbols.length, error: null } }));
 
-    // 3-worker 游標池（沿批次健檢先例；避免打爆 marketPerMin 限流）
+    // 併發游標池（沿批次健檢先例）。台股每檔會連帶抓籌碼三件套，
+    // 檔數多時容易觸及後端 marketPerMin=60 → 失敗批次自動退避重試，
+    // 不讓整輪（可能已跑數分鐘）因少數 429 全數作廢。
     const closeSeries: Record<string, { date: string; close: number }[]> = {};
-    const failed: string[] = [];
-    let cursor = 0;
-    await Promise.all(Array.from({ length: Math.min(3, symbols.length) }, async () => {
-      while (cursor < symbols.length) {
-        const sym = symbols[cursor++];
-        try {
-          const { data } = await getStockData(sym, '1d');
-          closeSeries[sym] = data
-            .filter(d => d.close !== null && d.close !== undefined)
-            .map(d => ({ date: d.date, close: d.close as number }));
-        } catch {
-          failed.push(sym);
-        }
-        setBfState(s => ({ ...s, [market]: { ...s[market], done: s[market].done + 1 } }));
-      }
-    }));
+    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+    const firstTxnDate = allTxns.length > 0
+      ? allTxns.reduce((m, t) => (t.date < m ? t.date : m), allTxns[0].date)
+      : undefined;
 
+    // 歷史收盤價是不變的事實 → 先吃快取，只有沒快取／過期的才打網路（大幅降低 429 機率）
+    const toFetch: string[] = [];
+    for (const sym of symbols) {
+      const cached = getCachedSeries(sym);
+      if (cached && cached.length > 0) closeSeries[sym] = cached;
+      else toFetch.push(sym);
+    }
+    setBfState(s => ({ ...s, [market]: { ...s[market], done: symbols.length - toFetch.length } }));
+
+    // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同
+    let lastError = '';
+    const freshlyFetched: { symbol: string; bars: { date: string; close: number }[] }[] = [];
+    const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
+      const missed: string[] = [];
+      let cursor = 0;
+      await Promise.all(Array.from({ length: Math.min(workers, list.length) }, async () => {
+        while (cursor < list.length) {
+          const sym = list[cursor++];
+          try {
+            const { data } = await getStockData(sym, '1d');
+            const bars = data
+              .filter(d => d.close !== null && d.close !== undefined)
+              .map(d => ({ date: d.date, close: d.close as number }));
+            closeSeries[sym] = bars;
+            freshlyFetched.push({ symbol: sym, bars });   // 收集後批次寫入，避免逐檔序列化整份快取
+          } catch (e: any) {
+            lastError = String(e?.message ?? e ?? '');
+            missed.push(sym);
+          }
+          setBfState(s => ({ ...s, [market]: { ...s[market], done: Math.min(s[market].done + 1, s[market].total) } }));
+        }
+      }));
+      return missed;
+    };
+    const diagnose = (): string => {
+      if (/429|too many|限流/i.test(lastError)) return '（被行情來源限流）請等幾分鐘再按一次重算';
+      if (/5\d\d|internal|failed to fetch|networkerror/i.test(lastError)) {
+        return '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
+      }
+      return lastError ? `（${lastError.slice(0, 60)}）` : '（原因不明）請稍後再試';
+    };
+
+    let pending = await fetchBatch(toFetch, 3);
+    // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
+    for (let round = 0; round < 2 && pending.length > 0; round++) {
+      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 45 } }));
+      await sleep(45000);
+      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 0, done: Math.max(0, s[market].total - pending.length) } }));
+      pending = await fetchBatch(pending, 1);
+    }
+
+    putCachedSeriesMany(freshlyFetched, firstTxnDate);   // 一次寫入本輪抓到的全部序列
+
+    const failed = pending;
     if (failed.length > 0) {
-      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${failed.join('、')} 行情抓取失敗（可能限流 429），稍後再試` } }));
+      const shown = failed.slice(0, 6).join('、') + (failed.length > 6 ? ` 等 ${failed.length} 檔` : '');
+      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗，已自動重試 2 次 ${diagnose()}` } }));
       return;
     }
 
@@ -90,15 +208,35 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
 
     const existing = loadSnapshots();
     const liveDates = existing.filter(r => r.market === market && r.source === 'live').map(r => r.date).sort();
-    const { rows: bfRows } = buildBackfillRows({
-      market,
-      lots: lotsInput,
-      closeSeries,
-      trades: realizedTrades.filter(t => t.market === market),
-      boundaryDate: liveDates[0],   // 回推只填第一筆 live 之前（D-08）
-      usdTwdRate: market === 'US' ? rate : undefined,
-      capturedAt: Date.now(),
-    });
+    const bfRows = useTxnMode
+      ? buildBackfillFromTxns({
+          market,
+          // 流水金額本就是市場幣別（TW=TWD、US=USD，解析器保證），無需換算。
+          // 例外：美股配息在帳單上是「應收台幣」，須換成 USD 才與同列其他欄位同幣別
+          // （對齊 computeLiveSnapshot 對 cashDividends 的 /rate 處理）。
+          txns: allTxns.map((t): TxnForBackfill => ({
+            date: t.date, symbol: t.symbol, market: t.market, kind: t.kind,
+            shares: t.shares, gross: t.gross, fee: t.fee, tax: t.tax,
+            divAmount: t.kind !== 'dividend'
+              ? undefined
+              : t.market === 'US'
+                ? (rate ? (t.netTwd ?? 0) / rate : 0)
+                : t.gross,
+          })),
+          closeSeries,
+          boundaryDate: liveDates[0],
+          usdTwdRate: market === 'US' ? rate : undefined,
+          capturedAt: Date.now(),
+        })
+      : buildBackfillRows({
+          market,
+          lots: lotsInput,
+          closeSeries,
+          trades: realizedTrades.filter(t => t.market === market),
+          boundaryDate: liveDates[0],   // 回推只填第一筆 live 之前（D-08）
+          usdTwdRate: market === 'US' ? rate : undefined,
+          capturedAt: Date.now(),
+        }).rows;
     // 重算語意：先清該市場全部 backfill 再寫入（backfill 永不覆蓋 live）
     const cleaned = existing.filter(r => !(r.market === market && r.source === 'backfill'));
     saveSnapshots(upsertSnapshots(cleaned, bfRows));
@@ -111,7 +249,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const mRows = rows.filter(r => r.market === market);
     if (mLots.length === 0 && mRows.length === 0) return null;
 
-    const points = buildChartSeries(rows, realizedTrades, market, includeDividend);
+    const marketDivs = dividendTxns
+      .filter(t => t.market === market)
+      .map(t => ({ date: t.date, amount: market === 'US' ? (t.netTwd ?? t.gross) : t.gross }));
+    const points = buildChartSeries(rows, realizedTrades, market, includeDividend, marketDivs);
+    const divTotal = marketDivs.reduce((s, d) => s + d.amount, 0);
     const datedLots = mLots.filter(l => !!l.buyDate);
     const undatedLots = mLots.filter(l => !l.buyDate);
     const hasBackfill = mRows.some(r => r.source === 'backfill');
@@ -128,14 +270,28 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 <button onClick={() => runBackfill(market)} disabled={st.running}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-ctl border border-surface-line text-slate-400 hover:text-white hover:border-slate-500 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={12} className="animate-spin" /> : <History size={12} />}
-                  {st.running ? `回推中 ${st.done}/${st.total} 檔…` : (hasBackfill ? '重算歷史回推' : '建立歷史曲線（回推）')}
+                  {st.running ? progressLabel(st) : (hasBackfill ? '重算歷史回推' : '建立歷史曲線（回推）')}
                 </button>
+              )}
+              {market === 'TW' && (
+                <button onClick={runDividendEstimate} disabled={divState.running || st.running}
+                  title="券商交易對帳單不含配息，改用公開除權息公告×你的持股推算（稅前）"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-ctl border border-surface-line text-slate-400 hover:text-white hover:border-slate-500 transition-colors disabled:opacity-50">
+                  {divState.running ? <Loader2 size={12} className="animate-spin" /> : <Coins size={12} />}
+                  {divState.running ? `估算配息 ${divState.done}/${divState.total} 檔…` : '估算歷史配息'}
+                </button>
+              )}
+              {divTotal > 0 && (
+                <span className="text-up/80">
+                  已計入配息 {Math.round(divTotal).toLocaleString('zh-TW')} 元（稅前，切「不含息損益」可排除）
+                </span>
               )}
               {undatedLots.length > 0 && (
                 <span className="text-amber-300/80">
                   {undatedLots.length} 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）
                 </span>
               )}
+              {market === 'TW' && divState.msg && <span className="text-accent">{divState.msg}</span>}
               {st.error && <span className="text-danger">{st.error}</span>}
             </div>
           </div>
@@ -147,7 +303,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 <button onClick={() => runBackfill(market)} disabled={st.running}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
-                  {st.running ? `回推中 ${st.done}/${st.total} 檔…` : '建立歷史曲線'}
+                  {st.running ? progressLabel(st) : '建立歷史曲線'}
                 </button>
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>

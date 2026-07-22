@@ -221,41 +221,194 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
   return { rows, excludedLots };
 };
 
+// ── 流水式回推（Phase 11 追加）──────────────────────────────────────────────
+// buildBackfillRows 從「現存持股」逆推，完全清倉的部位其 lot 已不存在 → 整段歷史缺席。
+// 本函式改以「完整買賣流水」逐日重播，重建每一天的真實持倉（含後來清倉的部位）。
+
+export interface TxnForBackfill {
+  date: string;
+  symbol: string;
+  market: 'TW' | 'US';
+  kind: 'buy' | 'sell' | 'dividend';
+  shares: number;
+  gross: number;      // chart 幣別成交金額
+  fee: number;
+  tax: number;
+  divAmount?: number; // 配息金額（TW=TWD、US 亦記 TWD，與 App 的 cashDividends 語意一致）
+  isUsEtf?: boolean;
+}
+
+export interface BackfillFromTxnsParams {
+  market: 'TW' | 'US';
+  txns: TxnForBackfill[];                                           // 該市場流水（任意順序，函式內排序）
+  closeSeries: Record<string, { date: string; close: number }[]>;
+  boundaryDate?: string;                                            // 第一筆 live 快照日（exclusive）
+  usdTwdRate?: number;
+  capturedAt: number;
+}
+
+interface ReplayLot { shares: number; cost: number; cashDiv: number }
+
+/**
+ * 逐日重播流水產生每日快照。
+ * 買進建 lot、賣出 FIFO 減 lot（清倉即從池中消失，該日之後不再計入市值）、配息累加。
+ * 與 importReplay 的 FIFO 語意一致，但目的是產生「每日組成」而非已實現紀錄。
+ */
+export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlSnapshot[] => {
+  const { market, txns, closeSeries, boundaryDate, usdTwdRate, capturedAt } = params;
+  if (txns.length === 0) return [];
+
+  const sorted = [...txns].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  const firstDate = sorted[0].date;
+
+  // 日期軸：有交易的 symbols 的 close 日期聯集，裁剪到 [首筆交易日, boundaryDate)
+  const symbols = new Set(sorted.map(t => t.symbol));
+  const dateSet = new Set<string>();
+  for (const sym of symbols) {
+    for (const bar of closeSeries[sym] ?? []) {
+      if (bar.date >= firstDate && (!boundaryDate || bar.date < boundaryDate)) dateSet.add(bar.date);
+    }
+  }
+  // 交易日本身也要在軸上（避免當日無行情資料時該筆交易被延後反映）
+  for (const t of sorted) {
+    if (!boundaryDate || t.date < boundaryDate) dateSet.add(t.date);
+  }
+  const axis = [...dateSet].sort();
+  if (axis.length === 0) return [];
+
+  const cursor = new Map<string, { i: number; last: number | null }>();
+  for (const sym of symbols) cursor.set(sym, { i: 0, last: null });
+
+  const pool = new Map<string, ReplayLot[]>();   // symbol → FIFO lot 池
+  const etfFlag = new Map<string, boolean>();
+  let ti = 0;
+  const rows: DailyPnlSnapshot[] = [];
+
+  for (const d of axis) {
+    // 1) 套用當日（含之前）尚未處理的交易
+    while (ti < sorted.length && sorted[ti].date <= d) {
+      const t = sorted[ti++];
+      if (t.isUsEtf !== undefined) etfFlag.set(t.symbol, t.isUsEtf);
+      const lots = pool.get(t.symbol) ?? [];
+
+      if (t.kind === 'buy') {
+        lots.push({ shares: t.shares, cost: t.gross + t.fee, cashDiv: 0 });   // 成本含買費（D-07）
+        pool.set(t.symbol, lots);
+        continue;
+      }
+      if (t.kind === 'dividend') {
+        // 配息不掛在 lot 上：已入袋的現金不該因為之後賣股而消失。
+        // 改由 buildChartSeries 以流水累計計入「已實現」側（含已清倉部位的歷史配息）。
+        continue;
+      }
+      // sell：FIFO 扣減（賣超部分忽略——期初部位缺口，圖上不臆測）
+      let remaining = t.shares;
+      while (remaining > 1e-9 && lots.length > 0) {
+        const l = lots[0];
+        const take = Math.min(l.shares, remaining);
+        const ratio = take / l.shares;
+        l.cost -= l.cost * ratio;
+        l.cashDiv -= l.cashDiv * ratio;
+        l.shares -= take;
+        remaining -= take;
+        if (l.shares <= 1e-9) lots.shift();
+      }
+      pool.set(t.symbol, lots);
+    }
+
+    // 2) 推進行情游標並計算當日快照
+    let marketValue = 0, totalCost = 0, estSellCosts = 0, cashDividends = 0;
+    const active = new Set<string>();
+    for (const sym of symbols) {
+      const lots = pool.get(sym);
+      if (!lots || lots.length === 0) continue;
+      const c = cursor.get(sym)!;
+      const series = closeSeries[sym] ?? [];
+      while (c.i < series.length && series[c.i].date <= d) { c.last = series[c.i].close; c.i++; }
+      if (c.last === null) continue;                       // 尚無行情（上市前/資料起點前）
+      const shares = lots.reduce((s, l) => s + l.shares, 0);
+      if (shares <= 1e-9) continue;
+      const value = c.last * shares;
+      active.add(sym);
+      marketValue += value;
+      totalCost += lots.reduce((s, l) => s + l.cost, 0);
+      cashDividends += lots.reduce((s, l) => s + l.cashDiv, 0);
+      if (market === 'TW') {
+        const { sellFee, tax } = calcTwSellFeeAndTax(value, sym);
+        estSellCosts += sellFee + tax;
+      } else {
+        estSellCosts += calcUsFee(value, etfFlag.get(sym) ?? false);
+      }
+    }
+    if (active.size === 0) continue;
+
+    rows.push({
+      date: d, market, source: 'backfill',
+      marketValue: market === 'US' ? round2(marketValue) : marketValue,
+      totalCost: market === 'US' ? round2(totalCost) : totalCost,
+      estSellCosts: market === 'US' ? round2(estSellCosts) : estSellCosts,
+      cashDividends: market === 'US' ? round2(cashDividends) : cashDividends,
+      ...(market === 'US' && usdTwdRate !== undefined ? { usdTwdRate } : {}),
+      symbolCount: active.size,
+      capturedAt,
+    });
+  }
+  return rows;
+};
+
 // ── S6：圖表序列（渲染期組合，含息開關在此收斂）────────────────────────────
 
 export interface ChartPoint {
   date: string;
-  unrealized: number;    // 依 includeDividend 決定是否含持有側股利
-  realizedCum: number;   // 帳本累計：Σ(realizedPnl + divCarried)，sellDate ≤ date
+  unrealized: number;    // 純價差：市值 − 成本 − 預估賣出費用
+  realizedCum: number;   // 已實現累計：賣出損益 ＋（含息時）累計配息
   total: number;         // unrealized + realizedCum
   source: 'live' | 'backfill';
 }
 
+/**
+ * 組合圖表序列。
+ *
+ * 含息語意（Phase 11 修正）：配息是「已入袋的現金收入」，故計入**已實現**側，
+ * 且不因之後賣股而消失。原本把配息掛在持有中 lot（未實現側）的做法有兩個錯誤——
+ * 清倉後歷史配息會憑空消失，且已實現側的 divCarried 不受含息開關控制。
+ *
+ * @param dividends 配息流水（date/amount，市場幣別）；未提供則視同無配息
+ */
 export const buildChartSeries = (
   rows: DailyPnlSnapshot[],
   trades: RealizedTrade[],
   market: 'TW' | 'US',
   includeDividend: boolean,
+  dividends?: { date: string; amount: number }[],
 ): ChartPoint[] => {
   const marketRows = rows.filter(r => r.market === market)
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const marketTrades = trades.filter(t => t.market === market)
     .sort((a, b) => (a.sellDate < b.sellDate ? -1 : a.sellDate > b.sellDate ? 1 : 0));
+  const divs = (dividends ?? []).slice()
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const isUs = market === 'US';
-  let ti = 0;
-  let cum = 0;
+  let ti = 0, di = 0;
+  let cum = 0, divCum = 0;
   return marketRows.map(r => {
     while (ti < marketTrades.length && marketTrades[ti].sellDate <= r.date) {
+      // divCarried：賣出時自 lot 移轉的手動輸入股利（與流水配息互不重疊）
       cum += marketTrades[ti].realizedPnl + marketTrades[ti].divCarried;
       ti++;
     }
-    const base = r.marketValue - r.totalCost - r.estSellCosts;
-    const unrealized = includeDividend ? base + r.cashDividends : base;
+    while (di < divs.length && divs[di].date <= r.date) {
+      divCum += divs[di].amount;
+      di++;
+    }
+    // 未實現＝純價差；配息一律計入已實現側（含息開關同時控制圖表與庫存表格的呈現）
+    const unrealized = r.marketValue - r.totalCost - r.estSellCosts;
+    const realized = includeDividend ? cum + divCum : cum;
     const point: ChartPoint = {
       date: r.date,
       unrealized: isUs ? round2(unrealized) : unrealized,
-      realizedCum: isUs ? round2(cum) : cum,
-      total: isUs ? round2(unrealized + cum) : unrealized + cum,
+      realizedCum: isUs ? round2(realized) : realized,
+      total: isUs ? round2(unrealized + realized) : unrealized + realized,
       source: r.source,
     };
     return point;
