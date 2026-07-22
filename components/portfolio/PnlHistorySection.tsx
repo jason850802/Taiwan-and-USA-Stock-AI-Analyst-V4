@@ -89,6 +89,8 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     }
     setBfState(s => ({ ...s, [market]: { ...s[market], done: symbols.length - toFetch.length } }));
 
+    // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同
+    let lastError = '';
     const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
       const missed: string[] = [];
       let cursor = 0;
@@ -102,13 +104,21 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
               .map(d => ({ date: d.date, close: d.close as number }));
             closeSeries[sym] = bars;
             putCachedSeries(sym, bars, firstTxnDate);
-          } catch {
+          } catch (e: any) {
+            lastError = String(e?.message ?? e ?? '');
             missed.push(sym);
           }
           setBfState(s => ({ ...s, [market]: { ...s[market], done: Math.min(s[market].done + 1, s[market].total) } }));
         }
       }));
       return missed;
+    };
+    const diagnose = (): string => {
+      if (/429|too many|限流/i.test(lastError)) return '（被行情來源限流）請等幾分鐘再按一次重算';
+      if (/5\d\d|internal|failed to fetch|networkerror/i.test(lastError)) {
+        return '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
+      }
+      return lastError ? `（${lastError.slice(0, 60)}）` : '（原因不明）請稍後再試';
     };
 
     let pending = await fetchBatch(toFetch, 3);
@@ -122,8 +132,8 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
 
     const failed = pending;
     if (failed.length > 0) {
-      const shown = failed.slice(0, 8).join('、') + (failed.length > 8 ? ` 等 ${failed.length} 檔` : '');
-      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗（已自動重試 2 次仍被限流），請稍等幾分鐘再按一次重算` } }));
+      const shown = failed.slice(0, 6).join('、') + (failed.length > 6 ? ` 等 ${failed.length} 檔` : '');
+      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗，已自動重試 2 次 ${diagnose()}` } }));
       return;
     }
 
