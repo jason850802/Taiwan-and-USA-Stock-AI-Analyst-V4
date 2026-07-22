@@ -5,8 +5,12 @@ import React, { useMemo, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../../types';
 import { getStockData } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
-import { buildBackfillRows, buildChartSeries, upsertSnapshots, BackfillLotInput } from '../../utils/portfolioHistory';
+import {
+  buildBackfillRows, buildBackfillFromTxns, buildChartSeries, upsertSnapshots,
+  BackfillLotInput, TxnForBackfill,
+} from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
+import { loadTxns } from '../../utils/txnStore';
 import Card from '../ui/Card';
 import PnlHistoryChart from './PnlHistoryChart';
 import { History, Loader2 } from 'lucide-react';
@@ -35,7 +39,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   const runBackfill = async (market: Market) => {
     const mLots = items.filter(i => (market === 'TW') === isTwStock(i.symbol));
     const datedLots = mLots.filter(l => !!l.buyDate);
-    if (datedLots.length === 0 || bfState[market].running) return;
+    // 有交易流水時以流水為準（可含已清倉部位）；沒有流水才退回「現存持股逆推」
+    const allTxns = loadTxns().filter(t => t.market === market);
+    const useTxnMode = allTxns.length > 0;
+    if (!useTxnMode && datedLots.length === 0) return;
+    if (bfState[market].running) return;
 
     const rate = usdTwdRate > 0 ? usdTwdRate : undefined;
     if (market === 'US') {
@@ -47,7 +55,9 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       }
     }
 
-    const symbols = [...new Set(datedLots.map(l => l.symbol))];
+    const symbols = useTxnMode
+      ? [...new Set(allTxns.map(t => t.symbol))]           // 含已清倉部位（完整歷史）
+      : [...new Set(datedLots.map(l => l.symbol))];
     setBfState(s => ({ ...s, [market]: { running: true, done: 0, total: symbols.length, error: null } }));
 
     // 3-worker 游標池（沿批次健檢先例；避免打爆 marketPerMin 限流）
@@ -90,15 +100,32 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
 
     const existing = loadSnapshots();
     const liveDates = existing.filter(r => r.market === market && r.source === 'live').map(r => r.date).sort();
-    const { rows: bfRows } = buildBackfillRows({
-      market,
-      lots: lotsInput,
-      closeSeries,
-      trades: realizedTrades.filter(t => t.market === market),
-      boundaryDate: liveDates[0],   // 回推只填第一筆 live 之前（D-08）
-      usdTwdRate: market === 'US' ? rate : undefined,
-      capturedAt: Date.now(),
-    });
+    const bfRows = useTxnMode
+      ? buildBackfillFromTxns({
+          market,
+          txns: allTxns.map((t): TxnForBackfill => {
+            // US 的金額換算成 USD（TWD 計價批次沿 D-10 用當下匯率）
+            const conv = (v: number) => (market === 'US' && rate ? v : v);
+            return {
+              date: t.date, symbol: t.symbol, market: t.market, kind: t.kind,
+              shares: t.shares, gross: conv(t.gross), fee: conv(t.fee), tax: conv(t.tax),
+              divAmount: t.kind === 'dividend' ? (t.market === 'US' ? (t.netTwd ?? 0) : t.gross) : undefined,
+            };
+          }),
+          closeSeries,
+          boundaryDate: liveDates[0],
+          usdTwdRate: market === 'US' ? rate : undefined,
+          capturedAt: Date.now(),
+        })
+      : buildBackfillRows({
+          market,
+          lots: lotsInput,
+          closeSeries,
+          trades: realizedTrades.filter(t => t.market === market),
+          boundaryDate: liveDates[0],   // 回推只填第一筆 live 之前（D-08）
+          usdTwdRate: market === 'US' ? rate : undefined,
+          capturedAt: Date.now(),
+        }).rows;
     // 重算語意：先清該市場全部 backfill 再寫入（backfill 永不覆蓋 live）
     const cleaned = existing.filter(r => !(r.market === market && r.source === 'backfill'));
     saveSnapshots(upsertSnapshots(cleaned, bfRows));

@@ -14,6 +14,7 @@ export interface ImportApplyPayload {
   lots: PortfolioItem[];
   newTrades: ReturnType<typeof replayStatement>['newTrades'];
   importedKeys: string[];
+  txns: ImportPlan['txns'];      // 完整買賣流水（供歷史回推重建已清倉部位）
   broker: ImportPlan['broker'];
   fileName: string;
 }
@@ -90,6 +91,7 @@ const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClo
       lots: applyPreview.lots,
       newTrades: applyPreview.newTrades,
       importedKeys: plan.txns.map(t => t.dedupeKey),
+      txns: plan.txns,
       broker: plan.broker,
       fileName,
     });
