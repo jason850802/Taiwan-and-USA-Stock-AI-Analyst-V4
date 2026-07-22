@@ -17,7 +17,16 @@ export const NAME_OVERRIDES: Record<string, string> = {
   神達: '3706',
 };
 
-const stripStar = (s: string): string => s.replace(/\*/g, '').trim();
+/**
+ * 正規化：移除券商／交易所加註的「市場別標記」，只留公司名本體。
+ * - `*`：處置股／注意股標記（對帳單與名錄都可能出現，且不一定同步）
+ * - `-創`：創新板（名錄有、對帳單沒有，如名錄「台灣虎航-創」vs 對帳單「台灣虎航」）
+ * - `-戰`：戰略新板
+ * ⚠️ `-KY`（境外註冊公司）是正式名稱的一部分，雙方都會出現，**不可移除**，
+ *    移除會讓「矽力-KY」與同名台灣公司產生誤配。
+ */
+const stripMarketTags = (s: string): string =>
+  s.replace(/\*/g, '').replace(/-(創|戰)$/u, '').trim();
 
 /**
  * 以名錄解析單一中文股名。
@@ -28,7 +37,7 @@ export const resolveTwSymbol = (name: string, dir: DirEntry[]): string | null =>
   const raw = String(name ?? '').trim();
   if (!raw) return null;
   if (NAME_OVERRIDES[raw]) return NAME_OVERRIDES[raw];
-  const bare = stripStar(raw);
+  const bare = stripMarketTags(raw);
   if (NAME_OVERRIDES[bare]) return NAME_OVERRIDES[bare];
 
   const exact = new Set<string>();
@@ -36,7 +45,7 @@ export const resolveTwSymbol = (name: string, dir: DirEntry[]): string | null =>
   for (const e of dir) {
     if (!e?.id || !e?.name) continue;
     if (e.name === raw) exact.add(e.id);
-    if (stripStar(e.name) === bare) loose.add(e.id);
+    if (stripMarketTags(e.name) === bare) loose.add(e.id);
   }
   if (exact.size === 1) return [...exact][0];
   if (exact.size === 0 && loose.size === 1) return [...loose][0];

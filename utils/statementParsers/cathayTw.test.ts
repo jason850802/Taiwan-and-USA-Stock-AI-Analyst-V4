@@ -175,6 +175,9 @@ describe('twSymbolResolver', () => {
     { id: '3706', name: '神達' },       // 同名多碼
     { id: '1234', name: '甲甲' },
     { id: '5678', name: '甲甲' },       // 無裁定的歧義
+    { id: '6757', name: '台灣虎航-創' }, // 創新板：名錄有「-創」、對帳單沒有
+    { id: '9999', name: '某某-戰' },     // 戰略新板
+    { id: '6415B', name: '矽力' },       // 陷阱：若誤剝 -KY 會與「矽力*-KY」相撞
   ];
 
   it('完全相同名稱', () => {
@@ -198,6 +201,15 @@ describe('twSymbolResolver', () => {
   });
   it('查無此名 → null', () => {
     expect(resolveTwSymbol('不存在公司', dir)).toBeNull();
+  });
+  it('創新板「-創」／戰略新板「-戰」後綴：名錄有、對帳單沒有時仍可對應', () => {
+    expect(resolveTwSymbol('台灣虎航', dir)).toBe('6757');
+    expect(resolveTwSymbol('台灣虎航-創', dir)).toBe('6757');
+    expect(resolveTwSymbol('某某', dir)).toBe('9999');
+  });
+  it('-KY 不可被剝除（剝了會與同名台灣公司誤配）', () => {
+    expect(resolveTwSymbol('矽力*-KY', dir)).toBe('6415');   // 非 6415B
+    expect(resolveTwSymbol('矽力', dir)).toBe('6415B');
   });
 
   it('批次解析：換 symbol、重算去重鍵、無法解析者剔除並回報一次', () => {
