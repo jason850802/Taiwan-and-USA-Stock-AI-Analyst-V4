@@ -10,8 +10,13 @@ import {
   BackfillLotInput, TxnForBackfill,
 } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
-import { loadTxns } from '../../utils/txnStore';
+import { loadTxns, saveTxns, appendTxns } from '../../utils/txnStore';
 import { getCachedSeries, putCachedSeriesMany } from '../../utils/closeSeriesCache';
+import { fetchFinMindRows } from '../../services/finmind';
+import {
+  estimateDividends, toDividendTxns, type DividendAnnouncement,
+} from '../../utils/dividendEstimator';
+import { Coins } from 'lucide-react';
 import Card from '../ui/Card';
 import PnlHistoryChart from './PnlHistoryChart';
 import { History, Loader2 } from 'lucide-react';
@@ -43,9 +48,56 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
 }) => {
   const [refreshTick, setRefreshTick] = useState(0);
   const [bfState, setBfState] = useState<Record<Market, BackfillState>>({ TW: IDLE, US: IDLE });
+  const [divState, setDivState] = useState<{ running: boolean; done: number; total: number; msg: string | null }>(
+    { running: false, done: 0, total: 0, msg: null });
+
+  /**
+   * 估算歷史配息：券商交易對帳單不含配息，改用公開除權息公告 × 交易流水推算。
+   * 只做台股（美股複委託帳單本身就有除息列）。金額為稅前，未扣二代健保補充保費。
+   */
+  const runDividendEstimate = async () => {
+    if (divState.running) return;
+    const txns = loadTxns().filter(t => t.market === 'TW');
+    const symbols = [...new Set(txns.filter(t => t.kind === 'buy').map(t => t.symbol))];
+    if (symbols.length === 0) return;
+
+    setDivState({ running: true, done: 0, total: symbols.length, msg: null });
+    const firstDate = txns.reduce((m, t) => (t.date < m ? t.date : m), txns[0].date);
+    const anns: Record<string, DividendAnnouncement[]> = {};
+    const failed: string[] = [];
+    let cursor = 0;
+    await Promise.all(Array.from({ length: Math.min(3, symbols.length) }, async () => {
+      while (cursor < symbols.length) {
+        const sym = symbols[cursor++];
+        try {
+          const rows = await fetchFinMindRows('TaiwanStockDividend', { data_id: sym, start_date: firstDate });
+          anns[sym] = rows as DividendAnnouncement[];
+        } catch {
+          failed.push(sym);
+        }
+        setDivState(s => ({ ...s, done: s.done + 1 }));
+      }
+    }));
+
+    const { dividends, stockDividendNotes, skipped } = estimateDividends(txns, anns);
+    if (dividends.length > 0) {
+      saveTxns(appendTxns(loadTxns(), toDividendTxns(dividends, 'TW')));
+    }
+    const total = dividends.reduce((s, d) => s + d.amount, 0);
+    const parts = [`估算 ${dividends.length} 筆配息，合計 ${total.toLocaleString('zh-TW')} 元（稅前）`];
+    if (stockDividendNotes.length > 0) parts.push(`另有 ${stockDividendNotes.length} 筆配股需自行確認股數`);
+    if (skipped.length > 0) parts.push(`${skipped.length} 筆公告資料不全已略過`);
+    if (failed.length > 0) parts.push(`${failed.length} 檔查詢失敗`);
+    parts.push('請按「重算歷史回推」讓曲線納入');
+    setDivState({ running: false, done: symbols.length, total: symbols.length, msg: parts.join('；') });
+    setRefreshTick(t => t + 1);
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const rows = useMemo(() => loadSnapshots(), [historyTick, refreshTick]);
+  // 配息流水（含已清倉部位的歷史配息）——供圖表以「已實現側累計」計入
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const dividendTxns = useMemo(() => loadTxns().filter(t => t.kind === 'dividend'), [historyTick, refreshTick]);
 
   const runBackfill = async (market: Market) => {
     const mLots = items.filter(i => (market === 'TW') === isTwStock(i.symbol));
@@ -197,7 +249,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const mRows = rows.filter(r => r.market === market);
     if (mLots.length === 0 && mRows.length === 0) return null;
 
-    const points = buildChartSeries(rows, realizedTrades, market, includeDividend);
+    const marketDivs = dividendTxns
+      .filter(t => t.market === market)
+      .map(t => ({ date: t.date, amount: market === 'US' ? (t.netTwd ?? t.gross) : t.gross }));
+    const points = buildChartSeries(rows, realizedTrades, market, includeDividend, marketDivs);
+    const divTotal = marketDivs.reduce((s, d) => s + d.amount, 0);
     const datedLots = mLots.filter(l => !!l.buyDate);
     const undatedLots = mLots.filter(l => !l.buyDate);
     const hasBackfill = mRows.some(r => r.source === 'backfill');
@@ -217,11 +273,25 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                   {st.running ? progressLabel(st) : (hasBackfill ? '重算歷史回推' : '建立歷史曲線（回推）')}
                 </button>
               )}
+              {market === 'TW' && (
+                <button onClick={runDividendEstimate} disabled={divState.running || st.running}
+                  title="券商交易對帳單不含配息，改用公開除權息公告×你的持股推算（稅前）"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-ctl border border-surface-line text-slate-400 hover:text-white hover:border-slate-500 transition-colors disabled:opacity-50">
+                  {divState.running ? <Loader2 size={12} className="animate-spin" /> : <Coins size={12} />}
+                  {divState.running ? `估算配息 ${divState.done}/${divState.total} 檔…` : '估算歷史配息'}
+                </button>
+              )}
+              {divTotal > 0 && (
+                <span className="text-up/80">
+                  已計入配息 {Math.round(divTotal).toLocaleString('zh-TW')} 元（稅前，切「不含息損益」可排除）
+                </span>
+              )}
               {undatedLots.length > 0 && (
                 <span className="text-amber-300/80">
                   {undatedLots.length} 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）
                 </span>
               )}
+              {market === 'TW' && divState.msg && <span className="text-accent">{divState.msg}</span>}
               {st.error && <span className="text-danger">{st.error}</span>}
             </div>
           </div>

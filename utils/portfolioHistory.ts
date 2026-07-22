@@ -297,11 +297,8 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
         continue;
       }
       if (t.kind === 'dividend') {
-        const amount = t.divAmount ?? 0;
-        const total = lots.reduce((s, l) => s + l.shares, 0);
-        if (total > 0 && amount !== 0) {
-          for (const l of lots) l.cashDiv += (amount * l.shares) / total;
-        }
+        // 配息不掛在 lot 上：已入袋的現金不該因為之後賣股而消失。
+        // 改由 buildChartSeries 以流水累計計入「已實現」側（含已清倉部位的歷史配息）。
         continue;
       }
       // sell：FIFO 扣減（賣超部分忽略——期初部位缺口，圖上不臆測）
@@ -363,37 +360,55 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
 
 export interface ChartPoint {
   date: string;
-  unrealized: number;    // 依 includeDividend 決定是否含持有側股利
-  realizedCum: number;   // 帳本累計：Σ(realizedPnl + divCarried)，sellDate ≤ date
+  unrealized: number;    // 純價差：市值 − 成本 − 預估賣出費用
+  realizedCum: number;   // 已實現累計：賣出損益 ＋（含息時）累計配息
   total: number;         // unrealized + realizedCum
   source: 'live' | 'backfill';
 }
 
+/**
+ * 組合圖表序列。
+ *
+ * 含息語意（Phase 11 修正）：配息是「已入袋的現金收入」，故計入**已實現**側，
+ * 且不因之後賣股而消失。原本把配息掛在持有中 lot（未實現側）的做法有兩個錯誤——
+ * 清倉後歷史配息會憑空消失，且已實現側的 divCarried 不受含息開關控制。
+ *
+ * @param dividends 配息流水（date/amount，市場幣別）；未提供則視同無配息
+ */
 export const buildChartSeries = (
   rows: DailyPnlSnapshot[],
   trades: RealizedTrade[],
   market: 'TW' | 'US',
   includeDividend: boolean,
+  dividends?: { date: string; amount: number }[],
 ): ChartPoint[] => {
   const marketRows = rows.filter(r => r.market === market)
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const marketTrades = trades.filter(t => t.market === market)
     .sort((a, b) => (a.sellDate < b.sellDate ? -1 : a.sellDate > b.sellDate ? 1 : 0));
+  const divs = (dividends ?? []).slice()
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const isUs = market === 'US';
-  let ti = 0;
-  let cum = 0;
+  let ti = 0, di = 0;
+  let cum = 0, divCum = 0;
   return marketRows.map(r => {
     while (ti < marketTrades.length && marketTrades[ti].sellDate <= r.date) {
+      // divCarried：賣出時自 lot 移轉的手動輸入股利（與流水配息互不重疊）
       cum += marketTrades[ti].realizedPnl + marketTrades[ti].divCarried;
       ti++;
     }
-    const base = r.marketValue - r.totalCost - r.estSellCosts;
-    const unrealized = includeDividend ? base + r.cashDividends : base;
+    while (di < divs.length && divs[di].date <= r.date) {
+      divCum += divs[di].amount;
+      di++;
+    }
+    // 未實現＝純價差；配息一律計入已實現側（含息開關同時控制圖表與庫存表格的呈現）
+    const unrealized = r.marketValue - r.totalCost - r.estSellCosts;
+    const realized = includeDividend ? cum + divCum : cum;
     const point: ChartPoint = {
       date: r.date,
       unrealized: isUs ? round2(unrealized) : unrealized,
-      realizedCum: isUs ? round2(cum) : cum,
-      total: isUs ? round2(unrealized + cum) : unrealized + cum,
+      realizedCum: isUs ? round2(realized) : realized,
+      total: isUs ? round2(unrealized + realized) : unrealized + realized,
       source: r.source,
     };
     return point;

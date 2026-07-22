@@ -82,7 +82,9 @@ describe('buildBackfillFromTxns｜多檔進出與部分賣出', () => {
 });
 
 describe('buildBackfillFromTxns｜配息與邊界', () => {
-  it('配息依股數等比累加到 cashDividends', () => {
+  it('配息不掛在持股上（Phase 11 語意）：快照 cashDividends 保持 0，由圖表以流水累計計入已實現側', () => {
+    // 理由：已入袋的現金不該因為之後賣股而消失。舊做法把配息加到 lot，
+    // 賣出時等比扣減、清倉後歸零，導致已清倉部位的歷史配息憑空不見。
     const txns: TxnForBackfill[] = [
       { date: '2026-01-02', symbol: 'AAA', market: 'TW', kind: 'buy', shares: 1000, gross: 10000, fee: 14, tax: 0 },
       { date: '2026-01-03', symbol: 'AAA', market: 'TW', kind: 'dividend', shares: 1000, gross: 500, fee: 0, tax: 0, divAmount: 500 },
@@ -92,7 +94,8 @@ describe('buildBackfillFromTxns｜配息與邊界', () => {
       closeSeries: { AAA: series([['2026-01-02', 10], ['2026-01-03', 11]]) },
       capturedAt: T,
     });
-    expect(rows.find(r => r.date === '2026-01-03')!.cashDividends).toBe(500);
+    expect(rows.find(r => r.date === '2026-01-03')!.cashDividends).toBe(0);
+    expect(rows.find(r => r.date === '2026-01-03')!.marketValue).toBe(11000);   // 配息不影響市值
   });
 
   it('boundaryDate 之後不產出（live 快照優先）', () => {
