@@ -11,7 +11,7 @@ import {
 } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
 import { loadTxns } from '../../utils/txnStore';
-import { getCachedSeries, putCachedSeries } from '../../utils/closeSeriesCache';
+import { getCachedSeries, putCachedSeriesMany } from '../../utils/closeSeriesCache';
 import Card from '../ui/Card';
 import PnlHistoryChart from './PnlHistoryChart';
 import { History, Loader2 } from 'lucide-react';
@@ -91,6 +91,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
 
     // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同
     let lastError = '';
+    const freshlyFetched: { symbol: string; bars: { date: string; close: number }[] }[] = [];
     const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
       const missed: string[] = [];
       let cursor = 0;
@@ -103,7 +104,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
               .filter(d => d.close !== null && d.close !== undefined)
               .map(d => ({ date: d.date, close: d.close as number }));
             closeSeries[sym] = bars;
-            putCachedSeries(sym, bars, firstTxnDate);
+            freshlyFetched.push({ symbol: sym, bars });   // 收集後批次寫入，避免逐檔序列化整份快取
           } catch (e: any) {
             lastError = String(e?.message ?? e ?? '');
             missed.push(sym);
@@ -129,6 +130,8 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 0, done: Math.max(0, s[market].total - pending.length) } }));
       pending = await fetchBatch(pending, 1);
     }
+
+    putCachedSeriesMany(freshlyFetched, firstTxnDate);   // 一次寫入本輪抓到的全部序列
 
     const failed = pending;
     if (failed.length > 0) {
