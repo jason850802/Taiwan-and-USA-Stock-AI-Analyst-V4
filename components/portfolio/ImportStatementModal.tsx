@@ -3,6 +3,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { PortfolioItem, ImportPlan, ImportGap } from '../../types';
 import { parseStatementFile, StatementParseError, getBrokerLabel } from '../../utils/statementParsers';
+import { ensureTaiwanDirectory } from '../../services/stockDirectory';
 import { buildImportPlan } from '../../utils/importPlan';
 import { replayStatement } from '../../utils/importReplay';
 import { loadImportLog } from '../../utils/importStore';
@@ -45,7 +46,8 @@ const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClo
   const handleFile = async (file: File) => {
     setBusy(true); setError(null); setPlan(null);
     try {
-      const parsed = await parseStatementFile(file);
+      // 國泰台股對帳單只有中文股名，需台股名錄反查代號（其餘格式不會用到此 callback）
+      const parsed = await parseStatementFile(file, () => ensureTaiwanDirectory());
       const log = loadImportLog();
       const p = buildImportPlan({
         broker: parsed.broker,
@@ -105,7 +107,7 @@ const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClo
           <div className="space-y-3">
             <div className="border border-dashed border-surface-line rounded-card p-8 text-center">
               <FileSpreadsheet className="mx-auto text-slate-500 mb-3" size={32} />
-              <p className="text-slate-300 text-sm mb-1">選擇永豐金（.xlsx）或國泰複委託（.csv）對帳單</p>
+              <p className="text-slate-300 text-sm mb-1">選擇永豐金或國泰證券的對帳單（.xlsx / .csv）</p>
               <p className="text-slate-500 text-xs mb-4">買進會建立持股、賣出會從庫存扣減並計入已實現損益</p>
               <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" className="hidden"
                 onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />

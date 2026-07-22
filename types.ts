@@ -137,7 +137,7 @@ export interface RealizedTrade {
 
 // ── 券商對帳單匯入（Phase 11）───────────────────────────────
 export type TxnKind = 'buy' | 'sell' | 'dividend';
-export type BrokerId = 'sinopac' | 'cathay';
+export type BrokerId = 'sinopac' | 'cathay' | 'cathayTw';
 
 /** 券商無關的中間格式：解析器產出、重播引擎消費（換券商只需新增解析器） */
 export interface ParsedTxn {
