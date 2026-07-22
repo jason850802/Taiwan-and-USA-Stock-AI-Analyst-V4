@@ -53,11 +53,11 @@ export const parseStatementFile = async (
   if (lower.endsWith('.xlsx') || lower.endsWith('.xls')) {
     let rows: any[][];
     try {
-      // 懶載：只在使用者丟 xlsx 時才下載這個 chunk（D-01）。
-      // 套件無根進入點，瀏覽器須指定 /browser 子路徑。
-      const mod = await import('read-excel-file/browser');
-      const readXlsxFile = (mod as any).default ?? mod;
-      rows = unwrapSheetRows(await readXlsxFile(file));
+      // 懶載：只在使用者丟 xlsx 時才載入這個 chunk（D-01）。
+      // 自有讀取器（非第三方套件）——券商匯出的 xlsx 常有非標準結構，
+      // 例如永豐金新版把空儲存格寫成 `t="s"` 卻無 <v>，第三方套件會整份拒讀。
+      const { readXlsxRows } = await import('./xlsxReader');
+      rows = await readXlsxRows(file);
     } catch (e: any) {
       throw new StatementParseError(`Excel 檔讀取失敗：${e?.message || '檔案可能損毀或非 xlsx 格式'}`);
     }
