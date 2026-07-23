@@ -13,6 +13,7 @@ import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore'
 import { loadTxns, saveTxns, appendTxns } from '../../utils/txnStore';
 import { getCachedSeries, putCachedSeriesMany } from '../../utils/closeSeriesCache';
 import { fetchFinMindRows } from '../../services/finmind';
+import { DataFetchError, type FetchErrorKind } from '../../services/fetchError';
 import {
   estimateDividends, toDividendTxns, type DividendAnnouncement,
 } from '../../utils/dividendEstimator';
@@ -141,8 +142,9 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     }
     setBfState(s => ({ ...s, [market]: { ...s[market], done: symbols.length - toFetch.length } }));
 
-    // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同
-    let lastError = '';
+    // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同。
+    // T3 起優先讀型別化的 kind；認不出 kind（非 DataFetchError）才退回訊息比對。
+    let lastError: { kind?: FetchErrorKind; message: string } = { message: '' };
     const freshlyFetched: { symbol: string; bars: { date: string; close: number }[] }[] = [];
     const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
       const missed: string[] = [];
@@ -158,7 +160,10 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
             closeSeries[sym] = bars;
             freshlyFetched.push({ symbol: sym, bars });   // 收集後批次寫入，避免逐檔序列化整份快取
           } catch (e: any) {
-            lastError = String(e?.message ?? e ?? '');
+            lastError = {
+              kind: e instanceof DataFetchError ? e.kind : undefined,
+              message: String(e?.message ?? e ?? ''),
+            };
             missed.push(sym);
           }
           setBfState(s => ({ ...s, [market]: { ...s[market], done: Math.min(s[market].done + 1, s[market].total) } }));
@@ -166,12 +171,19 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       }));
       return missed;
     };
+    const RATE_LIMIT_HINT = '（被行情來源限流）請等幾分鐘再按一次重算';
+    const BACKEND_DOWN_HINT = '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
     const diagnose = (): string => {
-      if (/429|too many|限流/i.test(lastError)) return '（被行情來源限流）請等幾分鐘再按一次重算';
-      if (/5\d\d|internal|failed to fetch|networkerror/i.test(lastError)) {
-        return '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
+      // 先認 kind（T3 型別化錯誤）
+      if (lastError.kind === 'RATE_LIMIT') return RATE_LIMIT_HINT;
+      if (lastError.kind === 'BACKEND_DOWN' || lastError.kind === 'NETWORK') return BACKEND_DOWN_HINT;
+      // 認不得再退回既有訊息比對（非 DataFetchError 的來源仍靠這層）
+      const msg = lastError.message;
+      if (/429|too many|限流/i.test(msg)) return RATE_LIMIT_HINT;
+      if (/5\d\d|internal|failed to fetch|networkerror/i.test(msg)) {
+        return BACKEND_DOWN_HINT;
       }
-      return lastError ? `（${lastError.slice(0, 60)}）` : '（原因不明）請稍後再試';
+      return msg ? `（${msg.slice(0, 60)}）` : '（原因不明）請稍後再試';
     };
 
     let pending = await fetchBatch(toFetch, 3);

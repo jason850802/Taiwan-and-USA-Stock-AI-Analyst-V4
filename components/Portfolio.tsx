@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PortfolioItem, StockDataPoint, RealizedTrade } from '../types';
 import { getLatestPrice, getStockData } from '../services/yahoo';
+import { classifyCaught, type FetchErrorKind } from '../services/fetchError';
 import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
 import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../utils/volume';
@@ -33,6 +34,18 @@ interface PortfolioProps {
 }
 
 interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string }
+
+/**
+ * 行情抓取失敗的健檢文案（T3）：依錯誤 kind 分流，不再無條件寫「可能限流中」。
+ * 後端沒開跟被限流的處置完全不同，猜錯會把使用者指去做錯的事。
+ * tail 是各呼叫點的尾句（單檔＝句號；批次＝「，或單獨對此檔重跑健檢。」）。
+ */
+const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
+  const lead = kind === 'RATE_LIMIT' ? '（Yahoo／FinMind 可能限流中）請'
+    : (kind === 'BACKEND_DOWN' || kind === 'NETWORK') ? '行情後端目前無回應，請確認網路或'
+    : '請';
+  return `**行情資料暫時無法取得**\n\n${lead}稍後再試${tail}`;
+};
 
 // lots 維持逐筆儲存，只在渲染時依 symbol 保序分組。
 const groupLotsBySymbol = (items: PortfolioItem[]): Map<string, PortfolioItem[]> => {
@@ -737,6 +750,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   // 健檢寫回世代守衛（per-symbol 單調遞增，比照 App.tsx fetchSeqRef 模式）：
   // 單檔與批次對同一 symbol 重疊在飛行時，較早起跑者的落地結果不得覆蓋較晚起跑者
   const healthSeqRef = useRef<Record<string, number>>({});
+  // 行情抓取失敗的種類（per-symbol，T3）：buildHealthItem 一律吞錯不 throw，
+  // 但失敗文案要能說出「限流」還是「後端沒開」，所以把 kind 留在這裡給文案讀。
+  const healthFetchKindRef = useRef<Record<string, FetchErrorKind | null>>({});
 
   // 新增表單
   const [form, setForm] = useState({
@@ -990,7 +1006,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       const { data } = await getStockData(symbol, '1d');
       recentData = data;
       volProj = estimateVolumeTrend(data, isTwStock(symbol), '1d');
-    } catch { /* continue without data */ }
+      healthFetchKindRef.current[symbol] = null;
+    } catch (e) {
+      healthFetchKindRef.current[symbol] = classifyCaught(e);   // 吞錯照舊，但把種類留下
+    }
 
     return {
       symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
@@ -1011,7 +1030,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       if (healthItem.recentData.length === 0) {
         // 行情抓取失敗：空資料送 LLM 只會在 formatHealthCheckData 拋錯，直接誠實標記可重試
         if (healthSeqRef.current[symbol] !== gen) return;
-        setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '資料取得失敗', fullResult: '**行情資料暫時無法取得**\n\n（Yahoo／FinMind 可能限流中）請稍後再試。' } }));
+        setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '。') } }));
         return;
       }
 
@@ -1078,7 +1097,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           const next = { ...prev };
           failedSymbols.forEach(symbol => {
             if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-            next[symbol] = { status: 'error', decision: '資料取得失敗', fullResult: '**行情資料暫時無法取得**\n\n（Yahoo／FinMind 可能限流中）請稍後再試，或單獨對此檔重跑健檢。' };
+            next[symbol] = { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '，或單獨對此檔重跑健檢。') };
           });
           return next;
         });

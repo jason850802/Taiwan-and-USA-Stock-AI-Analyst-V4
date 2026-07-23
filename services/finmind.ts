@@ -8,6 +8,7 @@ import type {
   TwValuation,
 } from '../types';
 import { proxyHeaders } from './_shared/apiClient';
+import { DataFetchError } from './fetchError';
 
 export type FinMindDataset =
   | 'TaiwanStockInstitutionalInvestorsBuySell'
@@ -38,8 +39,9 @@ export const fetchFinMindRows = async (
   });
   if (!res.ok) {
     const parsed = await res.json().catch(() => ({})) as { message?: string };
-    const error = new Error(parsed.message || `FinMind fetch error (${res.status})`) as Error & { status?: number };
-    error.status = res.status;
+    const kind = res.status === 429 ? 'RATE_LIMIT' : res.status >= 500 ? 'BACKEND_DOWN' : 'UNKNOWN';
+    const error = new DataFetchError(kind, parsed.message || `FinMind fetch error (${res.status})`) as DataFetchError & { status?: number };
+    error.status = res.status;   // 既有掛載保留：getTwFundamentals 的 429 退避仍讀這個
     throw error;
   }
 
@@ -388,7 +390,8 @@ export const getTwFundamentals = async (
 
   // 整頁失敗判準（沿用 py 版）：incomeQuarters＋balanceSheet＋valuation 全空 → 視為整體失敗。
   if (incomeQuarters.length === 0 && !balanceSheet && !valuation) {
-    throw new Error('所有 FinMind 資料集皆抓取失敗，可能為限流或代碼錯誤。');
+    // 「可能為限流」只是猜測，kind 不跟著猜——維持 UNKNOWN，message 原文不動
+    throw new DataFetchError('UNKNOWN', '所有 FinMind 資料集皆抓取失敗，可能為限流或代碼錯誤。');
   }
 
   const fundamentals: TwFundamentals = {

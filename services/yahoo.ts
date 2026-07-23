@@ -2,6 +2,7 @@ import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 import { isTwStock } from '../utils/market';
 import { proxyHeaders } from './_shared/apiClient';
+import { DataFetchError } from './fetchError';
 import { fetchFinMindRows } from './finmind';
 import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
 import {
@@ -252,7 +253,7 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
             rawDateStr: d.date
         }));
     }
-    throw new Error('FinMind data not found');
+    throw new DataFetchError('NOT_FOUND', 'FinMind data not found');
 };
 
 const queryYahoo = async (symbol: string, interval: string, range: string, signal?: AbortSignal): Promise<YahooChartResponse> => {
@@ -264,7 +265,7 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
 
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
-        throw new Error(parsed.message || `Fetch error (${res.status})`);
+        throw new DataFetchError(res.status === 429 ? 'RATE_LIMIT' : 'BACKEND_DOWN', parsed.message || `Fetch error (${res.status})`);
     }
 
     const json = await res.json() as YahooChartResponse;
@@ -272,13 +273,13 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
     if (json.chart && json.chart.error) {
         const code = json.chart.error.code;
         if (code === 'Not Found') {
-            throw new Error(`Symbol ${symbol} not found.`);
+            throw new DataFetchError('NOT_FOUND', `Symbol ${symbol} not found.`);
         }
-        throw new Error(JSON.stringify(json.chart.error));
+        throw new DataFetchError('PARSE', JSON.stringify(json.chart.error));
     }
 
     if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
-        throw new Error('No data found in response');
+        throw new DataFetchError('NOT_FOUND', 'No data found in response');
     }
 
     return json;
@@ -329,7 +330,7 @@ const fetchRawData = async (symbol: string, interval: string, range: string, sig
               return await performQuery(`${coreCode}.TWO`);
           } catch (e2: any) {
              if (e2?.name === 'AbortError') throw e2; // H-1
-             throw new Error(`找不到台股代號: ${coreCode}`);
+             throw new DataFetchError('NOT_FOUND', `找不到台股代號: ${coreCode}`);
           }
       }
   }
@@ -878,7 +879,8 @@ const fetchStockDataUncached = async (
               };
           } catch (finErr) {
               // If FinMind also fails, revert to original error
-              throw new Error(`Data Fetch Failed: ${err.message}`);
+              if (err instanceof DataFetchError) throw err;   // T3：原樣重丟保 kind 穿透到 UI
+              throw new DataFetchError('UNKNOWN', `Data Fetch Failed: ${err.message}`);
           }
       } else {
           throw err;
