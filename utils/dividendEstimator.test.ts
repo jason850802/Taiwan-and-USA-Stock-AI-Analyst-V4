@@ -2,7 +2,7 @@
 // 權利判定的核心：除息交易日「當天買進不享權、當天賣出仍享權」。
 import { describe, it, expect } from 'vitest';
 import {
-  estimateDividends, sharesBefore, toDividendTxns, dividendCumUpTo,
+  estimateDividends, sharesBefore, toDividendTxns, dividendCumUpTo, estimateLotDividends,
   type DividendAnnouncement,
 } from './dividendEstimator';
 import { StoredTxn } from './txnStore';
@@ -132,5 +132,52 @@ describe('dividendCumUpTo｜累計配息（含已清倉部位）', () => {
     const us = [...txns, tx({ kind: 'dividend', market: 'US', date: '2024-06-19', gross: 10, netTwd: 320 })];
     expect(dividendCumUpTo(us, 'US', '2024-12-31')).toBe(320);   // 美股取台幣淨額
     expect(dividendCumUpTo(us, 'TW', '2024-12-31')).toBe(4200);
+  });
+});
+
+// N1：在庫持股（lot）的股利估算——單一批次固定股數版，供庫存欄位自動更新用。
+// 與 estimateDividends 的差異：不重播多筆買賣（lot 本身就是「這批固定 X 股」），
+// 只看 buyDate 之後的除權息公告，用 totalShares 直接乘。
+describe('estimateLotDividends｜單一批次固定股數', () => {
+  it('買進日之後的除息才計入，買進當天除息不算（與 sharesBefore 同語意）', () => {
+    const anns = [
+      ann({ CashEarningsDistribution: 1.5, CashExDividendTradingDate: '2024-06-19' }),
+      ann({ CashEarningsDistribution: 1.2, CashExDividendTradingDate: '2024-09-18' }),
+    ];
+    expect(estimateLotDividends('2024-06-19', 1000, anns)).toMatchObject({ cashDividends: 1200, stockDividends: 0 });
+    expect(estimateLotDividends('2024-01-01', 1000, anns)).toMatchObject({ cashDividends: 2700, stockDividends: 0 });
+  });
+
+  it('現金股利加總取整數元', () => {
+    const anns = [
+      ann({ CashEarningsDistribution: 0.35, CashExDividendTradingDate: '2024-03-01' }),
+      ann({ CashEarningsDistribution: 0.35, CashExDividendTradingDate: '2024-06-01' }),
+    ];
+    // 700×0.35×2 = 490（無條件捨去/進位差異在此案例不出現，值本身是整數）
+    expect(estimateLotDividends('2024-01-01', 700, anns).cashDividends).toBe(490);
+  });
+
+  it('股票股利依股數加總，回傳配股股數（不動股數欄位，呼叫端自行決定）', () => {
+    const anns = [
+      ann({ CashEarningsDistribution: 0, StockEarningsDistribution: 0.5, StockExDividendTradingDate: '2024-07-10' }),
+    ];
+    expect(estimateLotDividends('2024-01-01', 1000, anns)).toMatchObject({ cashDividends: 0, stockDividends: 500 });
+  });
+
+  it('買進日之前的除息不計（含股票股利）', () => {
+    const anns = [
+      ann({ CashEarningsDistribution: 9, CashExDividendTradingDate: '2024-01-05' }),
+      ann({ StockEarningsDistribution: 1, StockExDividendTradingDate: '2024-01-05' }),
+    ];
+    expect(estimateLotDividends('2024-06-01', 1000, anns)).toMatchObject({ cashDividends: 0, stockDividends: 0 });
+  });
+
+  it('缺除息交易日的公告靜默略過（不臆測，呼叫端已有全域 skipped 名單可查）', () => {
+    const anns = [ann({ CashEarningsDistribution: 1.5, CashExDividendTradingDate: '' })];
+    expect(estimateLotDividends('2024-01-01', 1000, anns)).toMatchObject({ cashDividends: 0, stockDividends: 0 });
+  });
+
+  it('無公告或空陣列回零，不拋錯', () => {
+    expect(estimateLotDividends('2024-01-01', 1000, [])).toMatchObject({ cashDividends: 0, stockDividends: 0 });
   });
 });

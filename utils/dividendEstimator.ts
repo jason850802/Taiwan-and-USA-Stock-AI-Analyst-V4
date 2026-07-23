@@ -133,6 +133,43 @@ export const toDividendTxns = (list: EstimatedDividend[], market: 'TW' | 'US' = 
     key: `div|${market}|${d.symbol}|${d.exDate}`,
   }));
 
+export interface LotDividendEstimate {
+  cashDividends: number;   // 累計現金股利（元，取整數）
+  stockDividends: number;  // 累計配股股數（取整數；不動 totalShares，欄位語意是「已領股數」）
+}
+
+/**
+ * 單一持股批次（lot）的股利估算——供庫存欄位（cashDividends/stockDividends）自動更新用（N1）。
+ *
+ * 與 estimateDividends 的差異：那支重播完整買賣流水算「除息當下淨持股」（FIFO），
+ * 用於歷史曲線；這支假設 lot 自 buyDate 起股數固定為 totalShares（lot 本來就代表
+ * 「這一批 X 股」，不追蹤批次內的部分減碼），只加總 buyDate 之後的除權息公告。
+ * 語意與 sharesBefore 一致：買進當天除息不算（當天買進不享權）。
+ * 缺除息交易日的公告靜默略過（不臆測）——全域「查詢失敗/資料不全」名單由呼叫端管理。
+ */
+export const estimateLotDividends = (
+  buyDate: string,
+  totalShares: number,
+  anns: DividendAnnouncement[],
+): LotDividendEstimate => {
+  let cashDividends = 0;
+  let stockDividends = 0;
+  for (const a of anns) {
+    const cash = Number(a.CashEarningsDistribution) || 0;
+    const exDate = (a.CashExDividendTradingDate || '').trim();
+    if (cash > 0 && DATE_RE.test(exDate) && exDate > buyDate) {
+      cashDividends += totalShares * cash;
+    }
+
+    const stock = Number(a.StockEarningsDistribution) || 0;
+    const stockExDate = (a.StockExDividendTradingDate || '').trim();
+    if (stock > 0 && DATE_RE.test(stockExDate) && stockExDate > buyDate) {
+      stockDividends += totalShares * stock;
+    }
+  }
+  return { cashDividends: Math.round(cashDividends), stockDividends: Math.round(stockDividends) };
+};
+
 /** 到某日為止的累計配息（含已清倉部位——現金已入袋，不因賣股消失） */
 export const dividendCumUpTo = (txns: StoredTxn[], market: 'TW' | 'US', date: string): number => {
   let sum = 0;

@@ -4,7 +4,7 @@ import { getStockData } from '../services/yahoo';
 import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
-import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload } from 'lucide-react';
+import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Coins } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
@@ -20,6 +20,7 @@ import { useHoldingPrices } from './portfolio/useHoldingPrices';
 import { useDailySnapshot } from './portfolio/useDailySnapshot';
 import { usePortfolioForm } from './portfolio/usePortfolioForm';
 import { useHealthCheck } from './portfolio/useHealthCheck';
+import { useLotDividendUpdate } from './portfolio/useLotDividendUpdate';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -47,6 +48,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
     handleSingleHealthCheck, handleBatchHealthCheck,
   } = useHealthCheck(items, prices, usdTwdRate);
+  const { lotDividendState, runLotDividendUpdate } = useLotDividendUpdate(items, onUpdate);
 
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
   const [sellTarget,      setSellTarget]      = useState<PortfolioItem | null>(null);   // 賣出 Modal 目標批次
@@ -145,30 +147,41 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <h2 className="text-2xl font-bold text-white mb-1">我的庫存</h2>
           <p className="text-slate-400 text-sm">台股含手續費與證交稅・美股個股 0.08%・ETF $3/次</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
-            <Button variant={includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(true)}>
-              含息損益
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-wrap gap-2">
+            <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
+              <Button variant={includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(true)}>
+                含息損益
+              </Button>
+              <Button variant={!includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(false)}>
+                不含息損益
+              </Button>
+            </div>
+            <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
+              <RefreshCw size={15} /> 更新報價
             </Button>
-            <Button variant={!includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(false)}>
-              不含息損益
+            <span title="依除權息公告估算台股各批股利，會覆蓋該批的股利欄位">
+              <Button variant="ghost" onClick={runLotDividendUpdate} disabled={lotDividendState.running}
+                className="flex items-center gap-2">
+                {lotDividendState.running ? <Loader2 size={15} className="animate-spin" /> : <Coins size={15} />} 自動估算股利
+              </Button>
+            </span>
+            <Button variant="ghost" onClick={() => setShowImportModal(true)} className="flex items-center gap-2">
+              <Upload size={15} /> 匯入對帳單
+            </Button>
+            <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
+              {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
+            </Button>
+            <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
+              <Plus size={15} /> 新增持股
+            </Button>
+            <Button variant="ai" onClick={() => { setIsAnalyzeMode(true); setShowAddModal(true); }} className="flex items-center gap-2">
+              <BrainCircuit size={15} /> 新增持股與分析
             </Button>
           </div>
-          <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
-            <RefreshCw size={15} /> 更新報價
-          </Button>
-          <Button variant="ghost" onClick={() => setShowImportModal(true)} className="flex items-center gap-2">
-            <Upload size={15} /> 匯入對帳單
-          </Button>
-          <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
-            {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
-          </Button>
-          <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
-            <Plus size={15} /> 新增持股
-          </Button>
-          <Button variant="ai" onClick={() => { setIsAnalyzeMode(true); setShowAddModal(true); }} className="flex items-center gap-2">
-            <BrainCircuit size={15} /> 新增持股與分析
-          </Button>
+          {lotDividendState.msg && (
+            <p className="text-xs text-accent text-right max-w-md">{lotDividendState.msg}</p>
+          )}
         </div>
       </div>
 
