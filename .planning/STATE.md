@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-01)
 Phase: 4 of 4 (防濫用強化 ＋ 部署驗收) — Complete
 Plan: 4 of 4 complete
 Status: Milestone complete（所有 phase 已合併 main）
-Last activity: 2026-07-21 - Phase 09（AI 分析延遲優化）合併回 main：SI 拆快捷/完整、claude-cli 串流＋effort 分檔、api/gemini-stream.ts（NDJSON＋限流）、邊生成邊顯示、週線預抓。此前兩筆 quick 均完成：260715-jsr（sync_skills_mirror.py 原地覆寫消除 rmtree 競態，於 main）、260715-jfp（entry-decision SKILL 對齊 entryFilter.ts，SOP②label 補 MA5，32 案例行為鎖全綠，於 phase 分支）。既有註記仍有效：BL-4b 後 main 的 docs commit 未推送（push 會觸發重部署清 CDN，留使用者決定時機）
+Last activity: 2026-07-23 - Phase 12（架構深化：六張健檢卡）立案——improve-codebase-architecture 健檢報告 6 候選使用者拍板全做，12-CONTEXT＋12-PLAN 定案（順序 T1 市場分類→T2 持久層→T3 錯誤分類→T4 回推管線+worker-pool→T5 規則書鎖定→T6a/b Portfolio 拆解→T7 人工驗證），分支 gsd/phase-arch-deepening 已開，待交 Codex 執行。前次：2026-07-21 - Phase 09（AI 分析延遲優化）合併回 main：SI 拆快捷/完整、claude-cli 串流＋effort 分檔、api/gemini-stream.ts（NDJSON＋限流）、邊生成邊顯示、週線預抓。此前兩筆 quick 均完成：260715-jsr（sync_skills_mirror.py 原地覆寫消除 rmtree 競態，於 main）、260715-jfp（entry-decision SKILL 對齊 entryFilter.ts，SOP②label 補 MA5，32 案例行為鎖全綠，於 phase 分支）。既有註記仍有效：BL-4b 後 main 的 docs commit 未推送（push 會觸發重部署清 CDN，留使用者決定時機）
 
 Progress: [██████████] 100%
 
