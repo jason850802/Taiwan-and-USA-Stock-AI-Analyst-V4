@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef, Suspense, lazy } from 'react';
 import { RealizedTrade } from './types';
 import { buildSellResult, SellInput } from './utils/portfolioLedger';
-import { loadRealizedTrades, saveRealizedTrades } from './utils/portfolioHistoryStore';
+import { loadRealizedTrades, saveRealizedTrades, loadSnapshots, saveSnapshots } from './utils/portfolioHistoryStore';
 import { loadImportLog, saveImportLog, appendImportBatch } from './utils/importStore';
-import { loadTxns, saveTxns, appendTxns, fromParsedTxn, fromManualLot, fromManualTrade } from './utils/txnStore';
+import { loadTxns, saveTxns, appendTxns, fromParsedTxn, fromManualLot, fromManualTrade, removeTxnByKey } from './utils/txnStore';
 import type { ImportApplyPayload } from './components/portfolio/ImportStatementModal';
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
@@ -101,7 +101,22 @@ const App: React.FC = () => {
   };
 
   const handlePortfolioDelete = (id: string) => {
+    const target = portfolioItems.find(i => i.id === id);
     setPortfolioItems(prev => prev.filter(i => i.id !== id));
+    // T7 B1：同步移除該批的手動買進流水（若有）——否則「重算歷史回推」仍會把
+    // 已刪除的持股算進去（removeTxnByKey 對匯入來源的 txn 是 no-op，鍵格式不同）。
+    saveTxns(removeTxnByKey(loadTxns(), `manual|lot|${id}`));
+    if (target) {
+      const marketNowEmpty = portfolioItems
+        .filter(i => i.id !== id)
+        .every(i => isTwStock(i.symbol) !== isTwStock(target.symbol));
+      if (marketNowEmpty) {
+        // 該市場歸零：清掉當日 live 快照，避免曲線停在刪除前的舊總額
+        // （backfill 快照維持不動——那是「有 txn 佐證的歷史事實」，重算回推會自然更新）
+        const market = isTwStock(target.symbol) ? 'TW' : 'US';
+        saveSnapshots(loadSnapshots().filter(r => !(r.market === market && r.source === 'live')));
+      }
+    }
   };
 
   const handlePortfolioUpdate = (id: string, field: keyof Omit<PortfolioItem, 'id'>, value: number) => {
@@ -162,6 +177,9 @@ const App: React.FC = () => {
   // 僅刪帳面紀錄，不回復持股（UI 有二段確認＋警語）
   const handleRealizedTradeDelete = (tradeId: string) => {
     setRealizedTrades(prev => prev.filter(t => t.id !== tradeId));
+    // T7 B1：同步移除該筆手動賣出流水（若有）——曲線的歷史段仍需按「重算歷史回推」
+    // 才會反映（B2：RealizedLedger 已加提示），這裡只確保下次重算不會再算到已刪的賣出。
+    saveTxns(removeTxnByKey(loadTxns(), `manual|trade|${tradeId}`));
   };
 
   // 對帳單匯入（Phase 11）：重播結果一次性套用——庫存以重播後的完整清單取代
