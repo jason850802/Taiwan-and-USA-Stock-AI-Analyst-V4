@@ -148,7 +148,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <p className="text-slate-400 text-sm">台股含手續費與證交稅・美股個股 0.08%・ETF $3/次</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div className="flex flex-wrap gap-2">
+          {/* justify-end：按鈕列換行後，末排必須靠右貼齊——預設靠左會在末排右側留一大片
+              與卡片邊緣之間的空洞（T7 B6 後半，實測 749px） */}
+          <div className="flex flex-wrap justify-end gap-2">
             <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
               <Button variant={includeDividend ? 'primary' : 'ghost'} size="sm" onClick={() => setIncludeDividend(true)}>
                 含息損益
