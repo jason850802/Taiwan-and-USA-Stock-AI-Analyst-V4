@@ -23,7 +23,7 @@ const EntryChecklist: React.FC<{ result: EntryFilterResult }> = ({ result }) => 
         <h2 className="text-lg font-bold text-white tracking-wide">
           六六大順進場濾網 · {result.symbol}
         </h2>
-        <span className="ml-auto text-xs text-slate-400">{result.asof}　收 {result.price}</span>
+        <span className="ml-auto text-xs text-slate-400">{result.asof}　收 {result.price.toFixed(2)}</span>
       </div>
 
       <div className="p-5 grid gap-3 md:grid-cols-2">
