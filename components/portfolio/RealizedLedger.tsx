@@ -86,7 +86,7 @@ const RealizedLedger: React.FC<RealizedLedgerProps> = ({ trades, onDeleteTrade }
                     <td className="p-3">
                       {deleteConfirmId === t.id ? (
                         <div className="flex items-center gap-1.5 justify-end">
-                          <span className="text-[10px] text-amber-300 whitespace-nowrap">僅刪帳，不回復持股</span>
+                          <span className="text-[10px] text-amber-300 whitespace-nowrap">僅刪帳，不回復持股；曲線需按「重算歷史回推」才更新</span>
                           <button onClick={() => { onDeleteTrade(t.id); setDeleteConfirmId(null); }}
                             className="text-xs bg-danger-muted text-danger border border-danger/30 px-2 py-1 rounded-ctl hover:bg-danger/30 transition-colors whitespace-nowrap">確認刪帳</button>
                           <button onClick={() => setDeleteConfirmId(null)}
