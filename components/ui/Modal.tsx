@@ -48,22 +48,26 @@ const Modal: React.FC<ModalProps> = ({
         aria-label={title}
         tabIndex={-1}
         onClick={event => event.stopPropagation()}
-        className={`w-full bg-surface-card border border-surface-line rounded-modal p-6 max-h-[85vh] overflow-y-auto outline-none ${maxWidth}`}
+        className={`w-full bg-surface-card border border-surface-line rounded-modal max-h-[85vh] overflow-hidden outline-none flex flex-col ${maxWidth}`}
       >
-        {title && (
-          <div className="flex items-center justify-between gap-4 mb-5">
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="關閉"
-              className="w-8 h-8 inline-flex items-center justify-center rounded-ctl text-slate-400 hover:text-white hover:bg-surface-inset transition-colors"
-            >
-              <X size={18} />
-            </button>
-          </div>
-        )}
-        {children}
+        {/* overflow-y-auto 放內層、圓角+overflow-hidden 留外層——scrollbar 是矩形，
+            跟 border-radius 同一層會蓋住右上/右下角，看起來像沒切到圓角（T7 B6） */}
+        <div className="p-6 overflow-y-auto min-h-0">
+          {title && (
+            <div className="flex items-center justify-between gap-4 mb-5">
+              <h2 className="text-lg font-semibold text-white">{title}</h2>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="關閉"
+                className="w-8 h-8 inline-flex items-center justify-center rounded-ctl text-slate-400 hover:text-white hover:bg-surface-inset transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          )}
+          {children}
+        </div>
       </div>
     </div>
   );
