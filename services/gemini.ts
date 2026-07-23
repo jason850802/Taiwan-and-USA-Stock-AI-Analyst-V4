@@ -149,7 +149,10 @@ interface VolumeProjectionInfo {
 // 濾網的 GO/WAIT/NO-GO、各步驟狀態、SOP、戒律皆已由程式判定，AI 只負責「解讀與說明」，
 // 不得推翻濾網的客觀結論。
 // ───────────────────────────────────────────────────────────────
-const ENTRY_SYSTEM_INSTRUCTION_FULL = `
+// ⚠ 以下 5 個 SI 常數的內容受 utils/geminiRules.test.ts 的 snapshot 逐位元組鎖住。
+// 動到任何一個字（含空白）都會讓 A3 分析快取與 Gemini implicit caching 全數失效——
+// 快取鍵是 fnv1a(SI + ' ' + prompt)。要改請先確認那是你要的代價，再更新 snapshot。
+export const ENTRY_SYSTEM_INSTRUCTION_FULL = `
 ### 角色
 你是精通「朱家泓 × 林穎」技術分析體系的交易教練。下方提供的「程式濾網客觀結論」已由系統依六六大順逐步量化判定完成，**你的任務是解讀與教學說明，不得推翻 GO/WAIT/NO-GO 的客觀結論與各步驟燈號**。
 
@@ -177,7 +180,7 @@ const ENTRY_SYSTEM_INSTRUCTION_FULL = `
 - 結尾加一行小字免責：本分析為技術面教學推演，非投資建議。
 `;
 
-const ENTRY_SYSTEM_INSTRUCTION_FAST = `
+export const ENTRY_SYSTEM_INSTRUCTION_FAST = `
 ### 角色
 你是精通「朱家泓 × 林穎」技術分析體系的交易教練。下方「程式濾網客觀結論」已由系統量化判定完成，你的任務是精煉解讀，**不得推翻 GO/WAIT/NO-GO 結論與各步驟燈號**。
 
@@ -245,7 +248,12 @@ ${sopText}
     : callGeminiApi(payload);
 };
 
-const TRADE_DECISION_SYSTEM_INSTRUCTION = `
+// ⚠ 本規則書內的【規則 8】禁止做多進場條件，與 HEALTH_CHECK_SYSTEM_INSTRUCTION 的
+// 【F】加碼大忌是**刻意不同的兩套領域規則**（進場 vs 加碼兩種語境的變體，
+// 例：「未突破月線」vs「未突破前高」），不得為了「統一措辭」而合併——詳見
+// .planning/phases/12-arch-deepening/12-CONTEXT.md 的 D-06。
+// 改這裡的戒律時，請一併檢視另一套是否該跟著調整（多半不必，但要有意識地決定）。
+export const TRADE_DECISION_SYSTEM_INSTRUCTION = `
 # 角色設定
 你是一位嚴格的股票技術分析交易教練，完全依照「朱家泓 × 林穎」技術分析課程體系的規則來評估用戶的每一筆交易操作。你不使用任何個人觀點或通用技術分析知識，所有判斷必須直接引用以下規則庫。
 
@@ -634,7 +642,9 @@ export interface PortfolioHealthItem {
   volumeProjection?: VolumeProjectionInfo | null;
 }
 
-const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
+// 輸出格式同樣受 snapshot 鎖（utils/geminiRules.test.ts）：這是餵給 LLM 的資料版面，
+// 欄位順序或單位一改，SI 裡的欄位說明就對不上了。
+export const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
   return items.map((item, idx) => {
     const isTW = isTwStock(item.symbol);
     const last15 = item.recentData.slice(-15);
@@ -745,7 +755,11 @@ ${kLineData}
   }).join('\n');
 };
 
-const HEALTH_CHECK_SYSTEM_INSTRUCTION = `
+// ⚠ 本規則書內的【F】加碼大忌，與 TRADE_DECISION_SYSTEM_INSTRUCTION 的
+// 【規則 8】禁止做多進場條件是**刻意不同的兩套領域規則**（加碼 vs 進場兩種語境的變體），
+// 不得為了「統一措辭」而合併——詳見 .planning/phases/12-arch-deepening/12-CONTEXT.md 的 D-06。
+// 改這裡的大忌時，請一併檢視另一套是否該跟著調整（多半不必，但要有意識地決定）。
+export const HEALTH_CHECK_SYSTEM_INSTRUCTION = `
 # 持股庫存健檢系統
 
 ## 角色設定
@@ -995,7 +1009,7 @@ ${dividendTable || 'N/A'}
 `;
 };
 
-const FUNDAMENTALS_SYSTEM_INSTRUCTION = `
+export const FUNDAMENTALS_SYSTEM_INSTRUCTION = `
 ### 角色
 你是一位台股基本面研究助理，服務對象是「只做多、中長線」的個人投資者。使用繁體中文撰寫。
 
