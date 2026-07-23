@@ -87,10 +87,18 @@ describe('calcTwSellFeeAndTax（賣費 max(1,floor(v×0.001425))；稅 floor(v×
   });
 });
 
-describe('calcUsFee（個股 0.008% 無最低；ETF 固定 $3；無稅）', () => {
-  it('Case 3 買進 1,800 → 0.144；賣出 2,000 → 0.16', () => {
-    expect(calcUsFee(1_800, false)).toBeCloseTo(0.144, 9);
-    expect(calcUsFee(2_000, false)).toBeCloseTo(0.16, 9);
+describe('calcUsFee（個股 0.08% 無最低；ETF 固定 $3；無稅）', () => {
+  it('Case 3 買進 1,800 → 1.44；賣出 2,000 → 1.60', () => {
+    expect(calcUsFee(1_800, false)).toBeCloseTo(1.44, 9);
+    expect(calcUsFee(2_000, false)).toBeCloseTo(1.6, 9);
+  });
+
+  it('費率鎖：與國泰對帳單實收逐筆吻合（round2 後）', () => {
+    // 2026-07 對帳單樣本；原費率誤植 0.00008 會全部差 10 倍
+    const cases: [number, number][] = [[1500, 1.20], [895, 0.72], [604, 0.48], [175.5, 0.14], [1643, 1.31]];
+    for (const [gross, expected] of cases) {
+      expect(Math.round(calcUsFee(gross, false) * 100) / 100).toBeCloseTo(expected, 2);
+    }
   });
   it('ETF 固定 3 元（Case 3b）', () => {
     expect(calcUsFee(3_000, true)).toBe(3);

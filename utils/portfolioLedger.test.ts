@@ -62,13 +62,15 @@ describe('buildSellResult｜美股', () => {
     purchaseCurrency: 'USD', totalCostUSD: 1800.14, isUsEtf: false, ...over,
   });
 
-  it('Case 3：USD 購入個股全賣 10股@200（成本 1,800.14）→ 199.70，免匯率', () => {
-    const { trade, updatedLot } = buildSellResult(usLot(), { sharesSold: 10, sellPrice: 200, sellDate: '2026-07-01' });
+  it('Case 3：USD 購入個股全賣 10股@200（成本 1,801.44）→ 196.96，免匯率', () => {
+    // 費率 0.08%（2026-07-23 修正）：買費 1800×0.0008=1.44、賣費 2000×0.0008=1.60
+    const lot = usLot({ totalCostUSD: 1801.44, avgCostPrice: 180.144 });
+    const { trade, updatedLot } = buildSellResult(lot, { sharesSold: 10, sellPrice: 200, sellDate: '2026-07-01' });
     expect(trade.grossProceeds).toBe(2000);
-    expect(trade.sellFee).toBeCloseTo(0.16, 2);
+    expect(trade.sellFee).toBeCloseTo(1.6, 2);
     expect(trade.sellTax).toBe(0);
-    expect(trade.costBasis).toBeCloseTo(1800.14, 2);
-    expect(trade.realizedPnl).toBeCloseTo(199.70, 2);
+    expect(trade.costBasis).toBeCloseTo(1801.44, 2);
+    expect(trade.realizedPnl).toBeCloseTo(196.96, 2);   // 2000 − 1.60 − 1801.44
     expect(trade.currency).toBe('USD');
     expect(trade.usdTwdRateUsed).toBeUndefined();   // USD 購入且無股利：不需匯率
     expect(updatedLot).toBeNull();
@@ -85,9 +87,9 @@ describe('buildSellResult｜美股', () => {
     const lot = usLot({ purchaseCurrency: undefined, totalCostUSD: undefined, totalCost: 64_000 });
     const { trade, updatedLot } = buildSellResult(lot, { sharesSold: 5, sellPrice: 250, sellDate: '2026-07-01' }, 32);
     expect(trade.grossProceeds).toBe(1250);
-    expect(trade.sellFee).toBeCloseTo(0.10, 2);
+    expect(trade.sellFee).toBeCloseTo(1.0, 2);          // 1250 × 0.08%
     expect(trade.costBasis).toBeCloseTo(1000, 2);       // (64000×5/10)=32000 TWD → /32
-    expect(trade.realizedPnl).toBeCloseTo(249.90, 2);
+    expect(trade.realizedPnl).toBeCloseTo(249.00, 2);   // 1250 − 1.00 − 1000
     expect(trade.usdTwdRateUsed).toBe(32);
     expect(updatedLot!.totalCost).toBe(32_000);         // 批次縮減用原幣 TWD
     expect(updatedLot!.totalShares).toBe(5);

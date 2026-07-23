@@ -36,6 +36,11 @@ export const calcTwSellFeeAndTax = (value: number, symbol: string) => {
 };
 
 // ── 美股手續費 ──────────────────────────────────────────────────────────────
-// 個股：0.008%（無最低）；ETF：統一 $3 USD；無交易稅
+// 個股：0.08%（無最低）；ETF：統一 $3 USD；無交易稅
+//
+// 費率依據（2026-07 以國泰複委託對帳單反推，5 個樣本全數吻合，round2 後與帳單逐筆相同）：
+//   成交 1500.00 → 費 1.20 ｜ 895.00 → 0.72 ｜ 604.00 → 0.48 ｜ 175.50 → 0.14
+// 原值誤植為 0.00008（0.008%），使美股賣出成本低估 10 倍、損益被高估，2026-07-23 修正。
+// ETF 固定 $3 部分經帳單驗證正確（DRAM／SOXX／MUU／GLWG／LITX／SNXX 實收皆 3.00）。
 export const calcUsFee = (valueUsd: number, isEtf: boolean): number =>
-  isEtf ? 3 : valueUsd * 0.00008;
+  isEtf ? 3 : valueUsd * 0.0008;

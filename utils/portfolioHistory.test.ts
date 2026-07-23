@@ -82,7 +82,7 @@ describe('computeLiveSnapshot｜美股', () => {
     expect(s).not.toBeNull();
     expect(s.marketValue).toBe(2000);
     expect(s.totalCost).toBeCloseTo(1800.14, 2);
-    expect(s.estSellCosts).toBeCloseTo(0.16, 2);
+    expect(s.estSellCosts).toBeCloseTo(1.6, 2);      // 2000 × 0.08%
     expect(s.usdTwdRate).toBeUndefined();
   });
 
