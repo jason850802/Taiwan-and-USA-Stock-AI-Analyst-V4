@@ -6,6 +6,7 @@
 // 保存流水後，回推可逐日重播買賣，重建每一天的真實持倉。
 import { ParsedTxn, PortfolioItem, RealizedTrade, TxnKind } from '../types';
 import { isTwStock } from './portfolioFees';
+import { createPersistentStore } from './persistentStore';
 
 const KEY = 'portfolio_transactions_v1';
 
@@ -54,29 +55,28 @@ export const fromManualTrade = (t: RealizedTrade): StoredTxn => ({
   fee: t.sellFee, tax: t.sellTax, source: 'manual', key: `manual|trade|${t.id}`,
 });
 
-export const loadTxns = (): StoredTxn[] => {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (parsed?.version !== 1 || !Array.isArray(parsed.txns)) {
-      console.warn('[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）:', parsed?.version);
-      return [];
+/** 儲存信封（位元組相容：`{"version":1,"txns":[...]}`，不得改欄位順序） */
+interface TxnFile { version: 1; txns: StoredTxn[] }
+
+// 裁剪策略維持「無」——流水是回推的唯一史料，寧可寫不進去也不砍。
+const store = createPersistentStore<TxnFile>({
+  key: KEY,
+  fallback: () => ({ version: 1, txns: [] }),
+  decode: (raw: any) => {
+    if (raw?.version !== 1 || !Array.isArray(raw.txns)) {
+      console.warn('[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）:', raw?.version);
+      return null;
     }
-    return parsed.txns as StoredTxn[];
-  } catch {
-    return [];
-  }
-};
+    return raw as TxnFile;
+  },
+});
+
+export const loadTxns = (): StoredTxn[] => store.load().txns;
 
 export const saveTxns = (txns: StoredTxn[]): boolean => {
-  try {
-    localStorage.setItem(KEY, JSON.stringify({ version: 1, txns }));
-    return true;
-  } catch {
-    console.warn('[txnStore] 交易流水寫入失敗（storage 已滿）');
-    return false;
-  }
+  const ok = store.save({ version: 1, txns });
+  if (!ok) console.warn('[txnStore] 交易流水寫入失敗（storage 已滿）');
+  return ok;
 };
 
 /** 併入新交易，依 key 去重（同一筆不重複累積） */

@@ -1,6 +1,8 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
+import { isTwStock } from '../utils/market';
 import { proxyHeaders } from './_shared/apiClient';
+import { DataFetchError } from './fetchError';
 import { fetchFinMindRows } from './finmind';
 import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
 import {
@@ -251,7 +253,7 @@ const fetchFinMindDailyData = async (stockId: string): Promise<StockDataPoint[]>
             rawDateStr: d.date
         }));
     }
-    throw new Error('FinMind data not found');
+    throw new DataFetchError('NOT_FOUND', 'FinMind data not found');
 };
 
 const queryYahoo = async (symbol: string, interval: string, range: string, signal?: AbortSignal): Promise<YahooChartResponse> => {
@@ -263,7 +265,7 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
 
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
-        throw new Error(parsed.message || `Fetch error (${res.status})`);
+        throw new DataFetchError(res.status === 429 ? 'RATE_LIMIT' : 'BACKEND_DOWN', parsed.message || `Fetch error (${res.status})`);
     }
 
     const json = await res.json() as YahooChartResponse;
@@ -271,13 +273,13 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
     if (json.chart && json.chart.error) {
         const code = json.chart.error.code;
         if (code === 'Not Found') {
-            throw new Error(`Symbol ${symbol} not found.`);
+            throw new DataFetchError('NOT_FOUND', `Symbol ${symbol} not found.`);
         }
-        throw new Error(JSON.stringify(json.chart.error));
+        throw new DataFetchError('PARSE', JSON.stringify(json.chart.error));
     }
 
     if (!json.chart || !json.chart.result || json.chart.result.length === 0) {
-        throw new Error('No data found in response');
+        throw new DataFetchError('NOT_FOUND', 'No data found in response');
     }
 
     return json;
@@ -328,7 +330,7 @@ const fetchRawData = async (symbol: string, interval: string, range: string, sig
               return await performQuery(`${coreCode}.TWO`);
           } catch (e2: any) {
              if (e2?.name === 'AbortError') throw e2; // H-1
-             throw new Error(`找不到台股代號: ${coreCode}`);
+             throw new DataFetchError('NOT_FOUND', `找不到台股代號: ${coreCode}`);
           }
       }
   }
@@ -358,7 +360,7 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
     const volumes = quote.volume;
 
     const cleanData: any[] = [];
-    const isTaiwanStock = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
+    const isTaiwanStock = isTwStock(meta.symbol);
 
     timestamps.forEach((ts, i) => {
         if (closes[i] !== null && opens[i] !== null && highs[i] !== null && lows[i] !== null) {
@@ -473,7 +475,7 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
   }
 
   // For TW stocks, fetch Chinese name from FinMind
-  const isTW = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
+  const isTW = isTwStock(meta.symbol);
   let name = meta.longName || meta.shortName || meta.symbol;
   if (isTW) {
     const chineseName = await fetchFinMindStockInfo(meta.symbol);
@@ -805,7 +807,7 @@ const fetchStockDataUncached = async (
           if (first && first.which === '2y') {
               // 2y 先到：解析 meta → 籌碼解析一次 → 完整 enrich → 發射 partial → 等 10y 用同一 ctx 重 enrich。
               const meta2y = first.res.chart.result![0].meta;
-              isTaiwanStock = meta2y.symbol.endsWith('.TW') || meta2y.symbol.endsWith('.TWO');
+              isTaiwanStock = isTwStock(meta2y.symbol);
               symbolInfo = {
                   symbol: meta2y.symbol,
                   name: meta2y.longName || meta2y.shortName || meta2y.symbol,
@@ -826,7 +828,7 @@ const fetchStockDataUncached = async (
           // 2y 失敗靜默（first===null）→ 等 p10y；10y 先到（CDN 熱）→ 用其結果。兩者收斂到單段尾流程。
           const fullRes = (first && first.which === '10y') ? first.res : await p10y;
           const resultMeta = fullRes.chart.result![0].meta;
-          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+          isTaiwanStock = isTwStock(resultMeta.symbol);
           processedData = processYahooResult(fullRes, mainInterval);
           symbolInfo = {
               symbol: resultMeta.symbol,
@@ -838,7 +840,7 @@ const fetchStockDataUncached = async (
           // 單段（原路徑不動）：非 1d／無 onPartial／forceRefresh／背景刷新皆走此。
           const mainResponse = await fetchRawData(symbol, mainInterval, mainRange, signal);
           const resultMeta = mainResponse.chart.result![0].meta;
-          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+          isTaiwanStock = isTwStock(resultMeta.symbol);
 
           processedData = processYahooResult(mainResponse, mainInterval);
           symbolInfo = {
@@ -860,7 +862,7 @@ const fetchStockDataUncached = async (
       }
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
       const cleanSymbol = symbol.toUpperCase().replace(/\.TWO?$/i, '');
-      const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);
+      const isPotentialTaiwanStock = isTwStock(cleanSymbol);
 
       if (isPotentialTaiwanStock && interval === '1d') {
           console.log(`Yahoo failed (${err.message}). Attempting FinMind fallback for ${cleanSymbol}...`);
@@ -877,7 +879,8 @@ const fetchStockDataUncached = async (
               };
           } catch (finErr) {
               // If FinMind also fails, revert to original error
-              throw new Error(`Data Fetch Failed: ${err.message}`);
+              if (err instanceof DataFetchError) throw err;   // T3：原樣重丟保 kind 穿透到 UI
+              throw new DataFetchError('UNKNOWN', `Data Fetch Failed: ${err.message}`);
           }
       } else {
           throw err;

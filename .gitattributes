@@ -14,6 +14,8 @@
 *.css text eol=lf
 *.yml text eol=lf
 *.toml text eol=lf
+# vitest snapshot：位元組鎖的基準檔，行尾必須跨機器一致，否則 checkout 後整份假性失配
+*.snap text eol=lf
 
 # 二進位檔
 *.png binary

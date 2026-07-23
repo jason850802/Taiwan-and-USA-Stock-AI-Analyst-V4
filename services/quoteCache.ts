@@ -10,6 +10,8 @@
 // TTL 政策（.planning/optimization/PLAN.md 已拍板決策 3）：
 // 盤中 10 分鐘／收盤後沿用到下一交易日開盤（台美各依自己交易時段）。
 
+import { marketOf } from '../utils/market';
+
 export type QuoteMarket = 'TW' | 'US';
 
 export interface QuoteCacheEntry {
@@ -20,10 +22,9 @@ export interface QuoteCacheEntry {
 
 // ── 市場歸屬 ──
 export function marketForSymbol(symbol: string): QuoteMarket {
-  const s = symbol.trim().toUpperCase();
   // .TW/.TWO 後綴、或裸台股代碼（2330 / 00679B / 2888A）→ 台股；其餘（AAPL、USDTWD=X）→ 美股時段
-  if (/\.TWO?$/.test(s) || /^\d{3,6}[A-Z]?$/.test(s)) return 'TW';
-  return 'US';
+  // 分類規則統一由 utils/market 供應（Phase 12 T1）；trim 為本函式原有語意，保留。
+  return marketOf(symbol.trim());
 }
 
 // ── 交易時段判定 ──

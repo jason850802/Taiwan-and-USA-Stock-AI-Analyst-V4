@@ -2,11 +2,8 @@
 // 行為鎖：portfolioFees.test.ts。改任何常數/rounding 前先跑 npm run test。
 
 // ── 判斷台股 ───────────────────────────────────────────────────────────────
-export const isTwStock = (symbol: string): boolean => {
-  const s = symbol.toUpperCase();
-  // 台股：含 .TW / .TWO 後綴，或數字代號（可加單一英文字母結尾，如 00631L、00679B、00981A）
-  return s.endsWith('.TW') || s.endsWith('.TWO') || /^\d{3,6}[A-Z]?$/.test(s);
-};
+// 實作已移至 utils/market.ts（市場分類唯一權威，Phase 12 T1）；此處僅 re-export 保呼叫端不動。
+export { isTwStock } from './market';
 
 // ── 台股類型 ────────────────────────────────────────────────────────────────
 export type TwStockType = 'stock' | 'etf' | 'bond-etf';

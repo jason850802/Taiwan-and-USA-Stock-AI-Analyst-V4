@@ -91,6 +91,20 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 AI 評估規劃），先執行 `/gsd:surface enable <cluster>` 借回來再呼叫該指令，用完可 `disable` 關回去。
 <!-- GSD:workflow-end -->
 
+## Agent skills
+
+### Issue tracker
+
+Local markdown — issues／spec 放 `.scratch/<feature>/`（與 GSD 的 `.planning/` 分開）。見 `docs/agents/issue-tracker.md`。
+
+### Triage labels
+
+沿用五個預設角色（`needs-triage`／`needs-info`／`ready-for-agent`／`ready-for-human`／`wontfix`），在本地 tracker 表現為 `Status:` 行。見 `docs/agents/triage-labels.md`。
+
+### Domain docs
+
+Single-context：根目錄 `CONTEXT.md` ＋ `docs/adr/`（另有 `.planning/codebase/` 既有簡報）。見 `docs/agents/domain.md`。
+
 <!-- GSD:profile-start -->
 
 ## Developer Profile
