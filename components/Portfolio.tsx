@@ -1,15 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { PortfolioItem, StockDataPoint, RealizedTrade } from '../types';
-import { getLatestPrice, getStockData } from '../services/yahoo';
-import { classifyCaught, type FetchErrorKind } from '../services/fetchError';
-import { analyzeTradeDecision, analyzePortfolioHealth, PortfolioHealthItem } from '../services/gemini';
-import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../services/_shared/healthDecision';
-import { estimateVolumeTrend } from '../utils/volume';
-import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
+import React, { useState } from 'react';
+import { PortfolioItem, RealizedTrade } from '../types';
+import { getStockData } from '../services/yahoo';
+import { analyzeTradeDecision } from '../services/gemini';
+import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
-import { computeLiveSnapshot, upsertSnapshots } from '../utils/portfolioHistory';
-import { loadSnapshots, saveSnapshots } from '../utils/portfolioHistoryStore';
-import { runWithConcurrency } from '../utils/workerPool';
+import { groupLotsBySymbol } from '../utils/portfolioGrouping';
 import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Banknote, Upload } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -21,6 +16,10 @@ import SellModal from './portfolio/SellModal';
 import RealizedLedger from './portfolio/RealizedLedger';
 import PnlHistorySection from './portfolio/PnlHistorySection';
 import ImportStatementModal, { ImportApplyPayload } from './portfolio/ImportStatementModal';
+import { useHoldingPrices, type PriceData } from './portfolio/useHoldingPrices';
+import { useDailySnapshot } from './portfolio/useDailySnapshot';
+import { usePortfolioForm } from './portfolio/usePortfolioForm';
+import { useHealthCheck } from './portfolio/useHealthCheck';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -33,31 +32,6 @@ interface PortfolioProps {
   onDeleteTrade: (tradeId: string) => void;
   onStatementImport: (payload: ImportApplyPayload) => void;
 }
-
-interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string }
-
-/**
- * 行情抓取失敗的健檢文案（T3）：依錯誤 kind 分流，不再無條件寫「可能限流中」。
- * 後端沒開跟被限流的處置完全不同，猜錯會把使用者指去做錯的事。
- * tail 是各呼叫點的尾句（單檔＝句號；批次＝「，或單獨對此檔重跑健檢。」）。
- */
-const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
-  const lead = kind === 'RATE_LIMIT' ? '（Yahoo／FinMind 可能限流中）請'
-    : (kind === 'BACKEND_DOWN' || kind === 'NETWORK') ? '行情後端目前無回應，請確認網路或'
-    : '請';
-  return `**行情資料暫時無法取得**\n\n${lead}稍後再試${tail}`;
-};
-
-// lots 維持逐筆儲存，只在渲染時依 symbol 保序分組。
-const groupLotsBySymbol = (items: PortfolioItem[]): Map<string, PortfolioItem[]> => {
-  const groups = new Map<string, PortfolioItem[]>();
-  items.forEach(item => {
-    const lots = groups.get(item.symbol) ?? [];
-    lots.push(item);
-    groups.set(item.symbol, lots);
-  });
-  return groups;
-};
 
 // ── 格式化 ─────────────────────────────────────────────────────────────────
 const fmt  = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -728,10 +702,19 @@ const UsGroupTable: React.FC<UsGroupTableProps> = ({
 
 // ── 主元件 ─────────────────────────────────────────────────────────────────
 const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade, onStatementImport }) => {
-  const [prices,          setPrices]          = useState<Record<string, PriceData>>({});
-  const [historyTick,     setHistoryTick]     = useState(0);   // 快照落地 → 通知歷史圖表重讀 localStorage
-  const [usdTwdRate,      setUsdTwdRate]      = useState<number>(0);
-  const [showAddModal,    setShowAddModal]    = useState(false);
+  // 報價/匯率、每日快照、新增表單、庫存健檢四塊 state＋effect＋handlers 已抽成 hooks（T6a）；
+  // 解構回原變數名，下方計算段與 JSX 一行不動。
+  const { prices, usdTwdRate, fetchAllPrices } = useHoldingPrices(items);
+  const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
+  const {
+    showAddModal, setShowAddModal, form, setForm, feeInput, setFeeInput, setFeeTouched,
+    formIsTW, shares, rate, preview, handleAdd,
+  } = usePortfolioForm(onAdd, usdTwdRate);
+  const {
+    healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
+    handleSingleHealthCheck, handleBatchHealthCheck,
+  } = useHealthCheck(items, prices, usdTwdRate);
+
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
   const [sellTarget,      setSellTarget]      = useState<PortfolioItem | null>(null);   // 賣出 Modal 目標批次
   const [showImportModal, setShowImportModal] = useState(false);                        // 對帳單匯入 Modal
@@ -743,202 +726,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const [tradeAnalyzing,  setTradeAnalyzing]  = useState(false);
   const [tradeResult,     setTradeResult]     = useState<string>('');
   const [showTradeResult, setShowTradeResult] = useState(false);
-
-  // 庫存健檢 狀態（per-stock）
-  const [healthResults, setHealthResults] = useState<Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>>({});
-  const [healthModalSymbol, setHealthModalSymbol] = useState<string | null>(null);
-  const [batchChecking, setBatchChecking] = useState(false);
-  // 健檢寫回世代守衛（per-symbol 單調遞增，比照 App.tsx fetchSeqRef 模式）：
-  // 單檔與批次對同一 symbol 重疊在飛行時，較早起跑者的落地結果不得覆蓋較晚起跑者
-  const healthSeqRef = useRef<Record<string, number>>({});
-  // 行情抓取失敗的種類（per-symbol，T3）：buildHealthItem 一律吞錯不 throw，
-  // 但失敗文案要能說出「限流」還是「後端沒開」，所以把 kind 留在這裡給文案讀。
-  const healthFetchKindRef = useRef<Record<string, FetchErrorKind | null>>({});
-
-  // 新增表單
-  const [form, setForm] = useState({
-    symbol:           '',
-    inputMode:        'avg' as 'avg' | 'total',
-    avgCostPrice:     '',
-    totalCostInput:   '',
-    totalShares:      '',
-    brokerDiscount:   '',
-    cashDividends:    '',
-    stockDividends:   '',
-    purchaseCurrency: 'USD' as 'TWD' | 'USD', // for US stocks
-    isUsEtf:          false,
-    buyDate:          '',     // 買入時間（分析用）
-    buyReason:        '',     // 買入原因（分析用）
-    buyDateRecord:    '',     // 買進日期（存入持股，回推歷史用；與上面 AI 分析欄位無關）
-  });
-  const [feeInput, setFeeInput] = useState('');
-  const [feeTouched, setFeeTouched] = useState(false);
-
-  // ── 報價抓取 ───────────────────────────────────────────────────────────
-  const fetchPrice = useCallback(async (symbol: string) => {
-    setPrices(prev => ({ ...prev, [symbol]: { price: 0, name: symbol, loading: true, error: false } }));
-    try {
-      const r = await getLatestPrice(symbol);
-      setPrices(prev => ({ ...prev, [symbol]: { ...r, loading: false, error: false } }));
-    } catch {
-      setPrices(prev => ({ ...prev, [symbol]: { price: 0, name: symbol, loading: false, error: true } }));
-    }
-  }, []);
-
-  const fetchExchangeRate = useCallback(async () => {
-    try {
-      const r = await getLatestPrice('USDTWD=X');
-      if (r.price > 0) setUsdTwdRate(r.price);
-    } catch { /* ignore */ }
-  }, []);
-
-  const fetchAllPrices = useCallback(() => {
-    Array.from(new Set(items.map(i => i.symbol))).forEach(fetchPrice);
-    // Fetch exchange rate if any US stock exists
-    if (items.some(i => !isTwStock(i.symbol))) fetchExchangeRate();
-  }, [items, fetchPrice, fetchExchangeRate]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (items.length > 0) fetchAllPrices();
-  }, [items.map(i => i.symbol).join(',')]);
-
-  // ── 每日損益快照（Phase 10 S3/D-12）─────────────────────────────────────
-  // 單一 debounced effect 涵蓋所有時點：首抓完成、手動更新報價、增刪改/賣出、匯率到貨。
-  // 守衛 A/B 內建於 computeLiveSnapshot（部分報價/缺匯率 → 該市場跳過，寧缺勿錯）。
-  // fallback 32 只准表格顯示用——這裡把無效匯率轉 undefined，禁入持久化快照。
-  useEffect(() => {
-    if (items.length === 0) return;
-    const timer = setTimeout(() => {
-      const capturedAt = Date.now();
-      const rate = usdTwdRate > 0 ? usdTwdRate : undefined;
-      const twSnap = computeLiveSnapshot('TW', items.filter(i => isTwStock(i.symbol)), prices, rate, capturedAt);
-      const usSnap = computeLiveSnapshot('US', items.filter(i => !isTwStock(i.symbol)), prices, rate, capturedAt);
-      if (!twSnap && !usSnap) return;
-      const incoming = [twSnap, usSnap].filter((s): s is NonNullable<typeof s> => s !== null);
-      if (saveSnapshots(upsertSnapshots(loadSnapshots(), incoming))) {
-        setHistoryTick(t => t + 1);
-      }
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [items, prices, usdTwdRate]);
-
-  // ── 表單輔助 ───────────────────────────────────────────────────────────
-  const formIsTW = isTwStock(form.symbol);
-  const shares   = parseFloat(form.totalShares)    || 0;
-  const rate     = usdTwdRate > 0 ? usdTwdRate : 32;
-
-  useEffect(() => {
-    if (feeTouched) return;
-    if (formIsTW && form.inputMode === 'total') {
-      setFeeInput('');
-      return;
-    }
-
-    const avg = parseFloat(form.avgCostPrice) || 0;
-    const totalInput = parseFloat(form.totalCostInput) || 0;
-    const base = form.inputMode === 'avg' ? avg * shares : totalInput;
-    if (base <= 0) {
-      setFeeInput('');
-      return;
-    }
-
-    if (formIsTW) {
-      setFeeInput(String(calcTwBuyFee(base)));
-      return;
-    }
-
-    const fee = form.purchaseCurrency === 'USD'
-      ? calcUsFee(base, form.isUsEtf)
-      : calcUsFee(base / rate, form.isUsEtf) * rate;
-    setFeeInput(String(Number(fee.toFixed(2))));
-  }, [feeTouched, form.avgCostPrice, form.inputMode, form.isUsEtf, form.purchaseCurrency,
-    form.totalCostInput, formIsTW, rate, shares]);
-
-  const preview = (() => {
-    const avg       = parseFloat(form.avgCostPrice)   || 0;
-    const totalInp  = parseFloat(form.totalCostInput) || 0;
-    const enteredBuyFee = parseFloat(feeInput) || 0;
-
-    if (formIsTW) {
-      if (form.inputMode === 'avg') {
-        const base   = avg * shares;
-        const buyFee = enteredBuyFee;
-        const total  = base + buyFee;
-        return { base, buyFee, total, adjAvg: shares > 0 ? total / shares : avg, feeLabel: '買進手續費' };
-      } else {
-        const total = totalInp;
-        return { base: total, buyFee: 0, total, adjAvg: shares > 0 ? total / shares : 0, feeLabel: '' };
-      }
-    } else {
-      if (form.purchaseCurrency === 'USD') {
-        const baseUsd = form.inputMode === 'avg' ? avg * shares : totalInp;
-        const totalUsd = baseUsd + enteredBuyFee;
-        const totalTwd = totalUsd * rate;
-        return {
-          base: baseUsd, buyFee: enteredBuyFee, total: totalUsd,
-          adjAvg: shares > 0 ? totalUsd / shares : avg, totalTwd,
-          feeLabel: '買進手續費',
-        };
-      } else {
-        const baseTwd = form.inputMode === 'avg' ? avg * shares : totalInp;
-        const totalTwd = baseTwd + enteredBuyFee;
-        const feeUsd = enteredBuyFee / rate;
-        return {
-          base: baseTwd, buyFee: enteredBuyFee, total: totalTwd,
-          adjAvg: shares > 0 ? totalTwd / shares : avg, feeUsd,
-          feeLabel: '買進手續費',
-        };
-      }
-    }
-  })();
-
-  // ── 新增 ───────────────────────────────────────────────────────────────
-  const handleAdd = () => {
-    if (!form.symbol || shares <= 0 || preview.total <= 0) return;
-    const sym = form.symbol.trim().toUpperCase();
-
-    if (formIsTW) {
-      onAdd({
-        symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
-        totalCost: preview.total, brokerDiscount: 10,
-        ...(form.inputMode === 'avg' ? { buyFee: preview.buyFee } : {}),
-        cashDividends: parseFloat(form.cashDividends) || 0,
-        stockDividends: parseFloat(form.stockDividends) || 0,
-        ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
-      });
-    } else {
-      if (form.purchaseCurrency === 'USD') {
-        onAdd({
-          symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
-          totalCost: 0,                        // not used for USD purchase
-          totalCostUSD: preview.total,         // fixed USD cost
-          purchaseCurrency: 'USD', isUsEtf: form.isUsEtf,
-          brokerDiscount: 10, buyFee: preview.buyFee,
-          cashDividends: parseFloat(form.cashDividends) || 0,
-          stockDividends: parseFloat(form.stockDividends) || 0,
-          ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
-        });
-      } else {
-        onAdd({
-          symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
-          totalCost: preview.total,            // fixed TWD cost
-          purchaseCurrency: 'TWD', isUsEtf: form.isUsEtf,
-          brokerDiscount: 10, buyFee: preview.buyFee,
-          cashDividends: parseFloat(form.cashDividends) || 0,
-          stockDividends: parseFloat(form.stockDividends) || 0,
-          ...(form.buyDateRecord ? { buyDate: form.buyDateRecord } : {}),
-        });
-      }
-    }
-
-    setForm({ symbol: '', inputMode: 'avg', avgCostPrice: '', totalCostInput: '',
-              totalShares: '', brokerDiscount: '', cashDividends: '', stockDividends: '',
-              purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '', buyDateRecord: '' });
-    setFeeInput('');
-    setFeeTouched(false);
-    setShowAddModal(false);
-  };
 
   // ── 新增持股並執行 AI 分析 ──────────────────────────────────────────────
   const handleAddAndAnalyze = async () => {
@@ -976,169 +763,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       setShowTradeResult(true);
     }
   };
-
-  // ── 庫存健檢：組單檔 PortfolioHealthItem（單檔/批次共用）──────────────
-  const buildHealthItem = useCallback(async (symbol: string): Promise<PortfolioHealthItem | null> => {
-    const lots = items.filter(item => item.symbol === symbol);
-    if (lots.length === 0) return null;
-
-    const p = prices[symbol];
-    const currentPrice = p && !p.loading && !p.error ? p.price : 0;
-
-    // 美股：currentPrice 永遠是 USD；avgCostPrice 若以 TWD 購入需先換算成 USD
-    const isUS = !isTwStock(symbol);
-    const rate = usdTwdRate > 0 ? usdTwdRate : 32;
-    const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
-    const totalCostInCurrentCurrency = lots.reduce((sum, lot) => {
-      if (!isUS) return sum + lot.totalCost;
-      if (lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null) return sum + lot.totalCostUSD;
-      return sum + lot.totalCost / rate;
-    }, 0);
-    const avgCostPriceInCurrentCurrency = totalShares > 0
-      ? totalCostInCurrentCurrency / totalShares
-      : 0;
-
-    const profitPct = avgCostPriceInCurrentCurrency > 0 && currentPrice > 0
-      ? ((currentPrice - avgCostPriceInCurrentCurrency) / avgCostPriceInCurrentCurrency) * 100 : 0;
-
-    let recentData: StockDataPoint[] = [];
-    let volProj = null;
-    try {
-      const { data } = await getStockData(symbol, '1d');
-      recentData = data;
-      volProj = estimateVolumeTrend(data, isTwStock(symbol), '1d');
-      healthFetchKindRef.current[symbol] = null;
-    } catch (e) {
-      healthFetchKindRef.current[symbol] = classifyCaught(e);   // 吞錯照舊，但把種類留下
-    }
-
-    return {
-      symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
-      currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj,
-    };
-  }, [items, prices, usdTwdRate]);
-
-  // ── 單檔庫存健檢 ──────────────────────────────────────────────────────
-  const handleSingleHealthCheck = useCallback(async (symbol: string) => {
-    if (!items.some(i => i.symbol === symbol)) return;
-
-    const gen = healthSeqRef.current[symbol] = (healthSeqRef.current[symbol] ?? 0) + 1;
-    setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
-
-    try {
-      const healthItem = await buildHealthItem(symbol);
-      if (!healthItem) return;
-      if (healthItem.recentData.length === 0) {
-        // 行情抓取失敗：空資料送 LLM 只會在 formatHealthCheckData 拋錯，直接誠實標記可重試
-        if (healthSeqRef.current[symbol] !== gen) return;
-        setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '。') } }));
-        return;
-      }
-
-      const result = await analyzePortfolioHealth([healthItem]);
-
-      // 決策：優先 json 機器區，失敗 fallback regex（舊行為是下限）
-      const parsed = parseHealthDecisions(result);
-      const entry = parsed?.decisions.find(d => d.symbol === symbol) ?? parsed?.decisions[0] ?? null;
-      const decision = entry
-        ? DECISION_EMOJI[entry.decision] + entry.decision
-        : (extractDecisionByRegex(result) ?? '分析完成');
-      const fullResult = parsed ? parsed.cleanedMarkdown : result;
-
-      if (healthSeqRef.current[symbol] !== gen) return;
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult } }));
-    } catch {
-      if (healthSeqRef.current[symbol] !== gen) return;
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' } }));
-    }
-  }, [items, buildHealthItem]);
-
-  // ── 一鍵批次健檢（全部持股一次 LLM 呼叫）──────────────────────────────
-  const handleBatchHealthCheck = useCallback(async () => {
-    const symbols = Array.from(new Set(items.map(i => i.symbol)));
-    if (symbols.length === 0 || batchChecking) return;
-
-    setBatchChecking(true);
-    const gens: Record<string, number> = {};
-    symbols.forEach(s => { gens[s] = healthSeqRef.current[s] = (healthSeqRef.current[s] ?? 0) + 1; });
-    setHealthResults(prev => {
-      const next = { ...prev };
-      symbols.forEach(s => { next[s] = { status: 'loading', decision: '', fullResult: '' }; });
-      return next;
-    });
-
-    // 本輪實際送 LLM 的檔位（資料失敗者剔除後個別標記；catch 只回收這份名單）
-    let attemptedSymbols: string[] = symbols;
-
-    try {
-      // 資料準備：併發上限 3（getLatestPrice 不暖 getStockData 快取，冷抓打真網路，429 是常態）。
-      // 游標池實作已收斂到 utils/workerPool；buildHealthItem 內部吞錯不 throw 的語意不變。
-      const results: (PortfolioHealthItem | null)[] = new Array(symbols.length).fill(null);
-      await runWithConcurrency(symbols.map((_, i) => i), 3, async (idx) => {
-        const it = await buildHealthItem(symbols[idx]);
-        if (it) results[idx] = it;
-      });
-
-      // 行情抓取失敗（recentData 空）的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——
-      // 空資料會讓 formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮
-      const healthItems: PortfolioHealthItem[] = [];
-      const failedSymbols: string[] = [];
-      symbols.forEach((symbol, idx) => {
-        const it = results[idx];
-        if (it && it.recentData.length > 0) healthItems.push(it);
-        else failedSymbols.push(symbol);
-      });
-      if (failedSymbols.length > 0) {
-        setHealthResults(prev => {
-          const next = { ...prev };
-          failedSymbols.forEach(symbol => {
-            if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-            next[symbol] = { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '，或單獨對此檔重跑健檢。') };
-          });
-          return next;
-        });
-      }
-      const okSymbols = healthItems.map(it => it.symbol);
-      attemptedSymbols = okSymbols;
-      if (healthItems.length === 0) return; // 全部失敗：已逐檔標記，本輪不打 LLM
-
-      const result = await analyzePortfolioHealth(healthItems);
-
-      // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
-      // 切段只對實際送 LLM 的 okSymbols 做（splitHealthReport 要求每個 symbol 都認領到段落）
-      const parsed = parseHealthDecisions(result);
-      const displayText = parsed ? parsed.cleanedMarkdown : result;
-      const split = splitHealthReport(displayText, okSymbols);
-      const decisionMap = new Map((parsed?.decisions ?? []).map(d => [d.symbol, d.decision]));
-
-      setHealthResults(prev => {
-        const next = { ...prev };
-        okSymbols.forEach(symbol => {
-          if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-          const fullResult = split
-            ? split.perSymbol[symbol] + (split.overview ? '\n\n---\n\n' + split.overview : '')
-            : displayText;
-          const d = decisionMap.get(symbol);
-          const decision = d
-            ? DECISION_EMOJI[d] + d
-            : (extractDecisionByRegex(split ? split.perSymbol[symbol] : displayText) ?? '分析完成');
-          next[symbol] = { status: 'done', decision, fullResult };
-        });
-        return next;
-      });
-    } catch {
-      setHealthResults(prev => {
-        const next = { ...prev };
-        attemptedSymbols.forEach(symbol => {
-          if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-          next[symbol] = { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' };
-        });
-        return next;
-      });
-    } finally {
-      setBatchChecking(false);
-    }
-  }, [items, batchChecking, buildHealthItem]);
 
   // ── 分組 ───────────────────────────────────────────────────────────────
   const twItems = items.filter(i =>  isTwStock(i.symbol));
