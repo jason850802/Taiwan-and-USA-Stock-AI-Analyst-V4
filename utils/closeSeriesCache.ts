@@ -7,6 +7,8 @@
 //
 // 儲存最佳化：只留回推需要的區間（預設近 3 年），且價格取 4 位小數以內的原值，
 // 以「date 陣列 + close 陣列」而非物件陣列存放，體積約少一半。
+import { createPersistentStore } from './persistentStore';
+
 const KEY = 'portfolio_close_cache_v1';
 const MAX_AGE_MS = 3 * 24 * 60 * 60 * 1000;   // 超過 3 天視為過期（需補抓近端）
 
@@ -15,21 +17,22 @@ export interface CloseBar { date: string; close: number }
 interface PackedSeries { d: string[]; c: number[]; at: number }
 interface CacheFile { version: 1; series: Record<string, PackedSeries> }
 
-const load = (): CacheFile => {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return { version: 1, series: {} };
-    const parsed = JSON.parse(raw);
-    if (parsed?.version !== 1 || !parsed.series) return { version: 1, series: {} };
-    return parsed as CacheFile;
-  } catch {
-    return { version: 1, series: {} };
-  }
-};
+const store = createPersistentStore<CacheFile>({
+  key: KEY,
+  fallback: () => ({ version: 1, series: {} }),
+  decode: (raw: any) => (raw?.version === 1 && raw.series ? (raw as CacheFile) : null),
+  // 容量不足：丟棄最舊的一半再試一次，仍失敗就放棄（快取只是加速，不影響正確性）
+  trimForRetry: (f) => {
+    const keys = Object.keys(f.series);
+    const series = { ...f.series };
+    for (const k of keys.slice(0, Math.floor(keys.length / 2))) delete series[k];
+    return { version: 1, series };
+  },
+});
 
 /** 取快取；回傳 null 表示無快取或已過期（需重抓） */
 export const getCachedSeries = (symbol: string): CloseBar[] | null => {
-  const f = load();
+  const f = store.load();
   const p = f.series[symbol];
   if (!p || !Array.isArray(p.d) || !Array.isArray(p.c)) return null;
   if (Date.now() - (p.at ?? 0) > MAX_AGE_MS) return null;
@@ -53,20 +56,9 @@ export const putCachedSeriesMany = (
   fromDate?: string,
 ): void => {
   if (entries.length === 0) return;
-  const f = load();
+  const f = store.load();
   for (const e of entries) f.series[e.symbol] = pack(e.bars, fromDate);
-  try {
-    localStorage.setItem(KEY, JSON.stringify(f));
-  } catch {
-    // 容量不足：丟棄最舊的一半再試一次，仍失敗就放棄（快取只是加速，不影響正確性）
-    try {
-      const keys = Object.keys(f.series);
-      for (const k of keys.slice(0, Math.floor(keys.length / 2))) delete f.series[k];
-      localStorage.setItem(KEY, JSON.stringify(f));
-    } catch { /* 放棄快取 */ }
-  }
+  store.save(f);   // 失敗時工廠會走 trimForRetry 丟最舊一半再試一次；仍失敗即放棄
 };
 
-export const clearCloseCache = (): void => {
-  try { localStorage.removeItem(KEY); } catch { /* ignore */ }
-};
+export const clearCloseCache = (): void => store.clear();
