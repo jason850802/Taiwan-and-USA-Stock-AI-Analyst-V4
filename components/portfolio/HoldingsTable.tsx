@@ -413,7 +413,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                             {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
                             {!isTW && (
                               <p className={`text-[10px] mt-0.5 ${item.isUsEtf ? 'text-accent' : 'text-slate-400'}`}>
-                                {item.isUsEtf ? 'ETF  · $3/次' : '個股 · 0.008%'}
+                                {item.isUsEtf ? 'ETF  · $3/次' : '個股 · 0.08%'}
                                 {item.purchaseCurrency && (
                                   <span className="ml-1.5 text-slate-500">買入:{item.purchaseCurrency}</span>
                                 )}

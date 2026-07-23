@@ -143,7 +143,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-surface-card p-6 rounded-card border border-surface-line">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">我的庫存</h2>
-          <p className="text-slate-400 text-sm">台股含手續費與證交稅・美股個股 0.008%・ETF $3/次</p>
+          <p className="text-slate-400 text-sm">台股含手續費與證交稅・美股個股 0.08%・ETF $3/次</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-1 gap-1">
@@ -296,7 +296,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                       <button onClick={() => setForm(p => ({ ...p, isUsEtf: false }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
                           ${!form.isUsEtf ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
-                        個股（0.008%）
+                        個股（0.08%）
                       </button>
                       <button onClick={() => setForm(p => ({ ...p, isUsEtf: true }))}
                         className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
