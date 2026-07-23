@@ -1,6 +1,7 @@
 import { StockDataPoint, TwFundamentals } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
 import { isTwStock } from "../utils/market";
+import { DataFetchError } from "./fetchError";
 import { proxyHeaders } from "./_shared/apiClient";
 import { buildCacheKey, readCache, writeCache, taipeiTodayStr } from './_shared/geminiCache';
 
@@ -38,7 +39,8 @@ const callGeminiApi = async (
   };
 
   if (!response.ok) {
-    throw new Error(data.message || '分析失敗，請稍後再試。');
+    const kind = response.status === 429 ? 'RATE_LIMIT' : response.status >= 500 ? 'BACKEND_DOWN' : 'UNKNOWN';
+    throw new DataFetchError(kind, data.message || '分析失敗，請稍後再試。');
   }
 
   // 僅快取非空成功回應——不快取 fallbackText、不快取錯誤（避免壞結果被釘一整天）
@@ -65,11 +67,12 @@ const callGeminiApiStream = async (
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({})) as { message?: string };
-    throw new Error(data.message || '分析失敗，請稍後再試。');
+    const kind = response.status === 429 ? 'RATE_LIMIT' : response.status >= 500 ? 'BACKEND_DOWN' : 'UNKNOWN';
+    throw new DataFetchError(kind, data.message || '分析失敗，請稍後再試。');
   }
 
   if (!response.body) {
-    throw new Error('分析串流無法讀取，請稍後再試。');
+    throw new DataFetchError('PARSE', '分析串流無法讀取，請稍後再試。');
   }
 
   const reader = response.body.getReader();

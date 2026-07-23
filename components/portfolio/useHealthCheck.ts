@@ -28,6 +28,17 @@ const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string
   return `**行情資料暫時無法取得**\n\n${lead}稍後再試${tail}`;
 };
 
+/**
+ * AI 分析（Gemini）呼叫失敗的文案（T7 B3）：行情已就緒、卡在 LLM 呼叫本身時適用。
+ * 與 quoteFailMarkdown 是不同的失敗點（行情抓取 vs AI 分析），故分開一支、措辭也不同。
+ */
+const analysisFailMarkdown = (kind: FetchErrorKind): string => {
+  const lead = kind === 'RATE_LIMIT' ? '（AI 服務可能限流中）請'
+    : kind === 'BACKEND_DOWN' ? '（AI 服務後端目前無回應）請確認網路或'
+    : '請';
+  return `**庫存健檢分析失敗**\n\n${lead}稍後再試。`;
+};
+
 export const useHealthCheck = (
   items: PortfolioItem[],
   prices: Record<string, PriceData>,
@@ -114,9 +125,9 @@ export const useHealthCheck = (
 
       if (healthSeqRef.current[symbol] !== gen) return;
       setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult } }));
-    } catch {
+    } catch (e) {
       if (healthSeqRef.current[symbol] !== gen) return;
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' } }));
+      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: analysisFailMarkdown(classifyCaught(e)) } }));
     }
   }, [items, buildHealthItem]);
 
@@ -193,12 +204,13 @@ export const useHealthCheck = (
         });
         return next;
       });
-    } catch {
+    } catch (e) {
+      const kind = classifyCaught(e);
       setHealthResults(prev => {
         const next = { ...prev };
         attemptedSymbols.forEach(symbol => {
           if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-          next[symbol] = { status: 'error', decision: '分析失敗', fullResult: '**庫存健檢分析失敗**\n\n請稍後再試。' };
+          next[symbol] = { status: 'error', decision: '分析失敗', fullResult: analysisFailMarkdown(kind) };
         });
         return next;
       });
