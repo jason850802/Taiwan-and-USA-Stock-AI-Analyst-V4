@@ -30,17 +30,21 @@ interface PnlHistorySectionProps {
 type Market = 'TW' | 'US';
 interface BackfillState {
   running: boolean; done: number; total: number; error: string | null;
-  retrying?: number;   // 待重試檔數（限流退避中）
+  retrying?: number;   // 待重試檔數（退避中）
   waitSec?: number;    // 退避等待秒數
+  kind?: FetchErrorKind;     // 退避成因（T7 B4）：後端關閉時退避文案不該說「限流中」
   doneMsg?: string | null;   // 完成回饋（T7 發現 #5：快取全命中時毫秒完成，無此行會看似沒反應）
 }
 const IDLE: BackfillState = { running: false, done: 0, total: 0, error: null };
 
-/** 進度文字：一般抓取 vs 限流退避等待 */
-const progressLabel = (st: BackfillState): string =>
-  st.waitSec ? `限流中，${st.waitSec} 秒後重試 ${st.retrying} 檔…`
-    : st.retrying ? `重試 ${st.retrying} 檔…`
-      : `回推中 ${st.done}/${st.total} 檔…`;
+/** 進度文字：一般抓取 vs 退避等待——退避成因依 kind 分流（T7 B4），後端關閉≠限流 */
+const progressLabel = (st: BackfillState): string => {
+  if (st.waitSec) {
+    const cause = st.kind === 'BACKEND_DOWN' || st.kind === 'NETWORK' ? '後端無回應中' : '限流中';
+    return `${cause}，${st.waitSec} 秒後重試 ${st.retrying} 檔…`;
+  }
+  return st.retrying ? `重試 ${st.retrying} 檔…` : `回推中 ${st.done}/${st.total} 檔…`;
+};
 
 const RATE_LIMIT_HINT = '（被行情來源限流）請等幾分鐘再按一次重算';
 const BACKEND_DOWN_HINT = '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
@@ -148,6 +152,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
           // 進度文字才會維持「重試 N 檔…」而不是跳回「回推中 x/y 檔…」
           ...(p.retrying !== undefined ? { retrying: p.retrying } : {}),
           ...(p.waitSec !== undefined ? { waitSec: p.waitSec } : {}),
+          ...(p.kind !== undefined ? { kind: p.kind } : {}),
         },
       })),
     });

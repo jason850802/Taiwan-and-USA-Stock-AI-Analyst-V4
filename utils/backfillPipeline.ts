@@ -40,8 +40,9 @@ export interface BackfillPorts {
 export interface BackfillProgress {
   done: number;
   total: number;
-  retrying?: number;   // 待重試檔數（限流退避中）
+  retrying?: number;   // 待重試檔數（退避中）
   waitSec?: number;    // 退避等待秒數
+  kind?: FetchErrorKind;   // 退避中才有意義：造成本輪重試的錯誤種類（T7 B4，UI 據此決定退避文案）
 }
 
 export interface BackfillParams {
@@ -165,7 +166,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
   let pending = await fetchBatch(toFetch, FIRST_ROUND_WORKERS);
   // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
   for (let round = 0; round < RETRY_ROUNDS && pending.length > 0; round++) {
-    onProgress?.({ done, total, retrying: pending.length, waitSec: RETRY_WAIT_MS / 1000 });
+    onProgress?.({ done, total, retrying: pending.length, waitSec: RETRY_WAIT_MS / 1000, kind: lastError.kind });
     await ports.sleep(RETRY_WAIT_MS);
     done = Math.max(0, total - pending.length);
     onProgress?.({ done, total, retrying: pending.length, waitSec: 0 });

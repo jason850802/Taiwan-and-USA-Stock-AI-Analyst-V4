@@ -274,4 +274,12 @@ describe('runBackfillPipeline｜進度回報', () => {
     await run({ onProgress: p => seen.push({ ...p }) }, ports);
     expect(seen[0]).toEqual({ done: 1, total: 2 });
   });
+
+  it('退避通知帶上造成重試的錯誤種類（T7 B4：UI 靠此區分「限流」與「後端無回應」）', async () => {
+    const { ports } = makePorts({ failTimes: { BBB: 1 }, errorFor: () => new DataFetchError('BACKEND_DOWN', 'Fetch error (503)') });
+    const seen: BackfillProgress[] = [];
+    await run({ onProgress: p => seen.push({ ...p }) }, ports);
+    const waiting = seen.find(p => p.waitSec === 45);
+    expect(waiting?.kind).toBe('BACKEND_DOWN');
+  });
 });
