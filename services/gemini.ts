@@ -1,5 +1,6 @@
 import { StockDataPoint, TwFundamentals } from "../types";
 import { EntryFilterResult } from "../utils/entryFilter";
+import { isTwStock } from "../utils/market";
 import { proxyHeaders } from "./_shared/apiClient";
 import { buildCacheKey, readCache, writeCache, taipeiTodayStr } from './_shared/geminiCache';
 
@@ -532,7 +533,7 @@ export const analyzeTradeDecision = async (
   currentPrice?: number,
   recentData?: StockDataPoint[]
 ): Promise<string> => {
-  const isTaiwanStock = /^\d{3,6}[A-Z]?$/.test(symbol) || symbol.endsWith('.TW') || symbol.endsWith('.TWO');
+  const isTaiwanStock = isTwStock(symbol);
 
   let priceLine = `買入價格：${buyPrice}`;
   if (currentPrice && currentPrice > 0) {
@@ -635,7 +636,7 @@ export interface PortfolioHealthItem {
 
 const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
   return items.map((item, idx) => {
-    const isTW = item.symbol.endsWith('.TW') || item.symbol.endsWith('.TWO') || /^\d{3,6}[A-Z]?$/.test(item.symbol);
+    const isTW = isTwStock(item.symbol);
     const last15 = item.recentData.slice(-15);
     const latest = item.recentData[item.recentData.length - 1];
     const prev = item.recentData[item.recentData.length - 2];

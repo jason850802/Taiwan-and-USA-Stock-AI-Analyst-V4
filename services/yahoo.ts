@@ -1,5 +1,6 @@
 import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
+import { isTwStock } from '../utils/market';
 import { proxyHeaders } from './_shared/apiClient';
 import { fetchFinMindRows } from './finmind';
 import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
@@ -358,7 +359,7 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
     const volumes = quote.volume;
 
     const cleanData: any[] = [];
-    const isTaiwanStock = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
+    const isTaiwanStock = isTwStock(meta.symbol);
 
     timestamps.forEach((ts, i) => {
         if (closes[i] !== null && opens[i] !== null && highs[i] !== null && lows[i] !== null) {
@@ -473,7 +474,7 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
   }
 
   // For TW stocks, fetch Chinese name from FinMind
-  const isTW = meta.symbol.endsWith('.TW') || meta.symbol.endsWith('.TWO');
+  const isTW = isTwStock(meta.symbol);
   let name = meta.longName || meta.shortName || meta.symbol;
   if (isTW) {
     const chineseName = await fetchFinMindStockInfo(meta.symbol);
@@ -805,7 +806,7 @@ const fetchStockDataUncached = async (
           if (first && first.which === '2y') {
               // 2y 先到：解析 meta → 籌碼解析一次 → 完整 enrich → 發射 partial → 等 10y 用同一 ctx 重 enrich。
               const meta2y = first.res.chart.result![0].meta;
-              isTaiwanStock = meta2y.symbol.endsWith('.TW') || meta2y.symbol.endsWith('.TWO');
+              isTaiwanStock = isTwStock(meta2y.symbol);
               symbolInfo = {
                   symbol: meta2y.symbol,
                   name: meta2y.longName || meta2y.shortName || meta2y.symbol,
@@ -826,7 +827,7 @@ const fetchStockDataUncached = async (
           // 2y 失敗靜默（first===null）→ 等 p10y；10y 先到（CDN 熱）→ 用其結果。兩者收斂到單段尾流程。
           const fullRes = (first && first.which === '10y') ? first.res : await p10y;
           const resultMeta = fullRes.chart.result![0].meta;
-          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+          isTaiwanStock = isTwStock(resultMeta.symbol);
           processedData = processYahooResult(fullRes, mainInterval);
           symbolInfo = {
               symbol: resultMeta.symbol,
@@ -838,7 +839,7 @@ const fetchStockDataUncached = async (
           // 單段（原路徑不動）：非 1d／無 onPartial／forceRefresh／背景刷新皆走此。
           const mainResponse = await fetchRawData(symbol, mainInterval, mainRange, signal);
           const resultMeta = mainResponse.chart.result![0].meta;
-          isTaiwanStock = resultMeta.symbol.endsWith('.TW') || resultMeta.symbol.endsWith('.TWO');
+          isTaiwanStock = isTwStock(resultMeta.symbol);
 
           processedData = processYahooResult(mainResponse, mainInterval);
           symbolInfo = {
@@ -860,7 +861,7 @@ const fetchStockDataUncached = async (
       }
       // If Yahoo fails, and it looks like a Taiwan Stock Request for Daily Data, try FinMind
       const cleanSymbol = symbol.toUpperCase().replace(/\.TWO?$/i, '');
-      const isPotentialTaiwanStock = /^\d{3,6}[A-Z]?$/.test(cleanSymbol);
+      const isPotentialTaiwanStock = isTwStock(cleanSymbol);
 
       if (isPotentialTaiwanStock && interval === '1d') {
           console.log(`Yahoo failed (${err.message}). Attempting FinMind fallback for ${cleanSymbol}...`);

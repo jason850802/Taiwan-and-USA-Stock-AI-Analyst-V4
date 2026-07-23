@@ -19,6 +19,7 @@ import StockSearch from './components/StockSearch';
 import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
+import { isTwStock } from './utils/market';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
@@ -281,14 +282,14 @@ const App: React.FC = () => {
     }
   };
 
-  const isTaiwanStock = useMemo(() => info
-      ? (info.symbol.endsWith('.TW') || info.symbol.endsWith('.TWO'))
-      : (symbol.endsWith('.TW') || symbol.endsWith('.TWO') || /^\d{4}$/.test(symbol)), [info, symbol]);
+  // Phase 12 T1：分類統一走 utils/market。原本無 info 的分支只認 4 碼純數字，
+  // 會把 00679B／00631L 這類 3/5/6 碼＋字母的台股代碼誤判成美股——統一後修正。
+  const isTaiwanStock = useMemo(() => isTwStock(info?.symbol ?? symbol), [info, symbol]);
 
   // 基本面分頁掛載時的起始代碼：dashboard 正在看台股就帶入（strip .TW/.TWO），否則預設 2330。
   const fundamentalsInitialSymbol = useMemo(() => {
     const stripped = (info?.symbol || symbol).toUpperCase().replace(/\.TWO?$/i, '');
-    return /^\d{3,6}[A-Z]?$/.test(stripped) ? stripped : '2330';
+    return isTwStock(stripped) ? stripped : '2330';
   }, [info, symbol]);
 
   const volumeProj = useMemo(() => estimateVolumeTrend(data, isTaiwanStock, interval), [data, isTaiwanStock, interval]);
