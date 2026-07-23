@@ -9,6 +9,7 @@ import { isTwStock, calcTwBuyFee, calcTwSellFeeAndTax, calcUsFee } from '../util
 import { SellInput } from '../utils/portfolioLedger';
 import { computeLiveSnapshot, upsertSnapshots } from '../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../utils/portfolioHistoryStore';
+import { runWithConcurrency } from '../utils/workerPool';
 import { Plus, Trash2, RefreshCw, Wallet, Loader2, ChevronDown, ChevronUp, Info, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Banknote, Upload } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -1070,18 +1071,13 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     let attemptedSymbols: string[] = symbols;
 
     try {
-      // 資料準備：併發上限 3 的 index 游標池（getLatestPrice 不暖 getStockData 快取，冷抓打真網路，429 是常態）
+      // 資料準備：併發上限 3（getLatestPrice 不暖 getStockData 快取，冷抓打真網路，429 是常態）。
+      // 游標池實作已收斂到 utils/workerPool；buildHealthItem 內部吞錯不 throw 的語意不變。
       const results: (PortfolioHealthItem | null)[] = new Array(symbols.length).fill(null);
-      let cursor = 0;
-      const workers = Array.from({ length: Math.min(3, symbols.length) }, async () => {
-        while (true) {
-          const idx = cursor++;
-          if (idx >= symbols.length) break;
-          const it = await buildHealthItem(symbols[idx]);
-          if (it) results[idx] = it;
-        }
+      await runWithConcurrency(symbols.map((_, i) => i), 3, async (idx) => {
+        const it = await buildHealthItem(symbols[idx]);
+        if (it) results[idx] = it;
       });
-      await Promise.all(workers);
 
       // 行情抓取失敗（recentData 空）的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——
       // 空資料會讓 formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮

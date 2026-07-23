@@ -3,17 +3,14 @@
 // ＋進度＋無買進日期批次提示＋空狀態階梯。快照資料源＝localStorage（historyTick 通知重讀）。
 import React, { useMemo, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../../types';
-import { getStockData } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
-import {
-  buildBackfillRows, buildBackfillFromTxns, buildChartSeries, upsertSnapshots,
-  BackfillLotInput, TxnForBackfill,
-} from '../../utils/portfolioHistory';
+import { buildChartSeries, upsertSnapshots } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
 import { loadTxns, saveTxns, appendTxns } from '../../utils/txnStore';
-import { getCachedSeries, putCachedSeriesMany } from '../../utils/closeSeriesCache';
+import { runBackfillPipeline } from '../../utils/backfillPipeline';
+import { runWithConcurrency } from '../../utils/workerPool';
 import { fetchFinMindRows } from '../../services/finmind';
-import { DataFetchError, type FetchErrorKind } from '../../services/fetchError';
+import { type FetchErrorKind } from '../../services/fetchError';
 import {
   estimateDividends, toDividendTxns, type DividendAnnouncement,
 } from '../../utils/dividendEstimator';
@@ -44,6 +41,20 @@ const progressLabel = (st: BackfillState): string =>
     : st.retrying ? `重試 ${st.retrying} 檔…`
       : `回推中 ${st.done}/${st.total} 檔…`;
 
+const RATE_LIMIT_HINT = '（被行情來源限流）請等幾分鐘再按一次重算';
+const BACKEND_DOWN_HINT = '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
+
+/** 抓取失敗的處置提示：先認 kind（T3 型別化錯誤），認不得再退回既有訊息比對 */
+const diagnose = (kind: FetchErrorKind | 'NO_DATA' | undefined, message: string): string => {
+  if (kind === 'RATE_LIMIT') return RATE_LIMIT_HINT;
+  if (kind === 'BACKEND_DOWN' || kind === 'NETWORK') return BACKEND_DOWN_HINT;
+  if (/429|too many|限流/i.test(message)) return RATE_LIMIT_HINT;
+  if (/5\d\d|internal|failed to fetch|networkerror/i.test(message)) {
+    return BACKEND_DOWN_HINT;
+  }
+  return message ? `（${message.slice(0, 60)}）` : '（原因不明）請稍後再試';
+};
+
 const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   items, realizedTrades, includeDividend, usdTwdRate, historyTick,
 }) => {
@@ -66,19 +77,15 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const firstDate = txns.reduce((m, t) => (t.date < m ? t.date : m), txns[0].date);
     const anns: Record<string, DividendAnnouncement[]> = {};
     const failed: string[] = [];
-    let cursor = 0;
-    await Promise.all(Array.from({ length: Math.min(3, symbols.length) }, async () => {
-      while (cursor < symbols.length) {
-        const sym = symbols[cursor++];
-        try {
-          const rows = await fetchFinMindRows('TaiwanStockDividend', { data_id: sym, start_date: firstDate });
-          anns[sym] = rows as DividendAnnouncement[];
-        } catch {
-          failed.push(sym);
-        }
+    await runWithConcurrency(symbols, 3, async (sym) => {
+      const rows = await fetchFinMindRows('TaiwanStockDividend', { data_id: sym, start_date: firstDate });
+      anns[sym] = rows as DividendAnnouncement[];
+    }, {
+      onSettled: (sym, result) => {
+        if (!result.ok) failed.push(sym);
         setDivState(s => ({ ...s, done: s.done + 1 }));
-      }
-    }));
+      },
+    });
 
     const { dividends, stockDividendNotes, skipped } = estimateDividends(txns, anns);
     if (dividends.length > 0) {
@@ -124,134 +131,38 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       : [...new Set(datedLots.map(l => l.symbol))];
     setBfState(s => ({ ...s, [market]: { running: true, done: 0, total: symbols.length, error: null } }));
 
-    // 併發游標池（沿批次健檢先例）。台股每檔會連帶抓籌碼三件套，
-    // 檔數多時容易觸及後端 marketPerMin=60 → 失敗批次自動退避重試，
-    // 不讓整輪（可能已跑數分鐘）因少數 429 全數作廢。
-    const closeSeries: Record<string, { date: string; close: number }[]> = {};
-    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-    const firstTxnDate = allTxns.length > 0
-      ? allTxns.reduce((m, t) => (t.date < m ? t.date : m), allTxns[0].date)
-      : undefined;
+    // 編排（快取先行→併發抓→退避重試→批次寫快取→選模式建列）已收進 utils/backfillPipeline，
+    // 那裡有 fake ports 的完整測試。留在這裡的只有表現層的事：進度映射、失敗文案、合併存檔。
+    const result = await runBackfillPipeline({
+      market,
+      items: mLots,
+      txns: allTxns,
+      realizedTrades,
+      usdTwdRate,
+      onProgress: p => setBfState(s => ({
+        ...s,
+        [market]: {
+          ...s[market], done: p.done, total: p.total,
+          // 只覆寫有帶的欄位——退避輪設定的 retrying 要延續到該輪的逐檔進度，
+          // 進度文字才會維持「重試 N 檔…」而不是跳回「回推中 x/y 檔…」
+          ...(p.retrying !== undefined ? { retrying: p.retrying } : {}),
+          ...(p.waitSec !== undefined ? { waitSec: p.waitSec } : {}),
+        },
+      })),
+    });
 
-    // 歷史收盤價是不變的事實 → 先吃快取，只有沒快取／過期的才打網路（大幅降低 429 機率）
-    const toFetch: string[] = [];
-    for (const sym of symbols) {
-      const cached = getCachedSeries(sym);
-      if (cached && cached.length > 0) closeSeries[sym] = cached;
-      else toFetch.push(sym);
-    }
-    setBfState(s => ({ ...s, [market]: { ...s[market], done: symbols.length - toFetch.length } }));
-
-    // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同。
-    // T3 起優先讀型別化的 kind；認不出 kind（非 DataFetchError）才退回訊息比對。
-    let lastError: { kind?: FetchErrorKind; message: string } = { message: '' };
-    const freshlyFetched: { symbol: string; bars: { date: string; close: number }[] }[] = [];
-    const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
-      const missed: string[] = [];
-      let cursor = 0;
-      await Promise.all(Array.from({ length: Math.min(workers, list.length) }, async () => {
-        while (cursor < list.length) {
-          const sym = list[cursor++];
-          try {
-            const { data } = await getStockData(sym, '1d');
-            const bars = data
-              .filter(d => d.close !== null && d.close !== undefined)
-              .map(d => ({ date: d.date, close: d.close as number }));
-            closeSeries[sym] = bars;
-            freshlyFetched.push({ symbol: sym, bars });   // 收集後批次寫入，避免逐檔序列化整份快取
-          } catch (e: any) {
-            lastError = {
-              kind: e instanceof DataFetchError ? e.kind : undefined,
-              message: String(e?.message ?? e ?? ''),
-            };
-            missed.push(sym);
-          }
-          setBfState(s => ({ ...s, [market]: { ...s[market], done: Math.min(s[market].done + 1, s[market].total) } }));
-        }
-      }));
-      return missed;
-    };
-    const RATE_LIMIT_HINT = '（被行情來源限流）請等幾分鐘再按一次重算';
-    const BACKEND_DOWN_HINT = '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
-    const diagnose = (): string => {
-      // 先認 kind（T3 型別化錯誤）
-      if (lastError.kind === 'RATE_LIMIT') return RATE_LIMIT_HINT;
-      if (lastError.kind === 'BACKEND_DOWN' || lastError.kind === 'NETWORK') return BACKEND_DOWN_HINT;
-      // 認不得再退回既有訊息比對（非 DataFetchError 的來源仍靠這層）
-      const msg = lastError.message;
-      if (/429|too many|限流/i.test(msg)) return RATE_LIMIT_HINT;
-      if (/5\d\d|internal|failed to fetch|networkerror/i.test(msg)) {
-        return BACKEND_DOWN_HINT;
-      }
-      return msg ? `（${msg.slice(0, 60)}）` : '（原因不明）請稍後再試';
-    };
-
-    let pending = await fetchBatch(toFetch, 3);
-    // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
-    for (let round = 0; round < 2 && pending.length > 0; round++) {
-      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 45 } }));
-      await sleep(45000);
-      setBfState(s => ({ ...s, [market]: { ...s[market], retrying: pending.length, waitSec: 0, done: Math.max(0, s[market].total - pending.length) } }));
-      pending = await fetchBatch(pending, 1);
-    }
-
-    putCachedSeriesMany(freshlyFetched, firstTxnDate);   // 一次寫入本輪抓到的全部序列
-
-    const failed = pending;
-    if (failed.length > 0) {
+    if (!result.ok) {
+      if (result.kind === 'NO_DATA') { setBfState(s => ({ ...s, [market]: IDLE })); return; }
+      const failed = result.missedSymbols;
       const shown = failed.slice(0, 6).join('、') + (failed.length > 6 ? ` 等 ${failed.length} 檔` : '');
-      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗，已自動重試 2 次 ${diagnose()}` } }));
+      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗，已自動重試 2 次 ${diagnose(result.kind, result.detail)}` } }));
       return;
     }
 
-    // chart 幣別的批次現值（TW=TWD；US：USD 購入取 totalCostUSD、TWD 購入以當下匯率換算）
-    const lotsInput: BackfillLotInput[] = mLots.map(l => {
-      if (!l.buyDate) return { id: l.id, symbol: l.symbol, shares: l.totalShares, cost: 0, cashDiv: 0 };   // 交由函式排除＋回報
-      if (market === 'TW') {
-        return { id: l.id, symbol: l.symbol, buyDate: l.buyDate, shares: l.totalShares, cost: l.totalCost, cashDiv: l.cashDividends };
-      }
-      return {
-        id: l.id, symbol: l.symbol, buyDate: l.buyDate, shares: l.totalShares,
-        cost: l.purchaseCurrency === 'USD' ? (l.totalCostUSD ?? 0) : l.totalCost / rate!,
-        cashDiv: rate ? l.cashDividends / rate : 0,
-        isUsEtf: l.isUsEtf,
-      };
-    });
-
-    const existing = loadSnapshots();
-    const liveDates = existing.filter(r => r.market === market && r.source === 'live').map(r => r.date).sort();
-    const bfRows = useTxnMode
-      ? buildBackfillFromTxns({
-          market,
-          // 流水金額本就是市場幣別（TW=TWD、US=USD，解析器保證），無需換算。
-          // 例外：美股配息在帳單上是「應收台幣」，須換成 USD 才與同列其他欄位同幣別
-          // （對齊 computeLiveSnapshot 對 cashDividends 的 /rate 處理）。
-          txns: allTxns.map((t): TxnForBackfill => ({
-            date: t.date, symbol: t.symbol, market: t.market, kind: t.kind,
-            shares: t.shares, gross: t.gross, fee: t.fee, tax: t.tax,
-            divAmount: t.kind !== 'dividend'
-              ? undefined
-              : t.market === 'US'
-                ? (rate ? (t.netTwd ?? 0) / rate : 0)
-                : t.gross,
-          })),
-          closeSeries,
-          boundaryDate: liveDates[0],
-          usdTwdRate: market === 'US' ? rate : undefined,
-          capturedAt: Date.now(),
-        })
-      : buildBackfillRows({
-          market,
-          lots: lotsInput,
-          closeSeries,
-          trades: realizedTrades.filter(t => t.market === market),
-          boundaryDate: liveDates[0],   // 回推只填第一筆 live 之前（D-08）
-          usdTwdRate: market === 'US' ? rate : undefined,
-          capturedAt: Date.now(),
-        }).rows;
     // 重算語意：先清該市場全部 backfill 再寫入（backfill 永不覆蓋 live）
+    const existing = loadSnapshots();
     const cleaned = existing.filter(r => !(r.market === market && r.source === 'backfill'));
-    saveSnapshots(upsertSnapshots(cleaned, bfRows));
+    saveSnapshots(upsertSnapshots(cleaned, result.snapshots));
     setBfState(s => ({ ...s, [market]: { ...IDLE, done: symbols.length, total: symbols.length } }));
     setRefreshTick(t => t + 1);
   };
