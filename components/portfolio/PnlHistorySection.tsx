@@ -32,6 +32,7 @@ interface BackfillState {
   running: boolean; done: number; total: number; error: string | null;
   retrying?: number;   // 待重試檔數（限流退避中）
   waitSec?: number;    // 退避等待秒數
+  doneMsg?: string | null;   // 完成回饋（T7 發現 #5：快取全命中時毫秒完成，無此行會看似沒反應）
 }
 const IDLE: BackfillState = { running: false, done: 0, total: 0, error: null };
 
@@ -163,7 +164,12 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const existing = loadSnapshots();
     const cleaned = existing.filter(r => !(r.market === market && r.source === 'backfill'));
     saveSnapshots(upsertSnapshots(cleaned, result.snapshots));
-    setBfState(s => ({ ...s, [market]: { ...IDLE, done: symbols.length, total: symbols.length } }));
+    // 完成回饋必須給（T7 發現 #5）：快取全命中時整條鏈毫秒完成、瀏覽器來不及畫進度，
+    // 且重算結果常與畫面現值相同——沒有這行字，成功看起來就跟沒反應一樣。
+    setBfState(s => ({ ...s, [market]: {
+      ...IDLE, done: symbols.length, total: symbols.length,
+      doneMsg: `重算完成：快照 ${result.snapshots.length} 筆（快取命中 ${result.cacheHits} 檔、重抓 ${result.fetched} 檔）`,
+    } }));
     setRefreshTick(t => t + 1);
   };
 
@@ -215,6 +221,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 </span>
               )}
               {market === 'TW' && divState.msg && <span className="text-accent">{divState.msg}</span>}
+              {st.doneMsg && <span className="text-up/80">{st.doneMsg}</span>}
               {st.error && <span className="text-danger">{st.error}</span>}
             </div>
           </div>
