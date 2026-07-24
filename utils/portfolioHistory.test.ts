@@ -275,3 +275,95 @@ describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () 
     expect(pts.every(p => p.realizedCum === 0)).toBe(true);
   });
 });
+
+// ── 台幣口徑（美股曲線的 TWD 模式）──────────────────────────────────────────
+// 口徑：未實現＝(市值−預估賣出費)×**該日匯率** − **買入匯率成本**；
+//       已實現＝Σ(賣出淨額×賣出匯率 − 成本×買入匯率) ＋（含息時）配息實收台幣。
+describe('buildChartSeries｜美股台幣口徑（含匯差）', () => {
+  const usRow = (over: Partial<DailyPnlSnapshot>): DailyPnlSnapshot =>
+    row({ market: 'US', ...over });
+
+  const rows: DailyPnlSnapshot[] = [
+    // 成本 1000 USD @31.00 買入 → 台幣成本 31,000
+    usRow({ date: '2026-07-01', source: 'backfill', marketValue: 1100, totalCost: 1000, estSellCosts: 10, fxRate: 31, totalCostTwd: 31000 }),
+    // 隔日股價不動、匯率升到 32 → 台幣損益應變好（純匯差）
+    usRow({ date: '2026-07-02', source: 'live', marketValue: 1100, totalCost: 1000, estSellCosts: 10, fxRate: 32, totalCostTwd: 31000 }),
+  ];
+
+  it('USD 模式維持原行為（不受台幣欄位影響）', () => {
+    const pts = buildChartSeries(rows, [], 'US', false, undefined, 'USD');
+    expect(pts.map(p => p.unrealized)).toEqual([90, 90]);
+  });
+
+  it('股價不動、匯率上升 → 台幣未實現變好（匯差被呈現出來）', () => {
+    const pts = buildChartSeries(rows, [], 'US', false, undefined, 'TWD');
+    expect(pts[0].unrealized).toBeCloseTo((1100 - 10) * 31 - 31000, 6);   // 2,790
+    expect(pts[1].unrealized).toBeCloseTo((1100 - 10) * 32 - 31000, 6);   // 3,880
+    expect(pts[1].unrealized).toBeGreaterThan(pts[0].unrealized);
+  });
+
+  it('成本側用買入匯率、不隨當日匯率浮動（否則匯差會被抹平）', () => {
+    const pts = buildChartSeries(rows, [], 'US', false, undefined, 'TWD');
+    // 反向鎖必須挑「當日匯率 ≠ 買入匯率」的那天（第一天兩者都是 31，兩式同值測不出差別）：
+    // 若成本也用當日匯率，第二天會是 (1090−1000)×32＝2,880，而正解是 1090×32−31,000＝3,880
+    expect(pts[1].unrealized).not.toBeCloseTo((1100 - 10 - 1000) * 32, 6);
+    expect(pts[1].unrealized).toBeCloseTo(3880, 6);
+  });
+
+  it('已實現側用該筆的買/賣匯率；缺匯率的整筆不計入', () => {
+    const trades = [
+      { market: 'US', sellDate: '2026-07-01', realizedPnl: 90, divCarried: 0,
+        grossProceeds: 1100, sellFee: 10, sellTax: 0, costBasis: 1000,
+        buyExchangeRate: 31, sellExchangeRate: 32 } as RealizedTrade,
+      { market: 'US', sellDate: '2026-07-01', realizedPnl: 50, divCarried: 0,
+        grossProceeds: 550, sellFee: 0, sellTax: 0, costBasis: 500 } as RealizedTrade,   // 無匯率
+    ];
+    const pts = buildChartSeries(rows, trades, 'US', false, undefined, 'TWD');
+    expect(pts[0].realizedCum).toBeCloseTo(1090 * 32 - 1000 * 31, 6);   // 只計入有匯率那筆
+  });
+
+  it('含息：美股配息用帳單上的實收台幣（amountTwd），不再換匯', () => {
+    const divs = [{ date: '2026-07-01', amount: 3.2, amountTwd: 100 }];
+    const twd = buildChartSeries(rows, [], 'US', true, divs, 'TWD');
+    const usd = buildChartSeries(rows, [], 'US', true, divs, 'USD');
+    expect(twd[0].realizedCum).toBe(100);
+    expect(usd[0].realizedCum).toBe(3.2);
+  });
+
+  it('缺 fxRate 或 totalCostTwd 的列在台幣模式跳過（不用今天的匯率造史料）', () => {
+    const mixed = [
+      usRow({ date: '2026-07-01', marketValue: 1100, totalCost: 1000, estSellCosts: 10 }),               // 兩者都缺
+      usRow({ date: '2026-07-02', marketValue: 1100, totalCost: 1000, estSellCosts: 10, fxRate: 32 }),   // 缺成本
+      usRow({ date: '2026-07-03', marketValue: 1100, totalCost: 1000, estSellCosts: 10, fxRate: 32, totalCostTwd: 31000 }),
+    ];
+    expect(buildChartSeries(mixed, [], 'US', false, undefined, 'TWD').map(p => p.date)).toEqual(['2026-07-03']);
+    expect(buildChartSeries(mixed, [], 'US', false, undefined, 'USD')).toHaveLength(3);   // USD 不受影響
+  });
+});
+
+describe('computeLiveSnapshot｜台幣欄位', () => {
+  const prices = { AAA: { price: 110, date: '2026-07-02' } };
+  it('USD 計價批次有買入匯率 → 寫入 totalCostTwd（買入匯率）與 fxRate（即時匯率）', () => {
+    const snap = computeLiveSnapshot('US', [
+      lot({ symbol: 'AAA', totalShares: 10, purchaseCurrency: 'USD', totalCostUSD: 1000, exchangeRate: 31 }),
+    ], prices, 32, T)!;
+    expect(snap.totalCostTwd).toBe(31000);
+    expect(snap.fxRate).toBe(32);
+  });
+
+  it('任一 USD 批次缺買入匯率 → 不寫 totalCostTwd（寧缺勿錯，圖表跳過該日）', () => {
+    const snap = computeLiveSnapshot('US', [
+      lot({ symbol: 'AAA', totalShares: 10, purchaseCurrency: 'USD', totalCostUSD: 1000, exchangeRate: 31 }),
+      lot({ id: 'y', symbol: 'AAA', totalShares: 5, purchaseCurrency: 'USD', totalCostUSD: 500 }),
+    ], prices, 32, T)!;
+    expect(snap.totalCostTwd).toBeUndefined();
+    expect(snap.fxRate).toBe(32);
+  });
+
+  it('台股快照不帶台幣欄位（本來就是台幣，避免重複語意）', () => {
+    const snap = computeLiveSnapshot('TW', [lot({ symbol: '2330', totalShares: 1000, totalCost: 100000 })],
+      { '2330': { price: 110, date: '2026-07-02' } }, 32, T)!;
+    expect(snap.totalCostTwd).toBeUndefined();
+    expect(snap.fxRate).toBeUndefined();
+  });
+});

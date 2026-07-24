@@ -2,6 +2,7 @@
 // single source of truth＝帳本紀錄；刪除僅移除帳面，不回復持股（二段確認＋可見警語）。
 import React, { useMemo, useState } from 'react';
 import { RealizedTrade } from '../../types';
+import { twdRealizedPnl } from '../../utils/fx';
 import { ChevronDown, ChevronUp, Trash2, ReceiptText } from 'lucide-react';
 
 interface RealizedLedgerProps {
@@ -12,17 +13,8 @@ interface RealizedLedgerProps {
 const fmt = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtUsd = (n: number, d = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
-/**
- * 台幣實現損益（含匯差）＝ 賣出實收美元 × 賣出匯率 − 成本美元 × 買入匯率。
- * 兩個匯率缺一就回 null 顯示「—」——不用即時匯率替代，否則等於偽造當時的成交匯率（D-10）。
- * 台股本來就是台幣，直接回 realizedPnl。
- */
-const twdRealized = (t: RealizedTrade): number | null => {
-  if (t.market === 'TW') return t.realizedPnl;
-  if (!t.buyExchangeRate || !t.sellExchangeRate) return null;
-  const netUsd = t.grossProceeds - t.sellFee - t.sellTax;
-  return netUsd * t.sellExchangeRate - t.costBasis * t.buyExchangeRate;
-};
+// 台幣實現損益（含匯差）：與歷史曲線的台幣已實現側共用同一口徑
+const twdRealized = twdRealizedPnl;
 
 const RealizedLedger: React.FC<RealizedLedgerProps> = ({ trades, onDeleteTrade }) => {
   const [collapsed, setCollapsed] = useState(false);

@@ -64,6 +64,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   items, realizedTrades, includeDividend, usdTwdRate, historyTick,
 }) => {
   const [refreshTick, setRefreshTick] = useState(0);
+  const [usCurrency, setUsCurrency] = useState<'USD' | 'TWD'>('USD');   // 美股曲線幣別
   const [bfState, setBfState] = useState<Record<Market, BackfillState>>({ TW: IDLE, US: IDLE });
   const [divState, setDivState] = useState<{ running: boolean; done: number; total: number; msg: string | null }>(
     { running: false, done: 0, total: 0, msg: null });
@@ -183,22 +184,44 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const mRows = rows.filter(r => r.market === market);
     if (mLots.length === 0 && mRows.length === 0) return null;
 
+    const curr: 'TWD' | 'USD' = market === 'TW' ? 'TWD' : usCurrency;
     const marketDivs = dividendTxns
       .filter(t => t.market === market)
-      .map(t => ({ date: t.date, amount: market === 'US' ? (t.netTwd ?? t.gross) : t.gross }));
-    const points = buildChartSeries(rows, realizedTrades, market, includeDividend, marketDivs);
+      .map(t => ({
+        date: t.date,
+        amount: market === 'US' ? (t.netTwd ?? t.gross) : t.gross,
+        // 美股配息的實收台幣就在帳單上（netTwd），台幣口徑直接用實收數字，不必再換匯
+        ...(market === 'US' ? { amountTwd: t.netTwd ?? 0 } : {}),
+      }));
+    const points = buildChartSeries(rows, realizedTrades, market, includeDividend, marketDivs, curr);
     const divTotal = marketDivs.reduce((s, d) => s + d.amount, 0);
+    // 台幣曲線缺口：有快照但因缺匯率而畫不出來的天數（提示使用者重算）
+    const twdGap = market === 'US' && curr === 'TWD' ? mRows.length - points.length : 0;
     const datedLots = mLots.filter(l => !!l.buyDate);
     const undatedLots = mLots.filter(l => !l.buyDate);
     const hasBackfill = mRows.some(r => r.source === 'backfill');
     const st = bfState[market];
-    const title = market === 'TW' ? '台股損益歷史（TWD）' : '美股損益歷史（USD）';
+    const title = market === 'TW' ? '台股損益歷史（TWD）' : `美股損益歷史（${curr}）`;
+
+    // 美股幣別切換：USD＝純股價損益；TWD＝含匯差的實際台幣損益
+    const currencyToggle = market === 'US' ? (
+      <div className="flex items-center bg-surface-inset border border-surface-line rounded-ctl p-0.5 gap-0.5">
+        {(['USD', 'TWD'] as const).map(c => (
+          <button key={c} onClick={() => setUsCurrency(c)}
+            title={c === 'USD' ? '美元口徑：純股價損益，不含匯率變動' : '台幣口徑：成本用買入匯率、市值用當日匯率，含匯差'}
+            className={`px-2.5 py-1 rounded text-xs font-medium transition-all
+              ${curr === c ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}>
+            {c}
+          </button>
+        ))}
+      </div>
+    ) : undefined;
 
     return (
-      <Card key={market} title={title}>
+      <Card key={market} title={title} actions={currencyToggle}>
         {points.length > 0 ? (
           <div className="space-y-2">
-            <PnlHistoryChart currency={market === 'TW' ? 'TWD' : 'USD'} points={points} />
+            <PnlHistoryChart currency={curr} points={points} />
             <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
               {datedLots.length > 0 && (
                 <button onClick={() => runBackfill(market)} disabled={st.running}
@@ -220,6 +243,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                   已計入配息 {Math.round(divTotal).toLocaleString('zh-TW')} 元（稅前，切「不含息損益」可排除）
                 </span>
               )}
+              {twdGap > 0 && (
+                <span className="text-amber-300/80">
+                  {twdGap} 天缺當日匯率或買入匯率，台幣曲線未涵蓋——按「重算歷史回推」可補上
+                </span>
+              )}
               {undatedLots.length > 0 && (
                 <span className="text-amber-300/80">
                   {undatedLots.length} 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）
@@ -232,7 +260,20 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
           </div>
         ) : (
           <div className="py-8 text-center space-y-3">
-            {datedLots.length > 0 ? (
+            {twdGap > 0 ? (
+              <>
+                <p className="text-sm text-slate-500">
+                  這 {twdGap} 天的快照缺當日匯率或買入匯率，畫不出台幣曲線
+                  （USD 曲線可正常顯示）。按下方重算會一併抓取歷史匯率。
+                </p>
+                <button onClick={() => runBackfill(market)} disabled={st.running}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
+                  {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
+                  {st.running ? progressLabel(st) : '重算歷史回推（含匯率）'}
+                </button>
+                {st.error && <p className="text-danger text-xs">{st.error}</p>}
+              </>
+            ) : datedLots.length > 0 ? (
               <>
                 <p className="text-sm text-slate-500">尚無歷史資料——用歷史股價回推建立這個市場的損益曲線</p>
                 <button onClick={() => runBackfill(market)} disabled={st.running}

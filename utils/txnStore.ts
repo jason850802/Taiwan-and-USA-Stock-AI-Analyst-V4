@@ -23,6 +23,7 @@ export interface StoredTxn {
   fee: number;
   tax: number;
   netTwd?: number;         // 美股配息用（TWD）
+  exchangeRate?: number;   // 成交當日 USD/TWD（美股；台幣口徑回推用）
   source: 'import' | 'manual';
   key: string;             // 去重鍵（匯入來源用 dedupeKey；手動用生成鍵）
 }
@@ -31,6 +32,7 @@ export const fromParsedTxn = (t: ParsedTxn): StoredTxn => ({
   date: t.date, symbol: t.symbol, name: t.name, market: t.market, kind: t.kind,
   shares: t.shares, price: t.price, gross: t.gross, fee: t.fee, tax: t.tax,
   ...(t.netTwd !== undefined ? { netTwd: t.netTwd } : {}),
+  ...(t.exchangeRate !== undefined ? { exchangeRate: t.exchangeRate } : {}),
   source: 'import', key: t.dedupeKey,
 });
 
@@ -44,7 +46,9 @@ export const fromManualLot = (lot: PortfolioItem): StoredTxn | null => {
   return {
     date: lot.buyDate, symbol: lot.symbol, name: lot.symbol, market, kind: 'buy',
     shares: lot.totalShares, price: lot.totalShares > 0 ? (cost - fee) / lot.totalShares : 0,
-    gross: cost - fee, fee, tax: 0, source: 'manual', key: `manual|lot|${lot.id}`,
+    gross: cost - fee, fee, tax: 0,
+    ...(market === 'US' && lot.exchangeRate ? { exchangeRate: lot.exchangeRate } : {}),
+    source: 'manual', key: `manual|lot|${lot.id}`,
   };
 };
 
@@ -52,7 +56,9 @@ export const fromManualLot = (lot: PortfolioItem): StoredTxn | null => {
 export const fromManualTrade = (t: RealizedTrade): StoredTxn => ({
   date: t.sellDate, symbol: t.symbol, name: t.symbol, market: t.market, kind: 'sell',
   shares: t.sharesSold, price: t.sellPrice, gross: t.grossProceeds,
-  fee: t.sellFee, tax: t.sellTax, source: 'manual', key: `manual|trade|${t.id}`,
+  fee: t.sellFee, tax: t.sellTax,
+  ...(t.sellExchangeRate ? { exchangeRate: t.sellExchangeRate } : {}),
+  source: 'manual', key: `manual|trade|${t.id}`,
 });
 
 /** 儲存信封（位元組相容：`{"version":1,"txns":[...]}`，不得改欄位順序） */

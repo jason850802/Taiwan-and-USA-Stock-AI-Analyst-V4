@@ -4,6 +4,7 @@
 import { PortfolioItem, RealizedTrade, DailyPnlSnapshot } from '../types';
 import { calcTwSellFeeAndTax, calcUsFee } from './portfolioFees';
 import { round2 } from './portfolioLedger';
+import { lotBuyRate, hasBuyRate, twdRealizedPnl } from './fx';
 
 // ── 共用小工具 ──────────────────────────────────────────────────────────────
 
@@ -43,6 +44,9 @@ export const computeLiveSnapshot = (
   if (rateNeeded && !rateOk) return null;
 
   let marketValue = 0, totalCost = 0, estSellCosts = 0, cashDividends = 0;
+  // 台幣成本側：Σ 批次成本×買入匯率。任一美股批次沒記買入匯率 → 整列不出台幣欄位
+  // （寧缺勿錯：混用即時匯率會讓當日台幣成本浮動，看起來像匯差其實是估算誤差）。
+  let totalCostTwd = 0, twdCostOk = market === 'US';
   const symbols = new Set<string>();
   let date = '';
   for (const lot of lots) {
@@ -61,6 +65,11 @@ export const computeLiveSnapshot = (
       totalCost += usLotCostUsd(lot, rateOk ? usdTwdRate! : 1);   // rateNeeded 時上面已保證 rateOk
       estSellCosts += calcUsFee(value, lot.isUsEtf ?? false);
       cashDividends += rateOk ? lot.cashDividends / usdTwdRate! : lot.cashDividends;   // 美股股利 TWD 計價
+      // 台幣成本＝USD 計價批次 ×買入匯率；TWD 計價批次的 totalCost 本來就是實付台幣
+      if (!hasBuyRate(lot) && lot.purchaseCurrency === 'USD') twdCostOk = false;
+      totalCostTwd += lot.purchaseCurrency === 'USD'
+        ? (lot.totalCostUSD ?? 0) * lotBuyRate(lot, rateOk ? usdTwdRate! : 0)
+        : lot.totalCost;
     }
   }
   if (market === 'US') {
@@ -68,11 +77,15 @@ export const computeLiveSnapshot = (
     totalCost = round2(totalCost);
     estSellCosts = round2(estSellCosts);
     cashDividends = round2(cashDividends);
+    totalCostTwd = round2(totalCostTwd);
   }
   return {
     date, market, source: 'live',
     marketValue, totalCost, estSellCosts, cashDividends,
     ...(market === 'US' && rateNeeded ? { usdTwdRate } : {}),
+    // 台幣口徑：市值側用當下即時匯率；成本側用各批買入匯率（有缺就整組不出）
+    ...(market === 'US' && rateOk ? { fxRate: usdTwdRate } : {}),
+    ...(market === 'US' && twdCostOk ? { totalCostTwd } : {}),
     symbolCount: symbols.size,
     capturedAt,
   };
@@ -125,6 +138,7 @@ export interface BackfillLotInput {
   cost: number;      // 現成本（chart 幣別：TW=TWD；US 已依 D-10 換算 USD）
   cashDiv: number;   // 現現金股利累計（chart 幣別）
   isUsEtf?: boolean;
+  buyRate?: number;  // 買入匯率（美股；台幣成本側用，缺就該市場不出台幣欄位）
 }
 
 export interface BackfillParams {
@@ -134,6 +148,7 @@ export interface BackfillParams {
   trades: RealizedTrade[];    // 該市場帳本（chart 幣別欄位）
   boundaryDate?: string;      // 第一筆 live 快照日（exclusive：只產出 < boundary 的列）
   usdTwdRate?: number;        // US 有 TWD→USD 換算時記入列（審計）
+  fxSeries?: { date: string; close: number }[];   // USD/TWD 日線（台幣口徑市值側）
   capturedAt: number;
 }
 
@@ -143,7 +158,7 @@ export interface BackfillResult {
 }
 
 export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
-  const { market, lots, closeSeries, trades, boundaryDate, usdTwdRate, capturedAt } = params;
+  const { market, lots, closeSeries, trades, boundaryDate, usdTwdRate, fxSeries, capturedAt } = params;
   const excludedLots = lots.filter(l => !l.buyDate).map(l => ({ id: l.id, symbol: l.symbol, shares: l.shares }));
   const participants = lots.filter(l => !!l.buyDate);
   if (participants.length === 0) return { rows: [], excludedLots };
@@ -170,6 +185,9 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
   const cursor = new Map<string, { i: number; last: number | null }>();
   for (const sym of participantSymbols) cursor.set(sym, { i: 0, last: null });
 
+  const fxBars = fxSeries ?? [];
+  const fxCursor = { i: 0, last: null as number | null };
+
   const rows: DailyPnlSnapshot[] = [];
   for (const d of axis) {
     // 推進各 symbol 游標到 ≤ d 的最後一根 close
@@ -181,7 +199,12 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
         c.i++;
       }
     }
+    while (fxCursor.i < fxBars.length && fxBars[fxCursor.i].date <= d) {
+      fxCursor.last = fxBars[fxCursor.i].close;
+      fxCursor.i++;
+    }
     let marketValue = 0, totalCost = 0, estSellCosts = 0, cashDividends = 0;
+    let totalCostTwd = 0, twdCostOk = market === 'US';
     const activeSymbols = new Set<string>();
     for (const lot of participants) {
       if (lot.buyDate! > d) continue;                    // 尚未買進
@@ -196,6 +219,10 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
       marketValue += value;
       totalCost += asOf.cost;
       cashDividends += asOf.cashDiv;
+      if (market === 'US') {
+        if (!(lot.buyRate! > 0)) twdCostOk = false;
+        else totalCostTwd += asOf.cost * lot.buyRate!;
+      }
       if (market === 'TW') {
         const { sellFee, tax } = calcTwSellFeeAndTax(value, lot.symbol);
         estSellCosts += sellFee + tax;
@@ -214,6 +241,8 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
       date: d, market, source: 'backfill',
       marketValue, totalCost, estSellCosts, cashDividends,
       ...(market === 'US' && usdTwdRate !== undefined ? { usdTwdRate } : {}),
+      ...(market === 'US' && fxCursor.last !== null ? { fxRate: fxCursor.last } : {}),
+      ...(market === 'US' && twdCostOk ? { totalCostTwd: round2(totalCostTwd) } : {}),
       symbolCount: activeSymbols.size,
       capturedAt,
     });
@@ -236,6 +265,7 @@ export interface TxnForBackfill {
   tax: number;
   divAmount?: number; // 配息金額（TW=TWD、US 亦記 TWD，與 App 的 cashDividends 語意一致）
   isUsEtf?: boolean;
+  exchangeRate?: number; // 成交當日 USD/TWD（美股；台幣成本側用它，缺就該列不出台幣欄）
 }
 
 export interface BackfillFromTxnsParams {
@@ -244,10 +274,13 @@ export interface BackfillFromTxnsParams {
   closeSeries: Record<string, { date: string; close: number }[]>;
   boundaryDate?: string;                                            // 第一筆 live 快照日（exclusive）
   usdTwdRate?: number;
+  /** USD/TWD 日線（升冪）——美股台幣口徑的市值側換算；缺此序列則不產出台幣欄位 */
+  fxSeries?: { date: string; close: number }[];
   capturedAt: number;
 }
 
-interface ReplayLot { shares: number; cost: number; cashDiv: number }
+// costTwd：該批的台幣成本（買進金額×當日匯率），與 cost 同步等比縮減
+interface ReplayLot { shares: number; cost: number; cashDiv: number; costTwd: number; twdOk: boolean }
 
 /**
  * 逐日重播流水產生每日快照。
@@ -255,7 +288,7 @@ interface ReplayLot { shares: number; cost: number; cashDiv: number }
  * 與 importReplay 的 FIFO 語意一致，但目的是產生「每日組成」而非已實現紀錄。
  */
 export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlSnapshot[] => {
-  const { market, txns, closeSeries, boundaryDate, usdTwdRate, capturedAt } = params;
+  const { market, txns, closeSeries, boundaryDate, usdTwdRate, fxSeries, capturedAt } = params;
   if (txns.length === 0) return [];
 
   const sorted = [...txns].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
@@ -279,6 +312,10 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
   const cursor = new Map<string, { i: number; last: number | null }>();
   for (const sym of symbols) cursor.set(sym, { i: 0, last: null });
 
+  // 匯率游標：與收盤價同樣 carry-forward（匯率序列的假日缺口沿用前一交易日）
+  const fxBars = fxSeries ?? [];
+  const fxCursor = { i: 0, last: null as number | null };
+
   const pool = new Map<string, ReplayLot[]>();   // symbol → FIFO lot 池
   const etfFlag = new Map<string, boolean>();
   let ti = 0;
@@ -292,7 +329,14 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
       const lots = pool.get(t.symbol) ?? [];
 
       if (t.kind === 'buy') {
-        lots.push({ shares: t.shares, cost: t.gross + t.fee, cashDiv: 0 });   // 成本含買費（D-07）
+        const cost = t.gross + t.fee;                                    // 成本含買費（D-07）
+        // 台幣成本：台股本來就是台幣；美股用**成交當日匯率**（帳單上的匯率欄）
+        const twdOk = market === 'TW' || (t.exchangeRate ?? 0) > 0;
+        lots.push({
+          shares: t.shares, cost, cashDiv: 0,
+          costTwd: market === 'TW' ? cost : cost * (t.exchangeRate ?? 0),
+          twdOk,
+        });
         pool.set(t.symbol, lots);
         continue;
       }
@@ -308,6 +352,7 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
         const take = Math.min(l.shares, remaining);
         const ratio = take / l.shares;
         l.cost -= l.cost * ratio;
+        l.costTwd -= l.costTwd * ratio;
         l.cashDiv -= l.cashDiv * ratio;
         l.shares -= take;
         remaining -= take;
@@ -318,6 +363,11 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
 
     // 2) 推進行情游標並計算當日快照
     let marketValue = 0, totalCost = 0, estSellCosts = 0, cashDividends = 0;
+    let totalCostTwd = 0, twdCostOk = market === 'US';
+    while (fxCursor.i < fxBars.length && fxBars[fxCursor.i].date <= d) {
+      fxCursor.last = fxBars[fxCursor.i].close;
+      fxCursor.i++;
+    }
     const active = new Set<string>();
     for (const sym of symbols) {
       const lots = pool.get(sym);
@@ -332,6 +382,8 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
       active.add(sym);
       marketValue += value;
       totalCost += lots.reduce((s, l) => s + l.cost, 0);
+      totalCostTwd += lots.reduce((s, l) => s + l.costTwd, 0);
+      if (lots.some(l => !l.twdOk)) twdCostOk = false;   // 任一持有批次缺買入匯率 → 該日不出台幣
       cashDividends += lots.reduce((s, l) => s + l.cashDiv, 0);
       if (market === 'TW') {
         const { sellFee, tax } = calcTwSellFeeAndTax(value, sym);
@@ -349,6 +401,9 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
       estSellCosts: market === 'US' ? round2(estSellCosts) : estSellCosts,
       cashDividends: market === 'US' ? round2(cashDividends) : cashDividends,
       ...(market === 'US' && usdTwdRate !== undefined ? { usdTwdRate } : {}),
+      // 台幣口徑：市值側用**該日**匯率（回推的重點——匯差隨時間變動）；成本側用買入匯率
+      ...(market === 'US' && fxCursor.last !== null ? { fxRate: fxCursor.last } : {}),
+      ...(market === 'US' && twdCostOk ? { totalCostTwd: round2(totalCostTwd) } : {}),
       symbolCount: active.size,
       capturedAt,
     });
@@ -373,14 +428,21 @@ export interface ChartPoint {
  * 且不因之後賣股而消失。原本把配息掛在持有中 lot（未實現側）的做法有兩個錯誤——
  * 清倉後歷史配息會憑空消失，且已實現側的 divCarried 不受含息開關控制。
  *
- * @param dividends 配息流水（date/amount，市場幣別）；未提供則視同無配息
+ * 台幣口徑（美股，currency='TWD'）：
+ *   未實現 =（市值 − 預估賣出費）× **該日匯率** − **買入匯率成本**（含匯差）
+ *   已實現 = Σ 每筆的（賣出淨額×賣出匯率 − 成本×買入匯率）＋（含息時）配息的實收台幣
+ * 該日缺 fxRate／totalCostTwd 的列直接跳過——不用即時匯率回補，否則整段歷史會被today的
+ * 匯率抹平，看不出當時的匯差（D-10 同精神）。缺匯率的個別 trade 亦不計入已實現累計。
+ *
+ * @param dividends 配息流水（date/amount，市場幣別；amountTwd＝實收台幣，台幣口徑用）
  */
 export const buildChartSeries = (
   rows: DailyPnlSnapshot[],
   trades: RealizedTrade[],
   market: 'TW' | 'US',
   includeDividend: boolean,
-  dividends?: { date: string; amount: number }[],
+  dividends?: { date: string; amount: number; amountTwd?: number }[],
+  currency: 'TWD' | 'USD' = market === 'TW' ? 'TWD' : 'USD',
 ): ChartPoint[] => {
   const marketRows = rows.filter(r => r.market === market)
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
@@ -389,28 +451,42 @@ export const buildChartSeries = (
   const divs = (dividends ?? []).slice()
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const isUs = market === 'US';
+  const twdMode = isUs && currency === 'TWD';
   let ti = 0, di = 0;
   let cum = 0, divCum = 0;
-  return marketRows.map(r => {
+  const points: ChartPoint[] = [];
+  for (const r of marketRows) {
     while (ti < marketTrades.length && marketTrades[ti].sellDate <= r.date) {
-      // divCarried：賣出時自 lot 移轉的手動輸入股利（與流水配息互不重疊）
-      cum += marketTrades[ti].realizedPnl + marketTrades[ti].divCarried;
-      ti++;
+      const t = marketTrades[ti++];
+      if (twdMode) {
+        // divCarried 是手動輸入的股利（USD 計價），以賣出匯率換算；缺匯率的整筆略過
+        const twd = twdRealizedPnl(t);
+        if (twd !== null) cum += twd + t.divCarried * (t.sellExchangeRate ?? 0);
+      } else {
+        // divCarried：賣出時自 lot 移轉的手動輸入股利（與流水配息互不重疊）
+        cum += t.realizedPnl + t.divCarried;
+      }
     }
     while (di < divs.length && divs[di].date <= r.date) {
-      divCum += divs[di].amount;
-      di++;
+      const d = divs[di++];
+      divCum += twdMode ? (d.amountTwd ?? 0) : d.amount;
     }
+    // 台幣模式缺當日匯率或買入匯率成本 → 該點無解，跳過（不用今天的匯率造史料）
+    if (twdMode && !(r.fxRate! > 0 && r.totalCostTwd !== undefined)) continue;
+
     // 未實現＝純價差；配息一律計入已實現側（含息開關同時控制圖表與庫存表格的呈現）
-    const unrealized = r.marketValue - r.totalCost - r.estSellCosts;
+    const unrealized = twdMode
+      ? (r.marketValue - r.estSellCosts) * r.fxRate! - r.totalCostTwd!
+      : r.marketValue - r.totalCost - r.estSellCosts;
     const realized = includeDividend ? cum + divCum : cum;
-    const point: ChartPoint = {
+    const round = isUs && !twdMode ? round2 : (v: number) => v;
+    points.push({
       date: r.date,
-      unrealized: isUs ? round2(unrealized) : unrealized,
-      realizedCum: isUs ? round2(realized) : realized,
-      total: isUs ? round2(unrealized + realized) : unrealized + realized,
+      unrealized: round(unrealized),
+      realizedCum: round(realized),
+      total: round(unrealized + realized),
       source: r.source,
-    };
-    return point;
-  });
+    });
+  }
+  return points;
 };

@@ -160,3 +160,67 @@ describe('與已實現線合成：完整歷史', () => {
     expect(d6.total).toBeCloseTo(d6.unrealized + 2929, 6);
   });
 });
+
+describe('buildBackfillFromTxns｜美股台幣口徑', () => {
+  // NVDA：03/03 買 5@179（費 0.72）匯率 31.77 → 台幣成本 (895+0.72)×31.77 = 28,467.02
+  const txns: TxnForBackfill[] = [
+    { date: '2026-03-03', symbol: 'NVDA', market: 'US', kind: 'buy', shares: 5, gross: 895, fee: 0.72, tax: 0, exchangeRate: 31.77 },
+  ];
+  const closeSeries = { NVDA: series([['2026-03-03', 179], ['2026-03-04', 185]]) };
+  const fxSeries = series([['2026-03-03', 31.77], ['2026-03-04', 31.5]]);
+
+  it('台幣成本用**成交當日**匯率，之後不隨匯率變動', () => {
+    const rows = buildBackfillFromTxns({ market: 'US', txns, closeSeries, fxSeries, capturedAt: T });
+    expect(rows).toHaveLength(2);
+    expect(rows[0].totalCostTwd).toBeCloseTo((895 + 0.72) * 31.77, 2);
+    expect(rows[1].totalCostTwd).toBe(rows[0].totalCostTwd);   // 隔日匯率變了但成本不動
+  });
+
+  it('fxRate 逐日取當日匯率（假日 carry-forward）', () => {
+    const rows = buildBackfillFromTxns({
+      market: 'US', txns, closeSeries: { NVDA: series([['2026-03-03', 179], ['2026-03-04', 185], ['2026-03-05', 186]]) },
+      fxSeries, capturedAt: T,
+    });
+    expect(rows.map(r => r.fxRate)).toEqual([31.77, 31.5, 31.5]);   // 03/05 無匯率資料 → 沿用前值
+  });
+
+  it('賣出後剩餘部位的台幣成本等比縮減', () => {
+    const rows = buildBackfillFromTxns({
+      market: 'US',
+      txns: [
+        ...txns,
+        { date: '2026-03-04', symbol: 'NVDA', market: 'US', kind: 'sell', shares: 2, gross: 370, fee: 0.3, tax: 0, exchangeRate: 31.5 },
+      ],
+      closeSeries, fxSeries, capturedAt: T,
+    });
+    const d4 = rows.find(r => r.date === '2026-03-04')!;
+    expect(d4.totalCostTwd).toBeCloseTo((895 + 0.72) * 31.77 * 0.6, 2);   // 剩 3/5
+  });
+
+  it('買進流水缺匯率 → 該日不出 totalCostTwd（不猜；USD 欄位照常）', () => {
+    const rows = buildBackfillFromTxns({
+      market: 'US',
+      txns: [{ date: '2026-03-03', symbol: 'NVDA', market: 'US', kind: 'buy', shares: 5, gross: 895, fee: 0.72, tax: 0 }],
+      closeSeries, fxSeries, capturedAt: T,
+    });
+    expect(rows[0].totalCostTwd).toBeUndefined();
+    expect(rows[0].totalCost).toBeCloseTo(895.72, 2);
+    expect(rows[0].fxRate).toBe(31.77);
+  });
+
+  it('未提供 fxSeries → 無 fxRate（台幣曲線該日不畫，USD 不受影響）', () => {
+    const rows = buildBackfillFromTxns({ market: 'US', txns, closeSeries, capturedAt: T });
+    expect(rows[0].fxRate).toBeUndefined();
+    expect(rows[0].marketValue).toBeCloseTo(895, 2);
+  });
+
+  it('台股不產生台幣專屬欄位（本來就是台幣）', () => {
+    const rows = buildBackfillFromTxns({
+      market: 'TW',
+      txns: [{ date: '2026-01-02', symbol: 'AAA', market: 'TW', kind: 'buy', shares: 1000, gross: 10000, fee: 14, tax: 0 }],
+      closeSeries: { AAA: series([['2026-01-02', 10]]) }, capturedAt: T,
+    });
+    expect(rows[0].totalCostTwd).toBeUndefined();
+    expect(rows[0].fxRate).toBeUndefined();
+  });
+});

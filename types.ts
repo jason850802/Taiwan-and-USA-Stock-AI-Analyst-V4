@@ -197,6 +197,9 @@ export interface DailyPnlSnapshot {
   estSellCosts: number;    // Σ per-lot 預估賣出費稅（per-lot floor，對齊 StatCards）
   cashDividends: number;   // 快照時點持有批次現金股利累計（US 已換 USD）
   usdTwdRate?: number;     // 有做任何 TWD→USD 換算時必填（審計用）
+  // ── 台幣口徑（美股專用；缺欄＝該日無法算台幣，圖表跳過該點，不用即時匯率補）──
+  fxRate?: number;         // 該日 USD/TWD 收盤（市值側換算用；回推取當日匯率、live 取即時匯率）
+  totalCostTwd?: number;   // Σ 批次成本×**買入匯率**（成本側；不隨之後匯率變動）
   symbolCount: number;     // 當日檔數（組成變動偵測／除錯）
   capturedAt: number;      // 寫入時刻 Date.now()
 }

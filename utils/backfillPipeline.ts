@@ -84,6 +84,9 @@ export type BackfillResult =
       cacheHits?: undefined;
     };
 
+/** Yahoo 的 USD/TWD 匯率代號（與 useHoldingPrices 取即時匯率同源） */
+export const FX_SYMBOL = 'USDTWD=X';
+
 const RETRY_ROUNDS = 2;
 const RETRY_WAIT_MS = 45000;
 const FIRST_ROUND_WORKERS = 3;
@@ -114,8 +117,11 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
   if (symbols.length === 0) {
     return { ok: false, kind: 'NO_DATA', detail: '此市場沒有可回推的標的', missedSymbols: [] };
   }
+  // 美股台幣口徑：市值側要「每一天的匯率」才看得出匯差 → 把匯率當成一檔標的一起抓。
+  // 抓失敗不擋回推（USD 曲線本來就不需要它），只是那段沒有台幣可畫。
+  const fetchList = market === 'US' ? [...symbols, FX_SYMBOL] : symbols;
 
-  const total = symbols.length;
+  const total = fetchList.length;
   const closeSeries: Record<string, CloseBar[]> = {};
   const firstTxnDate = txns.length > 0
     ? txns.reduce((m, t) => (t.date < m ? t.date : m), txns[0].date)
@@ -123,7 +129,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
 
   // 歷史收盤價是不變的事實 → 先吃快取，只有沒快取／過期的才打網路（大幅降低 429 機率）
   const toFetch: string[] = [];
-  for (const sym of symbols) {
+  for (const sym of fetchList) {
     const cached = ports.closeCache.get(sym);
     if (cached && cached.length > 0) closeSeries[sym] = cached;
     else toFetch.push(sym);
@@ -175,9 +181,12 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
 
   ports.closeCache.putMany(freshlyFetched, firstTxnDate);   // 一次寫入本輪抓到的全部序列
 
-  if (pending.length > 0) {
-    return { ok: false, kind: lastError.kind, detail: lastError.message, missedSymbols: pending };
+  // 匯率抓失敗不算失敗：USD 曲線照常，只是這輪沒有台幣口徑的資料
+  const missedReal = pending.filter(s => s !== FX_SYMBOL);
+  if (missedReal.length > 0) {
+    return { ok: false, kind: lastError.kind, detail: lastError.message, missedSymbols: missedReal };
   }
+  const fxSeries = market === 'US' ? closeSeries[FX_SYMBOL] : undefined;
 
   const existing = loadExisting();
   const liveDates = existing
@@ -200,10 +209,12 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
             : t.market === 'US'
               ? (rate ? (t.netTwd ?? 0) / rate : 0)
               : t.gross,
+          ...(t.exchangeRate !== undefined ? { exchangeRate: t.exchangeRate } : {}),
         })),
         closeSeries,
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
+        fxSeries,
         capturedAt: Date.now(),
       })
     : buildBackfillRows({
@@ -219,12 +230,16 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
             cost: l.purchaseCurrency === 'USD' ? (l.totalCostUSD ?? 0) : l.totalCost / rate!,
             cashDiv: rate ? l.cashDividends / rate : 0,
             isUsEtf: l.isUsEtf,
+            // 台幣成本側：USD 計價批次用買入匯率；TWD 計價批次的成本已換成 USD，
+            // 乘回同一個買入匯率即還原實付台幣（一致口徑）
+            buyRate: l.exchangeRate,
           };
         }),
         closeSeries,
         trades: realizedTrades.filter(t => t.market === market),
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
+        fxSeries,
         capturedAt: Date.now(),
       }).rows;
 

@@ -283,3 +283,51 @@ describe('runBackfillPipeline｜進度回報', () => {
     expect(waiting?.kind).toBe('BACKEND_DOWN');
   });
 });
+
+// ── 美股台幣口徑：匯率序列當成一檔標的一起抓 ──────────────────────────────
+describe('runBackfillPipeline｜美股歷史匯率', () => {
+  const US_TXNS: StoredTxn[] = [
+    txn({ date: '2026-03-03', symbol: 'NVDA', market: 'US', shares: 5, price: 179,
+          gross: 895, fee: 0.72, exchangeRate: 31.77, key: 'n1' }),
+  ];
+  const US_BARS: Record<string, DailyBar[]> = {
+    NVDA: [{ date: '2026-03-03', close: 179 }, { date: '2026-03-04', close: 185 }],
+    'USDTWD=X': [{ date: '2026-03-03', close: 31.77 }, { date: '2026-03-04', close: 31.5 }],
+  };
+  const runUs = (over = {}, ports?: BackfillPorts) =>
+    run({ market: 'US', txns: US_TXNS, usdTwdRate: 31.5, ...over }, ports);
+
+  it('美股回推會一併抓 USDTWD=X，快照帶當日 fxRate 與買入匯率成本', async () => {
+    const { ports, state } = makePorts({ bars: US_BARS });
+    const res = await runUs({}, ports);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(state.fetched).toContain('USDTWD=X');
+    expect(res.snapshots.map(s => s.fxRate)).toEqual([31.77, 31.5]);
+    expect(res.snapshots[0].totalCostTwd).toBeCloseTo((895 + 0.72) * 31.77, 2);
+  });
+
+  it('台股回推不抓匯率（省一次請求、少一個 429 機會）', async () => {
+    const { ports, state } = makePorts();
+    await run({}, ports);
+    expect(state.fetched).not.toContain('USDTWD=X');
+  });
+
+  it('匯率抓失敗不擋回推：USD 曲線照出，只是沒有台幣欄位', async () => {
+    const { ports } = makePorts({ bars: US_BARS, failTimes: { 'USDTWD=X': 99 } });
+    const res = await runUs({}, ports);
+    expect(res.ok).toBe(true);            // 標的本身成功 → 整體成功
+    if (!res.ok) return;
+    expect(res.missedSymbols).toEqual([]);
+    expect(res.snapshots[0].fxRate).toBeUndefined();
+    expect(res.snapshots[0].marketValue).toBeCloseTo(895, 2);
+  });
+
+  it('標的抓失敗仍然是失敗（匯率的寬容不得外溢）', async () => {
+    const { ports } = makePorts({ bars: US_BARS, failTimes: { NVDA: 99 } });
+    const res = await runUs({}, ports);
+    expect(res.ok).toBe(false);
+    if (res.ok) return;
+    expect(res.missedSymbols).toEqual(['NVDA']);
+  });
+});
