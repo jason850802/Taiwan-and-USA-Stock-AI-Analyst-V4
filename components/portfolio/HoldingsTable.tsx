@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { PortfolioItem } from '../../types';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
 import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
-import { USD_TWD_FALLBACK } from '../../utils/fx';
+import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
 import { Trash2, Loader2, ChevronDown, ChevronUp, Info, HeartPulse, Banknote } from 'lucide-react';
 import Badge from '../ui/Badge';
 import type { PriceData } from './useHoldingPrices';
@@ -195,13 +195,11 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
   const toDisplay = (usdVal: number) => dc === 'USD' ? usdVal : usdVal * rate;
 
   // Cost of item in display currency
+  // 口徑：成本用「買入匯率」（該批 exchangeRate），市值才用即時匯率——切到 TWD 時看到的
+  // 成本＝當初實際扣款台幣，匯差賺賠會真實反映在損益。舊批次無匯率時退回即時匯率。
   const itemCostInDisplay = (item: PortfolioItem): number => {
     if (isTW) return item.totalCost;
-    if (item.purchaseCurrency === 'USD' && item.totalCostUSD != null) {
-      return toDisplay(item.totalCostUSD);
-    }
-    // TWD purchase (or legacy): totalCost is TWD
-    return dc === 'USD' ? item.totalCost / rate : item.totalCost;
+    return dc === 'USD' ? lotCostUsd(item, rate) : lotCostTwd(item, rate);
   };
 
   // ── 卡片頭合計（TW：費稅逐批加總；US：費用逐批加總＋幣別換算）──────────
@@ -295,6 +293,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                 <th className="text-right p-3 whitespace-nowrap">{isTW ? '成本均價' : `成本均價 (${dc})`}</th>
                 <th className="text-right p-3 whitespace-nowrap">總股數</th>
                 <th className="text-right p-3 whitespace-nowrap">{isTW ? '總成本 (元)' : `總成本 (${dc})`}</th>
+                {!isTW && <th className="text-right p-3 whitespace-nowrap" title="買入當時的 USD/TWD；台幣成本一律以它換算">買入匯率</th>}
                 <th className="text-right p-3 whitespace-nowrap">{isTW ? '目前股價' : '目前股價 (USD)'}</th>
                 <th className="text-right p-3 whitespace-nowrap">{isTW ? '目前市值' : `目前市值 (${dc})`}</th>
                 <th className="text-right p-3 whitespace-nowrap">現金股利</th>
@@ -354,6 +353,25 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       <td className="p-3 text-right font-mono tabular-nums text-amber-300">
                         {isTW ? fmt(totalCost) : (dc === 'USD' ? fmtUsd(totalCost) : fmt(totalCost))}
                       </td>
+                      {!isTW && (
+                        <td className="p-3 text-right font-mono tabular-nums text-slate-400 text-xs">
+                          {(() => {
+                            // 組列顯示「以成本加權的平均買入匯率」；全部批次都沒記匯率才顯示 —
+                            const rated = lots.filter(hasBuyRate);
+                            if (rated.length === 0) return <span className="text-slate-600">—</span>;
+                            const w = rated.reduce((s, l) => s + lotCostUsd(l, rate), 0);
+                            const avgRate = w > 0
+                              ? rated.reduce((s, l) => s + lotBuyRate(l, rate) * lotCostUsd(l, rate), 0) / w
+                              : lotBuyRate(rated[0], rate);
+                            return (
+                              <>
+                                {avgRate.toFixed(3)}
+                                {rated.length < lots.length && <span className="text-slate-600 ml-1">(部分)</span>}
+                              </>
+                            );
+                          })()}
+                        </td>
+                      )}
                       <td className="p-3 text-right font-mono tabular-nums">
                         {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
                           : p?.error ? <span className="text-danger text-xs">讀取失敗</span>
@@ -399,10 +417,11 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       // avgCostPrice is stored in purchase currency; convert for column display（US only）
                       const dispAvgCost = (() => {
                         if (isTW) return item.avgCostPrice;
+                        const br = lotBuyRate(item, rate);   // 成本側一律用買入匯率
                         if (item.purchaseCurrency === 'USD') {
-                          return dc === 'USD' ? item.avgCostPrice : item.avgCostPrice * rate;
+                          return dc === 'USD' ? item.avgCostPrice : item.avgCostPrice * br;
                         }
-                        return dc === 'USD' ? item.avgCostPrice / rate : item.avgCostPrice;
+                        return dc === 'USD' ? item.avgCostPrice / br : item.avgCostPrice;
                       })();
 
                       return (
@@ -448,7 +467,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                                   <EditableCell value={item.totalCostUSD} digits={2}
                                     onSave={v => onUpdate(item.id, 'totalCostUSD', v)} cls="text-amber-300" />
                                   {dc === 'TWD' && (
-                                    <p className="text-[10px] text-slate-500">≈ {fmt(item.totalCostUSD * rate)} TWD</p>
+                                    <p className="text-[10px] text-slate-500">≈ {fmt(lotCostTwd(item, rate))} TWD</p>
                                   )}
                                 </div>
                               ) : (
@@ -456,9 +475,20 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                                   <EditableCell value={item.totalCost}
                                     onSave={v => onUpdate(item.id, 'totalCost', v)} cls="text-amber-300" />
                                   {dc === 'USD' && (
-                                    <p className="text-[10px] text-slate-500">≈ {fmtUsd(item.totalCost / rate)}</p>
+                                    <p className="text-[10px] text-slate-500">≈ {fmtUsd(lotCostUsd(item, rate))}</p>
                                   )}
                                 </div>
+                              )}
+                            </td>
+                          )}
+                          {!isTW && (
+                            <td className="p-3 text-right font-mono tabular-nums">
+                              {/* 買入匯率：舊批次為空 → 顯示「—」可點擊補填（不猜、不造史料 D-10） */}
+                              <EditableCell value={item.exchangeRate} digits={3}
+                                onSave={v => onUpdate(item.id, 'exchangeRate', v)}
+                                cls={hasBuyRate(item) ? 'text-slate-300' : 'text-slate-600'} />
+                              {!hasBuyRate(item) && (
+                                <p className="text-[10px] text-slate-600">暫用 {rate.toFixed(2)}</p>
                               )}
                             </td>
                           )}
@@ -470,7 +500,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                                     ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-up' : 'text-down'}`}>
                                         {currentPrice.toFixed(2)}
                                       </span>
-                                    : <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / rate) ? 'text-up' : 'text-down'}`}>
+                                    : <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / lotBuyRate(item, rate)) ? 'text-up' : 'text-down'}`}>
                                         {fmtUsd(priceUsd)}
                                       </span>)
                                 : '—'}

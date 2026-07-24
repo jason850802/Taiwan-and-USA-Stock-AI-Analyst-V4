@@ -111,6 +111,8 @@ export interface PortfolioItem {
   purchaseCurrency?: 'TWD' | 'USD'; // 購入幣別（undefined = TWD 向下相容）
   totalCostUSD?: number;            // 總成本 USD（美股以USD購入時，固定值）
   isUsEtf?: boolean;                // true = 美股ETF（$3固定費）；false = 個股（0.008%）
+  exchangeRate?: number;            // 買入當時 USD/TWD（Phase 13）。成本換台幣一律用它；
+                                    // undefined＝舊資料，顯示「—」並退回即時匯率（不猜、不造史料 D-10）
   // ── 歷史損益（Phase 10）────────────────────────────────
   buyDate?: string;                 // 'YYYY-MM-DD'（本地日期）。undefined＝舊資料/未填→回推排除該批
 }
@@ -132,6 +134,8 @@ export interface RealizedTrade {
   divCarried: number;      // 隨賣出移轉到已實現側的現金股利（等比；市場幣別）
   currency: 'TWD' | 'USD'; // 冗餘＝market 幣別，防未來改市場判定規則時帳本失義
   usdTwdRateUsed?: number; // 僅美股 TWD 計價批次賣出時記錄（審計用）
+  buyExchangeRate?: number;  // 來源批次的買入匯率（Phase 13；美股專用，undefined＝來源批次沒記）
+  sellExchangeRate?: number; // 賣出當時 USD/TWD（Phase 13；美股專用）
   createdAt: number;
 }
 
@@ -153,6 +157,7 @@ export interface ParsedTxn {
   fee: number;         // 帳單實付手續費（不重算，D-06）
   tax: number;         // 帳單實付交易稅（美股恆 0；除息時為代扣稅）
   netTwd?: number;     // 應收/付台幣（美股除息寫入 cashDividends 用）
+  exchangeRate?: number; // 帳單「匯率」欄（美股；'--' 或缺欄時 undefined）
   dedupeKey: string;   // 台股＝委託單號；美股＝複合鍵（D-11）
   orderRef?: string;   // 台股委託單號（跨 lot 拆帳回溯）
   rawLine: string;     // 原始列摘要（預覽顯示用，不落 localStorage）

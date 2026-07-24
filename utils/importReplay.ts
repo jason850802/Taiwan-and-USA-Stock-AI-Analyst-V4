@@ -96,7 +96,11 @@ export const replayStatement = (input: ReplayInput): ReplayResult => {
         buyDate: txn.date,
       };
       lots.push(market === 'US'
-        ? { ...base, purchaseCurrency: 'USD', totalCostUSD: cost, isUsEtf: false }
+        ? {
+            ...base, purchaseCurrency: 'USD', totalCostUSD: cost, isUsEtf: false,
+            // 帳單有匯率欄就記為該批的買入匯率（成本換台幣一律用它）
+            ...(txn.exchangeRate ? { exchangeRate: txn.exchangeRate } : {}),
+          }
         : base);
       applied.buys++;
       return;
@@ -204,6 +208,8 @@ export const replayStatement = (input: ReplayInput): ReplayResult => {
         realizedPnl: pnl,
         divCarried: money(divCarried, market),
         currency: market === 'TW' ? 'TWD' : 'USD',
+        ...(market === 'US' && lot.exchangeRate ? { buyExchangeRate: lot.exchangeRate } : {}),
+        ...(market === 'US' && txn.exchangeRate ? { sellExchangeRate: txn.exchangeRate } : {}),
         createdAt: now,
       });
 

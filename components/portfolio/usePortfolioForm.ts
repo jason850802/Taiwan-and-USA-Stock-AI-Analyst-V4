@@ -30,14 +30,27 @@ export const usePortfolioForm = (
     buyDate:          '',     // 買入時間（分析用）
     buyReason:        '',     // 買入原因（分析用）
     buyDateRecord:    '',     // 買進日期（存入持股，回推歷史用；與上面 AI 分析欄位無關）
+    exchangeRate:     '',     // 買入匯率 USD/TWD（美股；空白＝未載入前，送出時退回當日匯率）
   });
   const [feeInput, setFeeInput] = useState('');
   const [feeTouched, setFeeTouched] = useState(false);
+  const [rateTouched, setRateTouched] = useState(false);
 
   // ── 表單輔助 ───────────────────────────────────────────────────────────
   const formIsTW = isTwStock(form.symbol);
   const shares   = parseFloat(form.totalShares)    || 0;
   const rate     = usdTwdRate > 0 ? usdTwdRate : USD_TWD_FALLBACK;
+
+  // 匯率欄預設帶當日匯率；使用者一改就永久讓位（同 feeTouched 語意，送出後重置）
+  // Yahoo 回來是 32.33700180053711 這種浮點，直接塞進欄位很醜 → 收到 3 位小數
+  const liveRateStr = usdTwdRate > 0 ? String(Number(usdTwdRate.toFixed(3))) : '';
+  useEffect(() => {
+    if (rateTouched || !liveRateStr) return;
+    setForm(p => (p.exchangeRate === liveRateStr ? p : { ...p, exchangeRate: liveRateStr }));
+  }, [rateTouched, liveRateStr]);
+
+  // 試算與存檔一律用「表單上的匯率」（使用者可改成當初實際成交匯率），空白才退回即時匯率
+  const entryRate = parseFloat(form.exchangeRate) > 0 ? parseFloat(form.exchangeRate) : rate;
 
   useEffect(() => {
     if (feeTouched) return;
@@ -61,10 +74,10 @@ export const usePortfolioForm = (
 
     const fee = form.purchaseCurrency === 'USD'
       ? calcUsFee(base, form.isUsEtf)
-      : calcUsFee(base / rate, form.isUsEtf) * rate;
+      : calcUsFee(base / entryRate, form.isUsEtf) * entryRate;
     setFeeInput(String(Number(fee.toFixed(2))));
   }, [feeTouched, form.avgCostPrice, form.inputMode, form.isUsEtf, form.purchaseCurrency,
-    form.totalCostInput, formIsTW, rate, shares]);
+    form.totalCostInput, formIsTW, entryRate, shares]);
 
   const preview = (() => {
     const avg       = parseFloat(form.avgCostPrice)   || 0;
@@ -85,7 +98,7 @@ export const usePortfolioForm = (
       if (form.purchaseCurrency === 'USD') {
         const baseUsd = form.inputMode === 'avg' ? avg * shares : totalInp;
         const totalUsd = baseUsd + enteredBuyFee;
-        const totalTwd = totalUsd * rate;
+        const totalTwd = totalUsd * entryRate;
         return {
           base: baseUsd, buyFee: enteredBuyFee, total: totalUsd,
           adjAvg: shares > 0 ? totalUsd / shares : avg, totalTwd,
@@ -94,7 +107,7 @@ export const usePortfolioForm = (
       } else {
         const baseTwd = form.inputMode === 'avg' ? avg * shares : totalInp;
         const totalTwd = baseTwd + enteredBuyFee;
-        const feeUsd = enteredBuyFee / rate;
+        const feeUsd = enteredBuyFee / entryRate;
         return {
           base: baseTwd, buyFee: enteredBuyFee, total: totalTwd,
           adjAvg: shares > 0 ? totalTwd / shares : avg, feeUsd,
@@ -124,6 +137,7 @@ export const usePortfolioForm = (
           symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
           totalCost: 0,                        // not used for USD purchase
           totalCostUSD: preview.total,         // fixed USD cost
+          exchangeRate: entryRate,             // 買入匯率（成本換台幣一律用它）
           purchaseCurrency: 'USD', isUsEtf: form.isUsEtf,
           brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
@@ -134,6 +148,7 @@ export const usePortfolioForm = (
         onAdd({
           symbol: sym, avgCostPrice: preview.adjAvg, totalShares: shares,
           totalCost: preview.total,            // fixed TWD cost
+          exchangeRate: entryRate,             // 買入匯率（TWD 成本換 USD 用它）
           purchaseCurrency: 'TWD', isUsEtf: form.isUsEtf,
           brokerDiscount: 10, buyFee: preview.buyFee,
           cashDividends: parseFloat(form.cashDividends) || 0,
@@ -145,9 +160,11 @@ export const usePortfolioForm = (
 
     setForm({ symbol: '', inputMode: 'avg', avgCostPrice: '', totalCostInput: '',
               totalShares: '', brokerDiscount: '', cashDividends: '', stockDividends: '',
-              purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '', buyDateRecord: '' });
+              purchaseCurrency: 'USD', isUsEtf: false, buyDate: '', buyReason: '', buyDateRecord: '',
+              exchangeRate: liveRateStr });
     setFeeInput('');
     setFeeTouched(false);
+    setRateTouched(false);
     setShowAddModal(false);
   };
 
@@ -156,7 +173,8 @@ export const usePortfolioForm = (
     form, setForm,
     feeInput, setFeeInput,
     feeTouched, setFeeTouched,
-    formIsTW, shares, rate,
+    setRateTouched,
+    formIsTW, shares, rate, entryRate,
     preview, handleAdd,
   };
 };

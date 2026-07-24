@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../types';
 import { getStockData } from '../services/yahoo';
 import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
+import { lotCostTwd, hasBuyRate } from '../utils/fx';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Coins } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -38,17 +39,23 @@ interface PortfolioProps {
 const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade, onStatementImport }) => {
   // 報價/匯率、每日快照、新增表單、庫存健檢四塊 state＋effect＋handlers 已抽成 hooks（T6a）；
   // 解構回原變數名，下方計算段與 JSX 一行不動。
-  const { prices, usdTwdRate, fetchAllPrices } = useHoldingPrices(items);
+  const { prices, usdTwdRate, fetchAllPrices, fetchExchangeRate } = useHoldingPrices(items);
   const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
   const {
     showAddModal, setShowAddModal, form, setForm, feeInput, setFeeInput, setFeeTouched,
-    formIsTW, shares, rate, preview, handleAdd,
+    setRateTouched, formIsTW, shares, rate, preview, handleAdd,
   } = usePortfolioForm(onAdd, usdTwdRate);
   const {
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
     handleSingleHealthCheck, handleBatchHealthCheck,
   } = useHealthCheck(items, prices, usdTwdRate);
   const { lotDividendState, runLotDividendUpdate } = useLotDividendUpdate(items, onUpdate);
+
+  // 新增第一檔美股時庫存裡還沒有美股 → 平常不會抓匯率，表單的「預設當日匯率」會落空；
+  // 表單開著且輸入的是美股代號就補抓一次（只在 rate 尚未取得時）。
+  useEffect(() => {
+    if (showAddModal && !formIsTW && form.symbol && usdTwdRate === 0) fetchExchangeRate();
+  }, [showAddModal, formIsTW, form.symbol, usdTwdRate, fetchExchangeRate]);
 
   const [deleteConfirm,   setDeleteConfirm]  = useState<string | null>(null);
   const [sellTarget,      setSellTarget]      = useState<PortfolioItem | null>(null);   // 賣出 Modal 目標批次
@@ -105,11 +112,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
 
   // ── 全局摘要（統一換算 TWD） ───────────────────────────────────────────
   const twInvested  = twItems.reduce((s, i) => s + i.totalCost, 0);
-  const usInvestedTwd = usItems.reduce((s, i) => {
-    if (i.purchaseCurrency === 'USD' && i.totalCostUSD != null)
-      return s + i.totalCostUSD * rate;
-    return s + i.totalCost;
-  }, 0);
+  // 成本用買入匯率、市值用即時匯率（使用者拍板口徑）；缺買入匯率的舊批次退回即時匯率
+  const usInvestedTwd = usItems.reduce((s, i) => s + lotCostTwd(i, rate), 0);
+  const usInvestedEstimated = usItems.some(i => !hasBuyRate(i));
   const totalInvested = twInvested + usInvestedTwd;
 
   const totalValue = items.reduce((s, i) => {
@@ -190,7 +195,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       {/* ── 全局摘要 ───────────────────────────────────────────────────── */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`} sub="美股依即時匯率換算" />
+          <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`}
+            sub={usItems.length === 0 ? undefined
+              : usInvestedEstimated ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
+              : '美股依買入匯率換算'} />
           <StatCard
             label="目前市值 (TWD)"
             value={hasAnyPrice ? `${fmt(totalValue)} 元` : '—'}
@@ -300,10 +308,26 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                     </div>
                     {form.purchaseCurrency === 'TWD' && (
                       <p className="text-xs text-slate-500 mt-1.5 px-1">
-                        以 TWD 購入：總成本(TWD)固定，USD換算依即時匯率計算
-                        {usdTwdRate > 0 && `（目前匯率約 ${fmt(usdTwdRate, 2)}）`}
+                        以 TWD 購入：總成本(TWD)固定，USD 換算依下方買入匯率計算
                       </p>
                     )}
+                  </div>
+                  <div>
+                    <label className="text-slate-300 text-sm font-medium block mb-1.5">
+                      買入匯率 (USD/TWD)
+                      <span className="text-slate-500 font-normal ml-1">預設為當日匯率，可改成實際成交匯率</span>
+                    </label>
+                    <input type="number" step="0.001" min="0" value={form.exchangeRate}
+                      onFocus={e => e.target.select()}
+                      onChange={e => { setRateTouched(true); setForm(p => ({ ...p, exchangeRate: e.target.value })); }}
+                      placeholder={usdTwdRate > 0 ? usdTwdRate.toFixed(3) : '例：31.50'}
+                      className={inputCls} />
+                    <p className="text-xs text-slate-500 mt-1.5 px-1">
+                      {usdTwdRate > 0
+                        ? `當日匯率 ${fmt(usdTwdRate, 3)}`
+                        : `尚未取得即時匯率，未填則以 ${fmt(rate, 2)} 計算（請先按「更新報價」）`}
+                      ；此匯率會存入該批，台幣成本一律用它換算
+                    </p>
                   </div>
                   <div>
                     <label className="text-slate-300 text-sm font-medium block mb-1.5">股票類型</label>
@@ -425,7 +449,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                         <span className="text-slate-300">有效總成本</span>
                         <span className="text-amber-300">
                           {!formIsTW && form.purchaseCurrency === 'USD' ? fmtUsd(preview.total) : `${fmt(preview.total)} 元`}
-                          {!formIsTW && form.purchaseCurrency === 'USD' && usdTwdRate > 0 && (
+                          {!formIsTW && form.purchaseCurrency === 'USD' && (preview as any).totalTwd > 0 && (
                             <span className="text-slate-500 font-normal ml-1">(≈ {fmt((preview as any).totalTwd ?? preview.total * rate)} TWD)</span>
                           )}
                         </span>

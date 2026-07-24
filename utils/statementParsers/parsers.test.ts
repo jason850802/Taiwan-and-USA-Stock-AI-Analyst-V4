@@ -164,6 +164,71 @@ describe('cathay：多區塊 CSV 與欄位解析', () => {
   });
 });
 
+// ── 國泰 2026 年真實下載格式（欄序與真檔一致，金額為合成值）────────────────
+// 與上面舊格式的三個差異，正是 2026-07-24 修的三個真檔相容性問題：
+//   ① 多一欄「交易所」（15 欄）②「一般除息」不是「除息」③ 6 月檔日期是單位數 2026/6/1
+// 另：這版檔案的「應收/付(-)金額」是美元（舊檔是台幣），除息換算不可直接當台幣用。
+const CATHAY_CSV_2026 = [
+  '商品代號,\t商品名稱,\t交易市場,\t交易所,\t庫存股數,\t幣別',   // 庫存明細區塊
+  'ZZZA,Zeta Alpha Inc,美國,US證券交易所AMEX,100.000000,美金',
+  '',
+  '交易日期,\t商品代號,\t商品名稱,\t交易市場,\t交易所,\t交易種類,\t交割幣別,\t實際交割幣別,\t股數,\t價格,\t匯率,\t成交金額,\t手續費,\t其他費用,\t應收/付(-)金額',
+  '2026/02/23,ZZZA,Zeta Alpha Inc,美國,US證券交易所AMEX,買進,美金,台幣,150.000000,10.0000,31.50,1500.000000,1.20,0.00,-1501.20',
+  '2026/03/09,ZZZA,Zeta Alpha Inc,美國,US證券交易所AMEX,賣出,美金,台幣,150.000000,12.0000,31.86,1800.000000,1.44,0.04,1798.52',
+  '2026/04/01,ZZZB,Zeta Beta Corp,美國,US證券交易所AMEX,一般除息,美金,台幣,5.000000,0.6500,31.91,3.250000,0.00,0.98,2.27',
+  '2026/05/26,ZZZC,Zeta Gamma Ltd,美國,US證券交易所AMEX,買進,美金,台幣,2.320890,861.7368,--,2000.000000,1.60,0.00,-2001.60',
+  '',
+  '交易日期,\t商品名稱,\t交易種類,\t計價幣別',
+].join('\r\n');
+
+// 6 月檔：單一區塊、標題整欄被雙引號包住、日期單位數
+const CATHAY_CSV_JUNE = [
+  '交易日期,"\t商品代號","\t商品名稱","\t交易市場","\t交易所","\t交易種類","\t交割幣別","\t實際交割幣別","\t股數","\t價格","\t匯率","\t成交金額","\t手續費","\t其他費用","\t應收/付(-)金額"',
+  '2026/6/1,ZZZA,Zeta Alpha Inc,美國,US證券交易所AMEX,買進,美金,台幣,3,176.79,31.46,530.37,0.42,0,-530.79',
+  '2026/6/23,ZZZA,Zeta Alpha Inc,美國,US證券交易所AMEX,賣出,美金,台幣,3,180,31.7,540,0.43,0.02,539.55',
+].join('\r\n');
+
+describe('cathay：2026 真檔格式（15 欄／一般除息／單位數日期）', () => {
+  const { txns, unsupported } = parseCathayCsv(CATHAY_CSV_2026);
+
+  it('多一欄「交易所」時仍正確定位（依欄名不依索引）', () => {
+    expect(unsupported).toHaveLength(0);
+    expect(txns).toHaveLength(4);
+    const buy = txns.find(t => t.symbol === 'ZZZA' && t.kind === 'buy')!;
+    expect(buy).toMatchObject({ date: '2026-02-23', shares: 150, price: 10, gross: 1500, fee: 1.2, tax: 0 });
+  });
+
+  it('「一般除息」認得為 dividend', () => {
+    const d = txns.find(t => t.kind === 'dividend')!;
+    expect(d).toMatchObject({ symbol: 'ZZZB', date: '2026-04-01', gross: 3.25, tax: 0.98 });
+  });
+
+  it('應收/付為美元時換成台幣寫入 netTwd（不可直接當台幣用，否則差 32 倍）', () => {
+    const d = txns.find(t => t.kind === 'dividend')!;
+    expect(d.netTwd).toBeCloseTo((3.25 - 0.98) * 31.91, 2);   // 72.44，不是 2.27
+  });
+
+  it('擷取匯率欄；「--」→ undefined 不猜', () => {
+    expect(txns.find(t => t.symbol === 'ZZZA' && t.kind === 'buy')!.exchangeRate).toBe(31.5);
+    expect(txns.find(t => t.symbol === 'ZZZA' && t.kind === 'sell')!.exchangeRate).toBe(31.86);
+    expect(txns.find(t => t.symbol === 'ZZZC')!.exchangeRate).toBeUndefined();
+  });
+
+  it('6 月單一區塊格式：引號標題＋單位數日期', () => {
+    const { txns: jt, unsupported: ju } = parseCathayCsv(CATHAY_CSV_JUNE);
+    expect(ju).toHaveLength(0);
+    expect(jt).toHaveLength(2);
+    expect(jt[0]).toMatchObject({ date: '2026-06-01', symbol: 'ZZZA', kind: 'buy', shares: 3, exchangeRate: 31.46 });
+    expect(jt[1]).toMatchObject({ date: '2026-06-23', kind: 'sell', exchangeRate: 31.7 });
+  });
+
+  it('標題列缺必要欄位時明確回報（不靜默吐 0 筆）', () => {
+    const { txns: none, unsupported: why } = parseCathayCsv('交易日期,商品名稱,備註\n2026/6/1,X,Y');
+    expect(none).toHaveLength(0);
+    expect(why[0].reason).toContain('缺少必要欄位');
+  });
+});
+
 describe('sortTxns：依日期升冪、同日保原檔序', () => {
   it('國泰 CSV 實測非嚴格日期排序，必須排序後才能重播', () => {
     const { txns } = parseCathayCsv(CATHAY_CSV);

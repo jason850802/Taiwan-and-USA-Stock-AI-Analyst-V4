@@ -41,5 +41,5 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     if (items.length > 0) fetchAllPrices();
   }, [items.map(i => i.symbol).join(',')]);
 
-  return { prices, usdTwdRate, fetchAllPrices };
+  return { prices, usdTwdRate, fetchAllPrices, fetchExchangeRate };
 };

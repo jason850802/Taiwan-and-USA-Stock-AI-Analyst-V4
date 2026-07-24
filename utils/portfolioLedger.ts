@@ -83,7 +83,9 @@ export const buildSellResult = (
     // 美股：帳本一律 USD。成本基礎三路——USD 購入直接用 totalCostUSD；
     // TWD 購入（undefined 向下相容）需以即時匯率換算（沿表格 itemCostInDisplay 語意）。
     const isUsdPurchase = lot.purchaseCurrency === 'USD';
-    const needRateForCost = !isUsdPurchase;
+    // TWD 購入且該批有記買入匯率 → 用買入匯率換算（不必等即時匯率）
+    const buyRate = lot.exchangeRate && lot.exchangeRate > 0 ? lot.exchangeRate : undefined;
+    const needRateForCost = !isUsdPurchase && buyRate === undefined;
     const needRateForDiv = lot.cashDividends > 0;  // 美股股利以 TWD 計價儲存（UsGroupTable 語意）
     if ((needRateForCost || needRateForDiv) && !(usdTwdRate && usdTwdRate > 0)) {
       throw new Error('USD/TWD 匯率不可得，無法計算美股成本／股利換算，請先更新報價');
@@ -92,7 +94,7 @@ export const buildSellResult = (
     const sellFee = round2(calcUsFee(rawGross, lot.isUsEtf ?? false));
     // 批次縮減用「原幣」量；帳本欄位用 USD
     const costNative = isUsdPurchase ? scale(lot.totalCostUSD ?? 0) : scale(lot.totalCost);
-    const costBasisUsd = isUsdPurchase ? round2(costNative) : round2(costNative / usdTwdRate!);
+    const costBasisUsd = isUsdPurchase ? round2(costNative) : round2(costNative / (buyRate ?? usdTwdRate!));
     const divNativeTwd = scale(lot.cashDividends);
     const divCarriedUsd = lot.cashDividends > 0 ? round2(divNativeTwd / usdTwdRate!) : 0;
     trade = {
@@ -111,6 +113,9 @@ export const buildSellResult = (
       divCarried: divCarriedUsd,
       currency: 'USD',
       ...(needRateForCost || needRateForDiv ? { usdTwdRateUsed: usdTwdRate } : {}),
+      // 匯率留痕：買入匯率隨批次、賣出匯率＝成交當下的即時匯率（供台幣實現損益）
+      ...(lot.exchangeRate && lot.exchangeRate > 0 ? { buyExchangeRate: lot.exchangeRate } : {}),
+      ...(usdTwdRate && usdTwdRate > 0 ? { sellExchangeRate: usdTwdRate } : {}),
       createdAt: Date.now(),
     };
     updatedLot = isFullSell ? null : {

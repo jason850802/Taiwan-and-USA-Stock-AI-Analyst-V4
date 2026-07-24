@@ -274,3 +274,45 @@ describe('工具與整體', () => {
     expect(r.applied).toEqual({ buys: 1, sells: 1, dividends: 0, skipped: 1 });
   });
 });
+
+describe('匯率留痕（美股買入／賣出匯率隨批次與帳本走）', () => {
+  it('買進帶匯率 → lot.exchangeRate；賣出產生 buy/sellExchangeRate', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'NVDA', kind: 'buy', date: '2026-03-03', shares: 5, price: 179, gross: 895, fee: 0.72, exchangeRate: 31.77 }),
+        us({ symbol: 'NVDA', kind: 'sell', date: '2026-04-16', shares: 5, price: 197.34, gross: 986.7, fee: 0.79, exchangeRate: 31.48 }),
+      ],
+      existingLots: [], now: T,
+    });
+    const t = r.newTrades[0];
+    expect(t.buyExchangeRate).toBe(31.77);
+    expect(t.sellExchangeRate).toBe(31.48);
+    // 台幣實現損益（含匯差）＝ 淨收美元×賣出匯率 − 成本美元×買入匯率
+    const twd = (t.grossProceeds - t.sellFee - t.sellTax) * t.sellExchangeRate! - t.costBasis * t.buyExchangeRate!;
+    expect(twd).toBeCloseTo(985.91 * 31.48 - 895.72 * 31.77, 2);
+  });
+
+  it('帳單匯率為「--」時不猜：lot 與帳本都不寫匯率', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'MU', kind: 'buy', date: '2026-05-26', shares: 2, price: 1000, gross: 2000, fee: 1.6 }),
+        us({ symbol: 'MU', kind: 'sell', date: '2026-05-27', shares: 2, price: 1050, gross: 2100, fee: 1.68 }),
+      ],
+      existingLots: [], now: T,
+    });
+    expect(r.newTrades[0].buyExchangeRate).toBeUndefined();
+    expect(r.newTrades[0].sellExchangeRate).toBeUndefined();
+  });
+
+  it('部分賣出後，剩餘批次保留買入匯率', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'GLW', kind: 'buy', date: '2026-05-28', shares: 10, price: 192.8, gross: 1928, fee: 1.54, exchangeRate: 31.39 }),
+        us({ symbol: 'GLW', kind: 'sell', date: '2026-06-30', shares: 4, price: 200, gross: 800, fee: 0.64, exchangeRate: 31.86 }),
+      ],
+      existingLots: [], now: T,
+    });
+    expect(r.lots[0].exchangeRate).toBe(31.39);
+    expect(r.lots[0].totalShares).toBe(6);
+  });
+});
