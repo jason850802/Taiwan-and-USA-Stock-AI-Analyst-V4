@@ -18,6 +18,21 @@ export interface PriceInfo {
 const usLotNeedsRate = (lot: PortfolioItem): boolean =>
   lot.purchaseCurrency !== 'USD' || lot.cashDividends > 0;
 
+/**
+ * 某日期的 USD/TWD（as-of：取 ≤ date 的最後一根，假日 carry-forward）。
+ * 用途：交易流水／舊批次沒有明記買入匯率時，以**當日的歷史市場匯率**回填成本側——
+ * 這是那天真實發生的市場匯率，不是今天的匯率，不違反 D-10（不造史料）。
+ * bars 需為升冪。找不到（買在資料起點之前）回 null。
+ */
+export const fxAsOf = (bars: { date: string; close: number }[], date: string): number | null => {
+  let last: number | null = null;
+  for (const b of bars) {
+    if (b.date <= date) last = b.close;
+    else break;
+  }
+  return last;
+};
+
 /** 美股批次成本換算成 USD（TWD 計價批次沿表格 itemCostInDisplay 語意用當下匯率，D-10） */
 const usLotCostUsd = (lot: PortfolioItem, rate: number): number =>
   lot.purchaseCurrency === 'USD' ? (lot.totalCostUSD ?? 0) : lot.totalCost / rate;
@@ -220,8 +235,10 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
       totalCost += asOf.cost;
       cashDividends += asOf.cashDiv;
       if (market === 'US') {
-        if (!(lot.buyRate! > 0)) twdCostOk = false;
-        else totalCostTwd += asOf.cost * lot.buyRate!;
+        // 買入匯率優先用批次記錄的，缺了用買進日的歷史市場匯率回填（同流水模式救援）
+        const br = (lot.buyRate ?? 0) > 0 ? lot.buyRate! : (fxAsOf(fxBars, lot.buyDate!) ?? 0);
+        if (!(br > 0)) twdCostOk = false;
+        else totalCostTwd += asOf.cost * br;
       }
       if (market === 'TW') {
         const { sellFee, tax } = calcTwSellFeeAndTax(value, lot.symbol);
@@ -330,11 +347,13 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
 
       if (t.kind === 'buy') {
         const cost = t.gross + t.fee;                                    // 成本含買費（D-07）
-        // 台幣成本：台股本來就是台幣；美股用**成交當日匯率**（帳單上的匯率欄）
-        const twdOk = market === 'TW' || (t.exchangeRate ?? 0) > 0;
+        // 台幣成本：台股本來就是台幣；美股優先用帳單匯率，缺了就用「成交當日的歷史市場匯率」回填
+        // （舊資料流水沒帶匯率欄時的救援——用那天真實市場匯率，非今日匯率）
+        const buyRate = (t.exchangeRate ?? 0) > 0 ? t.exchangeRate! : (fxAsOf(fxBars, t.date) ?? 0);
+        const twdOk = market === 'TW' || buyRate > 0;
         lots.push({
           shares: t.shares, cost, cashDiv: 0,
-          costTwd: market === 'TW' ? cost : cost * (t.exchangeRate ?? 0),
+          costTwd: market === 'TW' ? cost : cost * buyRate,
           twdOk,
         });
         pool.set(t.symbol, lots);

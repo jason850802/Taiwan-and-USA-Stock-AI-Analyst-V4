@@ -197,13 +197,13 @@ describe('buildBackfillFromTxns｜美股台幣口徑', () => {
     expect(d4.totalCostTwd).toBeCloseTo((895 + 0.72) * 31.77 * 0.6, 2);   // 剩 3/5
   });
 
-  it('買進流水缺匯率 → 該日不出 totalCostTwd（不猜；USD 欄位照常）', () => {
+  it('買進流水缺匯率但有 fxSeries → 以歷史市場匯率回填（不留白；詳見「舊資料救援」）', () => {
     const rows = buildBackfillFromTxns({
       market: 'US',
       txns: [{ date: '2026-03-03', symbol: 'NVDA', market: 'US', kind: 'buy', shares: 5, gross: 895, fee: 0.72, tax: 0 }],
       closeSeries, fxSeries, capturedAt: T,
     });
-    expect(rows[0].totalCostTwd).toBeUndefined();
+    expect(rows[0].totalCostTwd).toBeCloseTo(895.72 * 31.77, 2);   // 用 03/03 市場匯率回填
     expect(rows[0].totalCost).toBeCloseTo(895.72, 2);
     expect(rows[0].fxRate).toBe(31.77);
   });
@@ -222,5 +222,32 @@ describe('buildBackfillFromTxns｜美股台幣口徑', () => {
     });
     expect(rows[0].totalCostTwd).toBeUndefined();
     expect(rows[0].fxRate).toBeUndefined();
+  });
+});
+
+describe('buildBackfillFromTxns｜買入匯率缺漏時以歷史市場匯率回填（舊資料救援）', () => {
+  // 流水沒帶 exchangeRate（commit-1 之前匯入的舊資料），但有 USDTWD=X 日線
+  const txns: TxnForBackfill[] = [
+    { date: '2026-03-03', symbol: 'NVDA', market: 'US', kind: 'buy', shares: 5, gross: 895, fee: 0.72, tax: 0 },
+  ];
+  const closeSeries = { NVDA: series([['2026-03-03', 179], ['2026-03-04', 185]]) };
+  const fxSeries = series([['2026-03-03', 31.77], ['2026-03-04', 31.5]]);
+
+  it('用買進當日的市場匯率當買入匯率 → totalCostTwd 有值（不再整段缺）', () => {
+    const rows = buildBackfillFromTxns({ market: 'US', txns, closeSeries, fxSeries, capturedAt: T });
+    expect(rows).toHaveLength(2);
+    expect(rows[0].totalCostTwd).toBeCloseTo((895 + 0.72) * 31.77, 2);   // 用 03/03 的 31.77
+    expect(rows[1].totalCostTwd).toBe(rows[0].totalCostTwd);              // 不隨隔日匯率變動
+  });
+
+  it('帳單匯率仍優先於歷史市場匯率（有帶就用帶的）', () => {
+    const withRate = [{ ...txns[0], exchangeRate: 31.9 }];
+    const rows = buildBackfillFromTxns({ market: 'US', txns: withRate, closeSeries, fxSeries, capturedAt: T });
+    expect(rows[0].totalCostTwd).toBeCloseTo((895 + 0.72) * 31.9, 2);     // 用帶的 31.9 非 31.77
+  });
+
+  it('連歷史市場匯率都沒有（無 fxSeries）→ 仍缺，該日不出 totalCostTwd', () => {
+    const rows = buildBackfillFromTxns({ market: 'US', txns, closeSeries, capturedAt: T });
+    expect(rows[0].totalCostTwd).toBeUndefined();
   });
 });
