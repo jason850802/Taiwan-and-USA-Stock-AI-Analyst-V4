@@ -102,18 +102,35 @@ E3 第 6 條成立的唯一理由是 `envPrefix` 預設 `'VITE_'`。任何人在
 → 新腳本對**原始碼**改用有形狀的比對（前綴 ＋ 30 字以上金鑰字元），實測不會match 該 regex，
 對 `dist/` 才保留裸前綴（產物沒有任何正當理由出現這四個字，基線實測乾淨）。
 
-### G5 — tsc 非密閉：型檢把自己的建置產物吸進來 🟠
+### G5 — tsc 非密閉：型檢把自己的建置產物吸進來 🟠 ✅ 已修（2026-07-26）
 
 `tsconfig.json` 沒有 `include`／`exclude`／`files`，走預設 `**/*` ＋ `allowJs: true`
 → 收錄 115 檔（排除 node_modules 後），其中 **8 檔是 `dist/assets/*.js`**。後果：
 1. gate 結果取決於 `dist/` 是否存在與內容。文件版順序是 tsc → … → build，
    所以「build 前跑 tsc」與「build 後跑 tsc」檢查的是不同的檔案母體。
 2. 白費時間型檢壓縮後的 vendor bundle。
-3. 若存在 agent worktree，`.claude/` 下的複本會被同樣吸進來（LESSONS 2026-07-13 已記錄此類污染）。
+3. ~~若存在 agent worktree，`.claude/` 下的複本會被同樣吸進來。~~
+   **複驗證否**：TypeScript 預設 `**/*` glob **不匹配以 `.` 開頭的路徑段**。實測本 worktree
+   `.claude/hooks/` 下 10+ 個 `.js`（且 `allowJs: true`），修前修後**都是 0 檔進範圍**。
+   `.claude` 仍列進 exclude，是為了把意圖顯式化，不是因為它正在造成污染。
 
 好消息是 `api/` **確實在範圍內**（12 檔），E4 的疑慮證否——「tsc 0 錯」對後端是有發言權的。
-→ 未修（改 `tsconfig.json` 是行為變更，留給使用者拍板：加
-`"exclude": ["node_modules", "dist", ".claude"]`）。
+
+→ **已修**：`tsconfig.json` 加 `"exclude": ["node_modules", "dist", ".claude"]`。
+（`node_modules` 必須顯式列出——一旦自訂 `exclude`，TS 的預設排除清單就整個被取代。）
+
+驗證（`--listFilesOnly` 前後對比，皆在 `dist/` 存在的狀態下）：
+
+| 量測 | 修前 | 修後 |
+|---|---|---|
+| 總檔數（排除 node_modules） | 116 | **108** |
+| `dist/assets/*.js` | 8 | **0** |
+| `api/` | 12 | **12**（未動） |
+| `.claude/` | 0 | 0（本來就是 0，見上） |
+
+diff 只有那 8 行 `dist/`，其餘逐字不變。**密閉性**：修後（`dist/` 存在）的清單與
+build 前（`dist/` 不存在）的基線**逐字相同**——tsc 範圍不再取決於 `dist/` 在不在。
+`npx tsc --noEmit` exit=0，`npm run gate` 五段全綠。
 
 ### G6 — prompt 端幾乎沒有防漂移鎖 🟡
 
