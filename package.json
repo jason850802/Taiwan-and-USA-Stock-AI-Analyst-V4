@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "gate": "node scripts/run-gate.mjs",
     "sync:skills": "python scripts/sync_skills_mirror.py"
   },
   "dependencies": {

@@ -91,6 +91,12 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
 → `package.json`／`package-lock.json` diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
 
+一鍵版 **`npm run gate`**（`scripts/run-gate.mjs`，零依賴）把前五道收成一個指令，
+金鑰掃描比文件版更嚴（也掃 git 追蹤中的原始碼、並用 `.env` 值抓任何形狀的秘密——
+真金鑰不是 `AIza` 前綴，文件版掃不到）。**runtime 類驗證腳本管不到**——console 零紅字、
+UI 量數字、快取換乾淨代號，仍照上面的原規則人工做。各道 gate 的紅燈能力與剩餘缺口見
+`docs/gate-audit-findings.md`（2026-07-26 逐道故障注入驗證）。
+
 > GSD 已於 2026-07-26 完全停用：**兩端 hooks 解除註冊，且指令／agent 面已移出專案**
 > （`.claude/commands/`、`.claude/agents/`、`.codex/agents/` 連同安裝器狀態檔搬進備份區，
 > 只留惰性的框架本體與未註冊 hooks）。`gsd:` 斜線指令與 gsd-* subagent 自此不再載入。
