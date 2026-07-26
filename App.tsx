@@ -20,7 +20,7 @@ import { getStockData } from './services/yahoo';
 import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { isTwStock } from './utils/market';
-import { createPersistentStore } from './utils/persistentStore';
+import { loadPortfolioItems, savePortfolioItems } from './utils/portfolioItemsStore';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
@@ -38,13 +38,6 @@ const tabFallback = (
 );
 
 type AppView = 'dashboard' | 'portfolio' | 'fundamentals';
-
-// 庫存持股（Phase 12 T2 收編）：儲存形狀維持**裸陣列**，不加信封、不做遷移。
-const portfolioItemsStore = createPersistentStore<PortfolioItem[]>({
-  key: 'portfolio_items',
-  fallback: () => [],
-  decode: (raw) => (Array.isArray(raw) ? (raw as PortfolioItem[]) : null),
-});
 
 const App: React.FC = () => {
   const [symbol, setSymbol] = useState<string>('2330'); 
@@ -83,13 +76,12 @@ const App: React.FC = () => {
   const [analysisMode, setAnalysisMode] = useState<'fast' | 'thinking'>('fast');
 
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(() => portfolioItemsStore.load());
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(() => loadPortfolioItems());
 
   useEffect(() => {
     // Phase 12 T2：原本這行未包 try/catch，storage 滿或無痕模式會讓整個 effect 拋錯。
-    if (!portfolioItemsStore.save(portfolioItems)) {
-      console.warn('[App] 庫存寫入失敗（storage 滿或不可用）');
-    }
+    // 寫入失敗的警告由 store 模組發（比照 txnStore）。
+    savePortfolioItems(portfolioItems);
   }, [portfolioItems]);
 
   const handlePortfolioAdd = (item: Omit<PortfolioItem, 'id'>) => {

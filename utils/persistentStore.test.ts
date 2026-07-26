@@ -2,11 +2,13 @@
 //
 // 兩組斷言：
 //  1. 工廠本身（注入記憶體 Storage stub）——parse 守衛、quota 重試骨架、序列化不加信封。
-//  2. 五把 key 的「舊格式直接可讀」＋各自的裁剪策略——fixture 均為 @36c0f41 現行 JSON 形狀字面量，
+//  2. 六把 key 的「舊格式直接可讀」＋各自的裁剪策略——fixture 均為 @36c0f41 現行 JSON 形狀字面量
+//     （portfolio_items 於 2026-07-27 收編，形狀自始為裸陣列、與該基準一致），
 //     這組測試紅了就代表儲存格式被動到，舊使用者的資料會讀不出來。
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createPersistentStore } from './persistentStore';
 import { loadTxns, saveTxns, type StoredTxn } from './txnStore';
+import { loadPortfolioItems, savePortfolioItems } from './portfolioItemsStore';
 import { loadImportLog, saveImportLog } from './importStore';
 import { loadRealizedTrades, saveRealizedTrades, loadSnapshots, saveSnapshots } from './portfolioHistoryStore';
 import { getCachedSeries, putCachedSeriesMany } from './closeSeriesCache';
@@ -175,6 +177,27 @@ describe('舊格式相容（@36c0f41 現行 JSON 形狀字面量）', () => {
     expect(st.map.get('portfolio_transactions_v1')).toBe(raw);
   });
 
+  it('portfolio_items 讀得出裸陣列（含缺 exchangeRate/buyDate 的舊資料）', () => {
+    // 舊資料刻意不帶 buyFee/purchaseCurrency/exchangeRate/buyDate——undefined 是合法狀態
+    // （types.ts 明訂 undefined＝舊資料，UI 顯示「—」並退回即時匯率），讀取不得因此拒收
+    st.map.set('portfolio_items', '[{"id":"lot-1","symbol":"2330.TW","avgCostPrice":900,"totalShares":1000,"totalCost":901282,"brokerDiscount":2.8,"cashDividends":0,"stockDividends":0}]');
+    const items = loadPortfolioItems();
+    expect(items).toHaveLength(1);
+    expect(items[0].symbol).toBe('2330.TW');
+    expect(items[0].totalShares).toBe(1000);
+    expect(items[0].exchangeRate).toBeUndefined();
+    expect(items[0].buyDate).toBeUndefined();
+  });
+
+  it('portfolio_items 塞了信封物件 → 空陣列（原資料不動）', () => {
+    // 這條就是「有人順手加信封統一格式」的守門員：load 退回 fallback、
+    // 但**絕不可**把空陣列寫回去蓋掉原資料（App 首次 render 後必觸發一次 save）
+    const raw = '{"version":1,"items":[{"id":"lot-1"}]}';
+    st.map.set('portfolio_items', raw);
+    expect(loadPortfolioItems()).toEqual([]);
+    expect(st.map.get('portfolio_items')).toBe(raw);
+  });
+
   it('portfolio_import_log_v1 讀得出鍵與批次', () => {
     st.map.set('portfolio_import_log_v1', '{"version":1,"keys":["a","b"],"batches":[{"at":1721000000000,"broker":"cathay-tw","fileName":"x.csv","count":2}]}');
     const log = loadImportLog();
@@ -218,6 +241,11 @@ describe('舊格式相容（@36c0f41 現行 JSON 形狀字面量）', () => {
     expect(cache.version).toBe(1);
     expect(cache.series.AAPL.d).toEqual(['2025-01-02']);
     expect(cache.series.AAPL.c).toEqual([250]);
+
+    // portfolio_items 是六把中唯一的**裸陣列**：寫出不得長出信封
+    savePortfolioItems([{ id: 'lot-1', symbol: '2330.TW', avgCostPrice: 900, totalShares: 1000, totalCost: 901282, brokerDiscount: 2.8, cashDividends: 0, stockDividends: 0 }]);
+    expect(st.map.get('portfolio_items')!.startsWith('[{"id":"lot-1"')).toBe(true);
+    expect(st.map.get('portfolio_items')!.startsWith('{"version"')).toBe(false);
   });
 });
 
@@ -234,6 +262,12 @@ describe('quota 裁剪策略維持原樣', () => {
     st.failTimes = 5;
     expect(saveTxns([])).toBe(false);
     expect(st.map.has('portfolio_transactions_v1')).toBe(false);
+  });
+
+  it('portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）', () => {
+    st.failTimes = 5;
+    expect(savePortfolioItems([])).toBe(false);
+    expect(st.map.has('portfolio_items')).toBe(false);
   });
 
   it('snapshots：裁最舊 1/4 backfill，live 一列不動', () => {
