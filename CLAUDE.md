@@ -1,107 +1,30 @@
-<!-- 本檔是索引：上限 150 行。長內容放引用檔，不要塞回來（規則見 agent-dual-core\MAINTENANCE.md）。 -->
-<!-- 舊版全文備份：.claude/backups/CLAUDE.md.20260703.bak -->
+# Claude Code 入口
 
-## Project
+> **本檔只是指標。專案的完整規則在根目錄的 [`CORE_RULES.md`](CORE_RULES.md)——動工前先讀它。**
+> `AGENTS.md`（Codex 讀）指向同一份，兩端看到同一套規則。
+> 改規則請改 `CORE_RULES.md`，不要改本檔。
 
-**Taiwan & USA Stock AI Analyst** — 給個人投資者的台股／美股技術分析工具（繁中介面）。
-搜尋股票 → 抓行情、算技術指標 → 依朱家泓「六六大順」法則產出客觀 GO/WAIT/NO_GO →
-Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portfolio）功能。
-目前為純前端 React SPA（無後端，所有外部呼叫在瀏覽器端）。
+## 不開檔也要遵守的四條
 
-**Core Value:** 對任一檔台股／美股給出「客觀進場判斷＋AI 中文解讀」的可信分析，
-其金鑰與資料來源必須安全、穩定、不被盜用或竄改。
+1. **金鑰紅線**：`GEMINI_API_KEY` 只能存在後端／環境變數，**絕不可進前端 bundle 或 git**。
+   驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑，PowerShell 5.1 沒有 grep）。
+2. **改 `.ts/.tsx` 後最低驗證 `npx tsc --noEmit`**；只讀過程式碼不算驗證。完整 gate 見 `CORE_RULES.md`。
+3. **環境**：PowerShell 5.1 沒有 `&&`；路徑含空格必加引號；寫檔用 Write 工具或 `-Encoding utf8`。
+4. **工作流**：使用者描述需求後，依 `CORE_RULES.md` 的「工作流」路由表決定走法，**不要即興決定流程**。
+   碰錢的語意決策一律停下來問使用者。
 
-### Constraints（紅線，違反即停）
+## 交辦 subagent
 
-- **Security**: `GEMINI_API_KEY` 只能存在 Vercel 環境變數，絕不可出現在前端 bundle 或 git（本里程碑的根本目的）
-- **Tech stack**: 後端採 Vercel Serverless 函式，與既有 Vite 靜態站整合
-- **Compatibility**: 前端介面與分析行為不變；領域型別（`StockDataPoint[]` 等）保持相容
-- **Dependencies**: 行情沿用 Yahoo Finance（非官方）與 FinMind 免費層，本次不換供應商
-- **Budget**: 盡量落在 Vercel 免費層
+憑判斷不憑反射：Claude 5 世代 spawn 冷啟動成本高，預設自己處理（讀檔、定位、修改、驗證都算）；
+只有大範圍偵查（Explore agent）或已解模式的批次改檔（約 ≥10 檔）才交辦，主對話只收
+「結論＋檔案:行號」（判準見 `agent-dual-core\MODEL-DISPATCH.md` 第 1 節）。
 
-## 索引：需要時才讀（不要全部預讀）
+## Claude 專屬
 
-| 要做的事 | 先讀 |
-|---|---|
-| 了解技術棧、依賴、設定 | `.planning/codebase/STACK.md` |
-| 了解架構、資料流、分層 | `.planning/codebase/ARCHITECTURE.md` |
-| 寫碼風格、命名、放哪裡 | `.planning/codebase/CONVENTIONS.md` |
-| 已知問題與技術債 | `.planning/codebase/CONCERNS.md` |
-| 外部整合（Yahoo/FinMind/Gemini） | `.planning/codebase/INTEGRATIONS.md` |
-| 目前進度與下一步 | `.scratch/` 的未完成票據 ＋ `git log`（記憶檔另有摘要） |
-| 查 Phase 1~12 的歷史決策 | `.planning/phases/`（**唯讀檔案庫**，新工作不寫入） |
+- **Skills 位置**：`.claude/skills/`（**唯一事實來源**）。改完執行 `npm run sync:skills`
+  同步到 Codex 讀的 `.agents/skills/` 鏡像，不要手動改鏡像端。
+- **Matt Pocock skills**：用 Skill 工具或 `/mattpocock-skills:<name>` 斜線指令呼叫。
+- 全域基準見 `~/.claude/CLAUDE.md` 指向的 `agent-dual-core\CORE_RULES.md`；
+  **專案層（`CORE_RULES.md`）優先於全域基準。**
 
-## 制度檔（跨專案，位於 C:\Users\jason\Documents\Codex\agent-dual-core\）
-
-| 時機 | 檔案 |
-|---|---|
-| 交辦 subagent／選模型前 | `MODEL-DISPATCH.md` |
-| 判斷完成／升級／該不該問使用者 | `JUDGMENT.md` |
-| 動 shell、路徑、驗證前 | `ENVIRONMENT-GOTCHAS.md` |
-| 交辦單怎麼寫 | `TASK-TEMPLATES.md` |
-| 想改制度檔／記錄踩雷 | `MAINTENANCE.md`（教訓寫 `LESSONS.md`） |
-
-**不開檔也要遵守的三條**：
-1. 交辦 subagent 憑判斷不憑反射：Claude 5 世代 spawn 冷啟動成本高，預設自己處理（讀檔、定位、修改、驗證都算）；只有大範圍偵查（Explore agent）或已解模式的批次改檔（約 ≥10 檔）才交辦，主對話只收「結論＋檔案:行號」（詳見 MODEL-DISPATCH.md 第 1 節）。
-2. 改 `.ts/.tsx` 後最低驗證 `npx tsc --noEmit`；只讀過程式碼不算驗證。
-3. PowerShell 5.1 沒有 `&&`；路徑含空格必加引號；寫檔用 Write 工具或 `-Encoding utf8`。
-
-## 本專案關鍵事實（易錯）
-
-- 依賴單軌：只維護 `package.json`＋`package-lock.json`（index.html 的 esm.sh importmap 已移除，Vite 從 node_modules 解析）。
-- 測試跑道＝最小 vitest（`npm run test`）：只涵蓋 `utils/math.ts`／`entryFilter.ts`（32 案例、行為鎖）；仍無 lint、tsconfig 非 strict。改這兩檔前先跑 test，其餘檔驗證靠 tsc＋preview 實跑。
-- 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
-- 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
-- `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
-- 改 `.claude/skills/` 後執行 `npm run sync:skills` 同步 Codex 鏡像（`.agents/skills/`，白名單見 `scripts/sync_skills_mirror.py`）。
-
-## Project Skills
-
-朱家泓進場分析 7 步驟 skills 位於 `.claude/skills/`（Codex 讀 `.agents/skills/`）：
-`trend-analysis` → `position-analysis` → `kline-signal` → `ma-structure` →
-`volume-analysis` → `indicator-analysis` → `entry-decision`（總入口／最終結論）。
-使用者說「分析 XXXX」「XXXX 能不能買」時從 `trend-analysis` 開始依序跑，
-或直接用 `entry-decision` 帶完整流程。各步驟細節讀該 skill 的 SKILL.md，不要憑記憶重建規則。
-
-另有 `tw-fundamentals`（台股基本面資料層）：用 FinMind 免 token 抓台股財報／估值／月營收／股利，
-補上美股 skill（dcf-model／comps-analysis／initiating-coverage）從 SEC 自動取得、台股缺的那層。
-使用者要台股的財報、估值、DCF、基本面時用；抓取腳本 `.claude/skills/_shared/fetch_fundamentals.py`。
-
-工作流 skills：`phase-loop`（碰錢的精密 refactor 用——PLAN 格式含雷區 diff 形狀、手算對數、
-review_checklist，7 輪實戰驗證）；`start-dev`（起 dev 環境固定流程＋故障對照表）。
-
-## 工作流：Matt Pocock skills（2026-07-24 起，GSD 已完全停用）
-
-使用者只描述需求，**依下表路由，不要即興決定流程**：
-
-| 任務型態 | 走法 |
-|---|---|
-| 小修（單檔／文案／無語意決策） | 直接做：TDD → 機械 gate → commit，不開票 |
-| 新功能 | `grill-with-docs` 拍板邊界 → `to-spec` → `to-tickets`（落 `.scratch/<feature>/issues/`）→ 每票 `implement` |
-| 碰錢的精密 refactor | `phase-loop` 的 PLAN 格式，覆核改用 `code-review` |
-| 大霧工程（跨 session） | `wayfinder` 決策票地圖 → 收斂後接 `to-spec` |
-| 壞掉／沒反應／數字不對 | `diagnosing-bugs`（**先建紅燈迴圈才准提假設**） |
-
-`implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。產出一律繁體中文。
-中大型任務每張票建議開新對話（Matt 流的換窗紀律）。碰錢的語意決策一律停下來問使用者。
-
-**機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：
-tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
-→ package.json/lock diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
-
-> GSD 已於 2026-07-24 完全停用（兩端 hooks 全數解除註冊、指令不再使用）。
-> 完整備份含還原說明：`E:\My Project\_gsd-backup-2026-07-24\`。試行不通過可隨時回退。
-
-## Agent skills
-
-### Issue tracker
-
-Local markdown — issues／spec 放 `.scratch/<feature>/`（`.planning/` 是歷史檔案庫，兩者分開）。見 `docs/agents/issue-tracker.md`。
-
-### Triage labels
-
-沿用五個預設角色（`needs-triage`／`needs-info`／`ready-for-agent`／`ready-for-human`／`wontfix`），在本地 tracker 表現為 `Status:` 行。見 `docs/agents/triage-labels.md`。
-
-### Domain docs
-
-Single-context：根目錄 `CONTEXT.md` ＋ `docs/adr/`（另有 `.planning/codebase/` 既有簡報）。見 `docs/agents/domain.md`。
+<!-- 舊版全文備份：.claude/backups/CLAUDE.md.20260703.bak（2026-07-24 重構為指標檔，內容移入 CORE_RULES.md） -->
