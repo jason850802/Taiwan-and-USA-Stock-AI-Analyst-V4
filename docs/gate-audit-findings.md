@@ -176,6 +176,35 @@ E8 確認 CORE_RULES 敘述正確：白名單外的東西 sync 不碰、`--check
 
 見 E5 明細。不影響現行 gate（現行 gate 不開 `--strict`）。
 
+### G10 — worktree 裡的「gate 全綠」比主 repo 弱，而 gate 不出聲 🟠 ✅ 已修（2026-07-26）
+
+**這是本次審計交付物自己的缺陷**，由 G3／G5 兩個修復 session 各自獨立撞到後回報。
+
+`.env*` 不進 git，所以 agent 的 `.claude/worktrees/<name>/` 裡只有 `.env.example`（腳本按設計
+跳過範本檔）。原版腳本只找**本目錄**的 `.env*` → 規則 (b)(c) 靜默降級成 0 筆比對，
+而那兩條正是補 G1／G2（最高嚴重度那兩個）的。更糟的是結尾仍無條件印
+「✓ GATE 全綠（機械部分）」，中途只有一行 `·` 提示，會被 build 輸出蓋掉。
+**agent 幾乎都在 worktree 裡工作，所以這是常態而非邊角案例。**
+
+**已修，兩層**：
+
+1. **把洞補上（不只是講出來）**：`.env*` 搜尋範圍加入**主 worktree**——
+   `git rev-parse --path-format=absolute --git-common-dir` 在 worktree 內會指回主 repo 的
+   `.git`，取其父目錄即主 worktree。實測從 `kind-hypatia-c45673` 裡跑，
+   從「`.env 值 0 筆`」變成「`.env 來源：主 worktree（E:/My Project/…）（7 筆）`」。
+   兩處來源會去重，並把實際讀到的來源印出來，讓降級無法悄悄發生。
+2. **真的沒有 `.env` 時，降級狀態帶進結尾摘要**：改印 `△ GATE 綠燈，但金鑰掃描降級`
+   並說明哪兩條沒跑。**預設仍給綠燈**——CI／新 clone 沒有 `.env` 是正常的，為此紅燈
+   就會變成 G4 講的那種「開箱即紅、然後大家學會忽略」。要在此情況直接判紅：
+   `npm run gate -- --require-env`。
+
+**紅燈自證**（在 scratchpad 的丟棄式 repo 做，不碰真 `.env`）：
+
+| 情境 | 預設 | `--require-env` |
+|---|---|---|
+| 有 `.env`（主 repo／worktree） | ✓ 全綠，`.env 值 7 筆` | 同左 |
+| 完全沒有 `.env` | `△` 綠燈＋降級警示，exit 0 | ✗ 紅燈，exit 1 |
+
 ---
 
 ## 交付物：`npm run gate`
@@ -208,7 +237,10 @@ E8 確認 CORE_RULES 敘述正確：白名單外的東西 sync 不碰、`--check
   出現在原始碼裡造成的誤報；(b) 對 `dist/` 不限名（實測 7 個值全部不在 dist，零誤報）。
 - 範本檔（`.env.example`／`.sample`／`.template`）在 (b)(c) 中跳過：裡面是佔位符，
   比對只會製造誤報。它仍受 (a2) 覆蓋（是 git 追蹤中的非 `.md` 檔）。
-- 無 `.env*` 可讀時 (b)(c) 整條略過，不影響 (a)。
+- **`.env*` 的搜尋範圍含主 worktree**，所以在 `.claude/worktrees/<name>/` 裡跑也掃得到
+  真秘密（見 G10）。實際讀到的來源會印出來。
+- 真的沒有 `.env*` 可讀時 (b)(c) 略過，不影響 (a)，但**結尾摘要會標明降級**（`△` 而非 `✓`）；
+  要讓這種情況直接判紅：`npm run gate -- --require-env`。
 
 ### 偏離章程之處（請覆核）
 
