@@ -130,7 +130,8 @@ Codex 只收 PLAN 文件不自行規劃）；`start-dev`（起 dev 環境固定�
   1. 專案自有 skills ← `.claude/skills/`（**唯一事實來源**，要改 skill 改這裡）
   2. Matt Pocock skills ← Claude 的 plugin 快取（Claude 直接由 plugin 載入，
      Codex 讀不到 plugin 目錄故需鏡像；plugin 更新後重跑同步即可）
-  **不要手動改鏡像端**——白名單外的東西腳本不會碰，手動塞的檔案會變成永不更新的孤兒。
+  **不要手動改鏡像端**——白名單外的東西腳本不會碰，手動塞的檔案會變成永不更新的孤兒
+  （腳本會以 `[WARN]` 列出孤兒但不擋，見 `docs/gate-audit-findings.md` G8）。
 - **Matt skills 呼叫方式**：Claude 用 Skill 工具／斜線指令（由 plugin 提供）；
   Codex 讀 `.agents/skills/` 內的鏡像，透過各 skill 的 `agents/openai.yaml`。
 - **交接紀律**：票據刻意**不寫檔案路徑與行號**（耐久原則，票可能躺數天）——
