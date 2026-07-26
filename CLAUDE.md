@@ -45,7 +45,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 想改制度檔／記錄踩雷 | `MAINTENANCE.md`（教訓寫 `LESSONS.md`） |
 
 **不開檔也要遵守的三條**：
-1. 偵查／批次／驗證工作交辦 subagent，主對話只收結論（判準：開 ≥3 檔、掃 repo、改 ≥3 檔、一切驗證）。
+1. 交辦 subagent 憑判斷不憑反射：Claude 5 世代 spawn 冷啟動成本高，預設自己處理（讀檔、定位、修改、驗證都算）；只有大範圍偵查（Explore agent）或已解模式的批次改檔（約 ≥10 檔）才交辦，主對話只收「結論＋檔案:行號」（詳見 MODEL-DISPATCH.md 第 1 節）。
 2. 改 `.ts/.tsx` 後最低驗證 `npx tsc --noEmit`；只讀過程式碼不算驗證。
 3. PowerShell 5.1 沒有 `&&`；路徑含空格必加引號；寫檔用 Write 工具或 `-Encoding utf8`。
 
