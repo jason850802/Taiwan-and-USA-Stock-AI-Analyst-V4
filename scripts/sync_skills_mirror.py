@@ -11,7 +11,8 @@
   python scripts/sync_skills_mirror.py --check  # 只驗證不複製（給 CI 或覆核用）
 
 任何不一致以非零 exit code 失敗並列出檔名。
-白名單以外的目錄一律不碰（手動放進鏡像的東西不會被刪，但也不會被更新）。
+白名單以外的目錄一律不碰（手動放進鏡像的東西不會被刪，但也不會被更新）——
+但會以 [WARN] 列出來，因為「不碰」等於零偵測，孤兒被 commit 後就再也沒人會提它。
 找不到 Matt plugin 時只警告不失敗——CI／他台機器可能沒安裝，專案自有 skills 的同步不該被拖累。
 """
 import argparse
@@ -173,6 +174,22 @@ def resolve_pairs() -> tuple[list[tuple[Path, Path, str]], list[str]]:
     return pairs, warnings
 
 
+def find_orphans(expected: set[str]) -> list[str]:
+    """列出鏡像裡白名單外的頂層目錄（＝永不更新的孤兒）。
+
+    白名單外的東西本腳本一律不碰——這是刻意的（手動塞的檔案不會被刪）。但「不碰」
+    等於「零機械偵測」：孤兒一旦被 commit 進去，git status 就再也不會提它，而 Codex
+    仍照著讀，等於一份永遠不更新的假規則（gate 負向測試 E8 已實測確認此行為）。
+    所以這裡只**印警示不改 exit code**：孤兒不是不一致，紅燈會誤導；但它必須有人看得到。
+    """
+    if not DST_BASE.is_dir():
+        return []
+    return sorted(
+        p.name for p in DST_BASE.iterdir()
+        if p.is_dir() and p.name not in expected and p.name not in EXCLUDE_DIRS
+    )
+
+
 def main() -> None:
     # Windows console 預設 cp950，印中文／✓ 會 UnicodeEncodeError，強制 UTF-8
     for stream in (sys.stdout, sys.stderr):
@@ -202,6 +219,14 @@ def main() -> None:
         problems = compare_dir(src, dst, label)
         print(f"[{'OK' if not problems else 'DIFF'}] {label}")
         all_problems.extend(problems)
+
+    orphans = find_orphans({label for _, _, label in pairs})
+    if orphans:
+        print("\n[WARN] 鏡像裡有白名單外的目錄——本腳本不會同步也不會刪，它們永不更新：")
+        for name in orphans:
+            print(f"  - .agents/skills/{name}")
+        print("  處置：若該 skill 該進鏡像，加進本腳本的白名單；否則手動刪除。")
+        print("  （這不算不一致，故不影響 exit code。）")
 
     if all_problems:
         print("\n不一致清單：")

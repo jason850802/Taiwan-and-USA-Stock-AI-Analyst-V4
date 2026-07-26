@@ -152,11 +152,34 @@ diff 只有那 8 行 `dist/`，其餘逐字不變。**密閉性**：修後（`di
 build 前（`dist/` 不存在）的基線**逐字相同**——tsc 範圍不再取決於 `dist/` 在不在。
 `npx tsc --noEmit` exit=0，`npm run gate` 五段全綠。
 
-### G6 — prompt 端幾乎沒有防漂移鎖 🟡
+### G6 — prompt 端幾乎沒有防漂移鎖 🟡 ✅ 已修（2026-07-26）
 
 見上方 E6 加查表。4 個 prompt 建構端只有 1 個（且只有一半）在鎖內；
 `formatFundamentalsData` 零測試。
-→ 未修（屬新增測試）。
+
+**已修**：`utils/geminiPrompts.test.ts`（8 案、11 快照）。**在出線處攔截**——
+mock global `fetch`，呼叫四個 exported analyze 函式，把送出去的 request body 攔下來上快照。
+
+選這條路而非「把 template 抽成 pure 函式」的理由：四個 prompt 有三個是寫死在 async
+函式裡的 template literal，測試碰不到；抽取要動碰錢路徑的產品碼，且必須額外證明抽取
+前後**逐位元組相同**（差一個字就讓所有使用者的快取失效一輪）。攔截法**產品碼零改動**，
+而且鎖到的是**完整 prompt**——連 `analyzePortfolioHealth` 那句外層包裝詞
+（`services/gemini.ts:960`）一起，那正是 `formatHealthCheckData` 快照鎖照不到的半邊。
+
+不需要 `localStorage` stub：`readCache`／`writeCache` 以 `typeof localStorage === 'undefined'`
+守衛，node 測試環境下整層退化成 no-op，每次呼叫都會真的走到 fetch。
+
+一併鎖住的還有 payload 的計費旋鈕（`mode`／`temperature`／`thinkingConfig`）——
+`thinkingBudget` 漂移是直接的帳單變動。另有一案斷言**串流與非串流兩條路送出的 prompt
+逐位元組相同**，防兩條路各自漂移分歧。
+
+**紅燈自證**：四個 template 各改**一個字且長度不變**（證明是位元組鎖非長度鎖），一次跑
+→ **7 案紅、涵蓋四個 describe 全部**，外層包裝詞的 `startsWith` 斷言也獨立抓到；
+計費旋鈕快照正確保持綠（斷言彼此獨立）。還原後 8 案全綠。
+
+分支涵蓋：entry 兩案（持有/空手 × 觸犯戒律/未觸犯）、trade decision 兩案（台股「張」＋
+買入當日命中 / 美股「股」＋查無買入當日——後者是 Sonnet 覆核 HIGH-1 修的分支）、
+健檢一案（台股＋美股同時）、基本面一案（含 null 欄位走 N/A）。
 
 ### G7 — package diff 對 staged 變動失明 🟡
 
@@ -165,12 +188,19 @@ build 前（`dist/` 不存在）的基線**逐字相同**——tsc 範圍不再�
 → 新腳本保留文件版語意做紅綠判定（否則「刻意改 scripts 但還沒 commit」會被誤判成紅），
 但額外印出「相對 HEAD 仍有差異」的提醒，不讓它靜默。
 
-### G8 — 鏡像孤兒完全沒有機械偵測（宣稱屬實，但屬實 ≠ 有防護）🟡
+### G8 — 鏡像孤兒完全沒有機械偵測（宣稱屬實，但屬實 ≠ 有防護）🟡 ✅ 已修（2026-07-26）
 
 E8 確認 CORE_RULES 敘述正確：白名單外的東西 sync 不碰、`--check` 不報、exit 0。
 唯一訊號是 `git status` 的 `??`——一旦有人把孤兒 commit 進去，就**再也沒有任何機械手段
 會提到它**，它會是一份永遠不會更新、Codex 卻讀得到的假規則。
-→ 未修。建議（低優先）：`--check` 增加「白名單外目錄」警示（不必紅燈，印出即可）。
+
+**已修**：`scripts/sync_skills_mirror.py` 加 `find_orphans()`，`--check` 與實際 sync 都會以
+`[WARN]` 列出白名單外的頂層目錄並附處置方式。**刻意不改 exit code**——孤兒不是「不一致」，
+紅燈會誤導（而且會變成 G4 講的那種被學會忽略的紅燈）；它需要的是被看見，不是被擋。
+「白名單外一律不碰」的原行為完整保留（實測孤兒不會被刪）。
+
+**紅燈自證**：零孤兒時無任何 `[WARN]`（基線無雜訊，實測目前鏡像零孤兒）；塞一個白名單外
+目錄後 `--check` 與 sync **兩者都印出警示、exit 皆維持 0、孤兒未被刪**。
 
 ### G9 — `--strict` 欠帳 24 筆 🟢 純紀錄
 
