@@ -61,7 +61,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - 測試跑道＝vitest（`npm run test`）：核心 utils 有行為鎖案例；仍無 lint、tsconfig 非 strict。改被鎖的檔案前先跑 test。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
 - 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
-- Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；改型號兩處都要動（`services/gemini.ts` 不含型號字串）。
+- Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；**改型號（或改 `LLM_PROVIDER`）三處都要動**——前兩處，加上 `services/_shared/geminiCache.ts` 的 `ENGINE_TAG` bump 一格讓前端舊模型快取失效（前端拿不到型號，只能靠這個不含型號名的世代代號；`services/gemini.ts` 仍不含型號字串）。不 bump 的後果有上限：key 仍有日期段且跨日全清，最壞是當天繼續端出舊模型的結果。
 - `services/gemini.ts` 的 5 個 system instruction 受 snapshot **逐位元組鎖定**（`utils/geminiRules.test.ts`）——改一個字就會讓 AI 分析快取全失效，動它前先讀 `.planning/phases/12-arch-deepening/12-CONTEXT.md` 的 D-06。
 
 ## 工作流：Matt Pocock skills（2026-07-26 起，GSD 已完全停用）
