@@ -39,8 +39,9 @@ bundle，文件版 gate 會給綠燈。這是本次最高嚴重度發現，已�
 | 5. 整體引用 `import.meta.env`（**沒點名任何變數**） | **是** | E3c——最陰險：不需要有人寫出金鑰名字，全部 `VITE_*` 一起被內聯 |
 | 6. 非 `VITE_` 前綴的 `.env` 變數（實測 7 個，含 `GEMINI_API_KEY`／`FINMIND_TOKEN`） | 否 | 即使走路徑 5 也不進——`envPrefix` 預設只曝 `VITE_` |
 
-第 6 條是目前後端金鑰不會進前端 bundle 的**唯一憑藉**，而它是一個沒有任何測試守護的
-Vite 預設值（見缺口 G3）。
+第 6 條是目前後端金鑰不會進前端 bundle 的**唯一憑藉**。審計當下它是一個沒有任何測試守護的
+Vite 預設值（見缺口 G3）；2026-07-26 已改為顯式 `envPrefix: 'VITE_'` 並由
+`utils/viteConfigGuard.test.ts` 鎖住。
 
 ### E5 明細：`--strict` 欠帳 24 筆
 
@@ -87,13 +88,32 @@ E2 證明：金鑰放在未引用的常數 → tree-shaking 移除 → `dist/` �
 躺在 git 追蹤的檔案裡等著被 commit。
 → 新腳本規則 (a2)＋(c)：對 git 追蹤中的原始碼掃金鑰形狀，並用 `.env` 的秘密值做字面比對。
 
-### G3 — 後端金鑰不進 bundle 只靠一個沒人守的 Vite 預設值 🟠
+### G3 — 後端金鑰不進 bundle 只靠一個沒人守的 Vite 預設值 🟠 → ✅ 已修（2026-07-26）
 
-E3 第 6 條成立的唯一理由是 `envPrefix` 預設 `'VITE_'`。任何人在 `vite.config.ts` 加一行
-`envPrefix: ''`，或加 `define: { 'process.env': ... }`，**全部** `.env` 變數立刻具備進 bundle
-的資格，而且不會有任何測試紅燈。目前零測試守護這個假設。
-→ 未修（屬新增測試，超出本次審計範圍）。建議：加一條測試斷言 `vite.config.ts` 未設定
-`envPrefix`／`define`，或改為顯式 `envPrefix: 'VITE_'` 並鎖住。
+E3 第 6 條成立的唯一理由是 `envPrefix` 預設 `'VITE_'`。任何人在 `vite.config.ts` 放寬前綴
+或加 `define: { 'process.env': ... }`，後端秘密立刻具備進 bundle 的資格，而且不會有任何
+測試紅燈。
+
+**已修**：`vite.config.ts` 改為顯式 `envPrefix: 'VITE_'`，並加 `utils/viteConfigGuard.test.ts`
+（5 案）鎖住。三層斷言各擋一種漂移：
+
+| 層 | 斷言 | 擋什麼 |
+|---|---|---|
+| 1 | 匯出物件的 `envPrefix`／`define` | 直接改 `vite.config.ts` 字面值 |
+| 2 | `resolveConfig()` 後的 `envPrefix`／`define`（build ＋ serve 各一） | plugin 的 `config` hook 注入——光讀匯出物件看不到 |
+| 3 | 用 Vite 的 `loadEnv` 對 fixture `.env` 跑一次 | 鎖機制本身而非設定的拼字；fixture 用假值，真金鑰不會因斷言失敗被印進終端 |
+
+**紅燈自證**（三種注入各驗一次，全部還原）：
+
+| 注入 | 結果 |
+|---|---|
+| `envPrefix: ['VITE_', 'GEMINI_']` | 4/5 紅（含第 3 層印出 fixture 秘密確實外洩） |
+| `define: { 'process.env': {} }` | 3/5 紅（envPrefix 兩條正確保持綠——斷言彼此獨立） |
+| plugin 的 `config` hook 回傳 `define` | 2/5 紅，**只有第 2 層抓到**——證明該層不是冗餘 |
+
+**修正 G3 原文的一處**：`envPrefix: ''` 其實 **Vite 自己就擋**——`resolveEnvPrefix()` 會 throw
+「could lead unexpected exposure of sensitive information」，連 vitest 都起不來。真正沒人擋的是
+**放寬**前綴（想把 `GEMINI_MODEL_FAST` 這類設定丟給前端時最容易順手加）與 `define`。
 
 ### G4 — 照文件字面把金鑰掃描套到原始碼會「開箱即紅」🟠
 
