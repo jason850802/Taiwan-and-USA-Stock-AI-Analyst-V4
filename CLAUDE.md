@@ -1,8 +1,6 @@
 <!-- 本檔是索引：上限 150 行。長內容放引用檔，不要塞回來（規則見 agent-dual-core\MAINTENANCE.md）。 -->
 <!-- 舊版全文備份：.claude/backups/CLAUDE.md.20260703.bak -->
 
-<!-- GSD:project-start source:PROJECT.md -->
-
 ## Project
 
 **Taiwan & USA Stock AI Analyst** — 給個人投資者的台股／美股技術分析工具（繁中介面）。
@@ -21,8 +19,6 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - **Dependencies**: 行情沿用 Yahoo Finance（非官方）與 FinMind 免費層，本次不換供應商
 - **Budget**: 盡量落在 Vercel 免費層
 
-<!-- GSD:project-end -->
-
 ## 索引：需要時才讀（不要全部預讀）
 
 | 要做的事 | 先讀 |
@@ -32,7 +28,8 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 寫碼風格、命名、放哪裡 | `.planning/codebase/CONVENTIONS.md` |
 | 已知問題與技術債 | `.planning/codebase/CONCERNS.md` |
 | 外部整合（Yahoo/FinMind/Gemini） | `.planning/codebase/INTEGRATIONS.md` |
-| 目前進度與下一步 | `.planning/STATE.md`、`.planning/ROADMAP.md` |
+| 目前進度與下一步 | `.scratch/` 的未完成票據 ＋ `git log`（記憶檔另有摘要） |
+| 查 Phase 1~12 的歷史決策 | `.planning/phases/`（**唯讀檔案庫**，新工作不寫入） |
 
 ## 制度檔（跨專案，位於 C:\Users\jason\Documents\Codex\agent-dual-core\）
 
@@ -58,8 +55,6 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
 - 改 `.claude/skills/` 後執行 `npm run sync:skills` 同步 Codex 鏡像（`.agents/skills/`，白名單見 `scripts/sync_skills_mirror.py`）。
 
-<!-- GSD:skills-start source:skills/ -->
-
 ## Project Skills
 
 朱家泓進場分析 7 步驟 skills 位於 `.claude/skills/`（Codex 讀 `.agents/skills/`）：
@@ -72,30 +67,36 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 補上美股 skill（dcf-model／comps-analysis／initiating-coverage）從 SEC 自動取得、台股缺的那層。
 使用者要台股的財報、估值、DCF、基本面時用；抓取腳本 `.claude/skills/_shared/fetch_fundamentals.py`。
 
-工作流 skills：`phase-loop`（三角開發迴圈 playbook——規劃/交 Codex/覆核/合併四階段，
-7 輪實戰驗證的格式與儀式，做任何 phase 工作先讀它）；`start-dev`（起 dev 環境固定流程＋故障對照表）。
+工作流 skills：`phase-loop`（碰錢的精密 refactor 用——PLAN 格式含雷區 diff 形狀、手算對數、
+review_checklist，7 輪實戰驗證）；`start-dev`（起 dev 環境固定流程＋故障對照表）。
 
-<!-- GSD:skills-end -->
+## 工作流：Matt Pocock skills（2026-07-24 起，GSD 已完全停用）
 
-<!-- GSD:workflow-start source:GSD defaults -->
+使用者只描述需求，**依下表路由，不要即興決定流程**：
 
-## GSD Workflow Enforcement
+| 任務型態 | 走法 |
+|---|---|
+| 小修（單檔／文案／無語意決策） | 直接做：TDD → 機械 gate → commit，不開票 |
+| 新功能 | `grill-with-docs` 拍板邊界 → `to-spec` → `to-tickets`（落 `.scratch/<feature>/issues/`）→ 每票 `implement` |
+| 碰錢的精密 refactor | `phase-loop` 的 PLAN 格式，覆核改用 `code-review` |
+| 大霧工程（跨 session） | `wayfinder` 決策票地圖 → 收斂後接 `to-spec` |
+| 壞掉／沒反應／數字不對 | `diagnosing-bugs`（**先建紅燈迴圈才准提假設**） |
 
-改檔前先走 GSD 入口，讓規劃產物與執行 context 同步（注意是冒號語法）：
-`/gsd:quick`（小修／文件）、`/gsd:debug`（查蟲）、`/gsd:execute-phase`（計畫內工作）。
-除非使用者明確要求繞過，不要在 GSD 流程外直接改 repo。
+`implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。產出一律繁體中文。
+中大型任務每張票建議開新對話（Matt 流的換窗紀律）。碰錢的語意決策一律停下來問使用者。
 
-**節省 token**：本專案已用 `/gsd:surface` 關閉 `ns_meta`／`milestone`／`research_ideate`／
-`workspace_state`／`docs`／`ui`／`ai_eval` 這 7 個 cluster（保留 core_loop／audit_review／utility，
-故 quick/debug/execute-phase 不受影響）。若任務真的需要被關掉的功能（如里程碑收尾、UI 設計稿、
-AI 評估規劃），先執行 `/gsd:surface enable <cluster>` 借回來再呼叫該指令，用完可 `disable` 關回去。
-<!-- GSD:workflow-end -->
+**機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：
+tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
+→ package.json/lock diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
+
+> GSD 已於 2026-07-24 完全停用（兩端 hooks 全數解除註冊、指令不再使用）。
+> 完整備份含還原說明：`E:\My Project\_gsd-backup-2026-07-24\`。試行不通過可隨時回退。
 
 ## Agent skills
 
 ### Issue tracker
 
-Local markdown — issues／spec 放 `.scratch/<feature>/`（與 GSD 的 `.planning/` 分開）。見 `docs/agents/issue-tracker.md`。
+Local markdown — issues／spec 放 `.scratch/<feature>/`（`.planning/` 是歷史檔案庫，兩者分開）。見 `docs/agents/issue-tracker.md`。
 
 ### Triage labels
 
@@ -104,11 +105,3 @@ Local markdown — issues／spec 放 `.scratch/<feature>/`（與 GSD 的 `.plann
 ### Domain docs
 
 Single-context：根目錄 `CONTEXT.md` ＋ `docs/adr/`（另有 `.planning/codebase/` 既有簡報）。見 `docs/agents/domain.md`。
-
-<!-- GSD:profile-start -->
-
-## Developer Profile
-
-> Profile not yet configured. Run `/gsd-profile-user` to generate your developer profile.
-> This section is managed by `generate-claude-profile` -- do not edit manually.
-<!-- GSD:profile-end -->

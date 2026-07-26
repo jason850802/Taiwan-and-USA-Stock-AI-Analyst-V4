@@ -7,7 +7,7 @@
 本專案的**完整規則、架構、慣例與技能，一律以根目錄的 `CLAUDE.md` 為準**。動工前請先讀 `CLAUDE.md`。
 本檔只指向、**不複製** `CLAUDE.md`，以免兩份不同步；若有衝突，以 `CLAUDE.md` 為準。
 
-**唯一例外**：`CLAUDE.md` 裡「如何使用 GSD」寫的是 **Claude 的斜線指令用法**；**Codex 請改用下方「Codex 如何使用 GSD」一節**（兩個工具的 GSD 入口不同）。
+**唯一例外**：`CLAUDE.md` 的工作流路由表寫的是 **Claude 的斜線指令用法**；**Codex 請改用下方「Codex 如何接工作」一節**（同一套 skills，入口方式不同）。
 
 ## 動工前的紅線（摘自 CLAUDE.md，細節以該檔為準）
 
@@ -15,23 +15,19 @@
 - **相容性**：資料服務層回傳的領域型別（`StockDataPoint[]`、`StockInfo` 等）必須保持相容，避免動到圖表、過濾器、提示詞與既有分析行為。
 - **程式風格**：2 空格縮排、單引號、繁體中文註解、camelCase／PascalCase 命名；不要重排或重寫無關檔案。
 
-## Codex 如何使用 GSD（重要：與 Claude 不同）
+## Codex 如何接工作（2026-07-24 起，GSD 已完全停用）
 
-GSD 已為 Codex 安裝完成（代理在 `.codex/agents/`、守門 hook 在 `.codex/hooks.json`），但**入口方式和 Claude 不一樣**：
+**GSD 已停用**：`.codex/hooks.json` 的守門 hook 全數解除註冊，`gsd-ns-*` 技能不再使用，
+`/gsd-*` 斜線指令亦不使用。本專案改用 Matt Pocock 的 engineering skills
+（Claude 與 Codex 共用同一套；Codex 端透過各 skill 的 `agents/openai.yaml` 呼叫）。
 
-- ❌ **不要**使用 `/gsd-quick`、`/gsd-plan-phase`、`/gsd-execute-phase` 等斜線指令——那些是 **Claude Code 專屬**，Codex 沒有。
-- ✅ **改用 GSD 的 `gsd-ns-*` 整合入口技能**（透過 Skill 機制呼叫），它們會再路由到對應的子流程：
-  | 想做的事 | 用這個技能 |
-  |---|---|
-  | 討論／規劃／執行／驗證／推進階段 | `gsd-ns-workflow`（discuss・plan・execute・verify・phase・progress） |
-  | 程式審查／除錯／安全／UI／eval | `gsd-ns-review` |
-  | 建立 codebase 知識（map／graphify／docs／learnings） | `gsd-ns-context` |
-  | 專案生命週期（里程碑／稽核／摘要） | `gsd-ns-project` |
-  | 設定／工作區／workstreams／ship | `gsd-ns-manage` |
-  | 構想探索（explore／sketch／spike／spec） | `gsd-ns-ideate` |
-
-- **改檔前務必先走 GSD**：`.codex/hooks.json` 的 `gsd-workflow-guard` 會在 Edit／Write／Bash 前檢查流程、`gsd-validate-commit` 會檢查提交——這等同 `CLAUDE.md` 對 Claude 的強制規則。除非使用者明確要求略過。
-- 規劃／執行時，閱讀 `.planning/` 下相關的 `PLAN.md`、`STATE.md`，並維持**每步原子提交**。
+- **工作票據**在 `.scratch/<feature>/issues/<NN>-<slug>.md`（一票一檔，含 `Blocked by` 與驗收條件）。
+  接手時**讀該票即可冷啟動**，不需要讀 `.planning/`。規格書在 `.scratch/<feature>/spec.md`。
+- **tracker 慣例**見 `docs/agents/issue-tracker.md`；triage 狀態字串見 `docs/agents/triage-labels.md`。
+- **`.planning/` 是 Phase 1~12 的歷史檔案庫（唯讀）**——查既往決策可讀，新工作一律不寫入它。
+- **實作紀律**：一票一個 commit；每步 `npx tsc --noEmit` 0 錯；收尾跑完整測試與 `npm run build`，
+  並確認 `grep -r "AIza" dist/` 無結果、`package.json`／`package-lock.json` 零變動。
+- 票據刻意**不寫檔案路徑與行號**（耐久原則）——依行為描述自行探索現況程式碼。
 
 ## 專案技能（Skills）
 

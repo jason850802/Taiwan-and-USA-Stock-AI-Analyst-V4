@@ -32,7 +32,7 @@ PLAN.md 的必備結構（7 輪實戰驗證過的格式，勿省略）：
    需要製造失敗路徑時用「一次性臨時改壞→驗證→改回、不 commit」法，不留後門。
 8. **未決點誠實列出**：規劃期沒驗證的假設標明，並設計成執行期第一步先驗證（spike-first）。
 
-收尾：計畫 commit 到 main → `git checkout -b gsd/phase-<slug>` 開分支 → 更新記憶檔
+收尾：計畫 commit 到 main → `git checkout -b phase/<slug>` 開分支 → 更新記憶檔
 （`~/.claude/projects/.../memory/`）→ 產出 Codex 交接指令（階段 2 模板）給使用者。
 
 ## 階段 2：交接 Codex（使用者複製貼上）
@@ -40,7 +40,7 @@ PLAN.md 的必備結構（7 輪實戰驗證過的格式，勿省略）：
 模板（依 phase 內容填空）：
 ```
 【任務】執行 <phase 名稱>。
-1. 確認在 git 分支 gsd/<slug>。
+1. 確認在 git 分支 phase/<slug>。
 2. 完整讀 .planning/phases/NN-slug/NN-PLAN.md，「給冷啟動執行者的前提」逐條遵守，特別是：
    - <本期 2-4 條最要命的鐵則，如雷區 diff 形狀、邏輯零變化、token 不進前端>
 3. Task 1→N 一任務一 commit，只動各任務 <files>；每步 npx.cmd tsc --noEmit 0 錯誤。
@@ -65,13 +65,13 @@ Codex 若回報**規則衝突**：這是好行為（停下來問優於亂猜）�
 ## 階段 4：人工驗證與合併
 
 1. 使用者照 PLAN 的 human-verify 步驟操作（起環境用 `/start-dev`）。發現的問題先分類：
-   **本期改壞的（退 Codex 修）** vs **本來就有的舊 bug（用 /gsd:capture 記待辦，不擋合併）**
+   **本期改壞的（退 Codex 修）** vs **本來就有的舊 bug（用 `to-tickets` 落 `.scratch/`，不擋合併）**
    vs **新功能需求（另立任務，守住範圍）**——判斷方法：對照 `git show main:<檔>` 看該邏輯
    是否本期才變。
 2. 合併儀式（順序固定）：
    a. `tasklist //FI "IMAGENAME eq node.exe"` 檢查——使用者的 dev 伺服器與殘留子程序先收乾淨
       （Ctrl+C 常殺不乾淨，必要時 `taskkill //F //PID <pid>`），否則 EPERM 檔案鎖會炸合併。
-   b. `git checkout main && git merge --no-ff gsd/<slug> -m "<完整記錄驗證過程的訊息>"`。
+   b. `git checkout main && git merge --no-ff phase/<slug> -m "<完整記錄驗證過程的訊息>"`。
    c. 合併後 `npx tsc --noEmit` 複驗＋確認關鍵檔案已在 main。
    d. 更新記憶檔（phase 完成、開放線頭）；有踩新雷則 append 到
       `C:\Users\jason\Documents\Codex\agent-dual-core\LESSONS.md`。

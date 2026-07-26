@@ -29,9 +29,10 @@ Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
 - **Claim**: set `Status: claimed` and save before any work.
 - **Resolve**: append the answer under an `## Answer` heading, set `Status: resolved`, then append a context pointer (gist + link) to the map's Decisions-so-far in `map.md`.
 
-## Relationship to `.planning/` (GSD)
+## Relationship to `.planning/`
 
-This repo also runs the GSD workflow, whose phase plans live in `.planning/`. The two are separate:
-`.planning/` holds phase-level planning artifacts (CONTEXT/PLAN/STATE/ROADMAP); `.scratch/` holds
-the issue/spec tickets that the mattpocock engineering skills read and write. Don't write skill
-tickets into `.planning/`.
+`.planning/` is a **read-only archive** of Phase 1–12 planning artifacts (CONTEXT/PLAN per phase,
+plus the `codebase/` briefs). It dates from the project's previous workflow, which was retired on
+2026-07-24. Read it to trace past decisions; never write new work into it.
+
+All new tickets and specs live in `.scratch/`.
