@@ -61,7 +61,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - 測試跑道＝vitest（`npm run test`）：核心 utils 有行為鎖案例；仍無 lint、tsconfig 非 strict。改被鎖的檔案前先跑 test。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
 - 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
-- `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
+- Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；改型號兩處都要動（`services/gemini.ts` 不含型號字串）。
 - `services/gemini.ts` 的 5 個 system instruction 受 snapshot **逐位元組鎖定**（`utils/geminiRules.test.ts`）——改一個字就會讓 AI 分析快取全失效，動它前先讀 `.planning/phases/12-arch-deepening/12-CONTEXT.md` 的 D-06。
 
 ## 工作流：Matt Pocock skills（2026-07-26 起，GSD 已完全停用）
@@ -76,6 +76,14 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 大霧工程（跨 session） | `wayfinder` 決策票地圖 → 收斂後接 `to-spec` |
 | 壞掉／沒反應／數字不對 | `diagnosing-bugs`（**先建紅燈迴圈才准提假設**） |
 
+**Claude 端啟動方式（易撞牆）**：路由表主線的 `grill-with-docs`／`to-spec`／`to-tickets`／
+`implement`／`wayfinder`／`triage`／`ask-matt` 是 Matt 的 **user-invoked skill，不在模型可
+自動呼叫清單**（Skill 工具叫不到）。兩條路都算數：使用者自己打 `/mattpocock-skills:<name>`，
+或**依使用者 2026-07-26 授權，由助手讀 `.agents/skills/<name>/SKILL.md` 照內容執行**
+（要向使用者標明「現在進入 X 階段」）。模型可自行呼叫的是 `code-review`／`tdd`／
+`diagnosing-bugs`／`grilling`／`prototype`／`research`／`codebase-design`／`domain-modeling`／
+`resolving-merge-conflicts`。Codex 端無此限制（走鏡像的 `agents/openai.yaml`）。
+
 `implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。
 中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者。**
 
@@ -83,7 +91,9 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
 → `package.json`／`package-lock.json` diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
 
-> GSD 已於 2026-07-26 完全停用（兩端 hooks 全數解除註冊）。
+> GSD 已於 2026-07-26 完全停用：**兩端 hooks 解除註冊，且指令／agent 面已移出專案**
+> （`.claude/commands/`、`.claude/agents/`、`.codex/agents/` 連同安裝器狀態檔搬進備份區，
+> 只留惰性的框架本體與未註冊 hooks）。`gsd:` 斜線指令與 gsd-* subagent 自此不再載入。
 > 備份含還原說明：`E:\My Project\_gsd-backup-2026-07-26\`。試行不通過可隨時回退。
 
 ## Project Skills
@@ -97,8 +107,8 @@ tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `g
 補上美股 skill（dcf-model／comps-analysis）從 SEC 自動取得、台股缺的那層。
 抓取腳本 `.claude/skills/_shared/fetch_fundamentals.py`。
 
-工作流 skills：`phase-loop`（碰錢的精密 refactor 用，7 輪實戰驗證）；
-`start-dev`（起 dev 環境固定流程＋故障對照表）。
+工作流 skills：`phase-loop`（碰錢的精密 refactor 用，7 輪實戰驗證；**Claude 端專用、不進鏡像**——
+Codex 只收 PLAN 文件不自行規劃）；`start-dev`（起 dev 環境固定流程＋故障對照表，**兩端都有**）。
 
 ## Agent skills（Matt Pocock 流的設定）
 

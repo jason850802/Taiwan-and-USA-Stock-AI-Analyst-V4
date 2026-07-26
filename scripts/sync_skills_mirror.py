@@ -48,8 +48,10 @@ PROJECT_WHITELIST = [
     "indicator-analysis",
     "entry-decision",
     "tw-fundamentals",
+    "start-dev",   # 起 dev 環境流程，Codex 也要能照著開
     "_shared",
 ]
+# 註：`phase-loop` 刻意不在白名單——規劃由 Claude/Fable 做，Codex 只收 PLAN 文件執行。
 
 # ── 來源 2：Matt Pocock skills（plugin 快取）────────────────────────────
 # 只鏡像「Codex 實際會用到」的：engineering 全套（CORE_RULES.md 工作流路由表所指）
