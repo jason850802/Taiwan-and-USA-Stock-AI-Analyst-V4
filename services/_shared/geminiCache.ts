@@ -7,6 +7,19 @@
 export const CACHE_PREFIX = 'gemini_cache_v1|';
 const MAX_ENTRIES = 50;
 
+/**
+ * 引擎世代代號——實際型號由**後端** env 決定（`api/_lib/config.ts` 的 GEMINI_MODEL_FAST／
+ * GEMINI_MODEL_THINKING；`LLM_PROVIDER=claude-cli` 時整個換成 Claude），前端拿不到、
+ * 也不准內含型號字串（CORE_RULES 紅線）。這裡改用不含型號名的世代代號代打：
+ *
+ * **換型號或換 provider 時把它 bump 一格**（e1 → e2），全體使用者的舊模型快取當場失效。
+ * 忘了 bump 的後果有上限——key 仍有日期段且跨日會全清，最壞是當天繼續吃舊模型的結果。
+ *
+ * 兩個限制（由 utils/geminiCache.test.ts 鎖住）：不得為空、不得含 `|`
+ * （含 `|` 會讓段位錯亂，跨日清理就抓錯段）。
+ */
+export const ENGINE_TAG = 'e1';
+
 /** FNV-1a 32-bit 雜湊，回傳 hex 字串（無依賴、對 prompt 級長度足夠） */
 export function fnv1aHash(str: string): string {
   let hash = 0x811c9dc5;
@@ -29,9 +42,14 @@ export function taipeiTodayStr(): string {
   return `${get('year')}-${get('month')}-${get('day')}`;
 }
 
-/** 快取 key：prefix|mode|日期|hash(systemInstruction + ' ' + prompt)。日期由呼叫端注入，讓「日期參與 key」可被直測斷言。 */
+/**
+ * 快取 key：prefix|引擎|mode|日期|hash(systemInstruction + ' ' + prompt)。
+ * 日期由呼叫端注入，讓「日期參與 key」可被直測斷言。
+ * 引擎段刻意放在 prefix 之後而非接在尾巴：舊 4 段格式的殘留條目日期會落在 [3]＝hash，
+ * 跟今天永遠對不上，於是下一次寫入的跨日清理順手把它們掃掉，不留讀不到又佔 quota 的孤兒。
+ */
 export function buildCacheKey(mode: string, dateStr: string, systemInstruction: string, prompt: string): string {
-  return `${CACHE_PREFIX}${mode}|${dateStr}|${fnv1aHash(systemInstruction + ' ' + prompt)}`;
+  return `${CACHE_PREFIX}${ENGINE_TAG}|${mode}|${dateStr}|${fnv1aHash(systemInstruction + ' ' + prompt)}`;
 }
 
 type CacheEntry = { text: string; ts: number };
@@ -86,10 +104,11 @@ export function writeCache(key: string, text: string): void {
   try {
     if (typeof localStorage === 'undefined') return;
 
-    // 1. 跨日清理：日期段（key 以 | split 後 index 2）≠ 今日者一律移除
+    // 1. 跨日清理：日期段（key 以 | split 後 index 3）≠ 今日者一律移除。
+    //    舊 4 段格式（無引擎段）在此 index 讀到的是 hash，必不等於今日 → 一併被清掉。
     const today = taipeiTodayStr();
     for (const k of collectCacheKeys()) {
-      if (k.split('|')[2] !== today) localStorage.removeItem(k);
+      if (k.split('|')[3] !== today) localStorage.removeItem(k);
     }
 
     // 2. 寫入；quota 錯誤時淘汰最舊一筆後重試一次，再失敗即放棄
