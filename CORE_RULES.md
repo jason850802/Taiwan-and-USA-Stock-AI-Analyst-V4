@@ -64,7 +64,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - `services/gemini.ts` 的 Gemini 型號（fast=`gemini-3.5-flash`／thinking=`gemini-3.1-pro-preview`）有硬編處，改型號要全域搜尋。
 - `services/gemini.ts` 的 5 個 system instruction 受 snapshot **逐位元組鎖定**（`utils/geminiRules.test.ts`）——改一個字就會讓 AI 分析快取全失效，動它前先讀 `.planning/phases/12-arch-deepening/12-CONTEXT.md` 的 D-06。
 
-## 工作流：Matt Pocock skills（2026-07-24 起，GSD 已完全停用）
+## 工作流：Matt Pocock skills（2026-07-26 起，GSD 已完全停用）
 
 使用者只描述需求，**依下表路由，不要即興決定流程**：
 
@@ -83,8 +83,8 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
 → `package.json`／`package-lock.json` diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
 
-> GSD 已於 2026-07-24 完全停用（兩端 hooks 全數解除註冊）。
-> 備份含還原說明：`E:\My Project\_gsd-backup-2026-07-24\`。試行不通過可隨時回退。
+> GSD 已於 2026-07-26 完全停用（兩端 hooks 全數解除註冊）。
+> 備份含還原說明：`E:\My Project\_gsd-backup-2026-07-26\`。試行不通過可隨時回退。
 
 ## Project Skills
 
@@ -109,10 +109,13 @@ tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `g
 ## 雙工具運作（Claude Code ＋ Codex）
 
 - **入口檔**：Claude 讀 `CLAUDE.md`、Codex 讀 `AGENTS.md`，兩者都只指向本檔。改規則改這裡，不要改入口檔。
-- **Skills 鏡像**：`.claude/skills/` 是**唯一事實來源**；改完執行 `npm run sync:skills`
-  同步到 `.agents/skills/`（Codex 讀的鏡像，白名單見 `scripts/sync_skills_mirror.py`）。
-  **不要手動改鏡像端。**
-- **Matt skills 呼叫方式**：Claude 用 Skill 工具／斜線指令；Codex 透過各 skill 的
-  `agents/openai.yaml`。同一套 skill，入口不同。
+- **Skills 鏡像**：`.agents/skills/` 是 **Codex 的讀取端，兩個來源餵它**，
+  都由 `npm run sync:skills` 維護（白名單見 `scripts/sync_skills_mirror.py`）：
+  1. 專案自有 skills ← `.claude/skills/`（**唯一事實來源**，要改 skill 改這裡）
+  2. Matt Pocock skills ← Claude 的 plugin 快取（Claude 直接由 plugin 載入，
+     Codex 讀不到 plugin 目錄故需鏡像；plugin 更新後重跑同步即可）
+  **不要手動改鏡像端**——白名單外的東西腳本不會碰，手動塞的檔案會變成永不更新的孤兒。
+- **Matt skills 呼叫方式**：Claude 用 Skill 工具／斜線指令（由 plugin 提供）；
+  Codex 讀 `.agents/skills/` 內的鏡像，透過各 skill 的 `agents/openai.yaml`。
 - **交接紀律**：票據刻意**不寫檔案路徑與行號**（耐久原則，票可能躺數天）——
   接手方依行為描述自行探索現況程式碼。一票一個 commit。

@@ -15,8 +15,9 @@
 
 ## Codex 專屬
 
-- **Skills 位置**：讀 `.agents/skills/`（`.claude/skills/` 的鏡像）。
-  **鏡像是唯讀的**——要改 skill 請改 `.claude/skills/` 再跑 `npm run sync:skills`。
+- **Skills 位置**：讀 `.agents/skills/`。裡面有兩類，**都是唯讀鏡像**：
+  專案自有 skills（來源 `.claude/skills/`）＋ Matt Pocock skills（來源 Claude 的 plugin 快取）。
+  要改 skill 請改來源端再跑 `npm run sync:skills`，**不要直接改鏡像**。
 - **Matt Pocock skills**：透過各 skill 的 `agents/openai.yaml` 呼叫
   （與 Claude 共用同一套 skill，只是入口方式不同）。
 - **接工作**：票據在 `.scratch/<feature>/issues/<NN>-<slug>.md`（一票一檔，含 `Blocked by`
@@ -28,4 +29,4 @@
 - 全域基準見 `~/.codex/AGENTS.md` 指向的 `agent-dual-core\CORE_RULES.md`；
   **專案層（`CORE_RULES.md`）優先於全域基準。**
 
-<!-- 2026-07-24 重構為指標檔，內容合併進 CORE_RULES.md（原有的程式風格、鏡像規則、耐久原則條款均已併入） -->
+<!-- 2026-07-26 重構為指標檔，內容合併進 CORE_RULES.md（原有的程式風格、鏡像規則、耐久原則條款均已併入） -->

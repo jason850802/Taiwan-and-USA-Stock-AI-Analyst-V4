@@ -27,4 +27,4 @@
 - 全域基準見 `~/.claude/CLAUDE.md` 指向的 `agent-dual-core\CORE_RULES.md`；
   **專案層（`CORE_RULES.md`）優先於全域基準。**
 
-<!-- 舊版全文備份：.claude/backups/CLAUDE.md.20260703.bak（2026-07-24 重構為指標檔，內容移入 CORE_RULES.md） -->
+<!-- 舊版全文備份：.claude/backups/CLAUDE.md.20260703.bak（2026-07-26 重構為指標檔，內容移入 CORE_RULES.md） -->
