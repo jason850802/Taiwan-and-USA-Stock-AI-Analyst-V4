@@ -18,6 +18,9 @@
 //       的 log 消毒 regex 本身就含這個前綴，用裸字面掃原始碼會開箱即紅。
 //   (b) 讀 `.env*` 所有值（長度 >8）對 `dist/` 做字面比對：**任何形狀的秘密**都抓，
 //       不限 Google 金鑰。無 `.env*` 時整條略過。
+//       `.env*` 的搜尋範圍含**主 worktree**：agent 在 `.claude/worktrees/<name>/` 裡跑時
+//       那裡沒有真 `.env`（`.env*` 不進 git），若只看本目錄，(b)(c) 會靜默降級成 0 筆比對，
+//       讓 worktree 的「全綠」比主 repo 的弱而 gate 不出聲（G10）。
 //   (c) 讀 `.env*` 中「名字看起來是秘密」的值（KEY／TOKEN／SECRET／PASSWORD 等）
 //       對 git 追蹤中的原始碼做字面比對。這條補的是紅線「不進前端 bundle **或 git**」
 //       的後半句——(a)(b) 只看得到 build 產物，金鑰被 tree-shaking 移除但仍躺在原始碼裡
@@ -38,7 +41,13 @@ const KEY_SHAPED = new RegExp(KEY_PREFIX + '[0-9A-Za-z_-]{30,}');
 const SECRET_NAME = /(KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|_PAT)$/i;
 const MAX_REPORTED = 20; // 單條規則最多列這麼多筆，避免刷爆終端
 
+// 找不到任何 .env 值時，(b)(c) 兩條規則無事可做。預設仍給綠燈（CI／新 clone 沒有 .env
+// 是正常的，為此紅燈會變成 G4 講的那種「開箱即紅」），但**降級狀態必須帶到結尾摘要**，
+// 不能讓「全綠」看起來跟完整掃過一樣。要在缺 .env 時直接判紅就加 --require-env。
+const REQUIRE_ENV = process.argv.includes('--require-env');
+
 let failedSection = null;
+let secretScanDegraded = false;
 
 function banner(text) {
   console.log(`\n=== ${text} ===`);
@@ -109,14 +118,33 @@ function trackedSourceFiles() {
     .filter(p => existsSync(p));
 }
 
-/** 解析 `.env*`（跳過 .env.example 這類範本：裡面是佔位符，比對只會製造誤報）。 */
-function envSecrets() {
-  const names = readdirSync(ROOT)
+/**
+ * 主 worktree 的目錄。agent 在 `.claude/worktrees/<name>/` 裡跑 gate 時，那裡沒有真 `.env`
+ * （`.env*` 不進 git），(b)(c) 兩條會無事可做——而它們正是補 G1／G2 那兩個最高嚴重度缺口的。
+ * `--git-common-dir` 在 worktree 內會指回主 repo 的 `.git`，取其父目錄即主 worktree。
+ * 回傳 null 表示取不到或就是自己（在主 repo 跑）。
+ */
+function mainWorktreeDir() {
+  const r = git(['rev-parse', '--path-format=absolute', '--git-common-dir']);
+  if (r.status !== 0) return null;
+  const gitDir = r.stdout.toString('utf8').trim();
+  if (!gitDir) return null;
+  const dir = path.resolve(path.dirname(gitDir));
+  if (dir === path.resolve(ROOT)) return null;
+  return existsSync(dir) ? dir : null;
+}
+
+/**
+ * 解析 `.env*`，來源為「本目錄」＋「主 worktree 目錄」（後者讓 worktree 也掃得到真秘密）。
+ * 跳過 .env.example 這類範本：裡面是佔位符，比對只會製造誤報。
+ */
+function envSecretsIn(dir) {
+  const names = readdirSync(dir)
     .filter(n => n.startsWith('.env'))
     .filter(n => !/\.(example|sample|template)$/i.test(n));
   const found = [];
   for (const name of names) {
-    const text = readText(path.join(ROOT, name));
+    const text = readText(path.join(dir, name));
     if (text === null) continue;
     for (const line of text.split(/\r?\n/)) {
       if (/^\s*#/.test(line)) continue;
@@ -132,6 +160,28 @@ function envSecrets() {
     }
   }
   return found;
+}
+
+/** 彙整本目錄 ＋ 主 worktree 的 `.env*`，並回報實際讀到哪些來源（讓降級無法悄悄發生）。 */
+function collectEnvSecrets() {
+  const sources = [];
+  const secrets = [];
+  const seen = new Set();
+  const add = (dir, label) => {
+    const hits = envSecretsIn(dir);
+    if (hits.length === 0) return;
+    sources.push(`${label}（${hits.length} 筆）`);
+    for (const h of hits) {
+      const dedupe = `${h.key} ${h.value}`;
+      if (seen.has(dedupe)) continue;
+      seen.add(dedupe);
+      secrets.push({ ...h, origin: label });
+    }
+  };
+  add(ROOT, '本目錄');
+  const mainDir = mainWorktreeDir();
+  if (mainDir) add(mainDir, `主 worktree（${mainDir.split(path.sep).join('/')}）`);
+  return { secrets, sources };
 }
 
 // ── 各段 ─────────────────────────────────────────────────────────────────────
@@ -182,10 +232,18 @@ function stepSecretScan() {
     if (m) hits.push(`(a) ${rel(f)}:${lineOf(text, m.index)} 原始碼含 Google 金鑰形狀字串`);
   }
 
-  const secrets = envSecrets();
+  const { secrets, sources } = collectEnvSecrets();
   if (secrets.length === 0) {
-    console.log('  · 無 .env* 可讀（或無長度 >8 的值）→ (b)(c) 略過');
+    secretScanDegraded = true;
+    console.log('  ! 降級：本目錄與主 worktree 都沒有可讀的 .env*（或無長度 >8 的值）');
+    console.log('      → 規則 (b)(c) 未執行。它們補的是 G1／G2 這兩個最高嚴重度缺口，');
+    console.log('        所以這次的金鑰掃描比完整版弱。要在此情況直接判紅：npm run gate -- --require-env');
+    if (REQUIRE_ENV) {
+      console.log('  ✗ --require-env 已指定 → 判定紅燈');
+      return false;
+    }
   } else {
+    console.log(`  · .env 來源：${sources.join('、')}`);
     // (b) 所有 .env 值 → dist/
     for (const f of dist) {
       const text = readText(f);
@@ -264,5 +322,11 @@ if (failedSection) {
   process.exit(1);
 }
 
-console.log('\n✓ GATE 全綠（機械部分）。');
+if (secretScanDegraded) {
+  console.log('\n△ GATE 綠燈，但金鑰掃描降級：規則 (b)(c) 未執行（沒有可讀的 .env*）。');
+  console.log('  這次的綠比完整版弱——補 G1／G2 的那兩條規則沒有東西可比對。');
+  console.log('  要完整驗金鑰請在有真 .env 的目錄跑；要讓此情況直接判紅：npm run gate -- --require-env');
+} else {
+  console.log('\n✓ GATE 全綠（機械部分）。');
+}
 console.log('  runtime 類驗證腳本管不到，仍須人工：console 零紅字、UI 數字要量、快取換乾淨代號。');
