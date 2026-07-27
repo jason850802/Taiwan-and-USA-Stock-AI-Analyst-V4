@@ -5,7 +5,8 @@ import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
-import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Coins } from 'lucide-react';
+import { buildBackup, backupFileName, serializeBackup } from '../utils/portfolioBackup';
+import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
@@ -68,6 +69,23 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const [tradeAnalyzing,  setTradeAnalyzing]  = useState(false);
   const [tradeResult,     setTradeResult]     = useState<string>('');
   const [showTradeResult, setShowTradeResult] = useState(false);
+
+  // ── 備份下載（票 01）────────────────────────────────────────────────────
+  // 邏輯全在 utils/portfolioBackup（純模組、有行為鎖）；這裡只是薄膠水：
+  // 讀真實 localStorage → 產檔 → 觸發下載 → 釋放 object URL。
+  // 不看 items prop——備份的是 storage 現況，庫存為空時交易流水／已實現帳本仍可能有東西。
+  const handleBackup = () => {
+    const now = new Date();
+    const blob = new Blob([serializeBackup(buildBackup(localStorage, now))], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = backupFileName(now);
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // ── 新增持股並執行 AI 分析 ──────────────────────────────────────────────
   const handleAddAndAnalyze = async () => {
@@ -176,6 +194,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             <Button variant="ghost" onClick={() => setShowImportModal(true)} className="flex items-center gap-2">
               <Upload size={15} /> 匯入對帳單
             </Button>
+            <span title="把持股、交易流水、匯入紀錄、已實現帳本與每日快照存成一個 JSON 檔下載；收盤價與 AI 分析快取不含在內（那些會自動重抓）">
+              <Button variant="ghost" onClick={handleBackup} className="flex items-center gap-2">
+                <Download size={15} /> 備份
+              </Button>
+            </span>
             <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
               {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
             </Button>
