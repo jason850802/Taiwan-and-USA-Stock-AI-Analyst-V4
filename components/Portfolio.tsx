@@ -5,8 +5,7 @@ import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
-import { buildBackup, backupFileName, serializeBackup } from '../utils/portfolioBackup';
-import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins } from 'lucide-react';
+import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
@@ -17,12 +16,14 @@ import SellModal from './portfolio/SellModal';
 import RealizedLedger from './portfolio/RealizedLedger';
 import PnlHistorySection from './portfolio/PnlHistorySection';
 import ImportStatementModal, { ImportApplyPayload } from './portfolio/ImportStatementModal';
+import RestoreBackupModal from './portfolio/RestoreBackupModal';
 import HoldingsTable, { fmt, fmtUsd } from './portfolio/HoldingsTable';
 import { useHoldingPrices } from './portfolio/useHoldingPrices';
 import { useDailySnapshot } from './portfolio/useDailySnapshot';
 import { usePortfolioForm } from './portfolio/usePortfolioForm';
 import { useHealthCheck } from './portfolio/useHealthCheck';
 import { useLotDividendUpdate } from './portfolio/useLotDividendUpdate';
+import { usePortfolioBackup } from './portfolio/usePortfolioBackup';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -51,6 +52,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     handleSingleHealthCheck, handleBatchHealthCheck,
   } = useHealthCheck(items, prices, usdTwdRate);
   const { lotDividendState, runLotDividendUpdate } = useLotDividendUpdate(items, onUpdate);
+  // 備份（票 01）與回灌（票 02）：讀寫 storage、產檔下載、重新載入都在這個 hook 裡
+  const {
+    backupMsg, showRestoreModal, setShowRestoreModal, reloading, handleBackup, handleRestore,
+  } = usePortfolioBackup();
 
   // 新增第一檔美股時庫存裡還沒有美股 → 平常不會抓匯率，表單的「預設當日匯率」會落空；
   // 表單開著且輸入的是美股代號就補抓一次（只在 rate 尚未取得時）。
@@ -70,33 +75,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const [tradeResult,     setTradeResult]     = useState<string>('');
   const [showTradeResult, setShowTradeResult] = useState(false);
 
-  // ── 備份下載（票 01）────────────────────────────────────────────────────
-  // 邏輯全在 utils/portfolioBackup（純模組、有行為鎖）；這裡只是薄膠水：
-  // 讀真實 localStorage → 產檔 → 觸發下載 → 釋放 object URL。
-  // 不看 items prop——備份的是 storage 現況，庫存為空時交易流水／已實現帳本仍可能有東西。
-  const [backupMsg, setBackupMsg] = useState<string | null>(null);
-
-  const handleBackup = () => {
-    const now = new Date();
-    let text: string;
-    try {
-      text = serializeBackup(buildBackup(localStorage, now));
-    } catch (e: any) {
-      // buildBackup 讀不動 storage 時整包放棄——必須讓使用者看到，
-      // 否則他會以為手上那個檔是完整備份（保命功能最不能有的誤解）。
-      setBackupMsg(e?.message || '備份失敗，請確認瀏覽器是否封鎖了本站的儲存空間。');
-      return;
-    }
-
-    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = backupFileName(now);
-    a.click();
-    // 延到下一個 tick 才釋放：同一 tick 撤銷 object URL 在部分瀏覽器會讓下載拿到空檔
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-    setBackupMsg(`已下載備份檔 ${a.download}`);
-  };
 
   // ── 新增持股並執行 AI 分析 ──────────────────────────────────────────────
   const handleAddAndAnalyze = async () => {
@@ -210,6 +188,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                 <Download size={15} /> 備份
               </Button>
             </span>
+            <span title="用先前下載的備份檔整包覆蓋目前的庫存資料；覆蓋前會先自動下載一份現況當救命索">
+              <Button variant="ghost" onClick={() => setShowRestoreModal(true)} className="flex items-center gap-2">
+                <DatabaseBackup size={15} /> 回灌
+              </Button>
+            </span>
             <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
               {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
             </Button>
@@ -297,6 +280,16 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       {/* ── 對帳單匯入 Modal（Phase 11）──────────────────────────────────── */}
       <ImportStatementModal open={showImportModal} onClose={() => setShowImportModal(false)}
         existingLots={items} onApply={onStatementImport} />
+
+      {/* ── 回灌備份檔 Modal（票 02）─────────────────────────────────────── */}
+      <RestoreBackupModal open={showRestoreModal} onClose={() => setShowRestoreModal(false)}
+        onConfirm={handleRestore} />
+
+      {/* 回灌完成到重新載入之間的簾幕：那一拍畫面上的數字還是舊的（React 鏡像尚未重讀），
+          蓋住才不會有人在這時候按到東西、也才看得到發生了什麼。關不掉，等重載即可。 */}
+      <Modal open={reloading} onClose={() => {}} title="回灌完成" maxWidth="max-w-sm">
+        <p className="text-slate-300 text-sm">正在重新載入，畫面稍候會顯示備份當下的資料…</p>
+      </Modal>
 
       <SellModal lot={sellTarget} usdTwdRate={usdTwdRate}
         priceHint={sellTarget ? prices[sellTarget.symbol]?.price : undefined}
