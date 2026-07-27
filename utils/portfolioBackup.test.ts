@@ -303,9 +303,15 @@ describe('parseBackupFile — 驗證（先於任何寫入）', () => {
     expect(rejectionOf(envelope('')).code).toBe('bad-data');                          // 沒有 data 段
   });
 
-  it('unparsed 區形狀非法 → 拒收（信封任一段壞掉都不冒險去寫）', () => {
-    expect(rejectionOf(envelope('"data":{},"unparsed":[]')).code).toBe('bad-data');
-    expect(rejectionOf(envelope('"data":{},"unparsed":{"portfolio_items":42}')).code).toBe('bad-data');
+  it('unparsed 區形狀壞掉不拒收——那一區從頭到尾不會被套用，data 還救得回來', () => {
+    // 拒收的門就三道（不是本 App 的檔／版本不認得／資料段非物件）。
+    // 為了一個只拿來顯示的區塊擋下整份還原得了的資料，是本末倒置。
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const withBadUnparsed = parseBackupFile(envelope('"data":{"portfolio_items":[]},"unparsed":[]'));
+    expect(withBadUnparsed.status).toBe('ok');
+    if (withBadUnparsed.status !== 'ok') return;
+    expect(withBadUnparsed.file.unparsed).toBeUndefined();       // 壞掉的那區當作沒有
+    expect(withBadUnparsed.file.data.portfolio_items).toEqual([]); // 資料段照收
   });
 
   it('exportedAt 壞掉不因此拒收——資料段完好就要讓使用者救得回來', () => {
@@ -501,15 +507,16 @@ describe('筆數統計 — 確認框的對照數字', () => {
     expect(() => countStorageEntries(broken)).not.toThrow();
   });
 
-  it('備份檔的筆數從 data 段算；當初壞掉的 key 算「不明」而非 0', () => {
+  it('備份檔的筆數是「回灌後會剩幾筆」；當初壞掉的 key 算 0（回灌會把它移除）', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     const st = makeStorage();
     seedRealData(st);
     st.map.set('portfolio_snapshots_v1', '{"version":1,"rows":[{"date":"2024-06-26","mark');
     const counts = countBackupEntries(parsedOf(backupTextOf(st)));
     expect(counts.portfolio_items).toBe(1);
-    // 檔案裡有這把（在 unparsed 區）但回灌不會還原它，報 0 會讓使用者以為當初就沒資料
-    expect(counts.portfolio_snapshots_v1).toBeNull();
+    // 這把只在 unparsed 區、回灌不會還原 → 回灌後就是 0 筆。
+    // 報「不明」的話，確認框那一列不會標黃，等於在最該提醒的地方閉嘴。
+    expect(counts.portfolio_snapshots_v1).toBe(0);
   });
 });
 

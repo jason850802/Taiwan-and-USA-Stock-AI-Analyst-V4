@@ -145,7 +145,8 @@ const RestoreBackupModal: React.FC<RestoreBackupModalProps> = ({ open, onClose, 
             <div className="bg-surface-inset border border-surface-line rounded-card p-3
               flex items-center justify-between gap-3 text-sm">
               <span className="text-white font-bold truncate">{fileName}</span>
-              <span className="text-slate-500 text-xs shrink-0">匯出於 {localTime(picked.file.exportedAt)}</span>
+              {/* 詞彙照 CONTEXT.md：講「備份於」不講「匯出於」——匯出留給 P2 的 CSV 報表 */}
+              <span className="text-slate-500 text-xs shrink-0">備份於 {localTime(picked.file.exportedAt)}</span>
             </div>
 
             <table className="w-full text-sm">
@@ -182,7 +183,7 @@ const RestoreBackupModal: React.FC<RestoreBackupModalProps> = ({ open, onClose, 
               <div className="text-xs text-slate-300 space-y-1">
                 <p className="text-warn text-sm font-bold">備份之後新增的資料會被捨棄</p>
                 <p>
-                  回灌是整包覆蓋：這份備份檔匯出<span className="text-amber-300">之後</span>你新增的持股、
+                  回灌是整包覆蓋：這份備份檔產生<span className="text-amber-300">之後</span>你新增的持股、
                   匯入的對帳單、賣出紀錄與每日快照都會消失，且無法復原。
                 </p>
                 <p>按下確認時會先自動下載一份「現況」的備份檔當救命索，接著才覆蓋，完成後整頁重新載入。</p>

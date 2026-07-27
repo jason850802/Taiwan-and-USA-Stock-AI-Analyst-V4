@@ -179,11 +179,10 @@ export function parseBackupFile(text: string): ParseResult {
     return reject('bad-data', '備份檔的資料段損毀（不是預期的格式），已整包拒收，現有資料未被更動。');
   }
 
-  const unparsed = raw.unparsed;
-  if (unparsed !== undefined
-    && (!isPlainObject(unparsed) || Object.values(unparsed).some(v => typeof v !== 'string'))) {
-    return reject('bad-data', '備份檔的損壞資料區格式異常，已整包拒收，現有資料未被更動。');
-  }
+  // unparsed 區形狀壞掉**不拒收**：它從頭到尾不會被套用，只用來在確認框上告知
+  // 「這幾把當初就壞了」。整份 data 還救得回來卻為了這一區擋下來，是本末倒置
+  // （拒收的三道門就是 spec 寫的那三道：不是本 App 的檔、版本不認得、資料段非物件）。
+  const unparsed = normalizeUnparsed(raw.unparsed);
 
   return {
     status: 'ok',
@@ -194,10 +193,22 @@ export function parseBackupFile(text: string): ParseResult {
       // 為了一個看板欄位擋掉整份還救得回來的資料，是本末倒置。
       exportedAt: typeof raw.exportedAt === 'string' ? raw.exportedAt : '',
       data,
-      ...(unparsed ? { unparsed: unparsed as Record<string, string> } : {}),
+      ...(unparsed ? { unparsed } : {}),
     },
   };
 }
+
+/** 只留下形狀正確（key → 原字串）的部分；全壞或不是物件就當作沒有這一區並 warn */
+const normalizeUnparsed = (raw: unknown): Record<string, string> | null => {
+  if (raw === undefined) return null;
+  const entries = isPlainObject(raw)
+    ? Object.entries(raw).filter((e): e is [string, string] => typeof e[1] === 'string')
+    : [];
+  if (!isPlainObject(raw) || entries.length !== Object.keys(raw).length) {
+    console.warn('[portfolioBackup] 備份檔的 unparsed 區形狀異常，已忽略該區（不影響資料段的回灌）');
+  }
+  return entries.length > 0 ? Object.fromEntries(entries) : null;
+};
 
 export type ApplyResult =
   | { status: 'ok' }
@@ -275,7 +286,8 @@ export type EntryCounts = Record<BackupKey, number | null>;
 
 /**
  * 各 key 的「筆數」要看哪個陣列：持股是裸陣列，其餘四把包在 `{version,…}` 信封裡。
- * 這不是領域型別知識，只是 key → 陣列欄位的位置表。
+ * 這不是領域型別知識，只是 key → 陣列欄位的位置表（本模組刻意不 import 任何 store 的
+ * 型別，代價是欄位改名這裡不會 tsc 紅字——靠行為鎖那支真實 fixture 的筆數斷言守）。
  * 對不上就回 null（不明），**絕不拋錯、也不謊報 0**——確認框上的 0 會被讀成
  * 「本來就沒資料」，那是會害使用者按下去的誤導。
  */
@@ -314,11 +326,15 @@ export function countStorageEntries(storage: Storage): EntryCounts {
   return out;
 }
 
-/** 備份檔的筆數（確認框右半邊）。當初壞掉的 key 算「不明」——回灌不會還原它們 */
+/**
+ * 備份檔的筆數（確認框右半邊）。口徑是**回灌之後 storage 會有幾筆**，不是檔案裡躺了幾筆：
+ * 當初壞掉的 key 收在 unparsed 而不在 data，回灌時會被移除，所以是 0 筆而非「不明」——
+ * 報「不明」會讓那一列失去「變少了」的黃字提示，正好是最該提醒的那一列。
+ * （那些 key 為何歸零，確認框另有一段明講。）
+ */
 export function countBackupEntries(file: BackupFile): EntryCounts {
   const out = {} as EntryCounts;
   for (const key of BACKUP_KEYS) {
-    if (file.unparsed && key in file.unparsed) { out[key] = null; continue; }
     out[key] = Object.prototype.hasOwnProperty.call(file.data, key) ? countValue(key, file.data[key]) : 0;
   }
   return out;
