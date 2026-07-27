@@ -5,7 +5,8 @@ import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
-import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Coins } from 'lucide-react';
+import { buildBackup, backupFileName, serializeBackup } from '../utils/portfolioBackup';
+import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import StatCard from './ui/StatCard';
@@ -68,6 +69,34 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const [tradeAnalyzing,  setTradeAnalyzing]  = useState(false);
   const [tradeResult,     setTradeResult]     = useState<string>('');
   const [showTradeResult, setShowTradeResult] = useState(false);
+
+  // ── 備份下載（票 01）────────────────────────────────────────────────────
+  // 邏輯全在 utils/portfolioBackup（純模組、有行為鎖）；這裡只是薄膠水：
+  // 讀真實 localStorage → 產檔 → 觸發下載 → 釋放 object URL。
+  // 不看 items prop——備份的是 storage 現況，庫存為空時交易流水／已實現帳本仍可能有東西。
+  const [backupMsg, setBackupMsg] = useState<string | null>(null);
+
+  const handleBackup = () => {
+    const now = new Date();
+    let text: string;
+    try {
+      text = serializeBackup(buildBackup(localStorage, now));
+    } catch (e: any) {
+      // buildBackup 讀不動 storage 時整包放棄——必須讓使用者看到，
+      // 否則他會以為手上那個檔是完整備份（保命功能最不能有的誤解）。
+      setBackupMsg(e?.message || '備份失敗，請確認瀏覽器是否封鎖了本站的儲存空間。');
+      return;
+    }
+
+    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = backupFileName(now);
+    a.click();
+    // 延到下一個 tick 才釋放：同一 tick 撤銷 object URL 在部分瀏覽器會讓下載拿到空檔
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    setBackupMsg(`已下載備份檔 ${a.download}`);
+  };
 
   // ── 新增持股並執行 AI 分析 ──────────────────────────────────────────────
   const handleAddAndAnalyze = async () => {
@@ -176,6 +205,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             <Button variant="ghost" onClick={() => setShowImportModal(true)} className="flex items-center gap-2">
               <Upload size={15} /> 匯入對帳單
             </Button>
+            <span title="把持股、交易流水、匯入紀錄、已實現帳本與每日快照存成一個 JSON 檔下載；收盤價與 AI 分析快取不含在內（那些會自動重抓）">
+              <Button variant="ghost" onClick={handleBackup} className="flex items-center gap-2">
+                <Download size={15} /> 備份
+              </Button>
+            </span>
             <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
               {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
             </Button>
@@ -188,6 +222,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           </div>
           {lotDividendState.msg && (
             <p className="text-xs text-accent text-right max-w-md">{lotDividendState.msg}</p>
+          )}
+          {backupMsg && (
+            <p className="text-xs text-accent text-right max-w-md">{backupMsg}</p>
           )}
         </div>
       </div>

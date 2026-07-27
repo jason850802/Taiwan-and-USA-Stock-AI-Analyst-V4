@@ -9,7 +9,7 @@
 // 以「date 陣列 + close 陣列」而非物件陣列存放，體積約少一半。
 import { createPersistentStore } from './persistentStore';
 
-const KEY = 'portfolio_close_cache_v1';
+export const KEY = 'portfolio_close_cache_v1';
 const MAX_AGE_MS = 3 * 24 * 60 * 60 * 1000;   // 超過 3 天視為過期（需補抓近端）
 
 export interface CloseBar { date: string; close: number }
