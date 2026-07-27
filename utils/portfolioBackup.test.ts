@@ -528,9 +528,26 @@ describe('isEmptyBackup — 全新使用者不下載空的預備份', () => {
     expect(isEmptyBackup(buildBackup(asStorage(st), NOW))).toBe(true);
   });
 
-  it('任一把 key 有東西（哪怕是空陣列）→ 不算空', () => {
+  it('key 在但一筆資料都沒有 → 仍算空（這才是真正的「全新使用者」）', () => {
+    // App 一 render 就把 React state 的空陣列寫回 storage，全新使用者的 storage
+    // 其實長這樣。用「key 缺席」當判準的話跳過永不生效，他每次回灌都會收到一個
+    // 只裝空容器的垃圾檔（實測 235 bytes）——實機驗收就是這樣抓到的。
     const st = makeStorage();
     st.map.set('portfolio_items', '[]');
+    st.map.set('portfolio_realized_trades_v1', '{"version":1,"trades":[]}');
+    expect(isEmptyBackup(buildBackup(asStorage(st), NOW))).toBe(true);
+  });
+
+  it('任一把 key 有一筆真資料 → 不算空', () => {
+    const st = makeStorage();
+    st.map.set('portfolio_items', '[]');
+    st.map.set('portfolio_transactions_v1', '{"version":1,"txns":[{"key":"k1"}]}');
+    expect(isEmptyBackup(buildBackup(asStorage(st), NOW))).toBe(false);
+  });
+
+  it('形狀數不出來的 key → 不算空（看不懂的資料寧可多存一份救命索）', () => {
+    const st = makeStorage();
+    st.map.set('portfolio_items', '{"version":1,"items":[]}');   // 有人硬加了信封
     expect(isEmptyBackup(buildBackup(asStorage(st), NOW))).toBe(false);
   });
 

@@ -340,7 +340,20 @@ export function countBackupEntries(file: BackupFile): EntryCounts {
   return out;
 }
 
-/** 現況五把 key 全缺席 → 預備份會是個空檔，不必下載（別塞垃圾進使用者的下載資料夾） */
+/**
+ * 這份備份「一筆資料都沒有」嗎？是的話回灌時就跳過預備份，別塞垃圾進下載資料夾。
+ *
+ * 判準刻意是**筆數為零**而不是「key 缺席」：全新使用者一打開 App，React state
+ * 的空陣列就會被寫回去，storage 立刻長出 `portfolio_items: []` 與空的已實現帳本——
+ * 用「key 全缺席」當條件的話這個跳過形同永不生效，新使用者每次回灌都會收到一個
+ * 只裝著空容器的檔案（實測 235 bytes），正是這條要防的事。
+ *
+ * 反過來，數不出來的形狀（countValue 回 null）一律當成「有東西」：
+ * 寧可多存一份救命索，也不要在看不懂的資料上賭。
+ */
 export function isEmptyBackup(file: BackupFile): boolean {
-  return Object.keys(file.data).length === 0 && Object.keys(file.unparsed ?? {}).length === 0;
+  // 壞掉的內容最需要留副本——有 unparsed 就絕不是空的
+  if (Object.keys(file.unparsed ?? {}).length > 0) return false;
+  return BACKUP_KEYS.every(key =>
+    !Object.prototype.hasOwnProperty.call(file.data, key) || countValue(key, file.data[key]) === 0);
 }
