@@ -11,7 +11,16 @@
 //
 // Storage stub 與斷言風格沿用 utils/persistentStore.test.ts，不另創寫法。
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { BACKUP_KEYS, buildBackup, backupFileName, BACKUP_SCHEMA, BACKUP_APP_ID } from './portfolioBackup';
+import {
+  BACKUP_KEYS, buildBackup, backupFileName, serializeBackup,
+  BACKUP_SCHEMA_VERSION, BACKUP_APP_ID, BackupReadError,
+} from './portfolioBackup';
+// 防漂移用：各 store 自己的 key 常數（只 import 字串常數，不 import 任何領域型別）
+import { KEY as ITEMS_KEY } from './portfolioItemsStore';
+import { KEY as TXNS_KEY } from './txnStore';
+import { KEY as IMPORT_LOG_KEY } from './importStore';
+import { TRADES_KEY, SNAPSHOTS_KEY } from './portfolioHistoryStore';
+import { KEY as CLOSE_CACHE_KEY } from './closeSeriesCache';
 
 // ── 記憶體 Storage stub（比照 utils/persistentStore.test.ts） ──
 const makeStorage = () => {
@@ -52,8 +61,16 @@ describe('BACKUP_KEYS — 本體資料清單', () => {
   });
 
   it('不含可重建資料（收盤價快取、AI 分析快取）', () => {
-    expect(BACKUP_KEYS).not.toContain('portfolio_close_cache_v1');
+    expect(BACKUP_KEYS).not.toContain(CLOSE_CACHE_KEY);
     expect(BACKUP_KEYS.some(k => k.startsWith('gemini_cache_v1'))).toBe(false);
+  });
+
+  it('與各 store 自己的 key 常數逐一相符（防漂移）', () => {
+    // 沒有這條的話：某個 store 改了自己的 key，備份會靜默停止保護那份資料，
+    // 而本檔其他斷言都拿同一批硬編字面量比對，照樣全綠。
+    expect([...BACKUP_KEYS].sort()).toEqual(
+      [ITEMS_KEY, TXNS_KEY, IMPORT_LOG_KEY, TRADES_KEY, SNAPSHOTS_KEY].sort(),
+    );
   });
 });
 
@@ -62,13 +79,19 @@ describe('buildBackup — 信封', () => {
     const st = makeStorage();
     const file = buildBackup(asStorage(st), NOW);
     expect(file.app).toBe(BACKUP_APP_ID);
-    expect(file.schema).toBe(BACKUP_SCHEMA);
+    expect(file.schemaVersion).toBe(BACKUP_SCHEMA_VERSION);
     expect(file.exportedAt).toBe('2026-07-27T14:05:09.000Z');
   });
 
   it('全空 storage → data 是空物件（不拋錯，仍可備份）', () => {
     const st = makeStorage();
     expect(buildBackup(asStorage(st), NOW).data).toEqual({});
+  });
+
+  it('沒有壞資料時不長出 unparsed 欄位（正常備份檔看不到它）', () => {
+    const st = makeStorage();
+    seedRealData(st);
+    expect('unparsed' in buildBackup(asStorage(st), NOW)).toBe(false);
   });
 });
 
@@ -123,22 +146,58 @@ describe('buildBackup — 備份範圍', () => {
 describe('buildBackup — 壞資料與不可用 storage', () => {
   afterEach(() => { vi.restoreAllMocks(); });
 
-  it('某把 key 是壞 JSON → 略過該把並警告，其餘照收（不拋錯）', () => {
+  it('某把 key 是壞 JSON → 原字串收進 unparsed（位元組一個不少），其餘照收', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const st = makeStorage();
     seedRealData(st);
-    st.map.set('portfolio_snapshots_v1', '{壞掉的 json');
+    const truncated = '{"version":1,"rows":[{"date":"2024-06-26","mark';  // 寫入被截斷的樣子
+    st.map.set('portfolio_snapshots_v1', truncated);
 
-    const { data } = buildBackup(asStorage(st), NOW);
-    expect('portfolio_snapshots_v1' in data).toBe(false);
-    expect(data).toHaveProperty('portfolio_items');
+    const file = buildBackup(asStorage(st), NOW);
+    // 不進 data（那裡的東西回灌時要能直接套用），但**不得消失**
+    expect('portfolio_snapshots_v1' in file.data).toBe(false);
+    expect(file.unparsed?.portfolio_snapshots_v1).toBe(truncated);
+    expect(file.data).toHaveProperty('portfolio_items');
     expect(warn).toHaveBeenCalled();
   });
 
-  it('storage 本身不可用 → 回空 data，不拋錯', () => {
+  it('storage 讀不動 → 整包放棄丟 BackupReadError，不得產出殘缺卻看起來正常的檔案', () => {
     const broken = { getItem: () => { throw new Error('SecurityError'); } } as unknown as Storage;
-    expect(() => buildBackup(broken, NOW)).not.toThrow();
-    expect(buildBackup(broken, NOW).data).toEqual({});
+    expect(() => buildBackup(broken, NOW)).toThrow(BackupReadError);
+  });
+
+  it('讀到一半才失敗也一樣整包放棄（不得只備份到前幾把）', () => {
+    const st = makeStorage();
+    seedRealData(st);
+    const partial = {
+      getItem: (k: string) => {
+        if (k === 'portfolio_import_log_v1') throw new Error('SecurityError');
+        return st.getItem(k);
+      },
+    } as unknown as Storage;
+    expect(() => buildBackup(partial, NOW)).toThrow(BackupReadError);
+  });
+});
+
+describe('serializeBackup', () => {
+  it('兩空格縮排（檔案要人看得懂、可 diff），且 parse 回來與原物件相同', () => {
+    const st = makeStorage();
+    seedRealData(st);
+    const file = buildBackup(asStorage(st), NOW);
+    const text = serializeBackup(file);
+
+    expect(text).toContain('\n  "app"');
+    expect(JSON.parse(text)).toEqual(file);
+  });
+
+  it('序列化後每把 key 的值與 storage 原字串逐位元組相同（跨越序列化邊界的保真）', () => {
+    const st = makeStorage();
+    seedRealData(st);
+    const parsed = JSON.parse(serializeBackup(buildBackup(asStorage(st), NOW)));
+
+    for (const key of BACKUP_KEYS) {
+      expect(JSON.stringify(parsed.data[key])).toBe(st.map.get(key));
+    }
   });
 });
 

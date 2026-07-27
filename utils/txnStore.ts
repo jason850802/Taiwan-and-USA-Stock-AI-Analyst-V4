@@ -8,7 +8,7 @@ import { ParsedTxn, PortfolioItem, RealizedTrade, TxnKind } from '../types';
 import { isTwStock } from './portfolioFees';
 import { createPersistentStore } from './persistentStore';
 
-const KEY = 'portfolio_transactions_v1';
+export const KEY = 'portfolio_transactions_v1';
 
 /** 精簡版交易紀錄（不存 rawLine 等大欄位，控制 localStorage 用量） */
 export interface StoredTxn {

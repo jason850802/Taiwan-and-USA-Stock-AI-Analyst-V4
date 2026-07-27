@@ -74,17 +74,28 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   // 邏輯全在 utils/portfolioBackup（純模組、有行為鎖）；這裡只是薄膠水：
   // 讀真實 localStorage → 產檔 → 觸發下載 → 釋放 object URL。
   // 不看 items prop——備份的是 storage 現況，庫存為空時交易流水／已實現帳本仍可能有東西。
+  const [backupMsg, setBackupMsg] = useState<string | null>(null);
+
   const handleBackup = () => {
     const now = new Date();
-    const blob = new Blob([serializeBackup(buildBackup(localStorage, now))], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
+    let text: string;
+    try {
+      text = serializeBackup(buildBackup(localStorage, now));
+    } catch (e: any) {
+      // buildBackup 讀不動 storage 時整包放棄——必須讓使用者看到，
+      // 否則他會以為手上那個檔是完整備份（保命功能最不能有的誤解）。
+      setBackupMsg(e?.message || '備份失敗，請確認瀏覽器是否封鎖了本站的儲存空間。');
+      return;
+    }
+
+    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
     const a = document.createElement('a');
     a.href = url;
     a.download = backupFileName(now);
     a.click();
-    URL.revokeObjectURL(url);
+    // 延到下一個 tick 才釋放：同一 tick 撤銷 object URL 在部分瀏覽器會讓下載拿到空檔
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    setBackupMsg(`已下載備份檔 ${a.download}`);
   };
 
   // ── 新增持股並執行 AI 分析 ──────────────────────────────────────────────
@@ -211,6 +222,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           </div>
           {lotDividendState.msg && (
             <p className="text-xs text-accent text-right max-w-md">{lotDividendState.msg}</p>
+          )}
+          {backupMsg && (
+            <p className="text-xs text-accent text-right max-w-md">{backupMsg}</p>
           )}
         </div>
       </div>

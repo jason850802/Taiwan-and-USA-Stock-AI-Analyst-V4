@@ -30,12 +30,16 @@ export const BACKUP_KEYS = [
 export const BACKUP_APP_ID = 'taiwan-usa-stock-ai-analyst';
 
 /** 備份檔 schema 版本；回灌只收認得的版本，未知版本整包拒收（票 02） */
-export const BACKUP_SCHEMA = 1;
+export const BACKUP_SCHEMA_VERSION = 1;
 
 export interface BackupFile {
   app: typeof BACKUP_APP_ID;
-  schema: typeof BACKUP_SCHEMA;
-  /** ISO 8601 匯出時間，供使用者分辨多個備份檔的新舊 */
+  schemaVersion: typeof BACKUP_SCHEMA_VERSION;
+  /**
+   * ISO 8601（UTC）匯出時間，供使用者分辨多個備份檔的新舊。
+   * 刻意用 UTC——這欄是給機器讀的、要無歧義；**票 02 顯示給使用者時記得轉本地時間**
+   * （備份檔名用的是本地時間，深夜產生的檔案兩者日期本來就會不同）。
+   */
   exportedAt: string;
   /**
    * key → 該 key 的**解析後** JSON 值。刻意不存字串轉義版：檔案要人看得懂、可 diff。
@@ -44,35 +48,58 @@ export interface BackupFile {
    * **缺席的 key 不出現在這裡**（不寫成 null），回灌時「該移除就移除」靠這個語意。
    */
   data: Record<string, unknown>;
+  /**
+   * 內容不是合法 JSON 的 key（例如寫入被截斷），**原字串原封不動**收在這裡。
+   * 為什麼不直接丟掉：這是使用者的最後一份副本，被截斷的內容往往還留著大半筆交易，
+   * 是最需要帶出瀏覽器、之後手動搶救的東西——靜默丟棄正是保命功能不可接受的洞。
+   * 回灌不會套用這一段（票 02）。無此情況時本欄位缺席，正常備份檔看不到它。
+   */
+  unparsed?: Record<string, string>;
 }
 
-/** 收集備份：讀不到／壞 JSON 的 key 一律略過（不拋錯），其餘照收 */
+/** storage 讀取失敗——備份必須整包放棄，不得產出殘缺卻看起來正常的檔案 */
+export class BackupReadError extends Error {
+  constructor(public readonly key: string) {
+    super(`無法讀取「${key}」，備份已中止（瀏覽器可能處於無痕模式或封鎖了本站儲存空間）。`);
+    this.name = 'BackupReadError';
+  }
+}
+
+/**
+ * 收集備份。三種情況三種處置，**沒有一種是靜默少一塊**：
+ *  - key 缺席 → data 中亦缺席（回灌時「該移除就移除」靠這語意）
+ *  - key 內容壞掉 → 原字串收進 unparsed，位元組一個不少
+ *  - storage 讀不動 → 丟 BackupReadError，整包放棄；呼叫端須把錯誤顯示給使用者
+ */
 export function buildBackup(storage: Storage, now: Date): BackupFile {
   const data: Record<string, unknown> = {};
+  const unparsed: Record<string, string> = {};
 
   for (const key of BACKUP_KEYS) {
     let raw: string | null;
     try {
       raw = storage.getItem(key);
     } catch {
-      continue; // storage 不可用（無痕模式／SecurityError）：整批放棄，不讓備份鍵盤失效
+      // 只跳過這一把的話，會下載一個格式完整、內容殘缺、檔名正常的備份檔，
+      // 而使用者毫無所覺——那比按了沒反應更糟。整包中止。
+      throw new BackupReadError(key);
     }
     if (raw === null) continue; // 缺席就是缺席
 
     try {
       data[key] = JSON.parse(raw);
     } catch {
-      // 壞 JSON：該把資料其實已經救不回來了（各 store 的 load 也只會回 fallback），
-      // 但不能靜默——沿用專案 store 的 console.warn 慣例讓它至少留下痕跡。
-      console.warn(`[portfolioBackup] ${key} 內容非合法 JSON，已排除於備份之外`);
+      unparsed[key] = raw;
+      console.warn(`[portfolioBackup] ${key} 內容非合法 JSON，已以原始字串收進備份的 unparsed 區`);
     }
   }
 
   return {
     app: BACKUP_APP_ID,
-    schema: BACKUP_SCHEMA,
+    schemaVersion: BACKUP_SCHEMA_VERSION,
     exportedAt: now.toISOString(),
     data,
+    ...(Object.keys(unparsed).length > 0 ? { unparsed } : {}),
   };
 }
 

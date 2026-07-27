@@ -3,7 +3,7 @@
 import { BrokerId } from '../types';
 import { createPersistentStore } from './persistentStore';
 
-const KEY = 'portfolio_import_log_v1';
+export const KEY = 'portfolio_import_log_v1';
 const MAX_KEYS = 20000;   // 每筆鍵約 40 bytes，上限約 800KB
 
 export interface ImportBatch {

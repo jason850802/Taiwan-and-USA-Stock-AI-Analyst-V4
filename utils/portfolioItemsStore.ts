@@ -11,7 +11,7 @@
 import { PortfolioItem } from '../types';
 import { createPersistentStore } from './persistentStore';
 
-const KEY = 'portfolio_items';
+export const KEY = 'portfolio_items';
 
 // 裁剪策略維持「無」——持股是本體，寧可寫不進去也不砍。
 const store = createPersistentStore<PortfolioItem[]>({

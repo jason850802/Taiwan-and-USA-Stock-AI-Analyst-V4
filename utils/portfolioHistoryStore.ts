@@ -4,8 +4,8 @@
 import { RealizedTrade, DailyPnlSnapshot } from '../types';
 import { createPersistentStore } from './persistentStore';
 
-const TRADES_KEY = 'portfolio_realized_trades_v1';
-const SNAPSHOTS_KEY = 'portfolio_snapshots_v1';
+export const TRADES_KEY = 'portfolio_realized_trades_v1';
+export const SNAPSHOTS_KEY = 'portfolio_snapshots_v1';
 
 /** 儲存信封（位元組相容：`{"version":1,"trades":[...]}`／`{"version":1,"rows":[...]}`） */
 interface TradesFile { version: 1; trades: RealizedTrade[] }
