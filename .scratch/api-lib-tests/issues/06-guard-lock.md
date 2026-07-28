@@ -16,10 +16,22 @@
 
 **Blocked by:** 01 — 測試跑道就位＋config 行為鎖。
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] 上述五群的現行行為全數上鎖，含守門序的順序本身
-- [ ] 假 req/res 只驗可觀察行為（狀態碼、header、回應體、回傳值），不碰內部實作
-- [ ] `npm run gate` 全綠；既有案例零修改；產線碼零變更
-- [ ] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 06）
-- [ ] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+- [x] 上述五群的現行行為全數上鎖，含守門序的順序本身
+- [x] 假 req/res 只驗可觀察行為（狀態碼、header、回應體、回傳值），不碰內部實作
+- [x] `npm run gate` 全綠；既有案例零修改；產線碼零變更
+- [x] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 06）
+- [x] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+
+## Comments
+
+**2026-07-28 完成**（sonnet subagent 撰寫＋主窗整合）。27 案例（agent 26＋批次
+code-review 補 1 條「referer 不可解析（且無 origin）→ 拒絕」）：同源判定
+（x-forwarded-host 優先、origin 短路 referer 救不回）、來源矩陣（雙缺放行照
+findings 第 2 條鎖）、CORS 恆定表頭逐字、shared secret（等長錯值／長度不等）、
+applyGuards 守門序——「後面關卡未被觸及」用會炸的 vi.fn 假件當硬證據，
+「CORS 恆先設」用呼叫序記錄驗證，非憑回應內容推論（Spec 軸抽查認證此點）。
+故障注入 8 條全紅（含 OPTIONS 短路搬位、secret 長度檢查拿掉→timingSafeEqual throw），
+主窗獨立重跑同結果。注入採「find 字串不跨行」策略迴避 CRLF 雷。
+findings 進 1 條（第 13：兩種 403 共用 BAD_REQUEST code）。
