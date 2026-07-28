@@ -99,8 +99,20 @@ describe('validateFinMindParams', () => {
       expect(() => validateFinMindParams({ dataset: 'TaiwanStockPrice', start_date: '2024-1-1' })).toThrow(FinMindClassifiedError);
     });
 
-    it('怪行為：只驗格式不驗真實曆法，「9999-99-99」結構符合就放行', () => {
-      expect(validateFinMindParams({ dataset: 'TaiwanStockPrice', start_date: '9999-99-99' }).startDate).toBe('9999-99-99');
+    it('結構符合但不是真實日期時一律拒收', () => {
+      // 原行為是「只驗格式就放行」（findings 第 7 條），2026-07-28 裁決收口：
+      // 假日期送到上游只會換回空資料或錯誤，使用者看到「查無資料／上游錯誤」，
+      // 被指去查錯的方向——擋在這裡才會說出真正的原因。
+      const badDates = ['9999-99-99', '2021-02-29', '2024-13-01', '2024-00-10', '2024-01-32'];
+      for (const start_date of badDates) {
+        expect(() => validateFinMindParams({ dataset: 'TaiwanStockPrice', start_date }))
+          .toThrow(FinMindClassifiedError);
+      }
+    });
+
+    it('真實存在的日期照樣放行——含閏年 2 月 29 日與年底最後一天', () => {
+      expect(validateFinMindParams({ dataset: 'TaiwanStockPrice', start_date: '2020-02-29' }).startDate).toBe('2020-02-29');
+      expect(validateFinMindParams({ dataset: 'TaiwanStockPrice', start_date: '2024-12-31' }).startDate).toBe('2024-12-31');
     });
 
     it('start_date 未提供或空字串時不驗樣式，回傳 undefined', () => {

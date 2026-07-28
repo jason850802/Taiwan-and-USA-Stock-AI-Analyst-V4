@@ -82,11 +82,19 @@ describe('getModelForMode', () => {
     expect(getModelForMode('thinking')).toBe('gemini-3.1-pro-preview');
   });
 
-  it('只有空白的值不會落回預設，會原樣被當成型號送出去（不 trim）', () => {
-    // findings 第 5 條：空白字串是 truthy，`||` 攔不住它——設定打錯成空白會送出無效型號，
-    // 錯誤要到上游才浮現。首批只鎖現狀，要不要修由使用者裁決。
+  it('只有空白的值視同未設，落回預設型號', () => {
+    // 原行為是「原樣把空白當型號送出去」（findings 第 5(a) 條），2026-07-28 裁決收口：
+    // 空白是 truthy、`||` 攔不住，無效型號會一路送到上游，使用者看到的是「模型無法使用」
+    // 而不是「設定打錯」——症狀離原因太遠。改為取值後先去頭尾空白再判斷。
     vi.stubEnv('GEMINI_MODEL_FAST', '   ');
-    expect(getModelForMode('fast')).toBe('   ');
+    expect(getModelForMode('fast')).toBe('gemini-3.5-flash');
+    vi.stubEnv('GEMINI_MODEL_THINKING', '\t\n ');
+    expect(getModelForMode('thinking')).toBe('gemini-3.1-pro-preview');
+  });
+
+  it('有值但前後帶空白時，去掉空白再回傳——不讓多餘空白混進型號名', () => {
+    vi.stubEnv('GEMINI_MODEL_FAST', '  model-with-spaces  ');
+    expect(getModelForMode('fast')).toBe('model-with-spaces');
   });
 
   it('每次呼叫都重新讀環境變數，不是模組載入時的快照', () => {
@@ -119,11 +127,18 @@ describe('getAllowedOrigins', () => {
     ]);
   });
 
-  it('去尾斜線只去一層——兩條斜線會留下一條', () => {
-    vi.stubEnv('ALLOWED_ORIGIN', 'https://a.example.com/,https://b.example.com//');
+  it('尾斜線一律去到底——多打幾條都不會留下殘骸', () => {
+    // 原行為是「只去一層」（findings 第 5(b) 條），2026-07-28 裁決收口：留下來的那條
+    // 尾斜線永遠比不中瀏覽器送的 Origin（Origin 不帶尾斜線），該白名單項會實質失效，
+    // 而部署方以為自己把整個網域設好了。
+    vi.stubEnv(
+      'ALLOWED_ORIGIN',
+      'https://a.example.com/,https://b.example.com//,https://c.example.com///',
+    );
     expect(getAllowedOrigins()).toEqual([
       'https://a.example.com',
-      'https://b.example.com/',
+      'https://b.example.com',
+      'https://c.example.com',
     ]);
   });
 
@@ -153,12 +168,65 @@ describe('getSharedSecret', () => {
   });
 
   it('空字串回空字串——同樣是 falsy，呼叫端一樣視為停用', () => {
+    // 這條路現在會順帶噴一行警告（見下面的 describe）；這裡只驗回傳值，
+    // 把 warn 接住免得測試輸出多一行雜訊。
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubEnv('PROXY_SHARED_SECRET', '');
     expect(getSharedSecret()).toBe('');
+    warnSpy.mockRestore();
   });
 
   it('有值時原樣回傳，不 trim——尾隨空白是 secret 的一部分', () => {
     vi.stubEnv('PROXY_SHARED_SECRET', ' shared-secret-for-test ');
     expect(getSharedSecret()).toBe(' shared-secret-for-test ');
+  });
+});
+
+describe('getSharedSecret 對「設定存在但為空」的警告', () => {
+  // findings 第 6 條，2026-07-28 裁決收口：空字串與未設同路、驗證無聲停用，
+  // 而 Vercel 環境變數貼上失敗或寫成 `PROXY_SHARED_SECRET=` 就會是這個狀態，
+  // 部署方以為它開著。**放行行為刻意不動**（serverless 不做 fail-fast，見票面），
+  // 只多一行 log 讓它在 Vercel 記錄裡看得見。
+  //
+  // 警告用 module 級旗標做到「每個 process 只喊一次」，所以每個案例都要重載模組才測得準。
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it('值為空字串時警告一次，且同一個 process 內不重複刷', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubEnv('PROXY_SHARED_SECRET', '');
+    const mod = await import('./config.js');
+
+    expect(mod.getSharedSecret()).toBe(''); // 回傳值與改動前逐字相同
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    mod.getSharedSecret();
+    mod.getSharedSecret();
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
+  });
+
+  it('未設時不警告——那是本機 dev 的正常降級路徑，不該被當成問題喊', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubEnv('PROXY_SHARED_SECRET', undefined);
+    const mod = await import('./config.js');
+
+    expect(mod.getSharedSecret()).toBeUndefined();
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    warnSpy.mockRestore();
+  });
+
+  it('有正常值時不警告', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubEnv('PROXY_SHARED_SECRET', 'a-real-secret-value');
+    const mod = await import('./config.js');
+
+    expect(mod.getSharedSecret()).toBe('a-real-secret-value');
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    warnSpy.mockRestore();
   });
 });
