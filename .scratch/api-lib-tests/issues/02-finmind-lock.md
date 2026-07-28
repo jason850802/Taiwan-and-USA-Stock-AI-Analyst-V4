@@ -10,10 +10,21 @@
 
 **Blocked by:** 01 — 測試跑道就位＋config 行為鎖。
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] 驗證、快取秒數、錯誤分類三群現行行為全數上鎖
-- [ ] 時間相依案例用假時鐘固定時點，不用容忍區間
-- [ ] `npm run gate` 全綠；既有案例零修改；產線碼零變更
-- [ ] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 02）
-- [ ] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+- [x] 驗證、快取秒數、錯誤分類三群現行行為全數上鎖
+- [x] 時間相依案例用假時鐘固定時點，不用容忍區間
+- [x] `npm run gate` 全綠；既有案例零修改；產線碼零變更
+- [x] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 02）
+- [x] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+
+## Comments
+
+**2026-07-28 完成**（sonnet subagent 撰寫＋主窗整合）。35 案例（agent 34＋批次
+code-review 補 1 條「訊息含 aborted」的訊息路直測）。故障注入 7 條全紅
+（白名單刪項／樣式放寬×2／長快取換值／429 誤判／去尾拿掉／60 秒地板拿掉），
+主窗獨立重跑同結果。台北午夜三時點（12:00→43200、23:59:30→60 地板、午夜→86400）
+用 UTC ISO＋假時鐘固定，Spec 軸手算比對通過。白名單刻意用寫死字面陣列鎖
+（防「import 匯出反推」型假綠）。findings 進 3 條（第 7～9）。
+已知取捨：錯誤捕捉沿用 toThrow＋try/catch 雙呼叫式（純函式無副作用故無害），
+與 http/yahoo 的 captureError 式並存——首批「重複優於耦合」決策的自然結果，不回頭統一。
