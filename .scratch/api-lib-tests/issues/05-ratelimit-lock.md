@@ -11,10 +11,21 @@
 
 **Blocked by:** 01 — 測試跑道就位＋config 行為鎖。
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] 取 IP、檢查邏輯、載入期兩態的現行行為全數上鎖
-- [ ] 全程零真網路呼叫（假 limiter＋模組重載，不連 Upstash）
-- [ ] `npm run gate` 全綠；既有案例零修改；產線碼零變更
-- [ ] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 05）
-- [ ] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+- [x] 取 IP、檢查邏輯、載入期兩態的現行行為全數上鎖
+- [x] 全程零真網路呼叫（假 limiter＋模組重載，不連 Upstash）
+- [x] `npm run gate` 全綠；既有案例零修改；產線碼零變更
+- [x] 新翻出的可疑行為 append 進本 feature 目錄的 findings（標票號 05）
+- [x] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+
+## Comments
+
+**2026-07-28 完成**（sonnet subagent 撰寫＋主窗整合）。16 案例（agent 15＋批次
+code-review 補 1 條「x-real-ip 陣列取首」）：取 IP 序位（含空字串 cascade 怪行為
+照鎖）、checkRateLimit 全假件矩陣（fail-open 含 console.warn 斷言）、載入期兩態
+（resetModules＋顯式雙態 stub；已設態只驗非 null，經 node_modules 原始碼確認
+`Redis.fromEnv()`／`new Ratelimit()` 建構子純同步無 I/O）。
+故障注入 7 條全紅（fail-open→closed／取首→取末×2／預設 IP／filter(Boolean)／
+every→some／x-real-ip fallback 拿掉），主窗獨立重跑同結果。CRLF 雷同票 04，同法修復。
+findings 進 2 條（第 11：XFF 可偽造的限流身分、第 12：fail-open 遮蔽超限判定）。
