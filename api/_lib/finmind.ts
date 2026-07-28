@@ -47,6 +47,18 @@ const ALLOWED_DATASET_SET = new Set<string>(ALLOWED_DATASETS);
 const TAIWAN_DATA_ID_PATTERN = /^\d{3,6}[A-Z]?$/i;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+/**
+ * 形狀對了還要是真實存在的日期：9999-99-99、2021-02-29（非閏年）這類結構合法但不存在的
+ * 日期，送到上游只會換回空資料或錯誤，使用者被指去查「查無資料」而非「日期打錯」。
+ * 用 ISO 字串往返比對——比 Date.UTC() 逐欄比對安全，後者會把 0050 這種兩位數年份
+ * 映射成 1950 而誤殺真實日期。
+ */
+function isRealCalendarDate(value: string): boolean {
+  const parsed = new Date(`${value}T00:00:00Z`);
+
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value);
+}
+
 function getQueryValue(value: unknown): string {
   if (Array.isArray(value)) {
     return typeof value[0] === 'string' ? value[0] : '';
@@ -80,7 +92,7 @@ export function validateFinMindParams(query: {
     throw new FinMindClassifiedError('BAD_REQUEST');
   }
 
-  if (startDate && !DATE_PATTERN.test(startDate)) {
+  if (startDate && (!DATE_PATTERN.test(startDate) || !isRealCalendarDate(startDate))) {
     throw new FinMindClassifiedError('BAD_REQUEST');
   }
 

@@ -18,7 +18,7 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 ## ⚠️ 兩個必讀的前提
 
@@ -33,12 +33,33 @@
 
 ## 驗收條件
 
-- [ ] 四個走向的新行為各有測試涵蓋（含反例：合法的閏日要通過、單層尾斜線仍正確處理）
-- [ ] 被本票改變的既有行為鎖斷言已更新，且 commit message 逐條列出改了什麼、為什麼
-- [ ] 沒有任何模組載入期的 throw；shared secret 的放行行為與改動前完全相同（只多了 warn）
-- [ ] `npm run gate` 全綠；`package.json`／lock diff 0
-- [ ] 對改動的產線碼跑一次故障注入，確認新行為同樣鎖得住（做法見 api-lib-tests 票 01 的 Comments）
-- [ ] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+- [x] 四個走向的新行為各有測試涵蓋（含反例：合法的閏日要通過、單層尾斜線仍正確處理）
+- [x] 被本票改變的既有行為鎖斷言已更新，且 commit message 逐條列出改了什麼、為什麼
+- [x] 沒有任何模組載入期的 throw；shared secret 的放行行為與改動前完全相同（只多了 warn）
+- [x] `npm run gate` 全綠；`package.json`／lock diff 0
+- [x] 對改動的產線碼跑一次故障注入，確認新行為同樣鎖得住（做法見 api-lib-tests 票 01 的 Comments）
+- [x] 收尾依 implement 紀律跑 code-review（Standards＋Spec 雙軸）
+
+## Comments
+
+**2026-07-28 完成。** 走真正的 TDD：先把行為鎖改成新行為（**確認紅燈 5 條、其餘 55 條
+不受波及**），再改產線碼轉綠——這批鎖是上一輪剛立的，正好用在它們被設計來守的場合。
+
+四個走向的實作取捨：
+- 型號名用 `?.trim() ||`，順帶把「值前後有雜空白」也一起修掉（未設時 `undefined?.trim()`
+  仍是 undefined，落回預設的行為與改動前逐字相同）。
+- 尾斜線 `/\/$/` → `/\/+$/`。**只改 config 的白名單值**，沒動 guard 對「進來的 Origin」
+  的正規化——瀏覽器不送尾斜線，改它是沒有需求的抽象。
+- 空 secret 的警告用 module 級旗標做到每個實例只喊一次（每請求都喊會洗版 Vercel log）。
+  未設不喊——那是本機 dev 的正常降級路徑。**放行行為零變更**。
+- 曆法檢查用 ISO 字串往返比對，不用 `Date.UTC()` 逐欄比對——後者會把 `0050` 這種
+  兩位數年份映射成 1950，誤殺真實日期（node 實測確認）。
+
+故障注入 9 條全紅，含「只喊一次」與「未設不喊」這兩個容易寫成裝飾的斷言
+（注入「改成每次都喊」「未設也誤喊」都會紅）。
+code-review 收一條：既有「空字串回空字串」那條測試沒接 warn，會讓測試輸出多一行雜訊。
+
+**沒做的**：findings 第 2、11、12 條（已裁決維持現狀）、第 13 條（暫緩）。
 
 ## 不在範圍內
 
