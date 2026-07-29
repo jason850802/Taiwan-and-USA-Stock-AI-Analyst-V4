@@ -1,7 +1,14 @@
 # 01 — 費稅純函式支援當沖減半稅率
 
-Status: ready-for-agent
+Status: resolved（2026-07-29；commit hash 見 REPORT.md 的票對照表）
 Blocked by: —（首票）
+
+- [x] 費率設定檔新增 `TW_DAY_TRADE_STOCK_TAX_RATE = 0.0015`（含落日期限與「不做日期閘門」的理由註解）
+- [x] 稅率查詢加 optional 旗標；ETF／債券 ETF 一律忽略（縱深防禦最底層）
+- [x] 賣出費稅計算加 optional 旗標並透傳；單次 floor；手續費零影響
+- [x] 新增 9 個案例、既有 18 案零修改（27/27 綠）
+- [x] `npm run gate` 全綠
+- [ ] code-review：併入票 04 的 main..HEAD 批次雙軸覆核
 
 ## 目標
 
