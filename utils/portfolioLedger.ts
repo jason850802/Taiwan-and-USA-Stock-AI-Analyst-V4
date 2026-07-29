@@ -52,12 +52,12 @@ const isRoundLot = (shares: number): boolean =>
   Number.isFinite(shares) && shares > 0 && shares % TW_LOT_SIZE === 0;
 
 /**
- * 硬閘：這三種理由**永遠不可覆寫成 true**。
+ * 硬閘：這三種理由**永遠不可覆寫成 true**（引擎夾制與賣出視窗停用勾選框共用這一份）。
  * 零股賣單現實中不可能沖銷，而賣出股數是此刻親手輸入的事實（沒有「資料舊了」的藉口）；
  * ETF 不在減半條文射程；美股無證交稅。其餘（no-buy-date／date-mismatch／odd-lot-holding）
  * 都是**軟閘**——那些是儲存的中繼資料，可能沒填或填錯，使用者有權更正。
  */
-const HARD_GATE_REASONS: readonly DayTradeReason[] = ['not-tw-stock', 'etf-not-eligible', 'odd-lot-sell'];
+export const DAY_TRADE_HARD_GATE_REASONS: readonly DayTradeReason[] = ['not-tw-stock', 'etf-not-eligible', 'odd-lot-sell'];
 
 /**
  * 判定一筆賣出是否為現股當沖。**不吃價格**——判定不依賴價格，
@@ -114,7 +114,7 @@ export const buildSellResult = (
     // 當沖有效旗標＝夾制後的（覆寫 ?? 自動判定）。硬閘不過一律強制 false，且**夾制不拋錯**——
     // 與稅率函式忽略非個股旗標同一套縱深防禦：UI 擋第一層、引擎夾第二層、稅率函式守第三層。
     const assessment = assessDayTrade(lot, sharesSold, sellDate);
-    const isDayTrade = HARD_GATE_REASONS.includes(assessment.reason)
+    const isDayTrade = DAY_TRADE_HARD_GATE_REASONS.includes(assessment.reason)
       ? false
       : (input.isDayTrade ?? assessment.eligible);
     const { sellFee, tax } = calcTwSellFeeAndTax(rawGross, lot.symbol, isDayTrade);
