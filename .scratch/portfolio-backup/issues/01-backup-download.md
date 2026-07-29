@@ -10,7 +10,11 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** resolved（2026-07-27；merge `643b965` ＝ 實作 `59e313b` ＋ code-review 兩軸修正 `6496cc8`）
+
+> 補記 2026-07-29：本票原本「完成只記在 commit、票面留 `ready-for-agent`」，掃 frontier 會把
+> 做完的票再撿一次，故改標 `resolved`（沿用 api-lib 票 01 定下的慣例）。下面的驗收條目
+> **未逐條回填勾記**——驗收發生在當時的實作視窗，此處不追認未經手的檢查。
 
 - [ ] 庫存頁工具列有「備份」按鈕，與既有的「匯入對帳單」同一排、同一套 Button 樣式
 - [ ] 按下後下載單一 JSON 檔，檔名帶日期時間且可直接依檔名排序

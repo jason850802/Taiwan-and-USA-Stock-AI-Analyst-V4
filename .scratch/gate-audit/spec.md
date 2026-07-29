@@ -1,6 +1,6 @@
 # Gate 負向測試（Session 1）——實驗章程
 
-Status: ready-for-agent
+Status: resolved（2026-07-26 執行完畢，紀錄見下方 Comments；交付物 `746fd9e`，後續缺口修復 `dd3e1e8`／`655373b`／`115a5ec`）
 Type: audit（單 session 實驗，不拆票；本檔即冷啟動文件，一次 commit 交付）
 
 ## 背景與動機

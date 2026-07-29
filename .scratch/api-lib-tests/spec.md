@@ -1,6 +1,6 @@
 # Spec — api/_lib 首批行為鎖測試
 
-Status: ready-for-agent
+Status: resolved（2026-07-28 七票全 resolved：merge `7b8b708`／`5ecd95e`；findings 13 條裁決結案 `3232e96`，收口票 `abe5ce5`）
 來源：grill-with-docs 2026-07-28 四題拍板；邊界決策見 ADR-0002；詞彙見 CONTEXT.md「後端測試」節
 
 ## 問題陳述
