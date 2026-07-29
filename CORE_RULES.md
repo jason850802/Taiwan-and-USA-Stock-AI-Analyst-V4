@@ -84,7 +84,12 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 `diagnosing-bugs`／`grilling`／`prototype`／`research`／`codebase-design`／`domain-modeling`／
 `resolving-merge-conflicts`。Codex 端無此限制（走鏡像的 `agents/openai.yaml`）。
 
-`implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。
+`implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。**每個 merge commit 必帶
+`Code-Review:` trailer**——implement 類寫兩軸處置（無發現也要寫「無發現」；有收就點名
+收了什麼，內容要可對證、不是打卡）；純文件／規則類寫「免跑」。錨點放 merge 而非票 commit，
+因為「先 commit 後 review」的流程在零發現時沒有票 commit 可蓋。稽核（應 0 筆）：
+`git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"`
+（tag＝制度起點，2026-07-28）。逐票第二訊號＝resolved 票面的 code-review checkbox 必須已勾。
 中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者。**
 
 **機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：
