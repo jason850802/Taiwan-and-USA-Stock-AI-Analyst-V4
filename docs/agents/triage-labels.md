@@ -14,4 +14,6 @@ When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the 
 
 Because this repo's tracker is local markdown, a "label" is the value of the `Status:` line at the top of the issue file (see `issue-tracker.md`).
 
+The five roles above cover **triage only**. The same `Status:` line also carries two lifecycle values: `claimed` (someone is working on it) and `resolved` (done — implementation merged, evidence commits cited). `issue-tracker.md` says when to set them.
+
 Edit the right-hand column to match whatever vocabulary you actually use.
