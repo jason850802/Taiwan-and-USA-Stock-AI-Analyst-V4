@@ -26,17 +26,19 @@ const inputCls = `w-full bg-surface-inset border border-surface-line rounded-ctl
 /**
  * 當沖判定理由的顯示文案（reason 代碼 → 中文）。純函式只回代碼、不持有 UI 文字，
  * 映射放在這裡。用詞照 CONTEXT.md「台股現股當沖」節，不得漂移出詞彙表。
+ *
+ * 刻意用 Record 而不是 switch：本專案 tsconfig 非 strict、也沒開 noImplicitReturns，
+ * switch 漏掉日後新增的 reason 不會編譯錯，只會**靜默少一行理由**——而這行理由正是
+ * 這個勾選框存在的意義。Record 缺 key 則必紅（已實測本專案 tsconfig 下會報 TS2741）。
  */
-const dayTradeReasonText = (reason: DayTradeReason, lot: PortfolioItem): string => {
-  switch (reason) {
-    case 'eligible':          return '符合現股當沖：本批買進日＝賣出日、整張交易';
-    case 'etf-not-eligible':  return 'ETF 當沖不適用減半，證交稅仍 0.1%／債券 ETF 免稅';
-    case 'odd-lot-sell':      return '零股不得當沖；若實為整張當沖＋零股賣出，請拆成兩筆賣出';
-    case 'odd-lot-holding':   return '本批持有含零股，未自動認定；當日整張買賣屬實可手動勾選';
-    case 'date-mismatch':     return `本批買進日 ${lot.buyDate} ≠ 賣出日`;
-    case 'no-buy-date':       return '本批未記買進日；確為當沖可手動勾選';
-    case 'not-tw-stock':      return '';   // 美股完全不顯示當沖控制項，走不到這裡
-  }
+const DAY_TRADE_REASON_TEXT: Record<DayTradeReason, (lot: PortfolioItem) => string> = {
+  eligible:           () => '符合現股當沖：本批買進日＝賣出日、整張交易',
+  'etf-not-eligible': () => 'ETF 當沖不適用減半，證交稅仍 0.1%／債券 ETF 免稅',
+  'odd-lot-sell':     () => '零股不得當沖；若實為整張當沖＋零股賣出，請拆成兩筆賣出',
+  'odd-lot-holding':  () => '本批持有含零股，未自動認定；當日整張買賣屬實可手動勾選',
+  'date-mismatch':    lot => `本批買進日 ${lot.buyDate} ≠ 賣出日`,
+  'no-buy-date':      () => '本批未記買進日；確為當沖可手動勾選',
+  'not-tw-stock':     () => '',   // 美股完全不顯示當沖控制項，走不到這裡
 };
 
 const SellModal: React.FC<SellModalProps> = ({ lot, usdTwdRate, priceHint, onConfirm, onClose }) => {
@@ -150,7 +152,7 @@ const SellModal: React.FC<SellModalProps> = ({ lot, usdTwdRate, priceHint, onCon
             <span className={`text-sm ${dayTradeDisabled ? 'text-slate-500' : 'text-slate-300'}`}>
               現股當沖<span className="text-slate-500">（證交稅減半 0.15%）</span>
               <span className="block text-xs text-slate-500 mt-0.5 font-normal">
-                {shares > 0 ? dayTradeReasonText(assessment.reason, lot) : '輸入賣出股數後判定'}
+                {shares > 0 ? DAY_TRADE_REASON_TEXT[assessment.reason](lot) : '輸入賣出股數後判定'}
               </span>
             </span>
           </label>
