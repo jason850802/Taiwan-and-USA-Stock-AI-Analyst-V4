@@ -97,6 +97,13 @@ const RealizedLedger: React.FC<RealizedLedgerProps> = ({ trades, onDeleteTrade }
                     <td className="p-3">
                       <span className="text-white font-bold">{t.symbol}</span>
                       <span className="ml-1.5 text-[10px] text-slate-500">{t.market === 'TW' ? '台' : '美'}</span>
+                      {/* 只有 true 標「沖」；false 與 undefined 一律無視覺變化——
+                          顯示層不放大三態（「明確一般」與「不知道」對讀帳的人沒有差別）。
+                          尺寸對齊左邊的市場標記，不用 Badge 元件以免撐開表格列高。 */}
+                      {t.isDayTrade === true && (
+                        <span className="ml-1.5 text-[10px] px-1 py-px rounded bg-accent/15 text-accent border border-accent/30"
+                          title="現股當沖：證交稅按 0.15% 減半計">沖</span>
+                      )}
                     </td>
                     <td className="p-3 text-right text-slate-300">{fmt(t.sharesSold)}</td>
                     <td className="p-3 text-right text-slate-300">{t.sellPrice.toFixed(2)}</td>
