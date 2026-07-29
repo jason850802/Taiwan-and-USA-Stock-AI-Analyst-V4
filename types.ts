@@ -110,7 +110,7 @@ export interface PortfolioItem {
   // ── 美股專用 ───────────────────────────────────────────
   purchaseCurrency?: 'TWD' | 'USD'; // 購入幣別（undefined = TWD 向下相容）
   totalCostUSD?: number;            // 總成本 USD（美股以USD購入時，固定值）
-  isUsEtf?: boolean;                // true = 美股ETF（$3固定費）；false = 個股（0.008%）
+  isUsEtf?: boolean;                // true = 美股ETF（$3固定費）；false = 個股（0.08%）
   exchangeRate?: number;            // 買入當時 USD/TWD（Phase 13）。成本換台幣一律用它；
                                     // undefined＝舊資料，顯示「—」並退回即時匯率（不猜、不造史料 D-10）
   // ── 歷史損益（Phase 10）────────────────────────────────

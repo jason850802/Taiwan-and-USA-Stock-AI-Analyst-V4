@@ -76,13 +76,16 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 大霧工程（跨 session） | `wayfinder` 決策票地圖 → 收斂後接 `to-spec` |
 | 壞掉／沒反應／數字不對 | `diagnosing-bugs`（**先建紅燈迴圈才准提假設**） |
 
-**Claude 端啟動方式（易撞牆）**：路由表主線的 `grill-with-docs`／`to-spec`／`to-tickets`／
+**主線 skills 的啟動方式（兩端皆同，易撞牆）**：路由表主線的 `grill-with-docs`／`to-spec`／`to-tickets`／
 `implement`／`wayfinder`／`triage`／`ask-matt` 是 Matt 的 **user-invoked skill，不在模型可
 自動呼叫清單**（Skill 工具叫不到）。兩條路都算數：使用者自己打 `/mattpocock-skills:<name>`，
 或**依使用者 2026-07-26 授權，由助手讀 `.agents/skills/<name>/SKILL.md` 照內容執行**
 （要向使用者標明「現在進入 X 階段」）。模型可自行呼叫的是 `code-review`／`tdd`／
 `diagnosing-bugs`／`grilling`／`prototype`／`research`／`codebase-design`／`domain-modeling`／
-`resolving-merge-conflicts`。Codex 端無此限制（走鏡像的 `agents/openai.yaml`）。
+`resolving-merge-conflicts`。**Codex 端限制相同**——那批 SKILL.md 的 frontmatter 有
+`disable-model-invocation: true`，兩端 harness 都吃；2026-07-29 交接測試實測 Codex 只列得出
+19 個鏡像 skills 中的 9 個，缺的正是主線那批。所以派票給 Codex 執行時，它同樣得讀
+`.agents/skills/<name>/SKILL.md` 照做，不能靠斜線指令。
 
 `implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。**每個 merge commit 必帶
 `Code-Review:` trailer**——implement 類寫兩軸處置（無發現也要寫「無發現」；有收就點名
