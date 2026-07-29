@@ -1,5 +1,7 @@
 // utils/portfolioFees.ts — 庫存費用/稅純函式（Phase 10 T1 自 components/Portfolio.tsx 原樣搬出）
 // 行為鎖：portfolioFees.test.ts。改任何常數/rounding 前先跑 npm run test。
+// 台股費率／稅率不在本檔：見 config/twFeeRates.ts（設定與計算分離，本檔只留 rounding 規則）。
+import { TW_BROKERAGE_FEE_RATE, TW_SECURITIES_TAX_RATES } from '../config/twFeeRates';
 
 // ── 判斷台股 ───────────────────────────────────────────────────────────────
 // 實作已移至 utils/market.ts（市場分類唯一權威，Phase 12 T1）；此處僅 re-export 保呼叫端不動。
@@ -15,19 +17,15 @@ export const getTwStockType = (symbol: string): TwStockType => {
   }
   return 'stock';
 };
-export const getTaxRate = (symbol: string): number => {
-  const t = getTwStockType(symbol);
-  if (t === 'bond-etf') return 0;
-  if (t === 'etf') return 0.001;
-  return 0.003;
-};
+export const getTaxRate = (symbol: string): number =>
+  TW_SECURITIES_TAX_RATES[getTwStockType(symbol)];
 
 // ── 台股手續費 ──────────────────────────────────────────────────────────────
 export const calcTwBuyFee = (base: number): number =>
-  base > 0 ? Math.max(1, Math.floor(base * 0.001425)) : 0;
+  base > 0 ? Math.max(1, Math.floor(base * TW_BROKERAGE_FEE_RATE)) : 0;
 export const calcTwSellFeeAndTax = (value: number, symbol: string) => {
   if (value <= 0) return { sellFee: 0, tax: 0 };
-  const sellFee = Math.max(1, Math.floor(value * 0.001425));
+  const sellFee = Math.max(1, Math.floor(value * TW_BROKERAGE_FEE_RATE));
   const tax = Math.floor(value * getTaxRate(symbol));
   return { sellFee, tax };
 };
