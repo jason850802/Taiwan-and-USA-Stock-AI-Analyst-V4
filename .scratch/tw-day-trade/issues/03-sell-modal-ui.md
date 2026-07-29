@@ -1,6 +1,6 @@
 # 03 — 賣出視窗：自動判定＋可覆寫＋硬軟閘 UI
 
-Status: resolved（2026-07-29；commit hash 見 REPORT.md 的票對照表）
+Status: resolved（2026-07-29；commit 3019bcc）
 Blocked by: 02
 
 - [x] 台股個股：勾選框預設＝自動判定結果、理由由 reason 代碼映射
@@ -12,7 +12,7 @@ Blocked by: 02
 - [x] DOM 驗證五情境全過（數字與手算值逐一比對，見 REPORT.md）
 - [x] console 零紅字（僅既有 recharts 容器尺寸 warn，與本功能無關）
 - [x] `npm run gate` 全綠
-- [ ] code-review：併入票 04 的 main..HEAD 批次雙軸覆核
+- [x] code-review：已併入票 04 的 main..HEAD 批次雙軸覆核（Spec 軸無發現；Standards 軸 1 筆 R-01 已修，commit 53e2871）
 
 ## 目標
 
