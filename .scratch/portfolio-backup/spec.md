@@ -1,6 +1,6 @@
 # Spec：庫存備份與回灌（P1）
 
-Status: ready-for-agent
+Status: resolved（P1 範圍結案：兩票 2026-07-27 上 main，merge `643b965`／`3758cbc`）
 建立：2026-07-27（to-spec，承 grill-with-docs）
 依據：`docs/adr/0001-portfolio-backup-restore-overwrite.md`、詞彙表 `CONTEXT.md`
 
