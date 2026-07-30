@@ -1,7 +1,15 @@
 # 02 — 均線暖身期無值契約收斂（TS2345×4）
 
-Status: ready-for-agent
+Status: resolved（2026-07-30，證據 commit 086c770）
 Blocked by: —（依 spec 順序第二票）
+
+## Resolution
+
+- 修法＝四呼叫點 `?? 0`（與 ToNumber(null)→+0 逐案等價）；getDir 簽章／守衛零改動；types.ts 零 diff。
+- 刻意棄用 `?? undefined`：會把邊界日 'up' 翻成 'flat'（票面警告的行為變更雷，行為鎖有鎖此案）。
+- 行為鎖 7 案先行綠→改後原封綠；故障注入 2 次精準紅（?? undefined 翻邊界日／拆值守衛翻暖身值）。
+- strict 4 → 0（欠帳歸零）；666 → 673 案全綠既有零修改；gate 全綠。
+- code-review 兩軸：已跑（見 merge commit trailer）。 [x]
 
 ## What to build
 
