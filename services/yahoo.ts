@@ -702,10 +702,13 @@ const enrichChartData = (
           ma10: ma10[i] ?? undefined,
           ma20: ma20[i] ?? undefined,
           ma60: ma60[i] ?? undefined,
-          ma5Dir: i > 0 ? getDir(ma5[i], ma5[i-1]) : 'flat',
-          ma10Dir: i > 0 ? getDir(ma10[i], ma10[i-1]) : 'flat',
-          ma20Dir: i > 0 ? getDir(ma20[i], ma20[i-1]) : 'flat',
-          ma60Dir: i > 0 ? getDir(ma60[i], ma60[i-1]) : 'flat',
+          // 暖身期無值以 ?? 0 收斂型別：等價於比較運算子對 null 的 ToNumber(+0) 轉換，
+          // 保留邊界日（第一個有值日 vs 前一日無值）判為 'up' 的現行行為——
+          // 改成 ?? undefined 會走 getDir 的 undefined 守衛、把邊界日翻成 'flat'（行為鎖有鎖此案）。
+          ma5Dir: i > 0 ? getDir(ma5[i] ?? 0, ma5[i-1] ?? 0) : 'flat',
+          ma10Dir: i > 0 ? getDir(ma10[i] ?? 0, ma10[i-1] ?? 0) : 'flat',
+          ma20Dir: i > 0 ? getDir(ma20[i] ?? 0, ma20[i-1] ?? 0) : 'flat',
+          ma60Dir: i > 0 ? getDir(ma60[i] ?? 0, ma60[i-1] ?? 0) : 'flat',
           rsi: rsi[i] ?? undefined,
           macd: macdLine[i] ?? undefined,
           macdSignal: signalLine[i] ?? undefined,

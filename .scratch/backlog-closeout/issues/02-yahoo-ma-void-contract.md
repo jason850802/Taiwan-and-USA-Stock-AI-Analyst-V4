@@ -1,6 +1,6 @@
 # 02 — 均線暖身期無值契約收斂（TS2345×4）
 
-Status: ready-for-agent
+Status: claimed（2026-07-30，單窗自主連跑）
 Blocked by: —（依 spec 順序第二票）
 
 ## What to build
