@@ -1,7 +1,15 @@
 # 04 — EPS 零值顯示處置（F-01，spike 預算制）
 
-Status: ready-for-agent
+Status: resolved（2026-07-30，證據 commit 6bafc80，收法(1)紀錄結案）
 Blocked by: —（依 spec 順序末票）
+
+## Resolution
+
+- 走收法 (1)：tooltip 既已可區分——零值季「EPS 0.00 元」、無資料季無 tooltip（顯示空）。
+  四點對照 DOM 證據與機制分析記入 findings F-01；spike／wontfix 均不需啟動。
+- 零碼變更：不動資料層、不動 formatter、既有 679 案零修改；strict 0 不變；gate 全綠。
+- 取證方法（store dispatch 等價於 hover 的理由）已如實記入 findings。
+- code-review：免跑（純紀錄，零程式碼變更）。 [x]
 
 ## What to build
 
