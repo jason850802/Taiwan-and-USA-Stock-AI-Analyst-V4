@@ -1,6 +1,6 @@
 # 01 — React DOM 入口補正式型別依賴（TS7016）
 
-Status: ready-for-agent
+Status: claimed（2026-07-30，單窗自主連跑）
 Blocked by: —（依 spec 順序第一票）
 
 ## What to build

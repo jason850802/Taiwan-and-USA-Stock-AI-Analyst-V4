@@ -79,3 +79,24 @@
 **未處理原因**：同 F-02，改成 reject（或 resolve 已串流內容）都會改變對外語意，屬裁決事項。
 
 **待裁決**：維持現狀，或改為以特定分類 reject 讓呼叫端能收尾。
+
+---
+
+## F-04 — `@types/react` 只靠傳遞依賴存在，整個 TSX 型檢押在上游間接依賴上
+
+**票號**：收口批次票 01（順帶查核，登記不修）
+**性質**：現行依賴結構風險，非行為缺陷。
+
+**現象**：`package.json` 未宣告 `@types/react`，但 `node_modules/@types/react@19.2.14`
+存在——來源是 `react-markdown` 與 `recharts → react-redux` 的依賴宣告
+（`npm ls @types/react` 可證）。整個專案的 TSX 型別檢查（React 元件 props、hooks 簽章）
+都押在這兩個上游套件「剛好」帶入的間接依賴上。
+
+**為什麼可能重要**：任一上游改版把 `@types/react` 從 dependencies 移到 peerDependencies
+（生態系常見走向），`npm install` 後型別就無聲消失，tsc 會在毫無本地改動的情況下
+突然噴出大量 React 相關錯誤。屆時的錯誤訊息不會指向真正原因。
+
+**未處理原因**：修法＝正式安裝 `@types/react` 進 devDependencies，但收口批次授權書
+第 1 條只解鎖 `@types/react-dom` 一套件；擅自加裝即越權。
+
+**待裁決**：是否比照票 01 模式另開一次性紅線解除，把 `@types/react` 轉為正式 devDependency。
