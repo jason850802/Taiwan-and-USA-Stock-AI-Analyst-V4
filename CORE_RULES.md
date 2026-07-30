@@ -6,8 +6,7 @@
 > 規則內容一律以本檔為準——避免兩份不同步。工具專屬的差異（skills 目錄、呼叫方式）
 > 寫在各自的入口檔，其餘全部在這裡。
 >
-> 與全域 `C:\Users\jason\Documents\Codex\agent-dual-core\CORE_RULES.md` 的關係：
-> 那是跨專案基準，本檔是專案層，**衝突時以本檔為準**。
+> 全域基準：`agent-dual-core\CORE_RULES.md`（跨專案）；**衝突時以本檔為準**。
 
 ## Project
 
@@ -39,15 +38,10 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 目前進度與下一步 | `.scratch/` 的未完成票據 ＋ `git log` |
 | 查 Phase 1~12 的歷史決策 | `.planning/phases/`（**唯讀檔案庫**，新工作不寫入） |
 
-## 制度檔（跨專案，位於 C:\Users\jason\Documents\Codex\agent-dual-core\）
+## 制度檔（跨專案）
 
-| 時機 | 檔案 |
-|---|---|
-| 交辦 subagent／選模型前 | `MODEL-DISPATCH.md` |
-| 判斷完成／升級／該不該問使用者 | `JUDGMENT.md` |
-| 動 shell、路徑、驗證前 | `ENVIRONMENT-GOTCHAS.md` |
-| 交辦單怎麼寫 | `TASK-TEMPLATES.md` |
-| 想改制度檔／記錄踩雷 | `MAINTENANCE.md`（教訓寫 `LESSONS.md`） |
+交辦／選模型、判斷完成或升級或該不該問、環境雷、交辦單範本、改制度與記教訓——
+一律走總索引 `C:\Users\jason\Documents\Codex\agent-dual-core\INDEX.md`（含最小閱讀路徑）。
 
 ## 程式風格
 
@@ -60,7 +54,6 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - 依賴單軌：只維護 `package.json`＋`package-lock.json`（index.html 的 esm.sh importmap 已移除，Vite 從 node_modules 解析）。
 - 測試跑道＝vitest（`npm run test`）：核心 utils 有行為鎖案例；仍無 lint、tsconfig 非 strict。改被鎖的檔案前先跑 test。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
-- 金鑰驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果（用 Bash 工具跑；PowerShell 5.1 沒有 grep）。
 - Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；**改型號（或改 `LLM_PROVIDER`）三處都要動**——前兩處，加上 `services/_shared/geminiCache.ts` 的 `ENGINE_TAG` bump 一格讓前端舊模型快取失效（前端拿不到型號，只能靠這個不含型號名的世代代號；`services/gemini.ts` 仍不含型號字串）。不 bump 的後果有上限：key 仍有日期段且跨日全清，最壞是當天繼續端出舊模型的結果。
 - `services/gemini.ts` 的 5 個 system instruction 受 snapshot **逐位元組鎖定**（`utils/geminiRules.test.ts`）——改一個字就會讓 AI 分析快取全失效，動它前先讀 `.planning/phases/12-arch-deepening/12-CONTEXT.md` 的 D-06。
 
@@ -85,28 +78,19 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 因為「先 commit 後 review」的流程在零發現時沒有票 commit 可蓋。稽核（應 0 筆）：
 `git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"`
 （tag＝制度起點，2026-07-28）。逐票第二訊號＝resolved 票面的 code-review checkbox 必須已勾。
-中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者**——
-且要問對：**攤開現值、依據、以及「新值會改變什麼」**，不可把使用者給的新值當成正當預設、
-只問適用範圍（2026-07-29 盲測實錄：護欄有觸發，但把當沖稅率當成一般賣出的目標值，
-建議選項正是危險選項；詳 `docs/claude-handoff-findings.md`）。
+中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者，而且要問對**：
+**攤開現值、依據、新值會改變什麼**，不可把使用者給的新值當正當預設、只問適用範圍
+（2026-07-29 盲測教訓，詳 `docs/claude-handoff-findings.md`）。
 
-**機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：
-tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
-→ `package.json`／`package-lock.json` diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
+**機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：`npm run gate` 一鍵跑完機械五道——
+tsc 0 錯 → vitest 全綠（**既有案例零修改**）→ build → 金鑰掃描（dist ＋ git 追蹤原始碼＋用 `.env`
+值抓任何形狀的秘密；真金鑰非 `AIza` 前綴，手動 grep 掃不到）→ `package.json`／lock diff 0。
+**runtime 類腳本管不到，仍人工**：console 零紅字、UI 量數字不靠肉眼、快取類換乾淨代號。
+**既有測試紅燈＝語意變更的訊號，停下來問使用者；不是把期望值改綠。**
+各道 gate 的紅燈能力與剩餘缺口：`docs/gate-audit-findings.md`（2026-07-26 逐道故障注入驗證）。
 
-**既有測試紅燈＝語意變更的訊號，停下來問使用者；不是把期望值改綠。**（費率那一處已由
-`config/twFeeRates.ts` 的檔頭就地擋住，但這條適用於所有行為鎖。）
-
-一鍵版 **`npm run gate`**（`scripts/run-gate.mjs`，零依賴）把前五道收成一個指令，
-金鑰掃描比文件版更嚴（也掃 git 追蹤中的原始碼、並用 `.env` 值抓任何形狀的秘密——
-真金鑰不是 `AIza` 前綴，文件版掃不到）。**runtime 類驗證腳本管不到**——console 零紅字、
-UI 量數字、快取換乾淨代號，仍照上面的原規則人工做。各道 gate 的紅燈能力與剩餘缺口見
-`docs/gate-audit-findings.md`（2026-07-26 逐道故障注入驗證）。
-
-> GSD 已於 2026-07-26 完全停用：**兩端 hooks 解除註冊，且指令／agent 面已移出專案**
-> （`.claude/commands/`、`.claude/agents/`、`.codex/agents/` 連同安裝器狀態檔搬進備份區，
-> 只留惰性的框架本體與未註冊 hooks）。`gsd:` 斜線指令與 gsd-* subagent 自此不再載入。
-> 備份含還原說明：`E:\My Project\_gsd-backup-2026-07-26\`。試行不通過可隨時回退。
+> GSD 已於 2026-07-26 完全停用（兩端 hooks 解除註冊、指令／agent 面移出專案，`gsd:` 指令與
+> gsd-* subagent 不再載入）。備份含還原說明：`E:\My Project\_gsd-backup-2026-07-26\`。
 
 ## Project Skills
 
@@ -131,14 +115,7 @@ Codex 只收 PLAN 文件不自行規劃）；`start-dev`（起 dev 環境固定�
 ## 雙工具運作（Claude Code ＋ Codex）
 
 - **入口檔**：Claude 讀 `CLAUDE.md`、Codex 讀 `AGENTS.md`，兩者都只指向本檔。改規則改這裡，不要改入口檔。
-- **Skills 鏡像**：`.agents/skills/` 是 **Codex 的讀取端，兩個來源餵它**，
-  都由 `npm run sync:skills` 維護（白名單見 `scripts/sync_skills_mirror.py`）：
-  1. 專案自有 skills ← `.claude/skills/`（**唯一事實來源**，要改 skill 改這裡）
-  2. Matt Pocock skills ← Claude 的 plugin 快取（Claude 直接由 plugin 載入，
-     Codex 讀不到 plugin 目錄故需鏡像；plugin 更新後重跑同步即可）
-  **不要手動改鏡像端**——白名單外的東西腳本不會碰，手動塞的檔案會變成永不更新的孤兒
-  （腳本會以 `[WARN]` 列出孤兒但不擋，見 `docs/gate-audit-findings.md` G8）。
-- **Matt skills 呼叫方式**：Claude 用 Skill 工具／斜線指令（由 plugin 提供）；
-  Codex 讀 `.agents/skills/` 內的鏡像，透過各 skill 的 `agents/openai.yaml`。
+- **Skills 鏡像與呼叫**：`.agents/skills/`（Codex 讀取端）由 `npm run sync:skills` 維護——
+  兩個來源、白名單制、**不要手動改鏡像端**；機制、孤兒行為、兩端呼叫方式見 `docs/skill-invocation.md`。
 - **交接紀律**：票據刻意**不寫檔案路徑與行號**（耐久原則，票可能躺數天）——
   接手方依行為描述自行探索現況程式碼。一票一個 commit。

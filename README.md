@@ -42,7 +42,7 @@
    兩者都就緒後，瀏覽器開 **http://localhost:3000**；前端的 `/api` 請求由 Vite proxy 轉給後端 3001。
    固定的起環境流程請見 `start-dev` skill（助手會用 PowerShell `Start-Process` 開兩個獨立視窗並輪詢兩埠就緒）。
 
-4. 金鑰外洩驗證：`npm run build` 後，對 `dist/` 掃描字串 `AIza`（Gemini 金鑰前綴）應**無任何結果**。
+4. 金鑰外洩驗證：`npm run gate`（金鑰掃描涵蓋 `dist/` 與 git 追蹤原始碼，並用 `.env` 值做字面比對——比單掃 `AIza` 前綴嚴格，真金鑰並非該前綴）。
 
 ## Claude Code Skills（`.claude/skills/`）
 

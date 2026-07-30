@@ -28,11 +28,18 @@ Codex 只列得出 19 個鏡像 skills 中的 9 個，缺的正是主線那批�
    讀 `.agents/skills/<name>/SKILL.md`（鏡像端，版本穩定、兩端同源）照著做，
    並向使用者標明「現在進入 X 階段」。
 
+模型可自行呼叫的那 9 個，兩端對接方式不同：Claude 走 Skill 工具（plugin 提供）；
+Codex 由鏡像內各 skill 的 `agents/openai.yaml` 對接。
+
 派票給 Codex 執行 `implement` 時走第 2 條：它同樣得讀 SKILL.md，不能靠斜線指令。
 
 ## 鏡像與來源
 
 `.agents/skills/` 是 Codex 的讀取端，由 `npm run sync:skills` 從兩個來源維護
-（專案自有 skills ← `.claude/skills/`；Matt skills ← Claude 的 plugin 快取）。
-**不要手動改鏡像端**，白名單見 `scripts/sync_skills_mirror.py`。
+（專案自有 skills ← `.claude/skills/`（唯一事實來源，要改 skill 改這裡）；
+Matt skills ← Claude 的 plugin 快取——Claude 直接由 plugin 載入，Codex 讀不到
+plugin 目錄故需鏡像，plugin 更新後重跑同步即可）。
+**不要手動改鏡像端**，白名單見 `scripts/sync_skills_mirror.py`：白名單外的東西
+腳本不碰，手動塞進鏡像的檔案會變成永不更新的孤兒；sync 與 `--check` 會以
+`[WARN]` 列出孤兒但不擋（`docs/gate-audit-findings.md` G8）。
 `phase-loop` 刻意不進鏡像——規劃由 Claude／Fable 做，Codex 只收 PLAN 文件執行。
