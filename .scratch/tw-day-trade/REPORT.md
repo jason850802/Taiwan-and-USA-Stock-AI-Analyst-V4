@@ -209,14 +209,22 @@ console 零紅字（3000 與 3001 皆然）。截圖工具在本機會逾時（�
 
 ---
 
-## 8. 合併指令（驗收通過後由使用者執行）
+## 8. 合併（已完成）
 
-```bash
-git checkout main && git merge --no-ff phase/tw-day-trade -F .scratch/tw-day-trade/MERGE_MSG.txt
-```
+使用者於 2026-07-30 核准，已合併：**merge commit `0311855`**（`--no-ff`，帶 `Code-Review:` trailer）。
+合併後 main 上 `npm run gate` 五道全綠；trailer 稽核
+`git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"` 回 **0 筆**。
+feature branch `phase/tw-day-trade` 保留未刪（要刪：`git branch -d phase/tw-day-trade`）。
 
-merge message 已備妥在 `.scratch/tw-day-trade/MERGE_MSG.txt`（含 `Code-Review:` trailer）。
-若想自己打，trailer 內容是：
+> **踩到的雷（下次別重犯）**：本檔原本寫的指令
+> `git merge --no-ff phase/... -F .scratch/tw-day-trade/MERGE_MSG.txt` **會失敗**——
+> `MERGE_MSG.txt` 只 commit 在 feature branch 上，`git checkout main` 之後它不在工作樹裡，
+> git 回 `could not read file`。要嘛把訊息檔放在合併目標分支上／repo 外，要嘛改用
+> `git merge --no-ff <branch> -m "…"` 直接帶訊息。
+> 另外 `git show <branch>:<path>` 在 Git Bash 會被 MSYS 路徑轉換吃掉冒號
+> （`phase/x:.scratch/y` 變成 `phase\x;.scratch\y`），要 `MSYS_NO_PATHCONV=1` 才能取檔。
+
+原始 trailer 內容（供稽核對照）：
 
 ```
 Code-Review: Standards＋Spec 雙軸跑過 main..HEAD 全 diff。Spec 軸無發現（另實地查核
