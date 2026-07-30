@@ -1,7 +1,15 @@
 # 01 — React DOM 入口補正式型別依賴（TS7016）
 
-Status: ready-for-agent
+Status: resolved（2026-07-30，證據 commit 007228b）
 Blocked by: —（依 spec 順序第一票）
+
+## Resolution
+
+- strict 5 → 4：TS7016 歸零、零新增診斷（殘餘＝票 02 的 TS2345×4，位置不變）。
+- `tsc --noEmit` exit 0；666 案全綠零修改；`npm run gate` 全綠（套件 diff 入 commit 後跑）。
+- diff 範圍自查：package.json 一行；lockfile 兩 hunk 11 行全屬 @types/react-dom 自身條目。
+- @types/react 傳遞依賴查核屬實，已登記 findings F-04（未安裝，待裁決）。
+- code-review 兩軸：已跑（見 merge commit trailer）。 [x]
 
 ## What to build
 
