@@ -1,6 +1,6 @@
 # 04 — EPS 零值顯示處置（F-01，spike 預算制）
 
-Status: ready-for-agent
+Status: claimed（2026-07-30，單窗自主連跑）
 Blocked by: —（依 spec 順序末票）
 
 ## What to build

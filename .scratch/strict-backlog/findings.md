@@ -34,7 +34,29 @@
 不是助手該順手改的。可能的處置方向（未實作、未評估）：零值改畫最小高度長條、
 或在無資料季度顯示明確的「—」。
 
-**待裁決**：是否要另開票處理；若要，屬 UI 顯示語意，不屬 strict 欠帳這條線。
+**裁決結果（2026-07-30）**：**收法 (1) 紀錄結案，零碼變更**——使用者拍板收口批次票 04
+（授權書第 4 條，三收法依序嘗試），第一步查核即成立：tooltip 層已可區分零值與無資料。
+
+**tooltip 對照證據**（2026-07-30，2409 注入資料實機 DOM 讀值；同一張圖同一輪取證）：
+
+| 季度（注入值） | 長條／標籤 | tooltip 實際顯示 |
+|---|---|---|
+| 24Q3（1.25，對照） | 有／`1.25` | visible：「EPS 1.25 元」 |
+| **25Q4（精確 0）** | **無／無**（F-01 基線重現） | **visible：「EPS 0.00 元」** |
+| **26Q1（null 無資料）** | **無／無** | **hidden（整個 tooltip 不出現）** |
+| 26Q2（0.73，對照） | 有／`0.73` | visible：「EPS 0.73 元」 |
+
+區分語意：hover 零值季 → 跳出「EPS 0.00 元」；hover 無資料季 → 無任何 tooltip（票面
+「顯示空」的收法判準）。機制：`EpsTooltip` 自寫 `d.eps != null ? toFixed(2)+' 元' : '—'`，
+零值走 `0.00 元` 分支；無資料季 recharts 對 null 值產不出 payload 條目，`payload.length`
+守衛讓 tooltip 整個不渲染（『—』分支在軸觸發路徑上實際到不了，但「無 tooltip」本身
+即與零值的「0.00 元」可區分）。
+
+**取證方法備註**：瀏覽器 pane 未顯示（截圖／座標滑鼠不可用，見 LESSONS），activation 走
+recharts 3 內部 store 直接 `dispatch({type:'tooltip/setMouseOverAxisIndex', payload:{activeIndex,…}})`
+——與真實滑鼠 hover 走的是同一個 reducer（滑鼠 handler 最終 dispatch 同一 action），
+state 與 render 路徑逐位相同，僅繞過座標命中測試（與 tooltip 內容無關）。
+資料注入走 App 自身 sessionStorage 快取層（`tw_fund_2409_<日期>`），已於取證後清除。
 
 ---
 
