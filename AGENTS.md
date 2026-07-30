@@ -7,7 +7,7 @@
 ## 不開檔也要遵守的五條
 
 1. **金鑰紅線**：`GEMINI_API_KEY` 只能存在後端／環境變數，**絕不可進前端 bundle 或 git**。
-   驗證法：`npm run build` 後 `grep -r "AIza" dist/` 必須無結果。
+   驗證法：`npm run gate`（金鑰掃描涵蓋 dist 與追蹤原始碼；手動 `grep AIza` 掃不到真金鑰，勿再用）。
 2. **改 `.ts/.tsx` 後最低驗證 `npx tsc --noEmit`**；只讀過程式碼不算驗證。完整 gate 見 `CORE_RULES.md`。
 3. **環境**：Windows ＋ PowerShell 5.1 沒有 `&&`；路徑含空格必加引號；寫檔一律 UTF-8。
 4. **程式風格**：2 空格縮排、單引號、繁體中文註解、camelCase／PascalCase；
