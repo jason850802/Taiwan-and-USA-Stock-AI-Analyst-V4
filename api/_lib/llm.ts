@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -229,8 +229,10 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
     let stderr = '';
 
     // Windows 對部分 spawn 失敗（如非 PE 執行檔 → ERROR_BAD_EXE_FORMAT）是同步 throw 而非 'error' 事件，
-    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑
-    let child: ReturnType<typeof spawn>;
+    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑。
+    // 型別標成 ChildProcessWithoutNullStreams（不用 ReturnType<typeof spawn>，那會取到最寬的
+    // overload 使三條 stdio 變 nullable）：下面的 spawn 未指定 stdio，依 Node 契約三條 pipe 必然存在。
+    let child: ChildProcessWithoutNullStreams;
     try {
       child = spawn(exePath, args, {
         cwd: os.tmpdir(), // 避免載入專案 hooks/CLAUDE.md/skills
@@ -370,8 +372,9 @@ function callClaudeCliStream(
     } | null = null;
 
     // Windows 對部分 spawn 失敗（如非 PE 執行檔 → ERROR_BAD_EXE_FORMAT）是同步 throw 而非 'error' 事件，
-    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑
-    let child: ReturnType<typeof spawn>;
+    // 必須 try/catch 讓同步/非同步失敗走同一條分類與快取清除路徑。
+    // 型別同非串流路徑：未指定 stdio 的 spawn 依契約三條 pipe 必然存在（見 callClaudeCli 註解）。
+    let child: ChildProcessWithoutNullStreams;
     try {
       child = spawn(exePath, args, {
         cwd: os.tmpdir(), // 避免載入專案 hooks/CLAUDE.md/skills
