@@ -425,6 +425,9 @@ function callClaudeCliStream(
       clearTimeout(totalTimeoutId);
       clearTimeout(firstChunkTimeoutId);
       child.kill();
+      // 取消也是一種收斂（F-03 收口）：讓 await 端能往下走做收尾；
+      // settled 已設，後到的 close/error/result 不會二次 settle。
+      reject(new ClassifiedError('CANCELLED'));
     };
 
     const parseLine = (line: string) => {
@@ -452,6 +455,9 @@ function callClaudeCliStream(
         && event.event?.type === 'content_block_delta'
         && typeof event.event.delta?.text === 'string'
       ) {
+        // 已收斂（取消／逾時）後才到的增量靜默丟棄（F-02 收口）：
+        // 唯一呼叫端的 onDelta 是往 client response 寫入，收斂後對端已斷線。
+        if (settled) return;
         clearTimeout(firstChunkTimeoutId);
         streamedText += event.event.delta.text;
         onDelta(event.event.delta.text);

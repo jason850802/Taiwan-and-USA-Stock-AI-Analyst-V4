@@ -28,6 +28,7 @@ const statusByCode: Record<GeminiErrorCode, number> = {
   UPSTREAM_ERROR: 502,
   BAD_REQUEST: 400,
   MISSING_KEY: 500,
+  CANCELLED: 499, // 非串流路徑不產生取消分類，僅 Record 型別完整性
 };
 
 export const maxDuration = 120;

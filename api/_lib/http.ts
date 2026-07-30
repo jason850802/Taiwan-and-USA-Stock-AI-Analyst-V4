@@ -6,7 +6,8 @@ export type GeminiErrorCode =
   | 'RATE_LIMITED'
   | 'UPSTREAM_ERROR'
   | 'BAD_REQUEST'
-  | 'MISSING_KEY';
+  | 'MISSING_KEY'
+  | 'CANCELLED';
 
 export type GeminiRequest = {
   prompt: string;
@@ -25,6 +26,7 @@ const errorMessages: Record<GeminiErrorCode, string> = {
   UPSTREAM_ERROR: 'AI 服務暫時無法回應，請稍後再試。',
   BAD_REQUEST: '請求格式不正確，請重新整理頁面後再試一次。',
   MISSING_KEY: '後端尚未設定 Gemini API 金鑰，請聯絡管理員設定環境變數。',
+  CANCELLED: '請求已由呼叫端取消。',
 };
 
 export class ClassifiedError extends Error {

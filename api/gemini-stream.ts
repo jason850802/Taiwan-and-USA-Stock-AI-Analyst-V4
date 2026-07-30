@@ -30,6 +30,7 @@ const statusByCode: Record<GeminiErrorCode, number> = {
   UPSTREAM_ERROR: 502,
   BAD_REQUEST: 400,
   MISSING_KEY: 500,
+  CANCELLED: 499, // client 已斷線（nginx 慣例碼）；實際上取消分支不寫回應，僅型別完整性
 };
 
 export const maxDuration = 200;
@@ -71,6 +72,14 @@ export default async function handler(req: GeminiStreamReq, res: GeminiStreamRes
     const classifiedError = error instanceof ClassifiedError
       ? error
       : classifyGeminiError(error);
+
+    // 取消分類＝client 已斷線觸發（req 'close' → cancelRef.cancel）：靜默收尾——
+    // 不對已斷線的 response 寫任何內容（error 行／status/json 都不寫），
+    // 只 res.end() 讓 handler 的 async frame 確定結束（F-02/F-03 收口）。
+    if (classifiedError.code === 'CANCELLED') {
+      res.end();
+      return;
+    }
 
     console.error(
       `[gemini-stream:${classifiedError.code}] ${sanitizeErrorForLog(error)}`,

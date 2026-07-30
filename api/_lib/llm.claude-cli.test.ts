@@ -706,7 +706,7 @@ describe('claude-cli — 取消收斂', () => {
     expect(child.kill).toHaveBeenCalledTimes(1);
   });
 
-  it('取消後 Promise 維持未收斂（現行行為：cancel 只中止，不 resolve 也不 reject）', async () => {
+  it('取消後 Promise 立即以 CANCELLED 分類 reject，遲到 close 不改變結果（F-03 收口）', async () => {
     const { generateTextStream } = await loadLlm();
     const cancelRef: { cancel?: () => void } = {};
     const p = generateTextStream(REQ, vi.fn(), cancelRef);
@@ -714,16 +714,19 @@ describe('claude-cli — 取消收斂', () => {
     p.catch(() => {});
 
     cancelRef.cancel!();
-    await vi.advanceTimersByTimeAsync(200_000);
-    expect(state.settled).toBeNull();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.settled).toBe('rejected');
+    expect((state.value as ClassifiedError).code).toBe('CANCELLED');
 
-    // 取消後的 close 也不會讓它收斂
+    // 取消後推進時鐘＋遲到的 close 都不造成二次收斂、不改變分類
+    await vi.advanceTimersByTimeAsync(200_000);
     lastChild().emit('close', 0);
     await vi.advanceTimersByTimeAsync(0);
-    expect(state.settled).toBeNull();
+    expect(state.settled).toBe('rejected');
+    expect((state.value as ClassifiedError).code).toBe('CANCELLED');
   });
 
-  it('取消後遲到的 result 不會造成第二次收斂', async () => {
+  it('取消後遲到的 result 不會造成第二次收斂——維持 CANCELLED、不得翻案成 resolved', async () => {
     const { generateTextStream } = await loadLlm();
     const cancelRef: { cancel?: () => void } = {};
     const p = generateTextStream(REQ, vi.fn(), cancelRef);
@@ -734,10 +737,11 @@ describe('claude-cli — 取消收斂', () => {
     lastChild().stdout.emit('data', `${JSON.stringify({ type: 'result', result: '遲到' })}\n`);
     lastChild().emit('close', 0);
     await vi.advanceTimersByTimeAsync(0);
-    expect(state.settled).toBeNull();
+    expect(state.settled).toBe('rejected');
+    expect((state.value as ClassifiedError).code).toBe('CANCELLED');
   });
 
-  it('取消後若仍有增量資料抵達，onDelta 仍會被呼叫（現行行為，findings F-02）', async () => {
+  it('取消後遲到的增量不再觸發 onDelta（F-02 收口）', async () => {
     const { generateTextStream } = await loadLlm();
     const onDelta = vi.fn();
     const cancelRef: { cancel?: () => void } = {};
@@ -750,8 +754,22 @@ describe('claude-cli — 取消收斂', () => {
       event: { type: 'content_block_delta', delta: { text: '取消後才到的段落' } },
     })}\n`);
 
-    // 照現行行為鎖：解析路徑沒有檢查 settled，所以回呼照樣發出
-    expect(onDelta).toHaveBeenCalledWith('取消後才到的段落');
+    // 取消已收斂：解析路徑檢查 settled，遲到增量靜默丟棄
+    expect(onDelta).not.toHaveBeenCalled();
+  });
+
+  it('取消後子程序 error 後到不再二次收斂——維持 CANCELLED 分類', async () => {
+    const { generateTextStream } = await loadLlm();
+    const cancelRef: { cancel?: () => void } = {};
+    const p = generateTextStream(REQ, vi.fn(), cancelRef);
+    const state = track(p);
+    p.catch(() => {});
+
+    cancelRef.cancel!();
+    lastChild().emit('error', new Error('kill 之後的非同步 spawn error'));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.settled).toBe('rejected');
+    expect((state.value as ClassifiedError).code).toBe('CANCELLED');
   });
 
   it('已收斂之後再呼叫 cancel 不會殺到子程序', async () => {

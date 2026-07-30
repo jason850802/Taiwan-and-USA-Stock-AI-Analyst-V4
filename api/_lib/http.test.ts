@@ -30,6 +30,7 @@ describe('ClassifiedError', () => {
     UPSTREAM_ERROR: 'AI 服務暫時無法回應，請稍後再試。',
     BAD_REQUEST: '請求格式不正確，請重新整理頁面後再試一次。',
     MISSING_KEY: '後端尚未設定 Gemini API 金鑰，請聯絡管理員設定環境變數。',
+    CANCELLED: '請求已由呼叫端取消。',
   };
 
   (Object.entries(DEFAULT_MESSAGES) as [GeminiErrorCode, string][]).forEach(([code, message]) => {
