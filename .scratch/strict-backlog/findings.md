@@ -127,4 +127,7 @@ cancel 以新分類 CANCELLED reject（settled 先設，close／error／result �
 **未處理原因**：修法＝正式安裝 `@types/react` 進 devDependencies，但收口批次授權書
 第 1 條只解鎖 `@types/react-dom` 一套件；擅自加裝即越權。
 
-**待裁決**：是否比照票 01 模式另開一次性紅線解除，把 `@types/react` 轉為正式 devDependency。
+**裁決結果（2026-07-30）**：**已修**——使用者於收口批次回報後追加拍板，比照票 01 模式
+再解一次套件紅線（一次、一套件）。釘住樹上既有版本 19.2.14 轉正入 devDependencies，
+lockfile 零版本挪動（僅 root 鏡像行＋自身與 csstype 的 peer 旗標轉正）。
+證據 commit f5a1bd8；strict 0 不變、679 案全綠、gate 全綠。
