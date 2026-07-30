@@ -11,13 +11,12 @@ Status: resolved（2026-07-30，四票全數完結，無停損事項）
 | 03 串流取消收斂 | resolved | 實作 7f8ff2e／merge 6c77374；翻轉 3 案紅燈先行＋注入 3 紅；F-02/F-03 已修 |
 | 04 EPS 零值處置 | resolved | 6bafc80／merge f06aae7；收法(1)紀錄結案，零碼變更 |
 
-批次驗收逐條：strict `--strict` exit 0（5→0）✓；679 案全綠（666→679，
-既有案例僅票 03 清單三案翻轉）✓；gate 全綠 ✓；trailer 稽核 0 筆 ✓；
-findings F-01（紀錄結案）/F-02/F-03（已修）標裁決＋證據、另登記 F-04 待裁決 ✓；
-四票 resolved（日期＋證據 commit）✓；memory 已更新終局 ✓；push origin main ✓。
-來源：使用者 2026-07-30 拍板。**本檔＝授權書＋執行章程**：單一視窗自主連跑四票，
-過程不回報，停損或全部完成才回報。執行窗不需（也不應）中途問使用者——
-會撞紅線的例外已在下方授權書逐項解鎖並鎖定範圍。
+批次驗收八項全勾（見下方「批次驗收」清單）。批後追加：F-04（@types/react 僅傳遞依賴）
+使用者回報後追加拍板已修（實作 f5a1bd8／merge 8ab8903）——findings 四筆至此全數處置。
+
+> 原始章程（執行時的依據，保留備查）：來源：使用者 2026-07-30 拍板。**本檔＝授權書＋
+> 執行章程**：單一視窗自主連跑四票，過程不回報，停損或全部完成才回報。執行窗不需
+> （也不應）中途問使用者——會撞紅線的例外已在下方授權書逐項解鎖並鎖定範圍。
 
 ## 背景與範圍
 
@@ -71,14 +70,14 @@ claim（票面標 claimed）→ 探索現況 → 依票面的「鎖先行／紅�
 
 ## 批次驗收（「全部改好」的定義）
 
-- [ ] `npx tsc --noEmit --strict` **exit 0**（5 → 0，strict 欠帳歸零）
-- [ ] `npm run test` 全綠、總案數 ≥666；既有案例除票 03 列名清單外零修改
-- [ ] `npm run gate` 全綠（票 01 的套件變動入 commit 之後）
-- [ ] trailer 稽核 0 筆（`git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"`）
-- [ ] `.scratch/strict-backlog/findings.md` 的 F-01/F-02/F-03 標上裁決結果與證據
-- [ ] 本 spec 與四票全標 resolved（日期＋證據 commit）
-- [ ] memory `strict-backlog-progress` 更新終局（strict 歸零、F 全數處置、擋票解除）
-- [ ] 工作樹乾淨、`git push origin main` 完成
+- [x] `npx tsc --noEmit --strict` **exit 0**（5 → 0，strict 欠帳歸零）
+- [x] `npm run test` 全綠、總案數 ≥666（實測 679）；既有案例除票 03 列名清單外零修改
+- [x] `npm run gate` 全綠（票 01 的套件變動入 commit 之後）
+- [x] trailer 稽核 0 筆（`git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"`）
+- [x] `.scratch/strict-backlog/findings.md` 的 F-01/F-02/F-03 標上裁決結果與證據
+- [x] 本 spec 與四票全標 resolved（日期＋證據 commit）
+- [x] memory `strict-backlog-progress` 更新終局（strict 歸零、F 全數處置、擋票解除）
+- [x] 工作樹乾淨、`git push origin main` 完成（783fdb1..aa4d5b3，後續 F-04 追加至 8ab8903）
 
 ## 最終回報格式
 
