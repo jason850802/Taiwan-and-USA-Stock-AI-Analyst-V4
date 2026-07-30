@@ -76,16 +76,8 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 | 大霧工程（跨 session） | `wayfinder` 決策票地圖 → 收斂後接 `to-spec` |
 | 壞掉／沒反應／數字不對 | `diagnosing-bugs`（**先建紅燈迴圈才准提假設**） |
 
-**主線 skills 的啟動方式（兩端皆同，易撞牆）**：路由表主線的 `grill-with-docs`／`to-spec`／`to-tickets`／
-`implement`／`wayfinder`／`triage`／`ask-matt` 是 Matt 的 **user-invoked skill，不在模型可
-自動呼叫清單**（Skill 工具叫不到）。兩條路都算數：使用者自己打 `/mattpocock-skills:<name>`，
-或**依使用者 2026-07-26 授權，由助手讀 `.agents/skills/<name>/SKILL.md` 照內容執行**
-（要向使用者標明「現在進入 X 階段」）。模型可自行呼叫的是 `code-review`／`tdd`／
-`diagnosing-bugs`／`grilling`／`prototype`／`research`／`codebase-design`／`domain-modeling`／
-`resolving-merge-conflicts`。**Codex 端限制相同**——那批 SKILL.md 的 frontmatter 有
-`disable-model-invocation: true`，兩端 harness 都吃；2026-07-29 交接測試實測 Codex 只列得出
-19 個鏡像 skills 中的 9 個，缺的正是主線那批。所以派票給 Codex 執行時，它同樣得讀
-`.agents/skills/<name>/SKILL.md` 照做，不能靠斜線指令。
+**主線 skills（grill→spec→tickets→implement）整條是 user-invoked，模型的 Skill 工具叫不到，
+兩端皆同。** 啟動的兩條路、可自動呼叫的名單、派 Codex 執行的實務，見 `docs/skill-invocation.md`。
 
 `implement` 收尾**必跑 `code-review`**（雙軸 Standards＋Spec）。**每個 merge commit 必帶
 `Code-Review:` trailer**——implement 類寫兩軸處置（無發現也要寫「無發現」；有收就點名
@@ -93,11 +85,17 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 因為「先 commit 後 review」的流程在零發現時沒有票 commit 可蓋。稽核（應 0 筆）：
 `git log --merges code-review-trailer-start..HEAD --invert-grep --grep="^Code-Review:"`
 （tag＝制度起點，2026-07-28）。逐票第二訊號＝resolved 票面的 code-review checkbox 必須已勾。
-中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者。**
+中大型任務每張票建議開新對話（換窗紀律）。**碰錢的語意決策一律停下來問使用者**——
+且要問對：**攤開現值、依據、以及「新值會改變什麼」**，不可把使用者給的新值當成正當預設、
+只問適用範圍（2026-07-29 盲測實錄：護欄有觸發，但把當沖稅率當成一般賣出的目標值，
+建議選項正是危險選項；詳 `docs/claude-handoff-findings.md`）。
 
 **機械驗收 gate（專案紅線，與工作流無關，每次改碼都要）**：
 tsc 0 錯 → vitest 全綠（既有案例零修改）→ `npm run build` → `grep -r "AIza" dist/` 無結果
 → `package.json`／`package-lock.json` diff 0 → UI 驗證量數字不靠肉眼、快取類換乾淨代號。
+
+**既有測試紅燈＝語意變更的訊號，停下來問使用者；不是把期望值改綠。**（費率那一處已由
+`config/twFeeRates.ts` 的檔頭就地擋住，但這條適用於所有行為鎖。）
 
 一鍵版 **`npm run gate`**（`scripts/run-gate.mjs`，零依賴）把前五道收成一個指令，
 金鑰掃描比文件版更嚴（也掃 git 追蹤中的原始碼、並用 `.env` 值抓任何形狀的秘密——
