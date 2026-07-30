@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Bar, Line, ComposedChart, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,
+  type RenderableText,
 } from 'recharts';
 import { TwQuarterIncome } from '../../types';
 import Card from '../ui/Card';
@@ -16,6 +17,12 @@ const formatQuarterLabel = (dateStr: string): string => {
   const q = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
   return `${y.slice(2)}Q${q}`;
 };
+
+// EPS 長條圖的數值標籤格式化：參數收 recharts `LabelFormatter` 宣告的完整 RenderableText
+// 範圍（string | number | boolean | null | undefined），再自行收斂到數字才呼叫 toFixed——
+// 把參數縮成 number | null 會違反參數反變性，且非數字輸入仍會落進數字方法。
+// 收斂條件必須是 typeof 而非真值判斷：0 是有效 EPS，用真值判斷會讓它從 0.00 變空白。
+export const formatEpsLabel = (v: RenderableText): string => (typeof v === 'number' ? v.toFixed(2) : '');
 
 const MarginTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -101,7 +108,7 @@ const QuarterlyTrendCharts: React.FC<QuarterlyTrendChartsProps> = ({ data }) => 
                 <LabelList
                   dataKey="eps"
                   position="top"
-                  formatter={(v: number | null) => (v != null ? v.toFixed(2) : '')}
+                  formatter={formatEpsLabel}
                   style={{ fill: '#cbd5e1', fontSize: 11 }}
                 />
               </Bar>
