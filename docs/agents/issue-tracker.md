@@ -9,6 +9,7 @@ Issues and specs (you may know a spec as a PRD) for this repo live as markdown f
 - Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` — never a single combined tickets file
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
 - **Set `Status: resolved` on the ticket as soon as its implementation lands**, with the completion date and the evidence commits (implementation / code-review fixes / merge) on the same line. Recording completion only in git history is **not** enough: frontier scanning reads the ticket face, so a ticket left at `ready-for-agent` gets picked up and redone in the next window. Mark the feature's `spec.md` the same way once the whole feature closes.
+  - An implementation commit cannot cite its own hash, so either (a) put the date alone in that commit and let the **merge message name the implementation commit** — fine for a single-ticket feature — or (b) back-fill the hashes in the feature's wrap-up commit, which is what a multi-ticket feature does. Both satisfy this rule; what fails it is leaving the ticket at `ready-for-agent`.
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 
 ## When a skill says "publish to the issue tracker"
