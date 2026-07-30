@@ -1,7 +1,17 @@
 # 02 — 判定純函式與賣出引擎三態留痕
 
-Status: ready-for-agent
+Status: resolved（2026-07-29；commit 97e0aed）
 Blocked by: 01
+
+- [x] `assessDayTrade` 七種 reason 代碼、固定優先序、不吃價格
+- [x] `SellInput.isDayTrade` 三態；有效旗標＝夾制後的（覆寫 ?? 自動判定），夾制不拋錯
+- [x] `RealizedTrade.isDayTrade` optional；台股一律留痕、美股不寫該欄位
+- [x] 稅額改走費稅計算＋有效旗標；`SellResult` 形狀零變更
+- [x] 備份 schema 版本常數零變更（`git diff` 對 portfolioBackup.ts 為空）
+- [x] 對帳單匯入路徑零變更（重播引擎自建 trade 物件、從不呼叫賣出引擎與費稅公式 → 天然 `undefined`）
+- [x] 新增 22 個案例、既有 12 案零修改（61/61 綠含票 01）
+- [x] `npm run gate` 全綠
+- [x] code-review：已併入票 04 的 main..HEAD 批次雙軸覆核（Spec 軸無發現；Standards 軸 1 筆 R-01 已修，commit 53e2871）
 
 ## 目標
 

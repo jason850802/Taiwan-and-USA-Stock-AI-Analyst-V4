@@ -87,6 +87,55 @@ describe('calcTwSellFeeAndTax（賣費 max(1,floor(v×0.001425))；稅 floor(v×
   });
 });
 
+// ── 現股當沖減半（ADR-0003 決策 3；spec 見 .scratch/tw-day-trade/spec.md）──────
+// 旗標一律 optional 且預設＝現行為，故上方既有案例零修改。
+describe('getTaxRate 的當沖旗標（只有個股減半）', () => {
+  it('個股：true → 0.0015；false／缺參 → 0.003', () => {
+    expect(getTaxRate('2330.TW', true)).toBe(0.0015);
+    expect(getTaxRate('2330.TW', false)).toBe(0.003);
+    expect(getTaxRate('2330.TW')).toBe(0.003);
+  });
+  it('縱深防禦最底層：ETF／債券 ETF 收到 true 仍回原檔次', () => {
+    expect(getTaxRate('0050.TW', true)).toBe(0.001);
+    expect(getTaxRate('00631L', true)).toBe(0.001);
+    expect(getTaxRate('00679B.TW', true)).toBe(0);
+    expect(getTaxRate('00864C', true)).toBe(0);
+  });
+});
+
+describe('calcTwSellFeeAndTax 的當沖旗標（稅率替換、單次 floor）', () => {
+  // 手算：650,000 × 0.0015 = 975（整除）；一般 650,000 × 0.003 = 1,950
+  it('650,000 個股當沖 → tax 975（一般 1,950）、fee 仍 926', () => {
+    expect(calcTwSellFeeAndTax(650_000, '2330.TW', true)).toEqual({ sellFee: 926, tax: 975 });
+  });
+  // 手算：321,500 × 0.0015 = 482.25 → floor 482；一般 964.5 → floor 964
+  it('321,500 個股當沖 → tax 482（482.25 floor；一般 964）', () => {
+    expect(calcTwSellFeeAndTax(321_500, '2330.TW', true)).toEqual({ sellFee: 458, tax: 482 });
+  });
+  // 手算：643,000 × 0.0015 = 964.5 → floor 964。
+  // 本案鎖「稅額必為整數」：若誤實作成一般稅額除二不再取整（1929÷2 = 964.5）此案即紅。
+  it('643,000 個股當沖 → tax 964（964.5 floor）、fee 仍 916', () => {
+    expect(calcTwSellFeeAndTax(643_000, '2330.TW', true)).toEqual({ sellFee: 916, tax: 964 });
+  });
+  // 手算：500 × 0.0015 = 0.75 → floor 0（當沖小額稅可為 0）；
+  // 同案鎖 sellFee 仍為 max(1, floor(0.7125)) = 1 → 旗標恆不影響手續費
+  it('500 個股當沖 → tax 0（0.75 floor；一般 1）、fee 仍 1', () => {
+    expect(calcTwSellFeeAndTax(500, '2330.TW', true)).toEqual({ sellFee: 1, tax: 0 });
+  });
+  it('ETF 帶 true 稅率不減半（縱深防禦）：420,000 → tax 仍 420', () => {
+    expect(calcTwSellFeeAndTax(420_000, '0050.TW', true)).toEqual({ sellFee: 598, tax: 420 });
+  });
+  it('回歸鎖：同金額帶 false／缺參 一律等於現行行為', () => {
+    expect(calcTwSellFeeAndTax(650_000, '2330.TW', false)).toEqual(calcTwSellFeeAndTax(650_000, '2330.TW'));
+    expect(calcTwSellFeeAndTax(321_500, '2330.TW', false)).toEqual({ sellFee: 458, tax: 964 });
+    expect(calcTwSellFeeAndTax(500, '2330.TW', false)).toEqual({ sellFee: 1, tax: 1 });
+  });
+  it('非正數不受旗標影響', () => {
+    expect(calcTwSellFeeAndTax(0, '2330.TW', true)).toEqual({ sellFee: 0, tax: 0 });
+    expect(calcTwSellFeeAndTax(-5, '2330.TW', true)).toEqual({ sellFee: 0, tax: 0 });
+  });
+});
+
 describe('calcUsFee（個股 0.08% 無最低；ETF 固定 $3；無稅）', () => {
   it('Case 3 買進 1,800 → 1.44；賣出 2,000 → 1.60', () => {
     expect(calcUsFee(1_800, false)).toBeCloseTo(1.44, 9);

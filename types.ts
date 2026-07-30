@@ -136,6 +136,15 @@ export interface RealizedTrade {
   usdTwdRateUsed?: number; // 僅美股 TWD 計價批次賣出時記錄（審計用）
   buyExchangeRate?: number;  // 來源批次的買入匯率（Phase 13；美股專用，undefined＝來源批次沒記）
   sellExchangeRate?: number; // 賣出當時 USD/TWD（Phase 13；美股專用）
+  /**
+   * 現股當沖旗標（ADR-0003），**三態**：
+   *  true      = 這筆按當沖課稅（個股證交稅 0.15%）
+   *  false     = 明確按一般交易課稅
+   *  undefined = 不知道／不適用（舊資料、美股、對帳單匯入的所有賣出）
+   * 記在「賣出這個動作」上，不是批次的屬性——同一批昨天賣不是當沖、今天賣是。
+   * optional 是唯一合規的擴充法：備份 schema 不升版，舊備份回灌後為 undefined＝三態之一。
+   */
+  isDayTrade?: boolean;
   createdAt: number;
 }
 
