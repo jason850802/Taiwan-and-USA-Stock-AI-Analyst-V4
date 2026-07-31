@@ -76,9 +76,14 @@ ALLOWED_ORIGIN=http://localhost:3000,http://localhost:3001,https://xxx.vercel.ap
 2. 左側選 Budgets & alerts（預算與快訊）。
 3. 按 Create budget（建立預算）。
 4. Scope（範圍）鎖定 Gemini API key 所屬 project（本專案為 `chuan-483103`），避免涵蓋同帳單帳戶下其他 project。
-5. Budget type 選 Specified amount（指定金額），設每月固定金額（本專案設約 $10 USD／月）。
+5. Budget type 選 Specified amount（指定金額），設每月固定金額。
+   **⚠ 金額欄位吃的是帳單帳戶幣別，本帳戶是新台幣（TWD）不是美金**——2026-07-11 初設時
+   誤以為是 USD 而填 10，實際成了 NT$10（≈US$0.3），當天即破表。**本專案現設 NT$300／月**
+   （≈US$9.5，即原本想要的 $10 USD 量級）。填之前先確認欄位旁顯示的幣別符號。
 6. 設定 alert thresholds 門檻 50% / 90% / 100%。
 7. 通知對象勾選 email 給帳單管理員（Billing account admins/users）。
+   快訊管道已實證可用：2026-07-10 曾實際收到 100% 門檻通知信（信中時間戳為美西時區，
+   台北時間會晚一天，對帳時別被日期差誤導）。
 
 不設定任何自動化斷線動作（不接 Pub/Sub 觸發關閉服務），純 email 快訊。理由是避免誤傷同 project／同帳單帳戶下其他非 Gemini 服務（例如 BigQuery、Compute Engine）。
 
