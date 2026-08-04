@@ -1,6 +1,6 @@
 # 01 — 股數容差進匯入重播引擎（幻影缺口消滅）
 
-Status: ready-for-agent
+Status: resolved（2026-08-04；實作 commit `68274e2`）
 Blocked by: —
 
 ## 目標
@@ -30,13 +30,13 @@ spec.md「股數單位模組」「匯入重播引擎」節；ADR-0004 決策 2�
 
 ## 驗收
 
-- 新增行為鎖案例（既有案例**零修改**，期望值先手算再寫斷言）：
-  - LITE 實例：池 [1.2048, 1.08896, 0.50824]（buyDate 遞增）＋賣出 2.802 →
+- [x] 新增行為鎖案例（既有案例**零修改**，期望值先手算再寫斷言）：
+  - [x] LITE 實例：池 [1.2048, 1.08896, 0.50824]（buyDate 遞增）＋賣出 2.802 →
     缺口 0、applied.sells 1、trades 3、lots 清空；Σ sharesSold 以 toBeCloseTo(2.802)
     斷言；**Σ grossProceeds／sellFee／sellTax 與帳單總額嚴格相等**（守恆）。
-  - 真缺口仍要報：池 [1.0] 賣 2.802 → gap 一筆、sharesMissing ≈ 1.802（toBeCloseTo）、
+  - [x] 真缺口仍要報：池 [1.0] 賣 2.802 → gap 一筆、sharesMissing ≈ 1.802（toBeCloseTo）、
     該筆賣出略過（既有語意不變）。
-  - 界線：差距 2e-6（略大於容差）→ 缺口成立。
-  - 反向噪音：池子比賣出多 ≤1e-9 → 賣完後殘餘塵埃批次被既有過濾清掉、lots 為空。
-- `npm run gate` 全綠。
-- 收尾 `code-review`（雙軸），merge 帶 `Code-Review:` trailer。
+  - [x] 界線：差距 2e-6（略大於容差）→ 缺口成立。
+  - [x] 反向噪音：池子比賣出多 ≤1e-9 → 賣完後殘餘塵埃批次被既有過濾清掉、lots 為空。
+- [x] `npm run gate` 全綠。
+- [x] 收尾 `code-review`（雙軸），merge 帶 `Code-Review:` trailer。

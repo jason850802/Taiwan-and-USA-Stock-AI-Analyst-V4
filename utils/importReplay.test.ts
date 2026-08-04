@@ -316,3 +316,70 @@ describe('匯率留痕（美股買入／賣出匯率隨批次與帳本走）', (
     expect(r.lots[0].totalShares).toBe(6);
   });
 });
+
+describe('美股碎股股數容差', () => {
+  it('LITE 三批合計 2.802 股可全數重播，且帳單總額嚴格守恆', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-01-02', shares: 1.2048, price: 1000, gross: 1204.8 }),
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-02-02', shares: 1.08896, price: 1000, gross: 1088.96 }),
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-03-02', shares: 0.50824, price: 1000, gross: 508.24 }),
+        us({ symbol: 'LITE', kind: 'sell', date: '2026-04-02', shares: 2.802, price: 1000, gross: 2802, fee: 3, tax: 1 }),
+      ],
+      existingLots: [], now: T,
+    });
+
+    expect(r.gaps).toHaveLength(0);
+    expect(r.applied.sells).toBe(1);
+    expect(r.newTrades).toHaveLength(3);
+    expect(r.lots).toHaveLength(0);
+    expect(r.newTrades.reduce((sum, trade) => sum + trade.sharesSold, 0)).toBeCloseTo(2.802);
+    expect(r.newTrades.reduce((sum, trade) => sum + trade.grossProceeds, 0)).toBe(2802);
+    expect(r.newTrades.reduce((sum, trade) => sum + trade.sellFee, 0)).toBe(3);
+    expect(r.newTrades.reduce((sum, trade) => sum + trade.sellTax, 0)).toBe(1);
+  });
+
+  it('持有 1 股卻賣出 2.802 股時仍回報 1.802 股真缺口並略過賣出', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-01-02', shares: 1, price: 1000, gross: 1000 }),
+        us({ symbol: 'LITE', kind: 'sell', date: '2026-02-02', shares: 2.802, price: 1000, gross: 2802 }),
+      ],
+      existingLots: [], now: T,
+    });
+
+    expect(r.gaps).toHaveLength(1);
+    expect(r.gaps[0].sharesMissing).toBeCloseTo(1.802);
+    expect(r.newTrades).toHaveLength(0);
+    expect(r.applied.sells).toBe(0);
+    expect(r.applied.skipped).toBe(1);
+  });
+
+  it('股數短少 0.000002 股時超過容差，仍成立缺口', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-01-02', shares: 1, price: 1000, gross: 1000 }),
+        us({ symbol: 'LITE', kind: 'sell', date: '2026-02-02', shares: 1.000002, price: 1000, gross: 1000 }),
+      ],
+      existingLots: [], now: T,
+    });
+
+    expect(r.gaps).toHaveLength(1);
+    expect(r.gaps[0].sharesMissing).toBeCloseTo(0.000002);
+    expect(r.newTrades).toHaveLength(0);
+  });
+
+  it('池子多出不超過 1e-9 股的反向噪音時，既有塵埃過濾會清空 lot', () => {
+    const r = replayStatement({
+      txns: [
+        us({ symbol: 'LITE', kind: 'buy', date: '2026-01-02', shares: 2.8020000005, price: 1000, gross: 2802 }),
+        us({ symbol: 'LITE', kind: 'sell', date: '2026-02-02', shares: 2.802, price: 1000, gross: 2802 }),
+      ],
+      existingLots: [], now: T,
+    });
+
+    expect(r.gaps).toHaveLength(0);
+    expect(r.newTrades).toHaveLength(1);
+    expect(r.lots).toHaveLength(0);
+  });
+});

@@ -4,6 +4,7 @@
 // 手算對數案例：11-PLAN.md Case A~I。
 import { PortfolioItem, RealizedTrade, ParsedTxn, ImportGap } from '../types';
 import { round2 } from './portfolioLedger';
+import { SHARE_EPS } from './shareUnits';
 
 export interface ReplayInput {
   txns: ParsedTxn[];                   // 已去重、已排序（sortTxns）
@@ -132,7 +133,7 @@ export const replayStatement = (input: ReplayInput): ReplayResult => {
 
     // 缺口：池子不足以支應這筆賣出 → 若使用者已補成本則先造 synthetic lot
     const poolShares = pool.reduce((s, l) => s + l.totalShares, 0);
-    if (poolShares < txn.shares) {
+    if (txn.shares - poolShares > SHARE_EPS) {
       const missing = txn.shares - poolShares;
       const filled = filledByIndex.get(txnIndex);
       if (filled?.costPerShare !== undefined) {
