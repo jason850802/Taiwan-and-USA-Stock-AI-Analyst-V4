@@ -109,6 +109,63 @@ describe('buildSellResult｜美股', () => {
   });
 });
 
+describe('buildSellResult｜美股碎股', () => {
+  const fractionalUsLot = (over: Partial<PortfolioItem> = {}): PortfolioItem => ({
+    id: 'lot-us-fractional', symbol: 'LITE', avgCostPrice: 100, totalShares: 1.2048,
+    totalCost: 0, brokerDiscount: 10, cashDividends: 12.048, stockDividends: 0,
+    purchaseCurrency: 'USD', totalCostUSD: 120.48, isUsEtf: false, ...over,
+  });
+
+  it('精確滿賣會賣出全部持有股數並移除批次', () => {
+    const { trade, updatedLot } = buildSellResult(
+      fractionalUsLot(),
+      { sharesSold: 1.2048, sellPrice: 100, sellDate: '2026-07-01' },
+      32,
+    );
+
+    expect(trade.sharesSold).toBe(1.2048);
+    expect(updatedLot).toBeNull();
+  });
+
+  it('容差滿賣會 clamp 到持有股數並移除批次', () => {
+    const { trade, updatedLot } = buildSellResult(
+      fractionalUsLot(),
+      { sharesSold: 1.2048005, sellPrice: 100, sellDate: '2026-07-01' },
+      32,
+    );
+
+    expect(trade.sharesSold).toBe(1.2048);
+    expect(trade.grossProceeds).toBe(120.48);
+    expect(trade.costBasis).toBe(120.48);
+    expect(updatedLot).toBeNull();
+  });
+
+  it('超出股數容差仍會擋下超賣', () => {
+    expect(() => buildSellResult(
+      fractionalUsLot(),
+      { sharesSold: 1.2049, sellPrice: 100, sellDate: '2026-07-01' },
+      32,
+    )).toThrow('賣出股數不可超過持有股數（1.2048）');
+  });
+
+  it('部分賣出會保留碎股批次並等比縮減成本與股利', () => {
+    // 手算：120.48 × 0.5 ÷ 1.2048 = USD 50；12.048 × 0.5 ÷ 1.2048 = TWD 5。
+    const { trade, updatedLot } = buildSellResult(
+      fractionalUsLot(),
+      { sharesSold: 0.5, sellPrice: 100, sellDate: '2026-07-01' },
+      32,
+    );
+
+    expect(trade.sharesSold).toBe(0.5);
+    expect(trade.costBasis).toBe(50);
+    expect(trade.divCarried).toBe(0.16);
+    expect(updatedLot).not.toBeNull();
+    expect(updatedLot!.totalShares).toBeCloseTo(0.7048);
+    expect(updatedLot!.totalCostUSD).toBeCloseTo(70.48);
+    expect(updatedLot!.cashDividends).toBeCloseTo(7.048);
+  });
+});
+
 describe('buildSellResult｜輸入驗證', () => {
   it('超量／零股數／負價／未來日期／壞格式全數拋錯', () => {
     const lot = twLot();
