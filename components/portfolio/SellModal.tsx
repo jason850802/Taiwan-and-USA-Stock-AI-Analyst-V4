@@ -7,6 +7,7 @@ import {
   assessDayTrade, DayTradeReason, DAY_TRADE_HARD_GATE_REASONS,
 } from '../../utils/portfolioLedger';
 import { isTwStock } from '../../utils/portfolioFees';
+import { fmtShares } from '../../utils/shareUnits';
 import Modal from '../ui/Modal';
 
 interface SellModalProps {
@@ -115,7 +116,7 @@ const SellModal: React.FC<SellModalProps> = ({ lot, usdTwdRate, priceHint, onCon
     <Modal open={!!lot} onClose={onClose} title={`賣出 ${lot.symbol}`} maxWidth="max-w-md">
       <div className="space-y-4">
         <div className="text-sm text-slate-400 flex justify-between">
-          <span>持有 <span className="text-white font-mono">{lot.totalShares.toLocaleString('zh-TW')}</span> 股</span>
+          <span>持有 <span className="text-white font-mono">{fmtShares(lot.totalShares)}</span> 股</span>
           <span>成本均價 <span className="text-amber-300 font-mono">{lot.avgCostPrice.toFixed(2)}</span></span>
         </div>
 

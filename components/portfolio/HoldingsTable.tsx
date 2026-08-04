@@ -15,6 +15,7 @@ import { PortfolioItem } from '../../types';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
 import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
 import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
+import { fmtShares } from '../../utils/shareUnits';
 import { Trash2, Loader2, ChevronDown, ChevronUp, Info, HeartPulse, Banknote } from 'lucide-react';
 import Badge from '../ui/Badge';
 import type { PriceData } from './useHoldingPrices';
@@ -349,7 +350,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       <td className="p-3 text-right font-mono tabular-nums">
                         {isTW ? avgCost.toFixed(2) : (dc === 'USD' ? fmtUsd(avgCost) : avgCost.toFixed(2))}
                       </td>
-                      <td className="p-3 text-right font-mono tabular-nums">{fmt(totalShares)}</td>
+                      <td className="p-3 text-right font-mono tabular-nums">{fmtShares(totalShares)}</td>
                       <td className="p-3 text-right font-mono tabular-nums text-amber-300">
                         {isTW ? fmt(totalCost) : (dc === 'USD' ? fmtUsd(totalCost) : fmt(totalCost))}
                       </td>

@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { RealizedTrade } from '../../types';
 import { twdRealizedPnl } from '../../utils/fx';
+import { fmtShares } from '../../utils/shareUnits';
 import { ChevronDown, ChevronUp, Trash2, ReceiptText } from 'lucide-react';
 
 interface RealizedLedgerProps {
@@ -105,7 +106,7 @@ const RealizedLedger: React.FC<RealizedLedgerProps> = ({ trades, onDeleteTrade }
                           title="現股當沖：證交稅按 0.15% 減半計">沖</span>
                       )}
                     </td>
-                    <td className="p-3 text-right text-slate-300">{fmt(t.sharesSold)}</td>
+                    <td className="p-3 text-right text-slate-300">{fmtShares(t.sharesSold)}</td>
                     <td className="p-3 text-right text-slate-300">{t.sellPrice.toFixed(2)}</td>
                     <td className="p-3 text-right text-slate-400">{f(t.sellFee + t.sellTax)}</td>
                     <td className="p-3 text-right text-amber-300">{f(t.costBasis)}</td>

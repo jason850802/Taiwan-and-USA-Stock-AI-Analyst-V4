@@ -7,6 +7,7 @@ import { ensureTaiwanDirectory } from '../../services/stockDirectory';
 import { buildImportPlan } from '../../utils/importPlan';
 import { replayStatement } from '../../utils/importReplay';
 import { loadImportLog } from '../../utils/importStore';
+import { fmtShares } from '../../utils/shareUnits';
 import Modal from '../ui/Modal';
 import { Upload, FileSpreadsheet, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
@@ -189,7 +190,7 @@ const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClo
                               <span className="ml-1 text-slate-500">{g.name}</span>
                               <span className="ml-1 text-slate-600">{g.sellDate}</span>
                             </td>
-                            <td className="p-2 text-right text-slate-300">{fmt(g.sharesMissing)}</td>
+                            <td className="p-2 text-right text-slate-300">{fmtShares(g.sharesMissing)}</td>
                             <td className="p-2 text-right text-slate-300">{g.sellPrice.toFixed(2)}</td>
                             <td className="p-2 text-right">
                               <input type="number" value={v.cost} placeholder="留空略過"
