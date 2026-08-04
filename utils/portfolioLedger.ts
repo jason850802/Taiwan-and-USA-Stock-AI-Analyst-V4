@@ -3,6 +3,7 @@
 // 鐵則：等比量一律「乘先除後」；美股 USD 金額入帳前一律 round2；台股整數金額不動 rounding。
 import { PortfolioItem, RealizedTrade } from '../types';
 import { isTwStock, getTwStockType, calcTwSellFeeAndTax, calcUsFee } from './portfolioFees';
+import { SHARE_EPS, fmtShares } from './shareUnits';
 
 export interface SellInput {
   sharesSold: number;
@@ -96,16 +97,19 @@ export const buildSellResult = (
   const { sharesSold, sellPrice, sellDate } = input;
 
   if (!(sharesSold > 0)) throw new Error('賣出股數必須大於 0');
-  if (sharesSold > lot.totalShares) throw new Error(`賣出股數不可超過持有股數（${lot.totalShares}）`);
+  if (sharesSold > lot.totalShares + SHARE_EPS) {
+    throw new Error(`賣出股數不可超過持有股數（${fmtShares(lot.totalShares)}）`);
+  }
   if (!(sellPrice > 0)) throw new Error('賣出單價必須大於 0');
   if (!DATE_RE.test(sellDate)) throw new Error('賣出日期格式須為 YYYY-MM-DD');
   if (sellDate > todayLocalStr()) throw new Error('賣出日期不可晚於今天');
 
   const market: 'TW' | 'US' = isTwStock(lot.symbol) ? 'TW' : 'US';
-  const ratio = { num: sharesSold, den: lot.totalShares };   // 乘先除後：(x × num) / den
+  const isFullSell = lot.totalShares - sharesSold <= SHARE_EPS;
+  const effectiveSharesSold = isFullSell ? lot.totalShares : sharesSold;
+  const ratio = { num: effectiveSharesSold, den: lot.totalShares };   // 乘先除後：(x × num) / den
   const scale = (x: number) => (x * ratio.num) / ratio.den;
-  const isFullSell = sharesSold === lot.totalShares;
-  const rawGross = sellPrice * sharesSold;
+  const rawGross = sellPrice * effectiveSharesSold;
 
   let trade: RealizedTrade;
   let updatedLot: PortfolioItem | null;
@@ -126,7 +130,7 @@ export const buildSellResult = (
       symbol: lot.symbol,
       market,
       sellDate,
-      sharesSold,
+      sharesSold: effectiveSharesSold,
       sellPrice,
       grossProceeds: rawGross,
       sellFee,
@@ -141,7 +145,7 @@ export const buildSellResult = (
     };
     updatedLot = isFullSell ? null : {
       ...lot,
-      totalShares: lot.totalShares - sharesSold,
+      totalShares: lot.totalShares - effectiveSharesSold,
       totalCost: lot.totalCost - costBasis,
       cashDividends: lot.cashDividends - divCarried,
       ...(lot.buyFee !== undefined ? { buyFee: lot.buyFee - scale(lot.buyFee) } : {}),
@@ -170,7 +174,7 @@ export const buildSellResult = (
       symbol: lot.symbol,
       market,
       sellDate,
-      sharesSold,
+      sharesSold: effectiveSharesSold,
       sellPrice,
       grossProceeds: gross,
       sellFee,
@@ -187,7 +191,7 @@ export const buildSellResult = (
     };
     updatedLot = isFullSell ? null : {
       ...lot,
-      totalShares: lot.totalShares - sharesSold,
+      totalShares: lot.totalShares - effectiveSharesSold,
       ...(isUsdPurchase
         ? { totalCostUSD: (lot.totalCostUSD ?? 0) - costNative }
         : { totalCost: lot.totalCost - costNative }),

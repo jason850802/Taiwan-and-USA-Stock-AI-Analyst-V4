@@ -1,6 +1,6 @@
 # 03 — 手動賣出引擎的滿賣／超賣容差（含 clamp）
 
-Status: ready-for-agent
+Status: resolved（2026-08-04；實作 commit `51e3205`）
 Blocked by: 01, 02
 
 ## 目標
@@ -31,11 +31,11 @@ spec.md「手動賣出引擎」節；ADR-0004 決策 2（clamp 語意）；CONTE
 
 ## 驗收
 
-- 新增行為鎖案例（美股碎股批次，期望值先手算；既有案例**零修改**——
+- [x] 新增行為鎖案例（美股碎股批次，期望值先手算；既有案例**零修改**——
   整數與精確值路徑行為不變是設計保證，台股既有案例就是證明）：
-  - 精確滿賣：持有 1.2048、輸入 1.2048 → 全賣、updatedLot 為 null。
-  - 容差滿賣＋clamp：輸入 1.2048005（差 5e-7）→ 全賣、trade.sharesSold ＝ 1.2048。
-  - 超賣仍擋：輸入 1.2049（差 1e-4 > 容差）→ 拋錯。
-  - 部分賣出照舊：輸入 0.5 → 批次剩 0.7048、成本／股利等比縮減。
-- `npm run gate` 全綠。
-- 收尾 `code-review`，merge 帶 `Code-Review:` trailer。
+  - [x] 精確滿賣：持有 1.2048、輸入 1.2048 → 全賣、updatedLot 為 null。
+  - [x] 容差滿賣＋clamp：輸入 1.2048005（差 5e-7）→ 全賣、trade.sharesSold ＝ 1.2048。
+  - [x] 超賣仍擋：輸入 1.2049（差 1e-4 > 容差）→ 拋錯。
+  - [x] 部分賣出照舊：輸入 0.5 → 批次剩 0.7048、成本／股利等比縮減。
+- [x] `npm run gate` 全綠。
+- [x] 收尾 `code-review`（Standards 0 findings；Spec 0 findings），merge 帶 `Code-Review:` trailer。
