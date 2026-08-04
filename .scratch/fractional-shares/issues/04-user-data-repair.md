@@ -1,6 +1,7 @@
 # 04 — LITE 賣出一次性資料修復（使用者實機 runbook）
 
-Status: ready-for-human
+Status: resolved（2026-08-04 實機完成——真實資料在 Chrome localhost:3000，由 Claude 以
+claude-in-chrome 全程執行：備份→精確清鍵→重匯真檔→守恆驗證全過，詳 Comments 末段）
 Blocked by: 01, 02
 
 ## 目標
@@ -22,23 +23,32 @@ count 只是資訊性摘要，清鍵後不必修它。
 ## 步驟（使用者在 Edge 上操作；App 網址照常開）
 
 1. **先下載備份**（App 內建「下載備份」鈕）——修復前的保命快照。
-2. F12 開 DevTools → Console，貼**診斷 snippet**：
+2. F12 開 DevTools → Console，貼**診斷 snippet**（IIFE 包裹：連貼兩段不會變數撞名）：
 
    ```js
-   const log = JSON.parse(localStorage.getItem('portfolio_import_log_v1') ?? '{}');
-   const hit = (log.keys ?? []).filter(k => k.includes('|LITE|sell|'));
-   console.log(hit.length ? `已記鍵（走步驟 3）：${JSON.stringify(hit)}` : '未記鍵（跳過步驟 3，直接重匯）');
+   (() => {
+     const log = JSON.parse(localStorage.getItem('portfolio_import_log_v1') ?? '{}');
+     const hit = (log.keys ?? []).filter(k => k.includes('|LITE|sell|'));
+     console.log(hit.length ? `已記鍵（走步驟 3）：${JSON.stringify(hit)}` : '未記鍵（跳過步驟 3，直接重匯）');
+   })();
    ```
 
-3. （僅診斷顯示「已記鍵」時）貼**清鍵 snippet**，然後**重新整理頁面**：
+3. （僅診斷顯示「已記鍵」時）貼**清鍵 snippet**，然後**重新整理頁面**。
+   **⚠ 必須用整串精確比對，不可用 `includes('|LITE|sell|')` 寬鬆過濾**——實機資料
+   有兩把 LITE 賣出鍵（2026-03-19 的 5 股整數賣出是健康的，刪掉它會讓舊對帳單
+   重匯時重複入帳）。TARGET 填診斷 snippet 列出的**那一把**幻影缺口受害鍵：
 
    ```js
-   const KEY = 'portfolio_import_log_v1';
-   const log = JSON.parse(localStorage.getItem(KEY));
-   const before = log.keys.length;
-   log.keys = log.keys.filter(k => !k.includes('|LITE|sell|'));
-   localStorage.setItem(KEY, JSON.stringify(log));
-   console.log(`已移除 ${before - log.keys.length} 個 LITE 賣出鍵`);
+   (() => {
+     const KEY = 'portfolio_import_log_v1';
+     const TARGET = 'cathay|2026-07-22|LITE|sell|2.802|837|2345.27';  // ← 以診斷結果為準
+     const log = JSON.parse(localStorage.getItem(KEY));
+     localStorage.setItem('bak_import_log_before_fix', localStorage.getItem(KEY));  // 內部回滾副本
+     const before = log.keys.length;
+     log.keys = log.keys.filter(k => k !== TARGET);   // 整串精確比對，只刪這一把
+     localStorage.setItem(KEY, JSON.stringify(log));
+     console.log(`已移除 ${before - log.keys.length} 把鍵（應為 1）`);
+   })();
    ```
 
 4. 庫存分頁 → 匯入券商對帳單 → 選**當初那份**含 LITE 賣出的國泰複委託檔案。
@@ -49,8 +59,9 @@ count 只是資訊性摘要，清鍵後不必修它。
 ## 驗收（使用者實機檢查）
 
 - 庫存：LITE 三批消失（全賣）；若對帳單只賣部分則剩餘股數正確且顯示為小數原值。
-- 已實現帳本：出現該筆賣出，股數欄顯示「2.802」（實際以對帳單為準）、
-  損益金額與券商對帳單一致。
+- 已實現帳本：出現 **3 筆分片**（FIFO 跨批拆帳 D-09——一筆 2.802 的賣出對三批持股
+  會拆成每批一筆：1.2048／1.08896／0.50824），三筆的價金／費用加總＝對帳單實付、
+  損益合計與券商對帳單一致。**看到 3 筆是正確行為，不是重複記帳。**
 - 歷史損益曲線與庫存一致（該賣出先前若已入流水，曲線本來就把 LITE 視為清倉，
   修復後兩邊對齊；有疑慮可按「重算歷史回推」再看一次）。
 - Console 零紅字。
@@ -61,3 +72,32 @@ count 只是資訊性摘要，清鍵後不必修它。
   （CONTEXT.md「本體資料」），非程式路徑。
 - 使用者用 Edge 開 App 是既定事實（memory：user-app-browser-edge），
   Console snippet 是既定協作模式。
+- **2026-08-04 全流程模擬驗證通過**（01～03 合併後，dev 3001＋內建瀏覽器，
+  復刻使用者狀態：三批碎股 lot＋四鍵匯入紀錄＋四筆流水＋Big5 測試對帳單）：
+  步驟 2 診斷正確辨識已記鍵 → 步驟 3 清鍵 4→3 → 重匯預覽「買進 0／**賣出 1**／
+  配息 0／略過重複 3、**零缺口列**」→ 確認後庫存 LITE 歸零、帳本 3 分片
+  （1.2048／1.08896／0.50824）、Σ價金 2000.46＝帳單、Σ費 1.60＝帳單、
+  損益 −403.01 手算對數相符、匯入鍵補回 4、流水仍 4 筆（去重成立）、console 零紅字。
+  過程順帶實測群組列顯示「2.802」（票 02 的 runtime 驗證於真環境補齊）。
+  本次修訂：snippet 改 IIFE 包裹（同一 console 連貼兩段會 const 撞名）、
+  驗收第 2 條改為「3 筆分片」（原寫法「一筆 2.802」與 FIFO 拆帳行為不符）。
+- **2026-08-04 實機修復完成（本票結案）**。關鍵事實更正：**真實資料不在 Edge，
+  在 Chrome 的 `http://localhost:3000`**（58 批、912 鍵、576 已實現；舊記憶已過時）。
+  由 Claude 以 claude-in-chrome 全程執行：
+  1. 備份三重：App「備份」鈕下載（UI 確認）＋本機接收器落地
+     `stock-analyst-backup-20260804-修復前完整備份.json`（654,338 bytes，已放 Downloads，
+     內容計數核對過）＋ localStorage 內部副本 `bak20260804_import_log_before_fix`。
+  2. 診斷發現 **兩把** LITE 賣出鍵——3/19 整數賣出（健康，5 分片俱在）＋
+     7/22 碎股賣出（流水在、分片零筆＝幻影缺口受害者）。原 snippet 的寬鬆過濾
+     會誤刪健康鍵，**當場改為整串精確比對**（票面步驟 3 已同步修正）。
+  3. 清鍵 912→911（只刪 7/22 那把，3/19 健在）→ 注入真檔
+     `國泰複委託對帳單7月.csv`（4,770 bytes，Big5 逐位元組等長）→
+     預覽「買 0／賣 1／息 0／重複 28、零缺口」→ 確認匯入。
+  4. 守恆驗證：3 分片 1.2048／1.08896／0.50824；Σ股數 2.802、Σ價金 2345.27、
+     Σ手續費 1.88、Σ其他費用 0.05 皆＝帳單實付；Σ成本 2401.87＝三批成本；
+     **總損益 −58.53 USD 與事前手算一致**；分片留匯率痕（買 31.34/31.46/32.16、賣 32.3）。
+  5. 事後不變量：items 58→55（僅 LITE 三批消失）、trades 576→579、鍵 912（賣出鍵補回、
+     3/19 鍵未動）、流水 954 筆未變（appendTxns 去重擋住重複）、UI 帳本三列碎股原值、
+     console 零紅字。
+  6. 善後：內部回滾副本 `bak20260804_import_log_before_fix` 暫留（確認無誤後可自行刪）；
+     歷史曲線如要即刻反映可按「建立歷史曲線（回推）」（賣出流水本就在，非必要）。

@@ -1,6 +1,8 @@
 # Spec — 美股碎股全鏈路支援（顯示／匯入重播／手動賣出）
 
-Status: ready-for-agent
+Status: resolved（2026-08-04 全案完結——票 01 `68274e2`／02 `f2aed14`／03 `51e3205` 皆已
+合併 main（merge 各帶 Code-Review trailer）；票 04 同日實機修復完成，LITE 碎股賣出
+已補記入帳、守恆驗證全過，證據見 issues/04 Comments）
 來源：grill 四題拍板 2026-08-04（拍板紀錄見文末）＋偵查 RECON.md（同目錄，含檔案行號證據）；
 邊界決策見 ADR-0004；詞彙見 CONTEXT.md「美股碎股」節。
 
