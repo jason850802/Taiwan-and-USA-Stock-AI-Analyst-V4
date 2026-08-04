@@ -1,6 +1,6 @@
 # 02 — fmtShares 統一四個股數顯示點
 
-Status: ready-for-agent
+Status: resolved（2026-08-04；實作 commit `f2aed14`）
 Blocked by: 01
 
 ## 目標
@@ -33,11 +33,15 @@ spec.md「股數單位模組」「顯示端」節；ADR-0004 決策 3；CONTEXT.
 
 ## 驗收
 
-- fmtShares 單元測試（新測試檔，對照表照 spec）：
-  2.8019999999999996→「2.802」、1.08896→「1.08896」、0.50824→「0.50824」、
-  3→「3」、12000→「12,000」、0.000001→「0.000001」。
-- runtime 驗證不靠肉眼：起 dev 環境（照 start-dev skill），以 DOM 讀出群組列
+- [x] fmtShares 單元測試（新測試檔，對照表照 spec）：
+  - [x] 2.8019999999999996→「2.802」。
+  - [x] 1.08896→「1.08896」。
+  - [x] 0.50824→「0.50824」。
+  - [x] 3→「3」。
+  - [x] 12000→「12,000」。
+  - [x] 0.000001→「0.000001」。
+- [x] runtime 驗證不靠肉眼：起 dev 環境（照 start-dev skill），以 DOM 讀出群組列
   總股數與帳本股數欄字串，比對「2.802」「1.08896」等期望值；台股整數持股列
   顯示與改動前一致；console 零紅字。
-- 既有測試案例零修改；`npm run gate` 全綠。
-- 收尾 `code-review`，merge 帶 `Code-Review:` trailer。
+- [x] 既有測試案例零修改；`npm run gate` 全綠。
+- [x] 收尾 `code-review`（Standards 0 findings；Spec 0 findings），merge 帶 `Code-Review:` trailer。
