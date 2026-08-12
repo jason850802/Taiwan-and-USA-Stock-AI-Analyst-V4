@@ -5,6 +5,7 @@ import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
+import { formatQuoteTime } from '../utils/quoteTime';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -148,6 +149,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
   const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
+  const loadedQuoteTimes = Object.values(prices)
+    .filter(p => !p.loading && !p.error && Number.isFinite(p.fetchedAt))
+    .map(p => p.fetchedAt as number);
+  const quoteUpdatedTime = loadedQuoteTimes.length > 0
+    ? formatQuoteTime(Math.min(...loadedQuoteTimes), Date.now())
+    : null;
 
   const inputCls = "w-full bg-surface-inset border border-surface-line text-white px-4 py-3 rounded-ctl focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors placeholder:text-slate-600 text-sm";
 
@@ -171,9 +178,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                 不含息損益
               </Button>
             </div>
-            <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
-              <RefreshCw size={15} /> 更新報價
-            </Button>
+            <div className="flex flex-col items-end gap-1">
+              <Button variant="ghost" onClick={() => fetchAllPrices({ force: true })} className="flex items-center gap-2">
+                <RefreshCw size={15} /> 更新報價
+              </Button>
+              {quoteUpdatedTime && (
+                <p className="text-xs text-slate-400">報價 {quoteUpdatedTime} 更新</p>
+              )}
+            </div>
             <span title="依除權息公告估算台股各批股利，會覆蓋該批的股利欄位">
               <Button variant="ghost" onClick={runLotDividendUpdate} disabled={lotDividendState.running}
                 className="flex items-center gap-2">
