@@ -17,7 +17,12 @@ export type QuoteMarket = 'TW' | 'US';
 export interface QuoteCacheEntry {
   cachedAt: number;      // 寫入時刻（ms epoch）
   shortTtlOnly: boolean; // true＝只享 10 分鐘短 TTL、不享收盤後沿用（chipDataUnavailable 結果）
-  result: unknown;       // getStockData 管線終點的最終 {info, data}
+  result: unknown;       // K 線 {info, data} 或最新報價 {price, name, date}
+}
+
+// 報價 payload 與 K 線 payload 共用同一個 Map，鍵必須保有獨立命名空間。
+export function latestPriceCacheKey(symbol: string): string {
+  return `latest|${symbol.trim().toUpperCase()}`;
 }
 
 // ── 市場歸屬 ──
@@ -103,6 +108,16 @@ export function isQuoteCacheFresh(
   }
   // 7. 收盤後快取且期間未曾開盤 → 沿用到下一交易日開盤
   return true;
+}
+
+// 外匯是 24 小時市場，故不套股票市場時段，固定只沿用 60 分鐘。
+const FOREX_LATEST_PRICE_TTL_MS = 60 * 60_000;
+
+export function isLatestPriceCacheFresh(cachedAtMs: number, nowMs: number, symbol: string): boolean {
+  if (symbol.trim().toUpperCase().endsWith('=X')) {
+    return nowMs - cachedAtMs < FOREX_LATEST_PRICE_TTL_MS;
+  }
+  return isQuoteCacheFresh(cachedAtMs, nowMs, marketForSymbol(symbol));
 }
 
 // ── 雙層快取存取 ──
