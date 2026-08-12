@@ -9,7 +9,7 @@ import {
   isLatestPriceCacheFresh,
   marketForSymbol,
   isQuoteCacheFresh,
-  latestPriceCacheKey,
+  buildLatestPriceCacheKey,
   readQuoteCache,
   writeQuoteCache,
   writeMemoryAlias,
@@ -469,7 +469,7 @@ export interface GetLatestPriceOpts {
 type LatestPriceCacheResult = Omit<LatestPriceResult, 'fetchedAt'>;
 
 export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
-  const entry = readQuoteCache(latestPriceCacheKey(symbol));
+  const entry = readQuoteCache(buildLatestPriceCacheKey(symbol));
   if (!entry || !isLatestPriceCacheFresh(entry.cachedAt, Date.now(), symbol)) return null;
 
   const cached = entry.result as LatestPriceCacheResult;
@@ -516,7 +516,7 @@ export const getLatestPrice = async (
   const latest: LatestPriceCacheResult = { price: latestPrice, name, date };
   const fetchedAt = Date.now();
   if (Number.isFinite(latestPrice) && latestPrice > 0) {
-    writeQuoteCache(latestPriceCacheKey(symbol), {
+    writeQuoteCache(buildLatestPriceCacheKey(symbol), {
       cachedAt: fetchedAt,
       shortTtlOnly: false,
       result: latest,

@@ -21,7 +21,7 @@ export interface QuoteCacheEntry {
 }
 
 // 報價 payload 與 K 線 payload 共用同一個 Map，鍵必須保有獨立命名空間。
-export function latestPriceCacheKey(symbol: string): string {
+export function buildLatestPriceCacheKey(symbol: string): string {
   return `latest|${symbol.trim().toUpperCase()}`;
 }
 

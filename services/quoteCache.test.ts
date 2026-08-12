@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { isLatestPriceCacheFresh, latestPriceCacheKey } from './quoteCache';
+import { buildLatestPriceCacheKey, isLatestPriceCacheFresh } from './quoteCache';
 import { peekLatestPrice } from './yahoo';
 
-describe('latestPriceCacheKey', () => {
+describe('buildLatestPriceCacheKey', () => {
   it('報價鍵使用獨立命名空間且正規化代碼', () => {
-    const key = latestPriceCacheKey(' 2330.tw ');
+    const key = buildLatestPriceCacheKey(' 2330.tw ');
 
     expect(key).toBe('latest|2330.TW');
     expect(key).not.toBe('2330.TW|1d');
