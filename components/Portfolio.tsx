@@ -40,8 +40,7 @@ interface PortfolioProps {
 
 // ── 主元件 ─────────────────────────────────────────────────────────────────
 const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade, onStatementImport }) => {
-  // 報價/匯率、每日快照、新增表單、庫存健檢四塊 state＋effect＋handlers 已抽成 hooks（T6a）；
-  // 解構回原變數名，下方計算段與 JSX 一行不動。
+  // 報價／匯率、每日快照、新增表單與庫存健檢由各自的專用 hook 管理。
   const { prices, usdTwdRate, fetchAllPrices, fetchExchangeRate } = useHoldingPrices(items);
   const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
   const {

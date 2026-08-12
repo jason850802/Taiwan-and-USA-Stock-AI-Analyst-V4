@@ -1,6 +1,5 @@
-// components/portfolio/useHealthCheck.ts — 庫存健檢（Phase 12 T6a 自 Portfolio.tsx 平移）
-// 持有 healthResults／healthModalSymbol／batchChecking＋兩個 ref＋buildHealthItem＋
-// 單檔/批次兩個 handler。邏輯零改寫，只是搬家。
+// components/portfolio/useHealthCheck.ts — 庫存健檢
+// 管理逐檔與批次健檢狀態，支援單檔重跑、全量檢查與失敗子集重試。
 //
 // healthSeqRef 世代守衛（改前先想）：單檔與批次對同一 symbol 重疊在飛行時，
 // 較早起跑者的落地結果不得覆蓋較晚起跑者——兩個 handler 必須共用同一個 ref，
