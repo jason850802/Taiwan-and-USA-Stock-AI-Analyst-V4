@@ -181,6 +181,30 @@ function getClaudeCliEffort(mode: GeminiRequest['mode']): string {
 }
 
 /**
+ * CLI 認證失敗的特徵字串。除了「從未登入」，訂閱 OAuth 的 refresh token 也會到期
+ * （實測約 4 週），過期後 CLI 回 "Failed to authenticate: OAuth session expired and
+ * could not be refreshed"——同樣只能靠使用者重跑一次登入，不該落入 generic 上游錯誤。
+ */
+const CLAUDE_CLI_AUTH_FAILURE_MARKERS = [
+  'Not logged in',
+  'OAuth session expired',
+  'Failed to authenticate',
+];
+
+/** is_error 內容屬於「要使用者重新登入」時回對應分類錯誤，否則回 null */
+function claudeCliAuthError(resultText: string): ClassifiedError | null {
+  const isAuthFailure = CLAUDE_CLI_AUTH_FAILURE_MARKERS.some(
+    (marker) => resultText.includes(marker),
+  );
+  if (!isAuthFailure) return null;
+
+  return new ClassifiedError(
+    'MISSING_KEY',
+    '本機 Claude CLI 未登入或登入已過期：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
+  );
+}
+
+/**
  * 建立子程序環境：process.env 淺拷貝後剔除宿主 Claude Code 會話變數，
  * 避免從 Claude Code 會話啟動的 vercel dev 讓子 CLI 繼承宿主閘道／遞迴旗標。
  */
@@ -317,11 +341,9 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
 
         if (json.is_error === true) {
           const resultText = String(json.result ?? '');
-          if (resultText.includes('Not logged in')) {
-            reject(new ClassifiedError(
-              'MISSING_KEY',
-              '本機 Claude CLI 未登入：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
-            ));
+          const authError = claudeCliAuthError(resultText);
+          if (authError) {
+            reject(authError);
             return;
           }
           reject(new ClassifiedError(
@@ -510,11 +532,9 @@ function callClaudeCliStream(
 
         if (resultEvent.is_error === true) {
           const resultText = String(resultEvent.result ?? '');
-          if (resultText.includes('Not logged in')) {
-            reject(new ClassifiedError(
-              'MISSING_KEY',
-              '本機 Claude CLI 未登入：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
-            ));
+          const authError = claudeCliAuthError(resultText);
+          if (authError) {
+            reject(authError);
             return;
           }
           reject(new ClassifiedError(

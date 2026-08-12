@@ -277,7 +277,23 @@ describe('generateText / claude-cli — 輸出解析與錯誤分類', () => {
     lastChild().emit('close', 1);
     await expect(p).rejects.toMatchObject({
       code: 'MISSING_KEY',
-      message: '本機 Claude CLI 未登入：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
+      message: '本機 Claude CLI 未登入或登入已過期：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
+    });
+  });
+
+  // 2026-08-12 實機：訂閱 OAuth 的 refresh token 到期後 CLI 回這串，
+  // 舊版只認 "Not logged in" 而落入 UPSTREAM_ERROR，前端只看得到「後端無回應」
+  it('is_error 且內容為 refresh token 過期 → 同樣升級成 MISSING_KEY', async () => {
+    const { generateText } = await loadLlm();
+    const p = generateText(REQ);
+    lastChild().stdout.emit('data', JSON.stringify({
+      is_error: true,
+      result: 'Failed to authenticate: OAuth session expired and could not be refreshed',
+    }));
+    lastChild().emit('close', 1);
+    await expect(p).rejects.toMatchObject({
+      code: 'MISSING_KEY',
+      message: '本機 Claude CLI 未登入或登入已過期：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
     });
   });
 
@@ -435,6 +451,21 @@ describe('generateTextStream / claude-cli — 串流參數與逐段解析', () =
     })}\n`);
     lastChild().emit('close', 1);
     await expect(p).rejects.toMatchObject({ code: 'MISSING_KEY' });
+  });
+
+  it('串流遇 refresh token 過期 → 同樣 MISSING_KEY（與非串流同一判斷）', async () => {
+    const { generateTextStream } = await loadLlm();
+    const p = generateTextStream(REQ, vi.fn(), {});
+    lastChild().stdout.emit('data', `${JSON.stringify({
+      type: 'result',
+      is_error: true,
+      result: 'Failed to authenticate: OAuth session expired and could not be refreshed',
+    })}\n`);
+    lastChild().emit('close', 1);
+    await expect(p).rejects.toMatchObject({
+      code: 'MISSING_KEY',
+      message: '本機 Claude CLI 未登入或登入已過期：請在終端跑 claude /login（或 claude setup-token）後重試；或暫時移除 LLM_PROVIDER 改走 gemini-api。',
+    });
   });
 });
 
