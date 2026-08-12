@@ -1,5 +1,5 @@
 // components/portfolio/useHoldingPrices.ts — 庫存報價抓取（Phase 12 T6a 自 Portfolio.tsx 平移）
-// 持有 prices 與 usdTwdRate 兩個 state：同步偷看新鮮快取，miss 才抓最新價；
+// 持有 prices 與 usdTwdRate 兩個 state：同步讀取沿用窗內的報價快取，未命中才抓最新價；
 // items 的 symbol 集合一變就自動檢查，有美股時順帶處理匯率。
 import { useCallback, useEffect, useState } from 'react';
 import { PortfolioItem } from '../../types';
@@ -8,6 +8,8 @@ import type { GetLatestPriceOpts } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
 
 export interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string; fetchedAt?: number }
+
+const USD_TWD_SYMBOL = 'USDTWD=X';
 
 export const useHoldingPrices = (items: PortfolioItem[]) => {
   const [prices, setPrices] = useState<Record<string, PriceData>>(() => {
@@ -18,7 +20,7 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     });
     return initial;
   });
-  const [usdTwdRate, setUsdTwdRate] = useState<number>(() => peekLatestPrice('USDTWD=X')?.price ?? 0);
+  const [usdTwdRate, setUsdTwdRate] = useState<number>(() => peekLatestPrice(USD_TWD_SYMBOL)?.price ?? 0);
 
   // ── 報價抓取 ───────────────────────────────────────────────────────────
   const fetchPrice = useCallback(async (symbol: string, opts?: GetLatestPriceOpts) => {
@@ -41,7 +43,7 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
 
   const fetchExchangeRate = useCallback(async (opts?: GetLatestPriceOpts) => {
     if (!opts?.force) {
-      const cached = peekLatestPrice('USDTWD=X');
+      const cached = peekLatestPrice(USD_TWD_SYMBOL);
       if (cached) {
         setUsdTwdRate(cached.price);
         return;
@@ -49,7 +51,7 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     }
 
     try {
-      const r = await getLatestPrice('USDTWD=X', opts);
+      const r = await getLatestPrice(USD_TWD_SYMBOL, opts);
       if (r.price > 0) setUsdTwdRate(r.price);
     } catch { /* ignore */ }
   }, []);

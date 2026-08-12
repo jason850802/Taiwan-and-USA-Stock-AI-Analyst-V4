@@ -149,9 +149,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
   const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
-  const loadedQuoteTimes = Object.values(prices)
-    .filter(p => !p.loading && !p.error && Number.isFinite(p.fetchedAt))
-    .map(p => p.fetchedAt as number);
+  const loadedQuoteTimes = Array.from(new Set(items.map(i => i.symbol))).flatMap(symbol => {
+    const p = prices[symbol];
+    return p && !p.loading && !p.error && Number.isFinite(p.fetchedAt)
+      ? [p.fetchedAt as number]
+      : [];
+  });
   const quoteUpdatedTime = loadedQuoteTimes.length > 0
     ? formatQuoteTime(Math.min(...loadedQuoteTimes), Date.now())
     : null;
