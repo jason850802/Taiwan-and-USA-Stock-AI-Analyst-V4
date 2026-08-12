@@ -5,7 +5,7 @@
 // healthSeqRef 世代守衛（改前先想）：單檔與批次對同一 symbol 重疊在飛行時，
 // 較早起跑者的落地結果不得覆蓋較晚起跑者——兩個 handler 必須共用同一個 ref，
 // 拆開這個 hook 前先確認守衛仍然橫跨兩者。
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { PortfolioItem, StockDataPoint } from '../../types';
 import { getStockData } from '../../services/yahoo';
 import { classifyCaught, type FetchErrorKind } from '../../services/fetchError';
@@ -48,6 +48,12 @@ export const useHealthCheck = (
   const [healthResults, setHealthResults] = useState<Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>>({});
   const [healthModalSymbol, setHealthModalSymbol] = useState<string | null>(null);
   const [batchChecking, setBatchChecking] = useState(false);
+  const [batchFailedCount, setBatchFailedCount] = useState(0);
+  const failedHealthSymbols = useMemo(
+    () => Array.from(new Set(items.map(item => item.symbol)))
+      .filter(symbol => healthResults[symbol]?.status === 'error'),
+    [healthResults, items],
+  );
   // 健檢寫回世代守衛（per-symbol 單調遞增，比照 App.tsx fetchSeqRef 模式）：
   // 單檔與批次對同一 symbol 重疊在飛行時，較早起跑者的落地結果不得覆蓋較晚起跑者
   const healthSeqRef = useRef<Record<string, number>>({});
@@ -132,10 +138,15 @@ export const useHealthCheck = (
   }, [items, buildHealthItem]);
 
   // ── 一鍵批次健檢（全部持股一次 LLM 呼叫）──────────────────────────────
-  const handleBatchHealthCheck = useCallback(async () => {
-    const symbols = Array.from(new Set(items.map(i => i.symbol)));
+  const handleBatchHealthCheck = useCallback(async (targetSymbols?: readonly string[]) => {
+    const allSymbols = Array.from(new Set(items.map(i => i.symbol)));
+    const targetSet = targetSymbols === undefined ? null : new Set(targetSymbols);
+    const symbols = targetSet === null
+      ? allSymbols
+      : allSymbols.filter(symbol => targetSet.has(symbol));
     if (symbols.length === 0 || batchChecking) return;
 
+    setBatchFailedCount(failedHealthSymbols.filter(symbol => symbols.includes(symbol)).length);
     setBatchChecking(true);
     const gens: Record<string, number> = {};
     symbols.forEach(s => { gens[s] = healthSeqRef.current[s] = (healthSeqRef.current[s] ?? 0) + 1; });
@@ -215,14 +226,15 @@ export const useHealthCheck = (
         return next;
       });
     } finally {
+      setBatchFailedCount(0);
       setBatchChecking(false);
     }
-  }, [items, batchChecking, buildHealthItem]);
+  }, [items, batchChecking, buildHealthItem, failedHealthSymbols]);
 
   return {
     healthResults,
     healthModalSymbol, setHealthModalSymbol,
-    batchChecking,
+    batchChecking, batchFailedCount, failedHealthSymbols,
     handleSingleHealthCheck, handleBatchHealthCheck,
   };
 };

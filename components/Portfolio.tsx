@@ -49,8 +49,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   } = usePortfolioForm(onAdd, usdTwdRate);
   const {
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
+    batchFailedCount, failedHealthSymbols,
     handleSingleHealthCheck, handleBatchHealthCheck,
   } = useHealthCheck(items, prices, usdTwdRate);
+  const healthModalResult = healthModalSymbol ? healthResults[healthModalSymbol] : undefined;
+  const visibleFailedCount = failedHealthSymbols.length || batchFailedCount;
   const { lotDividendState, runLotDividendUpdate } = useLotDividendUpdate(items, onUpdate);
   // 備份（票 01）與回灌（票 02）：讀寫 storage、產檔下載、重新載入都在這個 hook 裡
   const {
@@ -193,7 +196,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                 <DatabaseBackup size={15} /> 回灌
               </Button>
             </span>
-            <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
+            {visibleFailedCount > 0 && (
+              <Button variant="ai" onClick={() => handleBatchHealthCheck(failedHealthSymbols)} disabled={batchChecking} className="flex items-center gap-2">
+                <HeartPulse size={15} /> 重試失敗（{visibleFailedCount}）
+              </Button>
+            )}
+            <Button variant="ai" onClick={() => handleBatchHealthCheck()} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
               {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
             </Button>
             <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
@@ -611,21 +619,32 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       </Modal>
       {/* ── 個股健檢結果 Modal ────────────────────────────────────────── */}
       <Modal
-        open={Boolean(healthModalSymbol && healthResults[healthModalSymbol]?.fullResult)}
+        open={Boolean(healthModalSymbol && healthModalResult)}
         onClose={() => setHealthModalSymbol(null)}
         title={`持股健檢：${healthModalSymbol ?? ''}`}
         maxWidth="max-w-3xl"
       >
-            <div className="text-slate-300">
-              <MarkdownReport
-                content={healthModalSymbol ? healthResults[healthModalSymbol]?.fullResult ?? '' : ''}
-              />
-            </div>
-            <div className="pt-4 border-t border-surface-line">
-              <Button variant="ghost" onClick={() => setHealthModalSymbol(null)} className="w-full">
-                關閉
-              </Button>
-            </div>
+        {healthModalResult?.status === 'loading' ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
+            <Loader2 size={24} className="animate-spin text-danger" />
+            <p className="text-sm">分析中…</p>
+          </div>
+        ) : (
+          <div className="text-slate-300">
+            <MarkdownReport content={healthModalResult?.fullResult ?? ''} />
+          </div>
+        )}
+        <div className="flex gap-2 pt-4 border-t border-surface-line">
+          <Button variant="ai" disabled={healthModalResult?.status === 'loading'}
+            onClick={() => {
+              if (healthModalSymbol) handleSingleHealthCheck(healthModalSymbol);
+            }} className="flex-1">
+            重新健檢
+          </Button>
+          <Button variant="ghost" onClick={() => setHealthModalSymbol(null)} className="flex-1">
+            關閉
+          </Button>
+        </div>
       </Modal>
     </div>
   );
