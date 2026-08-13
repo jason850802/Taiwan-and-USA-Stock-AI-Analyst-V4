@@ -11,7 +11,12 @@ import {
 } from './http.js';
 
 const CLAUDE_CLI_TIMEOUT_MS = 100_000;
-const CLAUDE_CLI_STREAM_TIMEOUT_MS = 180_000;
+// 串流總上限 300 秒（2026-08-13 由 180 秒調高，使用者拍板）。依據：庫存健檢實測
+// 單檔 88～131 秒、三檔批次 176 秒——180 秒只剩約 4 秒餘裕，真實庫存（20 檔以上）
+// 必撞穿。300 秒與 Vercel 函式的預設上限一致，部署環境同樣站得住。
+const CLAUDE_CLI_STREAM_TIMEOUT_MS = 300_000;
+// 首塊上限只用來偵測「CLI 卡死」：任何串流增量（含 thinking_delta）都算存活證明，
+// 判定放寬處見 generateTextStream 的 parseLine。
 const CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS = 45_000;
 
 /**
@@ -475,14 +480,20 @@ function callClaudeCliStream(
       if (
         event.type === 'stream_event'
         && event.event?.type === 'content_block_delta'
-        && typeof event.event.delta?.text === 'string'
       ) {
         // 已收斂（取消／逾時）後才到的增量靜默丟棄（F-02 收口）：
         // 唯一呼叫端的 onDelta 是往 client response 寫入，收斂後對端已斷線。
         if (settled) return;
+        // 首塊閘門的本意是「偵測 CLI 卡死」，不是「偵測有沒有文字」。庫存健檢那種
+        // 長提示詞實測會先吐 23 個 thinking_delta（3.8 秒就到）、直到 37 秒才吐出
+        // 第一個 text_delta——若只認 text，閘門會在模型正常思考時誤砍。
+        // 任何增量都是「活著且在工作」的確證，故一律解除首塊計時器。
         clearTimeout(firstChunkTimeoutId);
-        streamedText += event.event.delta.text;
-        onDelta(event.event.delta.text);
+        // 但只有 text 增量才轉發：thinking_delta 沒有 text 欄位，思考內容不外流。
+        if (typeof event.event.delta?.text === 'string') {
+          streamedText += event.event.delta.text;
+          onDelta(event.event.delta.text);
+        }
         return;
       }
 

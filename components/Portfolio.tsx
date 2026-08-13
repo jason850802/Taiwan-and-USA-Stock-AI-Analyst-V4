@@ -638,14 +638,23 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         title={`持股健檢：${healthModalSymbol ?? ''}`}
         maxWidth="max-w-3xl"
       >
-        {healthModalResult?.status === 'loading' ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
+        {healthModalResult?.status === 'loading' && !healthModalResult.fullResult ? (
+          <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400">
             <Loader2 size={24} className="animate-spin text-danger" />
-            <p className="text-sm">分析中…</p>
+            {/* 模型在吐出第一個字之前會先思考數十秒（實測約 37 秒），期間畫面上不會有任何
+                文字。不標示的話看起來像當掉，使用者會重按而白花一次分析。 */}
+            <p className="text-sm">AI 思考中…</p>
+            <p className="text-xs text-slate-500">首段文字出現前需要數十秒，請稍候</p>
           </div>
         ) : (
-          <div className="text-slate-300">
+          <div className="space-y-3 text-slate-300">
             <MarkdownReport content={healthModalResult?.fullResult ?? ''} />
+            {healthModalResult?.status === 'loading' && (
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <Loader2 size={16} className="animate-spin text-danger" />
+                <span>產生中…</span>
+              </div>
+            )}
           </div>
         )}
         <div className="flex gap-2 pt-4 border-t border-surface-line">

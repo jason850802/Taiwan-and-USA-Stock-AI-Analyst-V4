@@ -675,7 +675,7 @@ describe('claude-cli — timeout 收斂', () => {
     await expect(p).resolves.toEqual({ text: '慢慢跑完' });
   });
 
-  it('串流總逾時 180 秒——即使一路有增量也會被砍', async () => {
+  it('串流總逾時 300 秒——即使一路有增量也會被砍', async () => {
     const { generateTextStream } = await loadLlm();
     const onDelta = vi.fn();
     const p = generateTextStream(REQ, onDelta, {});
@@ -683,7 +683,7 @@ describe('claude-cli — timeout 收斂', () => {
     const child = lastChild();
 
     // 每 30 秒來一段，持續解除首塊逾時，但總逾時不受影響
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 9; i++) {
       child.stdout.emit('data', `${JSON.stringify({
         type: 'stream_event',
         event: { type: 'content_block_delta', delta: { text: `第${i}段` } },
@@ -695,7 +695,28 @@ describe('claude-cli — timeout 收斂', () => {
     await vi.advanceTimersByTimeAsync(30_000);
     expect(child.kill).toHaveBeenCalledTimes(1);
     await rejected;
-    expect(onDelta).toHaveBeenCalledTimes(5);
+    expect(onDelta).toHaveBeenCalledTimes(9);
+  });
+
+  it('思考增量（thinking_delta，無 text 欄位）也解除首塊逾時，但不轉發給呼叫端', async () => {
+    const { generateTextStream } = await loadLlm();
+    const onDelta = vi.fn();
+    const p = generateTextStream(REQ, onDelta, {});
+    const child = lastChild();
+
+    // 實測庫存健檢會先吐數十秒的 thinking_delta 才出現第一個 text_delta；
+    // 首塊閘門若只認 text，模型正常思考期間就會被誤砍。
+    child.stdout.emit('data', `${JSON.stringify({
+      type: 'stream_event',
+      event: { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: '盤算中' } },
+    })}\n`);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(child.kill).not.toHaveBeenCalled();
+    expect(onDelta).not.toHaveBeenCalled();   // 思考內容不外流
+
+    child.stdout.emit('data', `${JSON.stringify({ type: 'result', result: '想完才寫' })}\n`);
+    child.emit('close', 0);
+    await expect(p).resolves.toEqual({ text: '想完才寫' });
   });
 });
 

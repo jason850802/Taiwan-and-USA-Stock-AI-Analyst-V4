@@ -106,6 +106,7 @@ export const useHealthCheck = (
     if (!items.some(i => i.symbol === symbol)) return;
 
     const gen = healthSeqRef.current[symbol] = (healthSeqRef.current[symbol] ?? 0) + 1;
+    setHealthModalSymbol(symbol);
     setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
 
     try {
@@ -118,7 +119,16 @@ export const useHealthCheck = (
         return;
       }
 
-      const result = await analyzePortfolioHealth([healthItem]);
+      const result = await analyzePortfolioHealth([healthItem], (partial) => {
+        if (healthSeqRef.current[symbol] !== gen) return;
+        setHealthResults(prev => {
+          if (healthSeqRef.current[symbol] !== gen) return prev;
+          return {
+            ...prev,
+            [symbol]: { status: 'loading', decision: '', fullResult: partial },
+          };
+        });
+      });
 
       // 決策：優先 json 機器區，失敗 fallback regex（舊行為是下限）
       const parsed = parseHealthDecisions(result);
@@ -190,7 +200,8 @@ export const useHealthCheck = (
       attemptedSymbols = okSymbols;
       if (healthItems.length === 0) return; // 全部失敗：已逐檔標記，本輪不打 LLM
 
-      const result = await analyzePortfolioHealth(healthItems);
+      // 批次仍只打一筆串流請求；部分文本尚不能安全切成 per-symbol 段落，故不寫回。
+      const result = await analyzePortfolioHealth(healthItems, () => {});
 
       // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
       // 切段只對實際送 LLM 的 okSymbols 做（splitHealthReport 要求每個 symbol 都認領到段落）
