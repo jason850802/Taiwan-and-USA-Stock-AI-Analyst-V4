@@ -5,6 +5,7 @@ import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
+import { formatQuoteTime } from '../utils/quoteTime';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
@@ -39,8 +40,7 @@ interface PortfolioProps {
 
 // ── 主元件 ─────────────────────────────────────────────────────────────────
 const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate, realizedTrades, onSell, onUpdateMeta, onDeleteTrade, onStatementImport }) => {
-  // 報價/匯率、每日快照、新增表單、庫存健檢四塊 state＋effect＋handlers 已抽成 hooks（T6a）；
-  // 解構回原變數名，下方計算段與 JSX 一行不動。
+  // 報價／匯率、每日快照、新增表單與庫存健檢由各自的專用 hook 管理。
   const { prices, usdTwdRate, fetchAllPrices, fetchExchangeRate } = useHoldingPrices(items);
   const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
   const {
@@ -49,8 +49,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   } = usePortfolioForm(onAdd, usdTwdRate);
   const {
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
+    batchFailedCount, failedHealthSymbols,
     handleSingleHealthCheck, handleBatchHealthCheck,
   } = useHealthCheck(items, prices, usdTwdRate);
+  const healthModalResult = healthModalSymbol ? healthResults[healthModalSymbol] : undefined;
+  const visibleFailedCount = failedHealthSymbols.length || batchFailedCount;
   const { lotDividendState, runLotDividendUpdate } = useLotDividendUpdate(items, onUpdate);
   // 備份（票 01）與回灌（票 02）：讀寫 storage、產檔下載、重新載入都在這個 hook 裡
   const {
@@ -148,6 +151,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
   const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
+  const loadedQuoteTimes = Array.from(new Set(items.map(i => i.symbol))).flatMap(symbol => {
+    const p = prices[symbol];
+    return p && !p.loading && !p.error && Number.isFinite(p.fetchedAt)
+      ? [p.fetchedAt as number]
+      : [];
+  });
+  const quoteUpdatedTime = loadedQuoteTimes.length > 0
+    ? formatQuoteTime(Math.min(...loadedQuoteTimes), Date.now())
+    : null;
 
   const inputCls = "w-full bg-surface-inset border border-surface-line text-white px-4 py-3 rounded-ctl focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-colors placeholder:text-slate-600 text-sm";
 
@@ -171,9 +183,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                 不含息損益
               </Button>
             </div>
-            <Button variant="ghost" onClick={fetchAllPrices} className="flex items-center gap-2">
-              <RefreshCw size={15} /> 更新報價
-            </Button>
+            <div className="flex flex-col items-end gap-1">
+              <Button variant="ghost" onClick={() => fetchAllPrices({ force: true })} className="flex items-center gap-2">
+                <RefreshCw size={15} /> 更新報價
+              </Button>
+              {quoteUpdatedTime && (
+                <p className="text-xs text-slate-400">報價 {quoteUpdatedTime} 更新</p>
+              )}
+            </div>
             <span title="依除權息公告估算台股各批股利，會覆蓋該批的股利欄位">
               <Button variant="ghost" onClick={runLotDividendUpdate} disabled={lotDividendState.running}
                 className="flex items-center gap-2">
@@ -193,7 +210,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
                 <DatabaseBackup size={15} /> 回灌
               </Button>
             </span>
-            <Button variant="ai" onClick={handleBatchHealthCheck} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
+            {visibleFailedCount > 0 && (
+              <Button variant="ai" onClick={() => handleBatchHealthCheck(failedHealthSymbols)} disabled={batchChecking} className="flex items-center gap-2">
+                <HeartPulse size={15} /> 重試失敗（{visibleFailedCount}）
+              </Button>
+            )}
+            <Button variant="ai" onClick={() => handleBatchHealthCheck()} disabled={items.length === 0 || batchChecking} className="flex items-center gap-2">
               {batchChecking ? <Loader2 size={15} className="animate-spin" /> : <HeartPulse size={15} />} 全部健檢
             </Button>
             <Button variant="primary" onClick={() => { setIsAnalyzeMode(false); setShowAddModal(true); }} className="flex items-center gap-2">
@@ -611,21 +633,32 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       </Modal>
       {/* ── 個股健檢結果 Modal ────────────────────────────────────────── */}
       <Modal
-        open={Boolean(healthModalSymbol && healthResults[healthModalSymbol]?.fullResult)}
+        open={Boolean(healthModalSymbol && healthModalResult)}
         onClose={() => setHealthModalSymbol(null)}
         title={`持股健檢：${healthModalSymbol ?? ''}`}
         maxWidth="max-w-3xl"
       >
-            <div className="text-slate-300">
-              <MarkdownReport
-                content={healthModalSymbol ? healthResults[healthModalSymbol]?.fullResult ?? '' : ''}
-              />
-            </div>
-            <div className="pt-4 border-t border-surface-line">
-              <Button variant="ghost" onClick={() => setHealthModalSymbol(null)} className="w-full">
-                關閉
-              </Button>
-            </div>
+        {healthModalResult?.status === 'loading' ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
+            <Loader2 size={24} className="animate-spin text-danger" />
+            <p className="text-sm">分析中…</p>
+          </div>
+        ) : (
+          <div className="text-slate-300">
+            <MarkdownReport content={healthModalResult?.fullResult ?? ''} />
+          </div>
+        )}
+        <div className="flex gap-2 pt-4 border-t border-surface-line">
+          <Button variant="ai" disabled={healthModalResult?.status === 'loading'}
+            onClick={() => {
+              if (healthModalSymbol) handleSingleHealthCheck(healthModalSymbol);
+            }} className="flex-1">
+            重新健檢
+          </Button>
+          <Button variant="ghost" onClick={() => setHealthModalSymbol(null)} className="flex-1">
+            關閉
+          </Button>
+        </div>
       </Modal>
     </div>
   );

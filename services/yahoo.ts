@@ -6,8 +6,10 @@ import { DataFetchError } from './fetchError';
 import { fetchFinMindRows } from './finmind';
 import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
 import {
+  isLatestPriceCacheFresh,
   marketForSymbol,
   isQuoteCacheFresh,
+  buildLatestPriceCacheKey,
   readQuoteCache,
   writeQuoteCache,
   writeMemoryAlias,
@@ -453,7 +455,36 @@ const processYahooResult = (response: YahooChartResponse, interval: string): any
     return cleanData;
 };
 
-export const getLatestPrice = async (symbol: string): Promise<{ price: number; name: string; date?: string }> => {
+export interface LatestPriceResult {
+  price: number;
+  name: string;
+  date?: string;
+  fetchedAt: number;
+}
+
+export interface GetLatestPriceOpts {
+  force?: boolean;
+}
+
+type LatestPriceCacheResult = Omit<LatestPriceResult, 'fetchedAt'>;
+
+export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
+  const entry = readQuoteCache(buildLatestPriceCacheKey(symbol));
+  if (!entry || !isLatestPriceCacheFresh(entry.cachedAt, Date.now(), symbol)) return null;
+
+  const cached = entry.result as LatestPriceCacheResult;
+  return { ...cached, fetchedAt: entry.cachedAt };
+};
+
+export const getLatestPrice = async (
+  symbol: string,
+  opts?: GetLatestPriceOpts,
+): Promise<LatestPriceResult> => {
+  if (!opts?.force) {
+    const cached = peekLatestPrice(symbol);
+    if (cached) return cached;
+  }
+
   const response = await fetchRawData(symbol, '1d', '5d');
   const result = response.chart.result![0];
   const meta = result.meta;
@@ -482,7 +513,17 @@ export const getLatestPrice = async (symbol: string): Promise<{ price: number; n
     if (chineseName) name = chineseName;
   }
 
-  return { price: latestPrice, name, date };
+  const latest: LatestPriceCacheResult = { price: latestPrice, name, date };
+  const fetchedAt = Date.now();
+  if (Number.isFinite(latestPrice) && latestPrice > 0) {
+    writeQuoteCache(buildLatestPriceCacheKey(symbol), {
+      cachedAt: fetchedAt,
+      shortTtlOnly: false,
+      result: latest,
+    });
+  }
+
+  return { ...latest, fetchedAt };
 };
 
 // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。
