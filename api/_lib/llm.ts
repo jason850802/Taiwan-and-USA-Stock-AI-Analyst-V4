@@ -435,8 +435,12 @@ function callClaudeCliStream(
       child.kill();
       reject(new ClassifiedError(
         'UPSTREAM_ERROR',
+        // 增量數與文字字數要一起印：只看「已產出文字 0 字」分不出「上游卡死」與
+        // 「一路在思考但沒吐字」——後者的增量數會很大，這正是 2026-08-13 那次
+        // 診斷繞遠路的關鍵資訊。
         truncateForMessage(sanitizeErrorForLog(
-          `claude CLI 串流總逾時 ${CLAUDE_CLI_STREAM_TIMEOUT_MS / 1000} 秒（已產出文字 ${streamedText.length} 字）`,
+          `claude CLI 串流總逾時 ${CLAUDE_CLI_STREAM_TIMEOUT_MS / 1000} 秒`
+          + `（串流增量 ${streamDeltaCount} 個、已產出文字 ${streamedText.length} 字）`,
         )),
       ));
     }, CLAUDE_CLI_STREAM_TIMEOUT_MS);
@@ -448,6 +452,9 @@ function callClaudeCliStream(
       child.kill();
       reject(new ClassifiedError(
         'UPSTREAM_ERROR',
+        // 這裡的增量數在現行語意下恆為 0（任何增量都會先清掉本計時器），看似冗贅——
+        // 但它是絆線：哪天有人把 parseLine 的閘門改回只認文字增量，這個數字就會變成
+        // 非 0，一眼揭穿「CLI 明明有動靜卻被砍」。**不要當成死碼刪掉。**
         truncateForMessage(sanitizeErrorForLog(
           `claude CLI 首塊逾時 ${CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS / 1000} 秒（串流增量 ${streamDeltaCount} 個）`,
         )),

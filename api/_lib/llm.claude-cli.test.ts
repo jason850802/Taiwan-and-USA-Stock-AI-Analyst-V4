@@ -722,7 +722,7 @@ describe('claude-cli — timeout 收斂', () => {
     const elapsedSeconds = (Date.now() - startedAt) / 1000;
     await expect(rejected).resolves.toMatchObject({
       code: 'UPSTREAM_ERROR',
-      message: `claude CLI 串流總逾時 ${elapsedSeconds} 秒（已產出文字 27 字）`,
+      message: `claude CLI 串流總逾時 ${elapsedSeconds} 秒（串流增量 9 個、已產出文字 27 字）`,
     });
     expect(onDelta).toHaveBeenCalledTimes(9);
   });
