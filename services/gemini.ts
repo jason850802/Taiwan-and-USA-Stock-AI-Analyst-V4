@@ -953,19 +953,24 @@ export const HEALTH_CHECK_SYSTEM_INSTRUCTION = `
 `;
 
 export const analyzePortfolioHealth = async (
-  items: PortfolioHealthItem[]
+  items: PortfolioHealthItem[],
+  onChunk?: (partial: string) => void,
 ): Promise<string> => {
   const promptData = formatHealthCheckData(items);
 
   const promptText = `以下是我目前的庫存持股，請逐一進行健檢分析：\n${promptData}`;
 
-  return callGeminiApi({
+  const payload: GeminiApiPayload = {
     prompt: promptText,
     systemInstruction: HEALTH_CHECK_SYSTEM_INSTRUCTION,
     mode: 'fast',
     temperature: 0.2,
     thinkingConfig: { thinkingBudget: FLASH_THINKING_BUDGET },
-  }, '無法生成健檢結果。');
+  };
+
+  return onChunk
+    ? callGeminiApiStream(payload, onChunk)
+    : callGeminiApi(payload, '無法生成健檢結果。');
 };
 
 // ── 台股基本面 AI 解讀 ──────────────────────────────────────────────────────

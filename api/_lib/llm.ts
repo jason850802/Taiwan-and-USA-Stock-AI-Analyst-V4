@@ -11,7 +11,12 @@ import {
 } from './http.js';
 
 const CLAUDE_CLI_TIMEOUT_MS = 100_000;
-const CLAUDE_CLI_STREAM_TIMEOUT_MS = 180_000;
+// 串流總上限 300 秒（2026-08-13 由 180 秒調高，使用者拍板）。依據：庫存健檢實測
+// 單檔 88～131 秒、三檔批次 176 秒——180 秒只剩約 4 秒餘裕，真實庫存（20 檔以上）
+// 必撞穿。300 秒與 Vercel 函式的預設上限一致，部署環境同樣站得住。
+const CLAUDE_CLI_STREAM_TIMEOUT_MS = 300_000;
+// 首塊上限只用來偵測「CLI 卡死」：任何串流增量（含 thinking_delta）都算存活證明，
+// 判定放寬處見 generateTextStream 的 parseLine。
 const CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS = 45_000;
 
 /**
@@ -283,7 +288,12 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
       if (settled) return;
       settled = true;
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 逾時 ${CLAUDE_CLI_TIMEOUT_MS / 1000} 秒（stdout ${stdout.length} 字、stderr ${stderr.length} 字）`,
+        )),
+      ));
     }, CLAUDE_CLI_TIMEOUT_MS);
 
     const settle = (fn: () => void) => {
@@ -386,6 +396,7 @@ function callClaudeCliStream(
     let stdoutBuffer = '';
     let streamedText = '';
     let stderr = '';
+    let streamDeltaCount = 0;
     let resultEvent: {
       type?: string;
       subtype?: string;
@@ -422,7 +433,16 @@ function callClaudeCliStream(
       settled = true;
       clearTimeout(firstChunkTimeoutId);
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        // 增量數與文字字數要一起印：只看「已產出文字 0 字」分不出「上游卡死」與
+        // 「一路在思考但沒吐字」——後者的增量數會很大，這正是 2026-08-13 那次
+        // 診斷繞遠路的關鍵資訊。
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 串流總逾時 ${CLAUDE_CLI_STREAM_TIMEOUT_MS / 1000} 秒`
+          + `（串流增量 ${streamDeltaCount} 個、已產出文字 ${streamedText.length} 字）`,
+        )),
+      ));
     }, CLAUDE_CLI_STREAM_TIMEOUT_MS);
 
     const firstChunkTimeoutId = setTimeout(() => {
@@ -430,7 +450,15 @@ function callClaudeCliStream(
       settled = true;
       clearTimeout(totalTimeoutId);
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        // 這裡的增量數在現行語意下恆為 0（任何增量都會先清掉本計時器），看似冗贅——
+        // 但它是絆線：哪天有人把 parseLine 的閘門改回只認文字增量，這個數字就會變成
+        // 非 0，一眼揭穿「CLI 明明有動靜卻被砍」。**不要當成死碼刪掉。**
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 首塊逾時 ${CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS / 1000} 秒（串流增量 ${streamDeltaCount} 個）`,
+        )),
+      ));
     }, CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS);
 
     const settle = (fn: () => void) => {
@@ -475,14 +503,21 @@ function callClaudeCliStream(
       if (
         event.type === 'stream_event'
         && event.event?.type === 'content_block_delta'
-        && typeof event.event.delta?.text === 'string'
       ) {
         // 已收斂（取消／逾時）後才到的增量靜默丟棄（F-02 收口）：
         // 唯一呼叫端的 onDelta 是往 client response 寫入，收斂後對端已斷線。
         if (settled) return;
+        streamDeltaCount += 1;
+        // 首塊閘門的本意是「偵測 CLI 卡死」，不是「偵測有沒有文字」。庫存健檢那種
+        // 長提示詞實測會先吐 23 個 thinking_delta（3.8 秒就到）、直到 37 秒才吐出
+        // 第一個 text_delta——若只認 text，閘門會在模型正常思考時誤砍。
+        // 任何增量都是「活著且在工作」的確證，故一律解除首塊計時器。
         clearTimeout(firstChunkTimeoutId);
-        streamedText += event.event.delta.text;
-        onDelta(event.event.delta.text);
+        // 但只有 text 增量才轉發：thinking_delta 沒有 text 欄位，思考內容不外流。
+        if (typeof event.event.delta?.text === 'string') {
+          streamedText += event.event.delta.text;
+          onDelta(event.event.delta.text);
+        }
         return;
       }
 
