@@ -595,23 +595,27 @@ describe('claude-cli — stdio stream error 被接住', () => {
 // ---------------------------------------------------------------------------
 
 describe('claude-cli — timeout 收斂', () => {
-  it('非串流 100 秒逾時 → 殺子程序、以預設 UPSTREAM_ERROR 訊息拒絕', async () => {
+  it('非串流 100 秒逾時 → 殺子程序、訊息帶實際秒數與輸出長度', async () => {
     const { generateText } = await loadLlm();
+    const startedAt = Date.now();
     const p = generateText(REQ);
     // 拒絕的斷言要在推進時鐘「之前」掛好：推進時鐘會同步觸發 reject，
     // 事後才 await 等於慢一個 microtask turn，Node 會先判定成未捕捉拒絕。
-    const rejected = expect(p).rejects.toMatchObject({
-      code: 'UPSTREAM_ERROR',
-      message: 'AI 服務暫時無法回應，請稍後再試。',
-    });
+    const rejected = p.catch((error: ClassifiedError) => error);
     const child = lastChild();
+    child.stdout.emit('data', '已有輸出');
+    child.stderr.emit('data', '警告');
 
     await vi.advanceTimersByTimeAsync(99_999);
     expect(child.kill).not.toHaveBeenCalled();
 
     await vi.advanceTimersByTimeAsync(1);
     expect(child.kill).toHaveBeenCalledTimes(1);
-    await rejected;
+    const elapsedSeconds = (Date.now() - startedAt) / 1000;
+    await expect(rejected).resolves.toMatchObject({
+      code: 'UPSTREAM_ERROR',
+      message: `claude CLI 逾時 ${elapsedSeconds} 秒（stdout 4 字、stderr 2 字）`,
+    });
   });
 
   it('逾時後才到的 close 不會造成第二次收斂', async () => {
@@ -642,18 +646,38 @@ describe('claude-cli — timeout 收斂', () => {
     expect(lastChild().kill).not.toHaveBeenCalled();
   });
 
-  it('串流首塊 45 秒未到 → 殺子程序並拒絕', async () => {
+  it('串流首塊 45 秒未到 → 殺子程序、訊息帶實際秒數與增量數', async () => {
     const { generateTextStream } = await loadLlm();
+    const startedAt = Date.now();
     const p = generateTextStream(REQ, vi.fn(), {});
-    const rejected = expect(p).rejects.toMatchObject({ code: 'UPSTREAM_ERROR' });
+    const rejected = p.catch((error: ClassifiedError) => error);
     const child = lastChild();
+    child.stdout.emit('data', `${JSON.stringify({ type: 'stream_event', event: { type: 'message_start' } })}\n`);
 
     await vi.advanceTimersByTimeAsync(44_999);
     expect(child.kill).not.toHaveBeenCalled();
 
     await vi.advanceTimersByTimeAsync(1);
     expect(child.kill).toHaveBeenCalledTimes(1);
-    await rejected;
+    const elapsedSeconds = (Date.now() - startedAt) / 1000;
+    await expect(rejected).resolves.toMatchObject({
+      code: 'UPSTREAM_ERROR',
+      message: `claude CLI 首塊逾時 ${elapsedSeconds} 秒（串流增量 0 個）`,
+    });
+  });
+
+  it('串流首塊完全沒有收到增量時，逾時訊息明確顯示增量 0 個', async () => {
+    const { generateTextStream } = await loadLlm();
+    const startedAt = Date.now();
+    const p = generateTextStream(REQ, vi.fn(), {});
+    const rejected = p.catch((error: ClassifiedError) => error);
+
+    await vi.advanceTimersByTimeAsync(45_000);
+    const elapsedSeconds = (Date.now() - startedAt) / 1000;
+    await expect(rejected).resolves.toMatchObject({
+      code: 'UPSTREAM_ERROR',
+      message: `claude CLI 首塊逾時 ${elapsedSeconds} 秒（串流增量 0 個）`,
+    });
   });
 
   it('收到第一段增量就解除首塊逾時——之後撐過 45 秒也不會被殺', async () => {
@@ -678,8 +702,9 @@ describe('claude-cli — timeout 收斂', () => {
   it('串流總逾時 300 秒——即使一路有增量也會被砍', async () => {
     const { generateTextStream } = await loadLlm();
     const onDelta = vi.fn();
+    const startedAt = Date.now();
     const p = generateTextStream(REQ, onDelta, {});
-    const rejected = expect(p).rejects.toMatchObject({ code: 'UPSTREAM_ERROR' });
+    const rejected = p.catch((error: ClassifiedError) => error);
     const child = lastChild();
 
     // 每 30 秒來一段，持續解除首塊逾時，但總逾時不受影響
@@ -694,7 +719,11 @@ describe('claude-cli — timeout 收斂', () => {
 
     await vi.advanceTimersByTimeAsync(30_000);
     expect(child.kill).toHaveBeenCalledTimes(1);
-    await rejected;
+    const elapsedSeconds = (Date.now() - startedAt) / 1000;
+    await expect(rejected).resolves.toMatchObject({
+      code: 'UPSTREAM_ERROR',
+      message: `claude CLI 串流總逾時 ${elapsedSeconds} 秒（已產出文字 27 字）`,
+    });
     expect(onDelta).toHaveBeenCalledTimes(9);
   });
 

@@ -288,7 +288,12 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
       if (settled) return;
       settled = true;
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 逾時 ${CLAUDE_CLI_TIMEOUT_MS / 1000} 秒（stdout ${stdout.length} 字、stderr ${stderr.length} 字）`,
+        )),
+      ));
     }, CLAUDE_CLI_TIMEOUT_MS);
 
     const settle = (fn: () => void) => {
@@ -391,6 +396,7 @@ function callClaudeCliStream(
     let stdoutBuffer = '';
     let streamedText = '';
     let stderr = '';
+    let streamDeltaCount = 0;
     let resultEvent: {
       type?: string;
       subtype?: string;
@@ -427,7 +433,12 @@ function callClaudeCliStream(
       settled = true;
       clearTimeout(firstChunkTimeoutId);
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 串流總逾時 ${CLAUDE_CLI_STREAM_TIMEOUT_MS / 1000} 秒（已產出文字 ${streamedText.length} 字）`,
+        )),
+      ));
     }, CLAUDE_CLI_STREAM_TIMEOUT_MS);
 
     const firstChunkTimeoutId = setTimeout(() => {
@@ -435,7 +446,12 @@ function callClaudeCliStream(
       settled = true;
       clearTimeout(totalTimeoutId);
       child.kill();
-      reject(new ClassifiedError('UPSTREAM_ERROR'));
+      reject(new ClassifiedError(
+        'UPSTREAM_ERROR',
+        truncateForMessage(sanitizeErrorForLog(
+          `claude CLI 首塊逾時 ${CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS / 1000} 秒（串流增量 ${streamDeltaCount} 個）`,
+        )),
+      ));
     }, CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS);
 
     const settle = (fn: () => void) => {
@@ -484,6 +500,7 @@ function callClaudeCliStream(
         // 已收斂（取消／逾時）後才到的增量靜默丟棄（F-02 收口）：
         // 唯一呼叫端的 onDelta 是往 client response 寫入，收斂後對端已斷線。
         if (settled) return;
+        streamDeltaCount += 1;
         // 首塊閘門的本意是「偵測 CLI 卡死」，不是「偵測有沒有文字」。庫存健檢那種
         // 長提示詞實測會先吐 23 個 thinking_delta（3.8 秒就到）、直到 37 秒才吐出
         // 第一個 text_delta——若只認 text，閘門會在模型正常思考時誤砍。
