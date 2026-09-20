@@ -1,0 +1,46 @@
+{
+  "name": "form-without-us",
+  "stage": "green",
+  "passed": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "final": {
+    "items": [],
+    "prices": {},
+    "usdTwdRate": 32,
+    "historyTick": 0,
+    "snapshots": []
+  },
+  "requests": [
+    {
+      "group": "AAPL:1",
+      "symbol": "AAPL",
+      "status": 503,
+      "price": 100,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "2330.TW:1",
+      "symbol": "2330.TW",
+      "status": 200,
+      "price": 110,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:1",
+      "symbol": "USDTWD=X",
+      "status": 503,
+      "price": 30,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "USDTWD=X:2",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 32,
+      "date": "2026-09-18"
+    }
+  ],
+  "uncaught": [],
+  "hookSha256": "b85f642e49ebadb2d05124e93b9369a219d87452ccb5eea24dcf124410538cd0",
+  "buildIndexSha256": "9d18eaa0ddeedac0ac53a11f87a450c41f5e8a82170c135437b34917af7dcbd0"
+}

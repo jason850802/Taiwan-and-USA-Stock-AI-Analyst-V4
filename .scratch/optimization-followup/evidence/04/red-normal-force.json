@@ -1,0 +1,295 @@
+{
+  "name": "normal-force",
+  "stage": "red",
+  "passed": false,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "afterNew": {
+    "items": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      },
+      {
+        "id": "fixture-tw",
+        "symbol": "2330.TW",
+        "totalShares": 1,
+        "avgCostPrice": 100,
+        "totalCost": 100,
+        "cashDividends": 0,
+        "stockDividends": 0
+      }
+    ],
+    "prices": {
+      "AAPL": {
+        "price": 200,
+        "name": "驗收 AAPL",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876920000,
+        "loading": false,
+        "error": false
+      },
+      "2330.TW": {
+        "price": 110,
+        "name": "驗收台股",
+        "date": "2026-09-19",
+        "fetchedAt": 1789876920000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 32,
+    "historyTick": 2,
+    "snapshots": [
+      {
+        "date": "2026-09-19",
+        "market": "TW",
+        "source": "live",
+        "marketValue": 110,
+        "totalCost": 100,
+        "estSellCosts": 1,
+        "cashDividends": 0,
+        "symbolCount": 1,
+        "capturedAt": 1789876920000
+      },
+      {
+        "date": "2026-09-18",
+        "market": "US",
+        "source": "live",
+        "marketValue": 2000,
+        "totalCost": 100,
+        "estSellCosts": 1.6,
+        "cashDividends": 0,
+        "usdTwdRate": 32,
+        "fxRate": 32,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876920000
+      }
+    ]
+  },
+  "afterOld": {
+    "items": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      },
+      {
+        "id": "fixture-tw",
+        "symbol": "2330.TW",
+        "totalShares": 1,
+        "avgCostPrice": 100,
+        "totalCost": 100,
+        "cashDividends": 0,
+        "stockDividends": 0
+      }
+    ],
+    "prices": {
+      "AAPL": {
+        "price": 100,
+        "name": "驗收 AAPL",
+        "date": "2026-09-17",
+        "fetchedAt": 1789876980000,
+        "loading": false,
+        "error": false
+      },
+      "2330.TW": {
+        "price": 110,
+        "name": "驗收台股",
+        "date": "2026-09-19",
+        "fetchedAt": 1789876920000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 30,
+    "historyTick": 4,
+    "snapshots": [
+      {
+        "date": "2026-09-19",
+        "market": "TW",
+        "source": "live",
+        "marketValue": 110,
+        "totalCost": 100,
+        "estSellCosts": 1,
+        "cashDividends": 0,
+        "symbolCount": 1,
+        "capturedAt": 1789876980000
+      },
+      {
+        "date": "2026-09-17",
+        "market": "US",
+        "source": "live",
+        "marketValue": 1000,
+        "totalCost": 106.67,
+        "estSellCosts": 0.8,
+        "cashDividends": 0,
+        "usdTwdRate": 30,
+        "fxRate": 30,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876980000
+      },
+      {
+        "date": "2026-09-18",
+        "market": "US",
+        "source": "live",
+        "marketValue": 2000,
+        "totalCost": 100,
+        "estSellCosts": 1.6,
+        "cashDividends": 0,
+        "usdTwdRate": 32,
+        "fxRate": 32,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876920000
+      }
+    ]
+  },
+  "error": "舊價格覆蓋新價格",
+  "observed": {
+    "items": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      },
+      {
+        "id": "fixture-tw",
+        "symbol": "2330.TW",
+        "totalShares": 1,
+        "avgCostPrice": 100,
+        "totalCost": 100,
+        "cashDividends": 0,
+        "stockDividends": 0
+      }
+    ],
+    "prices": {
+      "AAPL": {
+        "price": 100,
+        "name": "驗收 AAPL",
+        "date": "2026-09-17",
+        "fetchedAt": 1789876980000,
+        "loading": false,
+        "error": false
+      },
+      "2330.TW": {
+        "price": 110,
+        "name": "驗收台股",
+        "date": "2026-09-19",
+        "fetchedAt": 1789876920000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 30,
+    "historyTick": 4,
+    "snapshots": [
+      {
+        "date": "2026-09-19",
+        "market": "TW",
+        "source": "live",
+        "marketValue": 110,
+        "totalCost": 100,
+        "estSellCosts": 1,
+        "cashDividends": 0,
+        "symbolCount": 1,
+        "capturedAt": 1789876980000
+      },
+      {
+        "date": "2026-09-17",
+        "market": "US",
+        "source": "live",
+        "marketValue": 1000,
+        "totalCost": 106.67,
+        "estSellCosts": 0.8,
+        "cashDividends": 0,
+        "usdTwdRate": 30,
+        "fxRate": 30,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876980000
+      },
+      {
+        "date": "2026-09-18",
+        "market": "US",
+        "source": "live",
+        "marketValue": 2000,
+        "totalCost": 100,
+        "estSellCosts": 1.6,
+        "cashDividends": 0,
+        "usdTwdRate": 32,
+        "fxRate": 32,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876920000
+      }
+    ]
+  },
+  "requests": [
+    {
+      "group": "AAPL:1",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 100,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "2330.TW:1",
+      "symbol": "2330.TW",
+      "status": 200,
+      "price": 110,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:1",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 30,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "AAPL:2",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 200,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "2330.TW:2",
+      "symbol": "2330.TW",
+      "status": 200,
+      "price": 110,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:2",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 32,
+      "date": "2026-09-18"
+    }
+  ],
+  "uncaught": [],
+  "hookSha256": "f654e47fd8ae4b7f342201c185e374c9520281704d8a17b6eca53fe2e4b17697",
+  "buildIndexSha256": "07928f79963285a86661522688ebb7b897afb270c188ad92fb4131b56ecd5c22"
+}

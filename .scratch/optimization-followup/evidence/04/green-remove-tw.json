@@ -1,0 +1,101 @@
+{
+  "name": "remove-tw",
+  "stage": "green",
+  "passed": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "removed": {
+    "items": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      }
+    ],
+    "prices": {
+      "AAPL": {
+        "price": 0,
+        "name": "AAPL",
+        "loading": true,
+        "error": false
+      }
+    },
+    "usdTwdRate": 0,
+    "historyTick": 0,
+    "snapshots": []
+  },
+  "final": {
+    "items": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      }
+    ],
+    "prices": {
+      "AAPL": {
+        "price": 100,
+        "name": "驗收 AAPL",
+        "date": "2026-09-17",
+        "fetchedAt": 1789876860000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 30,
+    "historyTick": 1,
+    "snapshots": [
+      {
+        "date": "2026-09-17",
+        "market": "US",
+        "source": "live",
+        "marketValue": 1000,
+        "totalCost": 106.67,
+        "estSellCosts": 0.8,
+        "cashDividends": 0,
+        "usdTwdRate": 30,
+        "fxRate": 30,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876860000
+      }
+    ]
+  },
+  "requests": [
+    {
+      "group": "AAPL:1",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 100,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "2330.TW:1",
+      "symbol": "2330.TW",
+      "status": 200,
+      "price": 110,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:1",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 30,
+      "date": "2026-09-17"
+    }
+  ],
+  "uncaught": [],
+  "hookSha256": "b85f642e49ebadb2d05124e93b9369a219d87452ccb5eea24dcf124410538cd0",
+  "buildIndexSha256": "9d18eaa0ddeedac0ac53a11f87a450c41f5e8a82170c135437b34917af7dcbd0"
+}

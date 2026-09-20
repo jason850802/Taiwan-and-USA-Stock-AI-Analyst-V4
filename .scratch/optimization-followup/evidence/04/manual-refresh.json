@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1528
+  },
+  "input": "Desktop browser_action click 更新報價",
+  "pending": {
+    "text": "我的庫存\n\n台股含手續費與證交稅・美股個股 0.08%・ETF $3/次\n\n含息損益\n不含息損益\n更新報價\n自動估算股利\n匯入對帳單\n備份\n回灌\n全部健檢\n新增持股\n新增持股與分析\n\n總投入成本 (TWD)\n\n3,200 元\n\n美股依買入匯率換算\n\n目前市值 (TWD)\n\n—\n\nUSD/TWD 32.00\n\n已領現金股利\n\n0 元\n\n總損益 (TWD)\n\n—\n\n美股損益歷史（USD）\nUSD\nTWD\n總損益\n未實現\n已實現(累計)\n1月\n3月\n6月\n1年\n全部\n09-18\n1.9k\n1.9k\n1.9k\n1.9k\n1.9k\n1 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）\n美股\n美國股票\n1 檔\n1 USD ≈ 32.00 TWD\nUSD\nTWD\n健檢\t代號 / 名稱\t成本均價 (TWD)\t總股數\t總成本 (TWD)\t買入匯率\t目前股價 (USD)\t目前市值 (TWD)\t現金股利\t股票股利(股)\t總損益 (TWD)\t\n\n\t\n\nAAPL\n\n1 批\n\n\t320.00\t10\t3,200\t32.000\t\n\t—\t0\t0\t—\t",
+    "cells": [
+      "",
+      "AAPL\n\n1 批",
+      "320.00",
+      "10",
+      "3,200",
+      "32.000",
+      "",
+      "—",
+      "0",
+      "0",
+      "—",
+      ""
+    ],
+    "snapshots": [
+      {
+        "date": "2026-09-18",
+        "market": "US",
+        "source": "live",
+        "marketValue": 2000,
+        "totalCost": 100,
+        "estSellCosts": 1.6,
+        "cashDividends": 0,
+        "usdTwdRate": 32,
+        "fxRate": 32,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789876920000
+      }
+    ],
+    "lots": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      }
+    ]
+  },
+  "final": {
+    "text": "我的庫存\n\n台股含手續費與證交稅・美股個股 0.08%・ETF $3/次\n\n含息損益\n不含息損益\n更新報價\n\n報價 12:04 更新\n\n自動估算股利\n匯入對帳單\n備份\n回灌\n全部健檢\n新增持股\n新增持股與分析\n\n總投入成本 (TWD)\n\n3,200 元\n\n美股依買入匯率換算\n\n目前市值 (TWD)\n\n85,000 元\n\nUSD/TWD 34.00\n\n已領現金股利\n\n0 元\n\n總損益 (TWD)\n\n+81,732 元\n\n+2554.13% · 含息\n\n美股損益歷史（USD）\nUSD\nTWD\n總損益\n未實現\n已實現(累計)\n1月\n3月\n6月\n1年\n全部\n09-18\n2.4k\n2.4k\n2.4k\n2.4k\n2.4k\n1 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）\n美股\n美國股票\n1 檔\n1 USD ≈ 34.00 TWD\nUSD\nTWD\n+81,732 (+2554.13%)\n健檢\t代號 / 名稱\t成本均價 (TWD)\t總股數\t總成本 (TWD)\t買入匯率\t目前股價 (USD)\t目前市值 (TWD)\t現金股利\t股票股利(股)\t總損益 (TWD)\t\n\n\t\n\nAAPL\n\n驗收 AAPL\n\n1 批\n\n\t320.00\t10\t3,200\t32.000\t$250.00\t85,000\t0\t0\t\n\n+81,732 元\n\n(+2554.13%)\n\n\t",
+    "cells": [
+      "",
+      "AAPL\n\n驗收 AAPL\n\n1 批",
+      "320.00",
+      "10",
+      "3,200",
+      "32.000",
+      "$250.00",
+      "85,000",
+      "0",
+      "0",
+      "+81,732 元\n\n(+2554.13%)",
+      ""
+    ],
+    "snapshots": [
+      {
+        "date": "2026-09-18",
+        "market": "US",
+        "source": "live",
+        "marketValue": 2500,
+        "totalCost": 94.12,
+        "estSellCosts": 2,
+        "cashDividends": 0,
+        "usdTwdRate": 34,
+        "fxRate": 34,
+        "totalCostTwd": 3200,
+        "symbolCount": 1,
+        "capturedAt": 1789877040000
+      }
+    ],
+    "lots": [
+      {
+        "id": "fixture-us",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 320,
+        "totalCost": 3200,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "TWD",
+        "exchangeRate": 32
+      }
+    ]
+  },
+  "requests": [
+    {
+      "group": "AAPL:1",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 100,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "USDTWD=X:1",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 30,
+      "date": "2026-09-17"
+    },
+    {
+      "group": "AAPL:2",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 200,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:2",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 32,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "AAPL:3",
+      "symbol": "AAPL",
+      "status": 200,
+      "price": 250,
+      "date": "2026-09-18"
+    },
+    {
+      "group": "USDTWD=X:3",
+      "symbol": "USDTWD=X",
+      "status": 200,
+      "price": 34,
+      "date": "2026-09-18"
+    }
+  ],
+  "uncaught": [],
+  "hookSha256": "b85f642e49ebadb2d05124e93b9369a219d87452ccb5eea24dcf124410538cd0",
+  "buildIndexSha256": "9d18eaa0ddeedac0ac53a11f87a450c41f5e8a82170c135437b34917af7dcbd0"
+}

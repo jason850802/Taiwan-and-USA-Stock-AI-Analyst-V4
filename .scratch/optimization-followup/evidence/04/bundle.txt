@@ -1,0 +1,21 @@
+{
+  "initialJsAssets": [
+    {
+      "file": "assets/index-BelmGy7D.js",
+      "rawBytes": 97481,
+      "gzipBytes": 34995
+    },
+    {
+      "file": "assets/vendor-CmCSiRIh.js",
+      "rawBytes": 193774,
+      "gzipBytes": 60504
+    }
+  ],
+  "totalRawKb": 284.43,
+  "totalGzipKb": 93.26,
+  "budgetKb": null,
+  "withinBudget": null
+}
+
+
+exit_code=0

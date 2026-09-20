@@ -1,0 +1,148 @@
+{
+  "baseline": "b2e0e4d2903083e193b3ae3b7b83765044327379",
+  "node": "v26.4.0",
+  "hookSha256": "b85f642e49ebadb2d05124e93b9369a219d87452ccb5eea24dcf124410538cd0",
+  "buildIndexSha256": "9d18eaa0ddeedac0ac53a11f87a450c41f5e8a82170c135437b34917af7dcbd0",
+  "cases": [
+    {
+      "name": "green-normal-force",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-normal-force-old-first",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-old-success-new-failure",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-old-failure-new-success",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-old-failure-before-success",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-cached-during-force",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-force-force",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-remove-us",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-remove-tw",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-clear",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-unmount",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-remove-readd",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-fx-failure-preserve",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-missing-fx-snapshot",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-form-without-us",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-snapshot-refresh",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-force-general-old-first",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-force-general-new-first",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "green-app-overlap",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    },
+    {
+      "name": "manual-refresh",
+      "passed": true,
+      "hookMatches": true,
+      "buildMatches": true,
+      "uncaught": 0
+    }
+  ]
+}
