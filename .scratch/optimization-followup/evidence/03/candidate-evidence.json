@@ -1,0 +1,38 @@
+{
+    "baseline":  "c27c4beea4a999f3dc20f2dd109690821379602c",
+    "reviewCandidate":  "0e8ed3db0dc4d6eefff67084be1a33b328d3c176",
+    "buildIndexSha256":  "07928f79963285a86661522688ebb7b897afb270c188ad92fb4131b56ecd5c22",
+    "sourceSha256":  "6c0bdca5daa63442fc72eb4d8f89369ade1715651663a34a5b3c38d0b4ad8b19",
+    "cases":  [
+                  {
+                      "file":  "green-stale-return.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  },
+                  {
+                      "file":  "green-switch-return.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  },
+                  {
+                      "file":  "green-tab-return.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  },
+                  {
+                      "file":  "green-force-pending.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  },
+                  {
+                      "file":  "green-failure-retry.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  },
+                  {
+                      "file":  "manual-tab-return.json",
+                      "passed":  true,
+                      "buildMatches":  true
+                  }
+              ]
+}

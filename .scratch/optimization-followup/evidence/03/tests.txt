@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ services/yahoo.revalidation.test.ts (19 tests) 341ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  21:54:39
+   Duration  1.09s (transform 92ms, setup 0ms, collect 36ms, tests 341ms, environment 0ms, prepare 359ms)
+
+
+
+exit_code=0

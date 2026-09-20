@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ❯ services/yahoo.revalidation.test.ts (19 tests | 1 failed) 322ms
+   ✓ 共用 K 線補全的使用端生命週期 > 過期快取的第一位使用端離開後，後加入者仍收到共用背景刷新 94ms
+   ✓ 共用 K 線補全的使用端生命週期 > 兩個分段使用端共用 2y 與 10y，各收到一次完整補全 11ms
+   ✓ 共用 K 線補全的使用端生命週期 > 10y 先到時一次 resolve 完整結果，不再通知補全或回退到晚到的 2y 10ms
+   ✓ 共用 K 線補全的使用端生命週期 > 取消第 0 位分段使用端，不取消另一位的補全 9ms
+   ✓ 共用 K 線補全的使用端生命週期 > 取消第 1 位分段使用端，不取消另一位的補全 10ms
+   ✓ 共用 K 線補全的使用端生命週期 > 首位初次結果前取消，其他使用端仍可取得完整結果 11ms
+   ✓ 共用 K 線補全的使用端生命週期 > 後加入者共用尚未結束的完整歷史，不重送 2y／10y 11ms
+   ✓ 共用 K 線補全的使用端生命週期 > 完整歷史呼叫端不會把共享工作的 2y 當作完整結果 9ms
+   ✓ 共用 K 線補全的使用端生命週期 > 完整歷史工作先起跑時，後加入的一般使用端也只等完整結果 8ms
+   × 共用 K 線補全的使用端生命週期 > force 尚未完成時加入的快取使用端仍訂閱新結果，不因舊快取尚新鮮而漏收 12ms
+     → expected "spy" to be called 1 times, but got 0 times
+   ✓ 共用 K 線補全的使用端生命週期 > force 每次發出新工作，舊完成不覆寫快取或通知有效使用端 11ms
+   ✓ 共用 K 線補全的使用端生命週期 > force 失敗後舊工作不得復活快取，下一次能重新請求 11ms
+   ✓ 共用 K 線補全的使用端生命週期 > 一個使用端的補全回呼出錯，不阻止另一個，也不讓成功快取失效 10ms
+   ✓ 共用 K 線補全的使用端生命週期 > 最後一位取消即卸除訂閱，傳輸忽略取消的晚回應不得發布快取 10ms
+   ✓ 共用 K 線補全的使用端生命週期 > 已取消的使用端不開啟網路工作 8ms
+   ✓ 共用 K 線補全的使用端生命週期 > 2y 失敗仍可由 10y 完成，不發重複終結回呼 8ms
+   ✓ 共用 K 線補全的使用端生命週期 > partial 後完整歷史失敗保留初次結果，清理後可再重試 9ms
+   ✓ 共用 K 線補全的使用端生命週期 > 不同股票與週期不共用錯誤的網路工作 10ms
+   ✓ 共用 K 線補全的使用端生命週期 > 100 輪加入、取消、成功與失敗後，事件處理器與通知都已終結 59ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+   Start at  21:54:06
+   Duration  1.12s (transform 85ms, setup 0ms, collect 36ms, tests 322ms, environment 0ms, prepare 360ms)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  services/yahoo.revalidation.test.ts > 共用 K 線補全的使用端生命週期 > force 尚未完成時加入的快取使用端仍訂閱新結果，不因舊快取尚新鮮而漏收
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ services/yahoo.revalidation.test.ts:181:22
+    179|     await forced;
+    180|     await flush();
+    181|     expect(callback).toHaveBeenCalledTimes(1);
+       |                      ^
+    182|     expect(callback.mock.calls[0][0].data.at(-1).close).toBe(200);
+    183|     expect(requests).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+exit_code=1

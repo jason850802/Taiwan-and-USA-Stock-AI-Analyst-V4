@@ -1,0 +1,49 @@
+{
+  "environment": {
+    "node": "v26.4.0",
+    "timezone": "UTC",
+    "fixedNow": "2026-09-20T04:00:00.000Z",
+    "cacheMode": "forceRefresh + empty sessionStorage",
+    "fakeNetworkDelayMs": 0
+  },
+  "coldStartMs": 825.54,
+  "warmupRuns": 1,
+  "measuredRuns": 5,
+  "results": [
+    {
+      "symbol": "AAPL",
+      "interval": "1d",
+      "inputBars": 2500,
+      "outputBars": 2500,
+      "medianMs": 22.22,
+      "sha256": "58b94b8b00fd34cf3d14ba07c0c455e16a9ed5d0c978911a2c5e8bf030c0acac"
+    },
+    {
+      "symbol": "2330.TW",
+      "interval": "1d",
+      "inputBars": 2500,
+      "outputBars": 2500,
+      "medianMs": 20.76,
+      "sha256": "71bd8885399f1b0f9f9b3ebf34f6675f730d83ba01780e7d28ed14c7c0d852d5"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "1wk",
+      "inputBars": 520,
+      "outputBars": 520,
+      "medianMs": 8.81,
+      "sha256": "79b4f970c6300ae10aefb6f1e34282abc3be862fc61f3eb489c8e0a7fde285e0"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "60m",
+      "inputBars": 1600,
+      "outputBars": 1600,
+      "medianMs": 13.4,
+      "sha256": "0b841ab24ff416f399c3261cada985d1e1ff4655a13ba23355d4bd6b314cd2b5"
+    }
+  ]
+}
+
+
+exit_code=0

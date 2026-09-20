@@ -1026,12 +1026,29 @@ type StockDataResult = { info: StockInfo; data: StockDataPoint[] };
 
 export interface GetStockDataOpts {
   forceRefresh?: boolean;                       // 更新報價按鈕：略過快取真重抓
-  signal?: AbortSignal;                         // 只 plumb 到 queryYahoo（planner_rulings #4）
+  signal?: AbortSignal;                         // 只取消自己的訂閱，最後一位離開才中止共享工作
   onRevalidated?: (r: StockDataResult) => void; // SWR 背景刷新到貨回呼
 }
 
-// SWR 背景刷新去重：同 key 已在刷新則不重複發
-const inflightRevalidate = new Map<string, Promise<StockDataResult | null>>();
+interface ChartSubscriber {
+  work: ChartWork | null;
+  initialDelivered: boolean;
+  acceptsPartial: boolean;
+  resolve: (result: StockDataResult) => void;
+  reject: (error: unknown) => void;
+  onRevalidated?: (result: StockDataResult) => void;
+  signal?: AbortSignal;
+  detach: () => void;
+}
+
+interface ChartWork {
+  key: string;
+  controller: AbortController;
+  subscribers: Set<ChartSubscriber>;
+}
+
+// 只保存尚未終結的共享工作；每個使用端有自己的取消、初次結果與補全通知。
+const inflightCharts = new Map<string, ChartWork>();
 
 // 淺拷貝防禦：防呼叫端意外 mutate 陣列污染快取（資料點物件共享，消費端本就視為 immutable）
 const cloneResult = (r: StockDataResult): StockDataResult => ({ info: { ...r.info }, data: r.data.slice() });
@@ -1049,22 +1066,105 @@ const writeQuoteCacheResult = (key: string, interval: string, result: StockDataR
     if (resultKey !== key) writeMemoryAlias(resultKey, entry);
 };
 
-const revalidateInBackground = (key: string, canon: string, interval: TimeInterval, onRevalidated?: (r: StockDataResult) => void): void => {
-    if (inflightRevalidate.has(key)) return; // 去重
-    // 不傳呼叫端 signal——刷新 promise 可能被多消費端共享，中止會誤傷（planner_rulings #4）
-    const p = fetchStockDataUncached(canon, interval)
-        .then((result) => {
-            writeQuoteCacheResult(key, interval, result);
-            onRevalidated?.(cloneResult(result));
-            return result;
-        })
-        .catch((err) => {
-            // 刷新失敗吞掉、保留舊快取不清除
-            console.warn(`Background quote revalidation failed for ${key}:`, err);
-            return null;
-        })
-        .finally(() => { inflightRevalidate.delete(key); });
-    inflightRevalidate.set(key, p);
+const abortError = () => new DOMException('Aborted', 'AbortError');
+
+const detachSubscriber = (subscriber: ChartSubscriber): void => {
+  subscriber.detach();
+  subscriber.work?.subscribers.delete(subscriber);
+  subscriber.work = null;
+};
+
+const cancelSubscriber = (subscriber: ChartSubscriber): void => {
+  const work = subscriber.work;
+  detachSubscriber(subscriber);
+  if (!subscriber.initialDelivered) subscriber.reject(abortError());
+  if (work && work.subscribers.size === 0) {
+    if (inflightCharts.get(work.key) === work) inflightCharts.delete(work.key);
+    work.controller.abort();
+  }
+};
+
+const createChartWork = (key: string): ChartWork => {
+  const previous = inflightCharts.get(key);
+  const work: ChartWork = { key, controller: new AbortController(), subscribers: new Set() };
+  inflightCharts.set(key, work);
+  if (previous) {
+    // force 開新世代；仍有效的使用端改等新結果，不會被舊世代的完成／finally 覆蓋。
+    for (const subscriber of previous.subscribers) {
+      subscriber.work = work;
+      work.subscribers.add(subscriber);
+    }
+    previous.subscribers.clear();
+    previous.controller.abort();
+  }
+  return work;
+};
+
+const subscribeChartWork = (work: ChartWork, opts?: GetStockDataOpts, cached?: StockDataResult): Promise<StockDataResult> => {
+  return new Promise((resolve, reject) => {
+    const subscriber: ChartSubscriber = {
+      work, resolve, reject,
+      initialDelivered: false,
+      acceptsPartial: !cached && !opts?.forceRefresh && Boolean(opts?.onRevalidated),
+      onRevalidated: opts?.onRevalidated,
+      signal: opts?.signal,
+      detach: () => opts?.signal?.removeEventListener('abort', onAbort),
+    };
+    const onAbort = () => cancelSubscriber(subscriber);
+    work.subscribers.add(subscriber);
+    if (opts?.signal?.aborted) { cancelSubscriber(subscriber); return; }
+    opts?.signal?.addEventListener('abort', onAbort, { once: true });
+    if (cached) {
+      subscriber.initialDelivered = true;
+      resolve(cloneResult(cached));
+    }
+  });
+};
+
+const startChartWork = (work: ChartWork, canon: string, interval: TimeInterval, staged: boolean): void => {
+  const isCurrent = () => inflightCharts.get(work.key) === work && !work.controller.signal.aborted;
+  const onPartial = (partial: StockDataResult) => {
+    if (!isCurrent()) return;
+    for (const subscriber of work.subscribers) {
+      if (subscriber.acceptsPartial && !subscriber.initialDelivered && !subscriber.signal?.aborted) {
+        subscriber.initialDelivered = true;
+        subscriber.resolve(cloneResult(partial));
+      }
+    }
+  };
+  const finish = (): ChartSubscriber[] => {
+    const subscribers = [...work.subscribers];
+    inflightCharts.delete(work.key);
+    subscribers.forEach(detachSubscriber);
+    // 完整歷史先完成時，不再需要仍未回來的 2y 傳輸。
+    work.controller.abort();
+    return subscribers;
+  };
+  void fetchStockDataUncached(canon, interval, work.controller.signal, staged ? onPartial : undefined).then(result => {
+    if (!isCurrent()) return;
+    writeQuoteCacheResult(work.key, interval, result);
+    for (const subscriber of finish()) {
+      if (subscriber.signal?.aborted) {
+        if (!subscriber.initialDelivered) subscriber.reject(abortError());
+        continue;
+      }
+      if (!subscriber.initialDelivered) subscriber.resolve(cloneResult(result));
+      else {
+        try { subscriber.onRevalidated?.(cloneResult(result)); }
+        catch (error) { console.warn(`Chart subscriber callback failed for ${work.key}:`, error); }
+      }
+    }
+  }, error => {
+    if (!isCurrent()) return;
+    const subscribers = finish();
+    for (const subscriber of subscribers) {
+      if (!subscriber.initialDelivered) subscriber.reject(error);
+    }
+    // 已顯示的舊／短歷史維持原樣；失敗不發布快取，也不冒充成功回呼。
+    if (subscribers.some(subscriber => subscriber.initialDelivered) && error?.name !== 'AbortError') {
+      console.warn(`Background quote revalidation failed for ${work.key}:`, error);
+    }
+  });
 };
 
 export const getStockData = async (
@@ -1072,6 +1172,7 @@ export const getStockData = async (
   interval: TimeInterval = '1d',
   opts?: GetStockDataOpts,
 ): Promise<StockDataResult> => {
+  if (opts?.signal?.aborted) throw abortError();
   // 正規化＋canonical key：裸台股碼先經名錄預解析成 .TW/.TWO 完整代碼，
   // 讓 `2330` 與 `2330.TW` 命中同一份快取
   const clean = symbol.trim().toUpperCase();
@@ -1084,69 +1185,26 @@ export const getStockData = async (
       } catch { /* 名錄失敗即以原字串為 key */ }
   }
   const key = `${canon}|${interval}`;
+  if (opts?.signal?.aborted) throw abortError();
 
+  let cached: StockDataResult | undefined;
   if (!opts?.forceRefresh) {
       const entry = readQuoteCache(key);
       if (entry) {
-          const cached = entry.result as StockDataResult;
-          if (isQuoteCacheFresh(entry.cachedAt, Date.now(), marketForSymbol(canon), entry.shortTtlOnly)) {
+          cached = entry.result as StockDataResult;
+          if (!inflightCharts.has(key) && isQuoteCacheFresh(entry.cachedAt, Date.now(), marketForSymbol(canon), entry.shortTtlOnly)) {
               // fresh：0 網路請求即回傳
               return cloneResult(cached);
           }
-          // stale → SWR：立即回傳舊資料，背景刷新到貨後經 onRevalidated 更新
-          revalidateInBackground(key, canon, interval, opts?.onRevalidated);
-          return cloneResult(cached);
       }
   }
 
-  // 統一 inflight 檢查（forceRefresh 與「partial 上屏後切走再切回的 miss」共享同一補全，
-  // 防重複兩段式／重複網路請求）：同 key 已有補全在跑 → 直接 await 共用。
-  {
-      const inflight = inflightRevalidate.get(key);
-      if (inflight) {
-          const shared = await inflight;
-          if (shared) return cloneResult(shared);
-      }
-  }
-
-  // miss 且 1d 冷抓（非 forceRefresh）：兩段式協調——2y partial 先 resolve、10y 補全走 onRevalidated。
-  // onRevalidated 閘門（Sonnet 覆核 HIGH-1）：呼叫端沒有接收補全的管道（如 Portfolio 一次性
-  // 背景分析）就不得吃兩段式——否則 partial resolve 後 full 被靜默丟棄，呼叫端永遠只拿到
-  // 2y 截斷資料。無回呼的呼叫端走下方單段 10y，語意與 BL-1 之前完全相同。
-  if (!opts?.forceRefresh && interval === '1d' && opts?.onRevalidated) {
-      return await new Promise<StockDataResult>((resolve, reject) => {
-          let settled = false;
-          const completion = fetchStockDataUncached(canon, interval, opts?.signal, (partial) => {
-              // partial 上屏：立即 resolve，但不寫快取（快取只寫 full）
-              if (!settled && !opts?.signal?.aborted) { settled = true; resolve(cloneResult(partial)); }
-          })
-              .then((full) => {
-                  if (opts?.signal?.aborted) {
-                      if (!settled) { settled = true; reject(new DOMException('Aborted', 'AbortError')); }
-                      return null; // abort：不寫快取、不發 onRevalidated
-                  }
-                  writeQuoteCacheResult(key, interval, full);
-                  if (!settled) { settled = true; resolve(cloneResult(full)); }        // 10y 先到：一次到位
-                  else { opts?.onRevalidated?.(cloneResult(full)); }                   // partial 已上屏：走既有回呼換 full
-                  return full;
-              })
-              .catch((err) => {
-                  if (!settled) { settled = true; reject(err); return null; }          // 無 partial：錯誤照舊上拋
-                  if (err?.name !== 'AbortError') console.warn(`Full-range completion failed for ${key}:`, err); // 停留 2y 視圖，無錯誤 UI
-                  return null;
-              })
-              .finally(() => { inflightRevalidate.delete(key); });
-          inflightRevalidate.set(key, completion); // forceRefresh／切回的 miss 共享補全
-      });
-  }
-
-  // 其餘 interval 與 forceRefresh：維持現行單段（不傳 onPartial）
-  const result = await fetchStockDataUncached(canon, interval, opts?.signal);
-
-  // 寫快取前守衛（planner_rulings #4）：abort 打在 FinMind 階段會被內部 try/catch 吞成
-  // 降級結果（chipDataUnavailable:true）照常完成——不攔截會把降級結果毒進快取。
-  if (opts?.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
-
-  writeQuoteCacheResult(key, interval, result);
-  return result;
+  const pending = inflightCharts.get(key);
+  const startsWork = Boolean(opts?.forceRefresh) || !pending;
+  const work = startsWork ? createChartWork(key) : pending;
+  // 已有快取先回完整舊資料，仍訂閱正在進行的刷新；冷抓且有回呼才接受 2y。
+  // 無快取且沒有回呼的呼叫端，一律等共享工作的完整結果。
+  const result = subscribeChartWork(work, opts, cached);
+  if (startsWork) startChartWork(work, canon, interval, !cached && !opts?.forceRefresh && interval === '1d' && Boolean(opts?.onRevalidated));
+  return await result;
 };

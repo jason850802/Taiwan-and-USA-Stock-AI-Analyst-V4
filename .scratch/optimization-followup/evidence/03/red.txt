@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ❯ services/yahoo.revalidation.test.ts (1 test | 1 failed) 103ms
+   × 共用 K 線補全的使用端生命週期 > 過期快取的第一位使用端離開後，後加入者仍收到共用背景刷新 103ms
+     → expected "spy" to be called 1 times, but got 0 times
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  21:36:45
+   Duration  871ms (transform 81ms, setup 0ms, collect 23ms, tests 103ms, environment 0ms, prepare 377ms)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  services/yahoo.revalidation.test.ts > 共用 K 線補全的使用端生命週期 > 過期快取的第一位使用端離開後，後加入者仍收到共用背景刷新
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ services/yahoo.revalidation.test.ts:68:22
+     66|     requests.slice(1).forEach(request => request.finish(200));
+     67|     await flush();
+     68|     expect(callback).toHaveBeenCalledTimes(1);
+       |                      ^
+     69|     expect(callback.mock.calls[0][0].data.at(-1).close).toBe(200);
+     70|     expect(oldCallback).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+exit_code=1

@@ -1,0 +1,37 @@
+{
+  "name": "tab-return",
+  "stage": "green",
+  "passed": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1536
+  },
+  "fixedNow": "2026-09-20T04:00:00.000Z",
+  "after": {
+    "quote": "222.00",
+    "query": "AAPL",
+    "candles": 64,
+    "text": "搜尋\n\n驗收 AAPL\n\nAAPL\n\n222.00\n\n▲ +1.00（+0.45%）\n成交量 1,000,000量變化 +0.0%\n更新\nAI 分析\n15分\n1時\n日\n週\n月\n還原權值\n指標\nK線圖\nADJ (還原)\nMA5\n220.00\n▲\nMA10\n217.50\n▲\nMA20\n212.50\n▲\nMA60\n192.50\n▲\n2026-09-18\n開\n221.00\n高\n224.00\n低\n220.00\n收\n222.00\n↑1.00\n(↑0.45%)\n量\n1,000,000\n2017-03-12\n2018-02-23\n2019-02-05\n2020-01-19\n2021-01-01\n2021-12-14\n2022-11-27\n2023-11-10\n2024-10-23\n2025-10-05\n2026-09-18\n157\n177\n197\n217\n224\n外資買賣超 (Foreign Net Buy/Sell)\nMACD\nKDJ\nRSI\n0\n0\n0\n0\n投信買賣超 (Trust Net Buy/Sell)\nMACD\nKDJ\nRSI\n0\n0\n0\n0\n\n點擊上方「AI 分析」按鈕，逐步通過六六大順濾網並生成進場分析報告"
+  },
+  "requests": [
+    {
+      "group": "AAPL|1d|2y|1",
+      "symbol": "AAPL",
+      "interval": "1d",
+      "range": "2y",
+      "status": 200,
+      "price": 111
+    },
+    {
+      "group": "AAPL|1d|10y|1",
+      "symbol": "AAPL",
+      "interval": "1d",
+      "range": "10y",
+      "status": 200,
+      "price": 222
+    }
+  ],
+  "buildIndexSha256": "07928f79963285a86661522688ebb7b897afb270c188ad92fb4131b56ecd5c22"
+}

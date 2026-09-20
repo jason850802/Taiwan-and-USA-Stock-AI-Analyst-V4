@@ -1,0 +1,121 @@
+{
+  "baseline": "c27c4beea4a999f3dc20f2dd109690821379602c",
+  "sourceHashes": {
+    "before": "209b582a2a0a16370d562562f1970a14c7fd0bef0b9ee928ed60ff6d93857e0d",
+    "after": "6c0bdca5daa63442fc72eb4d8f89369ade1715651663a34a5b3c38d0b4ad8b19"
+  },
+  "environment": {
+    "node": "v26.4.0",
+    "timezone": "UTC",
+    "fixedNow": "2026-09-20T04:00:00.000Z",
+    "cacheMode": "forceRefresh + empty sessionStorage",
+    "fakeDelayMs": 0
+  },
+  "method": "同程序；各版本每組先暖機一次，五輪交替先後取中位數；只用於暖態回退調查，非冷啟動比較",
+  "results": [
+    {
+      "symbol": "AAPL",
+      "interval": "1d",
+      "inputBars": 2500,
+      "timings": {
+        "before": [
+          29.565,
+          21.418,
+          21.962,
+          20.961,
+          20.808
+        ],
+        "after": [
+          25.146,
+          22.165,
+          21.989,
+          21.284,
+          19.908
+        ]
+      },
+      "beforeMs": 21.418,
+      "afterMs": 21.989,
+      "changePct": 2.67,
+      "outputEqual": true,
+      "sha256": "58b94b8b00fd34cf3d14ba07c0c455e16a9ed5d0c978911a2c5e8bf030c0acac"
+    },
+    {
+      "symbol": "2330.TW",
+      "interval": "1d",
+      "inputBars": 2500,
+      "timings": {
+        "before": [
+          20.231,
+          20.8,
+          20.41,
+          20.606,
+          20.23
+        ],
+        "after": [
+          20.455,
+          20.543,
+          19.881,
+          20.956,
+          20.369
+        ]
+      },
+      "beforeMs": 20.41,
+      "afterMs": 20.455,
+      "changePct": 0.22,
+      "outputEqual": true,
+      "sha256": "71bd8885399f1b0f9f9b3ebf34f6675f730d83ba01780e7d28ed14c7c0d852d5"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "1wk",
+      "inputBars": 520,
+      "timings": {
+        "before": [
+          8.597,
+          11.717,
+          9.031,
+          8.272,
+          8.801
+        ],
+        "after": [
+          9.177,
+          11.719,
+          9.066,
+          8.6,
+          8.982
+        ]
+      },
+      "beforeMs": 8.801,
+      "afterMs": 9.066,
+      "changePct": 3.01,
+      "outputEqual": true,
+      "sha256": "79b4f970c6300ae10aefb6f1e34282abc3be862fc61f3eb489c8e0a7fde285e0"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "60m",
+      "inputBars": 1600,
+      "timings": {
+        "before": [
+          13.094,
+          13.725,
+          14.587,
+          13.906,
+          14.981
+        ],
+        "after": [
+          13.305,
+          15.198,
+          14.45,
+          17.681,
+          15.453
+        ]
+      },
+      "beforeMs": 13.906,
+      "afterMs": 15.198,
+      "changePct": 9.29,
+      "outputEqual": true,
+      "sha256": "0b841ab24ff416f399c3261cada985d1e1ff4655a13ba23355d4bd6b314cd2b5"
+    }
+  ]
+}
