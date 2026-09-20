@@ -1,0 +1,21 @@
+{
+    "reviewCandidate":  "c86d7f7c703782eef3a51151c4b1e2feb49c27dc",
+    "checkedAt":  "2026-09-21T07:05:48.9703462+08:00",
+    "sourceFiles":  94,
+    "verificationFiles":  24,
+    "rawHashChecks":  193,
+    "queueBaselineChecks":  21,
+    "totalRawFiles":  214,
+    "oldTestByteChecks":  42,
+    "buildMatches":  true,
+    "failures":  [
+
+                 ],
+    "originalSealUnmodified":  true,
+    "exactSourceFiles":  95,
+    "appKeyboardLayoutSourceChecks":  69,
+    "startupToolChecks":  8,
+    "sourceRunToolFailures":  [
+
+                              ]
+}

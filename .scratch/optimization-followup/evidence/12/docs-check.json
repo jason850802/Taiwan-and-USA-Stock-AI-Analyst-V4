@@ -1,0 +1,56 @@
+{
+  "files": 18,
+  "links": 82,
+  "missing": [],
+  "incorrectHashes": [],
+  "statuses": [
+    {
+      "file": ".scratch/optimization-followup/issues/12-final-acceptance.md",
+      "status": "resolved — 2026-09-21"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/01-baseline.md",
+      "status": "resolved — 2026-09-20；最終提交 `ade5dca1e7106c90430efc35b50ba4adaaae8b42`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/02-fundamentals-request.md",
+      "status": "resolved — 2026-09-20；最終提交 `c27c4beea4a999f3dc20f2dd109690821379602c`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/03-chart-revalidation.md",
+      "status": "resolved — 2026-09-20；最終提交 `b2e0e4d2903083e193b3ae3b7b83765044327379`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/04-holdings-request.md",
+      "status": "resolved — 2026-09-20；最終提交 `0366f5fb1d58d963323cc9d519f49ec87217a048`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/05-holdings-queue.md",
+      "status": "resolved — 2026-09-21；最終提交 `12c544f4a58d2fe07b46e523e7ddfc796eb11f12`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/06-yahoo-handshake.md",
+      "status": "resolved — 2026-09-21；最終提交 `513f6347bfb77dedced2b8f5e0d85fef68ed8cbb`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/07-cache-profile.md",
+      "status": "resolved — 2026-09-21；最終提交 `d80a8941344a6c3f1e4bdf93c09ce636564a677f`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/08-cache-bounds.md",
+      "status": "resolved — 2026-09-21；最終提交 `06aa1cc8268479b8227269519c794be6a47a4f0d`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/09-stream-render.md",
+      "status": "resolved — 2026-09-21；最終提交 `6493c4c78b8282db1dae1202ca94df9aa08e8b40`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/10-keyboard-accessibility.md",
+      "status": "resolved — 2026-09-21；最終提交 `eb1dcfac70094fcbdcdacf9c873b589e5f52c6b4`"
+    },
+    {
+      "file": ".scratch/optimization-followup/issues/11-code-cleanup.md",
+      "status": "resolved — 2026-09-21；最終提交 `8a6f5e4c9ff0f388528f9974fafe5c3bdc02b880`"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "baseline": "8a6f5e4c9ff0f388528f9974fafe5c3bdc02b880",
+  "beforeSha256": "58c70a81e967fd26d55517257db305bdd58d81f749b4b57cf9f2ee485186ddee",
+  "afterSha256": "f21c10dccaa22f8e89380957e8918a99c3f85bd83ee19e7ba8d90cc43d2556be",
+  "red": {
+    "file": "health-guard/red-batch-readd-before.json",
+    "passed": false,
+    "sha256": "ed6be1712ba9ea230c451239a80b860860cb73a012afe03d2101c8d93f05fbd9"
+  },
+  "cases": [
+    {
+      "file": "health-guard/green-batch-readd-before.json",
+      "passed": true,
+      "sha256": "83f649971419a8a707b42802ea611268d15bdcb5da19b7a6d0ead51f034056a3"
+    },
+    {
+      "file": "health-guard/green-batch-readd-after.json",
+      "passed": true,
+      "sha256": "48bb56d1c1a7767c818f376bb6f5e80adefd66853a7a4668b08da521ce1e96a9"
+    },
+    {
+      "file": "health-guard/green-batch-error-readd.json",
+      "passed": true,
+      "sha256": "c4295a92531d05e58e25f14a3257d7371a34c08f6eade88b258076a76b6966cd"
+    },
+    {
+      "file": "health-guard/green-single-readd.json",
+      "passed": true,
+      "sha256": "5517b475b1adda47bc9affff4037b81f657d791f2bca6629f97911a509a773ff"
+    },
+    {
+      "file": "health-guard/green-finished-readd.json",
+      "passed": true,
+      "sha256": "5390fe78652072a5e24859f6d55a50107a329bc81d285f38887bdae155461fc4"
+    },
+    {
+      "file": "health-guard/green-remaining-stock.json",
+      "passed": true,
+      "sha256": "716d79e428c2bbaf3e774e7066e103a3e212699693b8026d967e32fb4eba198d"
+    }
+  ]
+}

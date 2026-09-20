@@ -1,6 +1,6 @@
 # 10 — 視窗焦點與圖示操作可及性
 
-Status: resolved — 2026-09-21
+Status: resolved — 2026-09-21；最終提交 `eb1dcfac70094fcbdcdacf9c873b589e5f52c6b4`
 Blocked by: 01
 Type: task
 
@@ -37,3 +37,5 @@ Type: task
 2026-09-21：依整批授權開始10。固定比較點 `6493c4c78b8282db1dae1202ca94df9aa08e8b40`；工作區乾淨。驗收以共用Modal的真實瀏覽器宿主與正式App、DOM焦點及原生鍵盤事件為界；兩種尺寸使用同源固定尺寸iframe，其內部window尺寸與CSS媒體查詢均實際改變，不冒充行動裝置或螢幕閱讀器實機。
 
 2026-09-21結案：15個兩尺寸瀏覽器案例、141次原生按鍵、3份修改前紅燈、94個來源指紋核對通過；47檔／805項gate全綠，51個既有測試／snapshot／依賴不變。Standards的StrictMode來源回復問題及Spec的最後一輪清理紀錄缺口均已關閉，兩軸OPEN0。證據見[README](../evidence/10/README.md)、[code-review](../evidence/10/code-review.md)。本票單一最終提交雜湊於12回填；依使用者整批授權接續11。
+
+2026-09-21：第12票依Git主線回填最終提交 `eb1dcfac70094fcbdcdacf9c873b589e5f52c6b4`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

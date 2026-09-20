@@ -1,6 +1,6 @@
 # 08 — 可重建快取有界且儲存降級安全
 
-Status: resolved — 2026-09-21
+Status: resolved — 2026-09-21；最終提交 `06aa1cc8268479b8227269519c794be6a47a4f0d`
 Blocked by: 07
 Type: task
 
@@ -38,3 +38,5 @@ Type: task
 2026-09-21：依 05～12 整批授權開始 08。固定比較點 `d80a8941344a6c3f1e4bdf93c09ce636564a677f`，07 已完成封板雙軸覆核。測試沿用規格已核准的公開 quoteCache／getTwFundamentals、假 Storage／fetch 與瀏覽器壓力介面；容量採 07 數值、同步持久化，保留既有測試／沿用窗及金融語意。
 
 實作、799 項 gate、14 份壓力樣本、6 類故障及 5 頁正式 App 完成，全部原始數據與重跑入口見 [08 證據](../evidence/08/README.md)。近期工作集保留，完整全量循環的重抓成本已列出三輪耗時與命中率。Standards 原 1 項證據發現已修正關閉，兩軸最終 OPEN 0／NEW 0；紀錄見 [獨立覆核](../evidence/08/code-review.md)。依整批授權繼續 09；最終自身 hash 於 12 回填。
+
+2026-09-21：第12票依Git主線回填最終提交 `06aa1cc8268479b8227269519c794be6a47a4f0d`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

@@ -1,6 +1,6 @@
 # 01 — 保存並驗收既有最佳化基準
 
-Status: resolved — 2026-09-20
+Status: resolved — 2026-09-20；最終提交 `ade5dca1e7106c90430efc35b50ba4adaaae8b42`
 Blocked by: 無
 Type: task
 
@@ -43,3 +43,5 @@ Type: task
 - 雙軸覆核：`../evidence/01/code-review.md`。使用者明確同意將 worker 模型 ID `5.6` 視為 GPT-5.6 Sol；Standards 初始 2 項、Spec 初始 1 項均已修正，最終兩軸皆 `OPEN: 0`／`NEW: 0`。
 - 可回復基準：本票最終提交；依 multi-ticket tracker 規則，最終 hash 於 12 的 wrap-up 回填。供首次 review 的中間候選為 `94f1301`，會由本票最終 amend 取代。
 - 01 到此結案；02 維持 `ready-for-agent`，本次沒有開始 02。
+
+2026-09-21：第12票依Git主線回填最終提交 `ade5dca1e7106c90430efc35b50ba4adaaae8b42`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

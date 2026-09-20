@@ -1,6 +1,6 @@
 # 09 — 長 AI 報告合併畫面更新
 
-Status: resolved — 2026-09-21
+Status: resolved — 2026-09-21；最終提交 `6493c4c78b8282db1dae1202ca94df9aa08e8b40`
 Blocked by: 02
 Type: task
 
@@ -37,3 +37,5 @@ Type: task
 2026-09-21：依整批授權開始09；固定比較點 `06aa1cc8268479b8227269519c794be6a47a4f0d`，開始時工作區乾淨。50個既有測試／snapshot／依賴檔案雜湊已保存。測試沿規格已核准的公開顯示回呼、假動畫影格／HTTP邊界、真實App與Markdown呈現；市場分析與單檔健檢是實際逐段顯示入口，批次健檢仍僅在完整回應後分配。
 
 2026-09-21：完成。gate47檔／805項，6個新增公開測試；14份前後量測、15項正式App與1項原生操作通過。全來源與原始檔指紋、全文／快取及Markdown雜湊、median／worst經獨立雙軸程序核對；Standards與Spec均OPEN0。證據見 `../evidence/09/README.md`、`stream-summary.json`、`code-review.md`；首次候選 `80661df`，最終hash於12回填。依整批授權續做10。
+
+2026-09-21：第12票依Git主線回填最終提交 `6493c4c78b8282db1dae1202ca94df9aa08e8b40`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

@@ -1,0 +1,21 @@
+// 沿用08正式App與故障場景，補完整95檔來源及一次性執行識別；歷史工具保持不變。
+import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash, randomUUID } from 'node:crypto';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import path from 'node:path';
+const root = fileURLToPath(new URL('../../../../', import.meta.url));
+const dir = fileURLToPath(new URL('./', import.meta.url));
+const original = fileURLToPath(new URL('../08/app-server.mjs', import.meta.url));
+if (process.argv[2] !== '12') throw Error('只允許12快取App輸出');
+const sourceFiles = [...new Set([...JSON.parse(readFileSync(path.join(dir, 'audit.json'), 'utf8')).files.map(row => row.path), 'vite.config.ts'])].sort();
+const tools = { 'cache-app-server.mjs': createHash('sha256').update(readFileSync(fileURLToPath(import.meta.url))).digest('hex') };
+const runId = randomUUID();
+writeFileSync(path.join(dir, 'cache-app-startup.json'), JSON.stringify({ runId, pid: process.pid, startedAt: new Date().toISOString(), sourceFiles, tools }, null, 2) + '\n');
+let source = readFileSync(original, 'utf8').replaceAll('import.meta.url', JSON.stringify(pathToFileURL(original).href));
+const declaration = /const sourceFiles = [\s\S]*?\r?\nconst sourceHashes =/;
+if ([...source.matchAll(new RegExp(declaration.source, 'g'))].length !== 1) throw Error('08來源清單邊界改變');
+source = source.replace(declaration, `const sourceFiles = ${JSON.stringify(sourceFiles)};\nconst sourceHashes =`);
+source = source.replace("from '../07/fixtures.mjs'", `from ${JSON.stringify(pathToFileURL(path.resolve(path.dirname(original), '../07/fixtures.mjs')).href)}`);
+if (source.split('const binding = { baseline:').length !== 2) throw Error('08證據綁定邊界改變');
+source = source.replace('const binding = { baseline:', `const binding = { integrationRunId: ${JSON.stringify(runId)}, integrationTools: ${JSON.stringify(tools)}, baseline:`);
+await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);

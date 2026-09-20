@@ -1,0 +1,488 @@
+{
+  "sourceFiles": 94,
+  "reachableFiles": 94,
+  "entrypoints": [
+    "index.tsx",
+    "api/finmind.ts",
+    "api/gemini-stream.ts",
+    "api/gemini.ts",
+    "api/yahoo/chart.ts",
+    "api/yahoo/search.ts"
+  ],
+  "unreachableCandidates": [],
+  "files": [
+    {
+      "path": "App.tsx",
+      "lines": 632,
+      "reachable": true
+    },
+    {
+      "path": "index.tsx",
+      "lines": 19,
+      "reachable": true
+    },
+    {
+      "path": "types.ts",
+      "lines": 303,
+      "reachable": true
+    },
+    {
+      "path": "api/finmind.ts",
+      "lines": 108,
+      "reachable": true
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "lines": 104,
+      "reachable": true
+    },
+    {
+      "path": "api/gemini.ts",
+      "lines": 66,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/config.ts",
+      "lines": 50,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/finmind.ts",
+      "lines": 173,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/guard.ts",
+      "lines": 141,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "lines": 132,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "lines": 592,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/ratelimit.ts",
+      "lines": 83,
+      "reachable": true
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "lines": 248,
+      "reachable": true
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "lines": 86,
+      "reachable": true
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "lines": 68,
+      "reachable": true
+    },
+    {
+      "path": "components/AnalysisResult.tsx",
+      "lines": 37,
+      "reachable": true
+    },
+    {
+      "path": "components/ChartToolbar.tsx",
+      "lines": 203,
+      "reachable": true
+    },
+    {
+      "path": "components/EntryChecklist.tsx",
+      "lines": 113,
+      "reachable": true
+    },
+    {
+      "path": "components/ErrorBoundary.tsx",
+      "lines": 79,
+      "reachable": true
+    },
+    {
+      "path": "components/FundamentalsPanel.tsx",
+      "lines": 199,
+      "reachable": true
+    },
+    {
+      "path": "components/Portfolio.tsx",
+      "lines": 677,
+      "reachable": true
+    },
+    {
+      "path": "components/QuoteHeader.tsx",
+      "lines": 91,
+      "reachable": true
+    },
+    {
+      "path": "components/Sidebar.tsx",
+      "lines": 65,
+      "reachable": true
+    },
+    {
+      "path": "components/StockChart.tsx",
+      "lines": 1042,
+      "reachable": true
+    },
+    {
+      "path": "components/StockSearch.tsx",
+      "lines": 211,
+      "reachable": true
+    },
+    {
+      "path": "components/fundamentals/DividendTable.tsx",
+      "lines": 49,
+      "reachable": true
+    },
+    {
+      "path": "components/fundamentals/FinancialHealthCards.tsx",
+      "lines": 61,
+      "reachable": true
+    },
+    {
+      "path": "components/fundamentals/MonthlyRevenueChart.tsx",
+      "lines": 79,
+      "reachable": true
+    },
+    {
+      "path": "components/fundamentals/QuarterlyTrendCharts.tsx",
+      "lines": 124,
+      "reachable": true
+    },
+    {
+      "path": "components/fundamentals/ValuationHeader.tsx",
+      "lines": 41,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/HoldingsTable.tsx",
+      "lines": 571,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/ImportStatementModal.tsx",
+      "lines": 249,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/PnlHistoryChart.tsx",
+      "lines": 155,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/PnlHistorySection.tsx",
+      "lines": 307,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/RealizedLedger.tsx",
+      "lines": 167,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/RestoreBackupModal.tsx",
+      "lines": 224,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/SellModal.tsx",
+      "lines": 213,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/holdingPriceQueue.ts",
+      "lines": 49,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/useDailySnapshot.ts",
+      "lines": 39,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/useHealthCheck.ts",
+      "lines": 296,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/useHoldingPrices.ts",
+      "lines": 145,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/useLotDividendUpdate.ts",
+      "lines": 77,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/usePortfolioBackup.ts",
+      "lines": 82,
+      "reachable": true
+    },
+    {
+      "path": "components/portfolio/usePortfolioForm.ts",
+      "lines": 181,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Badge.tsx",
+      "lines": 25,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Banner.tsx",
+      "lines": 40,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Button.tsx",
+      "lines": 45,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Card.tsx",
+      "lines": 23,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/MarkdownReport.tsx",
+      "lines": 77,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Modal.tsx",
+      "lines": 139,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/Skeleton.tsx",
+      "lines": 29,
+      "reachable": true
+    },
+    {
+      "path": "components/ui/StatCard.tsx",
+      "lines": 26,
+      "reachable": true
+    },
+    {
+      "path": "config/twFeeRates.ts",
+      "lines": 43,
+      "reachable": true
+    },
+    {
+      "path": "services/fetchError.ts",
+      "lines": 47,
+      "reachable": true
+    },
+    {
+      "path": "services/finmind.ts",
+      "lines": 520,
+      "reachable": true
+    },
+    {
+      "path": "services/gemini.ts",
+      "lines": 1064,
+      "reachable": true
+    },
+    {
+      "path": "services/quoteCache.ts",
+      "lines": 292,
+      "reachable": true
+    },
+    {
+      "path": "services/stockDirectory.ts",
+      "lines": 219,
+      "reachable": true
+    },
+    {
+      "path": "services/yahoo.ts",
+      "lines": 1211,
+      "reachable": true
+    },
+    {
+      "path": "services/_shared/apiClient.ts",
+      "lines": 8,
+      "reachable": true
+    },
+    {
+      "path": "services/_shared/boundedSession.ts",
+      "lines": 193,
+      "reachable": true
+    },
+    {
+      "path": "services/_shared/geminiCache.ts",
+      "lines": 129,
+      "reachable": true
+    },
+    {
+      "path": "services/_shared/healthDecision.ts",
+      "lines": 141,
+      "reachable": true
+    },
+    {
+      "path": "utils/backfillPipeline.ts",
+      "lines": 248,
+      "reachable": true
+    },
+    {
+      "path": "utils/closeSeriesCache.ts",
+      "lines": 65,
+      "reachable": true
+    },
+    {
+      "path": "utils/dividendEstimator.ts",
+      "lines": 182,
+      "reachable": true
+    },
+    {
+      "path": "utils/entryFilter.ts",
+      "lines": 398,
+      "reachable": true
+    },
+    {
+      "path": "utils/framePublisher.ts",
+      "lines": 33,
+      "reachable": true
+    },
+    {
+      "path": "utils/fx.ts",
+      "lines": 45,
+      "reachable": true
+    },
+    {
+      "path": "utils/importPlan.ts",
+      "lines": 52,
+      "reachable": true
+    },
+    {
+      "path": "utils/importReplay.ts",
+      "lines": 242,
+      "reachable": true
+    },
+    {
+      "path": "utils/importStore.ts",
+      "lines": 70,
+      "reachable": true
+    },
+    {
+      "path": "utils/market.ts",
+      "lines": 22,
+      "reachable": true
+    },
+    {
+      "path": "utils/math.ts",
+      "lines": 168,
+      "reachable": true
+    },
+    {
+      "path": "utils/panMath.ts",
+      "lines": 127,
+      "reachable": true
+    },
+    {
+      "path": "utils/persistentStore.ts",
+      "lines": 77,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioBackup.ts",
+      "lines": 360,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioFees.ts",
+      "lines": 60,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioGrouping.ts",
+      "lines": 15,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioHistory.ts",
+      "lines": 512,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioHistoryStore.ts",
+      "lines": 66,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioItemsStore.ts",
+      "lines": 30,
+      "reachable": true
+    },
+    {
+      "path": "utils/portfolioLedger.ts",
+      "lines": 204,
+      "reachable": true
+    },
+    {
+      "path": "utils/quoteTime.ts",
+      "lines": 13,
+      "reachable": true
+    },
+    {
+      "path": "utils/shareUnits.ts",
+      "lines": 8,
+      "reachable": true
+    },
+    {
+      "path": "utils/txnStore.ts",
+      "lines": 103,
+      "reachable": true
+    },
+    {
+      "path": "utils/volume.ts",
+      "lines": 131,
+      "reachable": true
+    },
+    {
+      "path": "utils/workerPool.ts",
+      "lines": 48,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/cathay.ts",
+      "lines": 131,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/cathayTw.ts",
+      "lines": 233,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/index.ts",
+      "lines": 158,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/sinopac.ts",
+      "lines": 102,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/twSymbolResolver.ts",
+      "lines": 87,
+      "reachable": true
+    },
+    {
+      "path": "utils/statementParsers/xlsxReader.ts",
+      "lines": 160,
+      "reachable": true
+    }
+  ]
+}
+
+
+exit_code=0

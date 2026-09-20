@@ -1,0 +1,9 @@
+{
+  "fixturePid": 31196,
+  "origin": "http://127.0.0.1:4179",
+  "checkedAt": "2026-09-20T21:51:17.717Z",
+  "processAbsent": true,
+  "portClosed": true,
+  "startup": "replay-05/startup.json",
+  "note": "此程式只核對停止結果，不發出終止指令。"
+}

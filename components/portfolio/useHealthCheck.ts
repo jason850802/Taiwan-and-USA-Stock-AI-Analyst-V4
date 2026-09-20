@@ -61,6 +61,7 @@ export const useHealthCheck = (
   const healthSeqRef = useRef<Record<string, number>>({});
   const mountedRef = useRef(false);
   const displaysRef = useRef(new Map<string, ReturnType<typeof createFramePublisher<HealthResult>>>());
+  const symbolsRef = useRef(new Set(items.map(item => item.symbol)));
   useLayoutEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -73,13 +74,20 @@ export const useHealthCheck = (
   }, []);
   useLayoutEffect(() => {
     const symbols = new Set(items.map(item => item.symbol));
-    for (const [symbol, display] of displaysRef.current) {
+    symbolsRef.current = symbols;
+    // 批次沒有單檔影格排程，也必須失效；保留遞增世代，避免重加同代碼讓舊請求復活。
+    for (const symbol of Object.keys(healthSeqRef.current)) {
       if (!symbols.has(symbol)) {
-        display.cancel();
+        displaysRef.current.get(symbol)?.cancel();
         displaysRef.current.delete(symbol);
         healthSeqRef.current[symbol]++;
       }
     }
+    setHealthResults(prev => {
+      const entries = Object.entries(prev).filter(([symbol]) => symbolsRef.current.has(symbol));
+      return entries.length === Object.keys(prev).length ? prev : Object.fromEntries(entries);
+    });
+    setHealthModalSymbol(prev => prev && !symbolsRef.current.has(prev) ? null : prev);
   }, [items]);
   // 行情抓取失敗的種類（per-symbol，T3）：buildHealthItem 一律吞錯不 throw，
   // 但失敗文案要能說出「限流」還是「後端沒開」，所以把 kind 留在這裡給文案讀。

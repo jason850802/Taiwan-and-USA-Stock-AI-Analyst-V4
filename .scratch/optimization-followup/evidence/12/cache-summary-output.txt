@@ -1,0 +1,450 @@
+{
+  "allPassed": true,
+  "datasets": [
+    {
+      "count": 30,
+      "resources": {
+        "fundamentals": {
+          "keys": 0,
+          "uniquePayloads": 0,
+          "aliases": 0,
+          "estimatedPayloadBytes": 0,
+          "estimatedKeyBytes": 0,
+          "largestPayloadBytes": 0,
+          "unmeasurable": 0,
+          "dates": []
+        },
+        "quote": {
+          "keys": 83,
+          "uniquePayloads": 66,
+          "aliases": 17,
+          "estimatedPayloadBytes": 131765772,
+          "estimatedKeyBytes": 2108,
+          "largestPayloadBytes": 6245216,
+          "unmeasurable": 0
+        },
+        "persisted": {
+          "quote": {
+            "keys": 34,
+            "bytes": 3845088,
+            "keyBytes": 1982,
+            "largestPayloadBytes": 1281180
+          },
+          "fundamentals": {
+            "keys": 0,
+            "bytes": 0,
+            "keyBytes": 0,
+            "largestPayloadBytes": 0
+          }
+        },
+        "indexes": {
+          "fundamentals": {
+            "entries": 0,
+            "orphanKeys": 0,
+            "unindexedKeys": 0
+          },
+          "quote": {
+            "entries": 66,
+            "orphanPayloads": 0,
+            "unindexedPayloads": 0,
+            "indexedKeys": 83,
+            "staleKeys": 0
+          },
+          "fundamentalsSession": {
+            "entries": 0,
+            "orphanKeys": 0
+          },
+          "quoteSession": {
+            "entries": 34,
+            "orphanKeys": 0
+          }
+        }
+      },
+      "firstRoundServiceMs": {
+        "count": 5,
+        "median": 3191.1,
+        "worst": 3235.2,
+        "total": 16020.8
+      },
+      "conversionTotalMs": {
+        "count": 5,
+        "median": 4729.2,
+        "worst": 4804.3,
+        "total": 23598.9
+      },
+      "serializationTotalMs": {
+        "count": 5,
+        "median": 1262.6,
+        "worst": 1277.4,
+        "total": 6283.7
+      },
+      "storageTotalMs": {
+        "count": 5,
+        "median": 337.1,
+        "worst": 338.3,
+        "total": 1672.2
+      },
+      "worstStorageMs": {
+        "count": 5,
+        "median": 4.9,
+        "worst": 6.4,
+        "total": 26.4
+      },
+      "worstSerializationMs": {
+        "count": 5,
+        "median": 12.7,
+        "worst": 20.9,
+        "total": 70.4
+      },
+      "recentWorkset": {
+        "stocks": 10,
+        "calls": 30,
+        "requests": 15,
+        "chartRequests": 0
+      },
+      "fundamentals": [
+        {
+          "day": "2026-09-20T04:00:00Z",
+          "hits": 60,
+          "requests": 210,
+          "retained": {
+            "keys": 30,
+            "uniquePayloads": 30,
+            "aliases": 0,
+            "estimatedPayloadBytes": 194760,
+            "estimatedKeyBytes": 1500,
+            "largestPayloadBytes": 6492,
+            "unmeasurable": 0,
+            "dates": [
+              "2026-09-20"
+            ]
+          },
+          "persisted": {
+            "keys": 30,
+            "bytes": 194760,
+            "keyBytes": 1500,
+            "largestPayloadBytes": 6492
+          }
+        },
+        {
+          "day": "2026-09-21T04:00:00Z",
+          "hits": 60,
+          "requests": 210,
+          "retained": {
+            "keys": 30,
+            "uniquePayloads": 30,
+            "aliases": 0,
+            "estimatedPayloadBytes": 194760,
+            "estimatedKeyBytes": 1500,
+            "largestPayloadBytes": 6492,
+            "unmeasurable": 0,
+            "dates": [
+              "2026-09-21"
+            ]
+          },
+          "persisted": {
+            "keys": 30,
+            "bytes": 194760,
+            "keyBytes": 1500,
+            "largestPayloadBytes": 6492
+          }
+        }
+      ],
+      "hitRates": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "count": 100,
+      "resources": {
+        "fundamentals": {
+          "keys": 0,
+          "uniquePayloads": 0,
+          "aliases": 0,
+          "estimatedPayloadBytes": 0,
+          "estimatedKeyBytes": 0,
+          "largestPayloadBytes": 0,
+          "unmeasurable": 0,
+          "dates": []
+        },
+        "quote": {
+          "keys": 153,
+          "uniquePayloads": 136,
+          "aliases": 17,
+          "estimatedPayloadBytes": 131783482,
+          "estimatedKeyBytes": 4138,
+          "largestPayloadBytes": 6245216,
+          "unmeasurable": 0
+        },
+        "persisted": {
+          "quote": {
+            "keys": 64,
+            "bytes": 16166,
+            "keyBytes": 3780,
+            "largestPayloadBytes": 256
+          },
+          "fundamentals": {
+            "keys": 0,
+            "bytes": 0,
+            "keyBytes": 0,
+            "largestPayloadBytes": 0
+          }
+        },
+        "indexes": {
+          "fundamentals": {
+            "entries": 0,
+            "orphanKeys": 0,
+            "unindexedKeys": 0
+          },
+          "quote": {
+            "entries": 136,
+            "orphanPayloads": 0,
+            "unindexedPayloads": 0,
+            "indexedKeys": 153,
+            "staleKeys": 0
+          },
+          "fundamentalsSession": {
+            "entries": 0,
+            "orphanKeys": 0
+          },
+          "quoteSession": {
+            "entries": 64,
+            "orphanKeys": 0
+          }
+        }
+      },
+      "firstRoundServiceMs": {
+        "count": 5,
+        "median": 9793,
+        "worst": 9849.6,
+        "total": 48912.6
+      },
+      "conversionTotalMs": {
+        "count": 5,
+        "median": 15605.6,
+        "worst": 15738.6,
+        "total": 77947.4
+      },
+      "serializationTotalMs": {
+        "count": 5,
+        "median": 3933.8,
+        "worst": 3963.3,
+        "total": 19580.5
+      },
+      "storageTotalMs": {
+        "count": 5,
+        "median": 1126.8,
+        "worst": 1145.4,
+        "total": 5622.4
+      },
+      "worstStorageMs": {
+        "count": 5,
+        "median": 6.8,
+        "worst": 35.1,
+        "total": 65.8
+      },
+      "worstSerializationMs": {
+        "count": 5,
+        "median": 15.2,
+        "worst": 20.4,
+        "total": 78.2
+      },
+      "recentWorkset": {
+        "stocks": 10,
+        "calls": 30,
+        "requests": 15,
+        "chartRequests": 0
+      },
+      "fundamentals": [
+        {
+          "day": "2026-09-20T04:00:00Z",
+          "hits": 200,
+          "requests": 700,
+          "retained": {
+            "keys": 100,
+            "uniquePayloads": 100,
+            "aliases": 0,
+            "estimatedPayloadBytes": 649200,
+            "estimatedKeyBytes": 5000,
+            "largestPayloadBytes": 6492,
+            "unmeasurable": 0,
+            "dates": [
+              "2026-09-20"
+            ]
+          },
+          "persisted": {
+            "keys": 100,
+            "bytes": 649200,
+            "keyBytes": 5000,
+            "largestPayloadBytes": 6492
+          }
+        },
+        {
+          "day": "2026-09-21T04:00:00Z",
+          "hits": 200,
+          "requests": 700,
+          "retained": {
+            "keys": 100,
+            "uniquePayloads": 100,
+            "aliases": 0,
+            "estimatedPayloadBytes": 649200,
+            "estimatedKeyBytes": 5000,
+            "largestPayloadBytes": 6492,
+            "unmeasurable": 0,
+            "dates": [
+              "2026-09-21"
+            ]
+          },
+          "persisted": {
+            "keys": 100,
+            "bytes": 649200,
+            "keyBytes": 5000,
+            "largestPayloadBytes": 6492
+          }
+        }
+      ],
+      "hitRates": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "mode": "quota",
+      "bars": 2500,
+      "price": 348.9093638133738,
+      "per": 15
+    },
+    {
+      "mode": "denied",
+      "bars": 2500,
+      "price": 348.9093638133738,
+      "per": 15
+    },
+    {
+      "mode": "corrupt",
+      "recoveredBars": 2500
+    },
+    {
+      "mode": "serialization",
+      "returnedWithoutThrow": true
+    },
+    {
+      "mode": "denied-recovery",
+      "oldValueRestored": false,
+      "oldAliasRestored": false
+    },
+    {
+      "mode": "oversize",
+      "bars": 20000,
+      "price": 2099.5301637643834,
+      "retained": {
+        "fundamentals": {
+          "keys": 3,
+          "uniquePayloads": 3,
+          "aliases": 0,
+          "estimatedPayloadBytes": 19476,
+          "estimatedKeyBytes": 150,
+          "largestPayloadBytes": 6492,
+          "unmeasurable": 0,
+          "dates": [
+            "2026-09-20"
+          ]
+        },
+        "quote": {
+          "keys": 3,
+          "uniquePayloads": 3,
+          "aliases": 0,
+          "estimatedPayloadBytes": 18735652,
+          "estimatedKeyBytes": 74,
+          "largestPayloadBytes": 6245224,
+          "unmeasurable": 0
+        },
+        "persisted": {
+          "quote": {
+            "keys": 0,
+            "bytes": 0,
+            "keyBytes": 0,
+            "largestPayloadBytes": 0
+          },
+          "fundamentals": {
+            "keys": 1,
+            "bytes": 6492,
+            "keyBytes": 50,
+            "largestPayloadBytes": 6492
+          }
+        },
+        "indexes": {
+          "fundamentals": {
+            "entries": 3,
+            "orphanKeys": 0,
+            "unindexedKeys": 0
+          },
+          "quote": {
+            "entries": 3,
+            "orphanPayloads": 0,
+            "unindexedPayloads": 0,
+            "indexedKeys": 3,
+            "staleKeys": 0
+          },
+          "fundamentalsSession": {
+            "entries": 1,
+            "orphanKeys": 0
+          },
+          "quoteSession": {
+            "entries": 0,
+            "orphanKeys": 0
+          }
+        }
+      }
+    }
+  ]
+}

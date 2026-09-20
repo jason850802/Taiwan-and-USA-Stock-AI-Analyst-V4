@@ -1,0 +1,33 @@
+{
+  "reason": "正式App來源清單漏列config；以12 wrapper綁定完整95檔及runId重新執行，14個profile與故障探針不改寫",
+  "rows": [
+    {
+      "file": "app-pressure.json",
+      "sha256": "509dfbcd7e9422962a6fd14a015f4a989a0da95c8b1906afaa9e0760104f4c7f"
+    },
+    {
+      "file": "app-quota.json",
+      "sha256": "a7b605490d097829f63495fe28dfb731bdd8d8a7195c5568d17e8b4d1c2b0607"
+    },
+    {
+      "file": "app-denied.json",
+      "sha256": "c5ae397a44981257f939bc0c22a79e4d5c17591322233ba5d94053b7645cda8f"
+    },
+    {
+      "file": "app-corrupt.json",
+      "sha256": "3c9192d25b51a477fe10e534162293928ef55a665f9db44211de8655211264fd"
+    },
+    {
+      "file": "app-oversize.json",
+      "sha256": "291bd7a59c04229fe6203c488d163352f82bc3be10be757df075ddcf29efff85"
+    },
+    {
+      "file": "verified-cache.json",
+      "sha256": "58e768e76420da423099dbaa324821e1ef42dc4d3719819bd80628348156b53e"
+    },
+    {
+      "file": "cleanup-app-cache.json",
+      "sha256": "9080e28a00de9340880ab1523d0840e641f342f6f60f772a9cd42031ca8fdcbb"
+    }
+  ]
+}

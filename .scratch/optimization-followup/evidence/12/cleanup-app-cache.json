@@ -1,0 +1,9 @@
+{
+  "fixturePid": 2192,
+  "origin": "http://127.0.0.1:4181",
+  "checkedAt": "2026-09-20T22:39:21.950Z",
+  "processAbsent": true,
+  "portClosed": true,
+  "startup": "工具exec回傳PID與session；完整啟動識別另在整合紀錄",
+  "note": "此程式只核對停止結果，不發出終止指令。"
+}

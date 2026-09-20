@@ -1,6 +1,6 @@
 # 02 — 基本面換股、載入與重試正確歸屬
 
-Status: resolved — 2026-09-20
+Status: resolved — 2026-09-20；最終提交 `c27c4beea4a999f3dc20f2dd109690821379602c`
 Blocked by: 01
 Type: task
 
@@ -40,3 +40,5 @@ Type: task
 2026-09-20：Standards 指出同股舊回應可能倒退服務快取；已新增重現與發布身分守衛，保留快取鍵及有效期。最新驗收為 11 組瀏覽器案例、731 項 Vitest（原有 727＋新增 4）全綠，等待修正覆核。
 
 2026-09-20 結案：Standards 初始 1 項 MEDIUM 已 CLOSED，Spec 初始 0 項；兩軸修正覆核均 OPEN 0／NEW 0，見 [獨立覆核](../evidence/02/code-review.md)。本票只有一個最終提交，初始覆核候選 `fb70974840882d8b02fce461d0e565881edbbd74` 由本票修正及結案 amend 取代；最終自身 hash 依多票 tracker 規則於 12 回填。撤回以本票最終 commit 的反向修改為單位，先檢查後續依賴，不回退第 01 票基準。假站與測試分頁已關閉；第 03 票維持 ready-for-agent，本次停止。
+
+2026-09-21：第12票依Git主線回填最終提交 `c27c4beea4a999f3dc20f2dd109690821379602c`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

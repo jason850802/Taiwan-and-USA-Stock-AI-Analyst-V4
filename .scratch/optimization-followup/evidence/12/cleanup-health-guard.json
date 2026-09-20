@@ -1,0 +1,9 @@
+{
+  "fixturePid": 28136,
+  "origin": "http://127.0.0.1:4182",
+  "checkedAt": "2026-09-20T21:17:31.398Z",
+  "processAbsent": true,
+  "portClosed": true,
+  "startup": "health-guard/startup.json",
+  "note": "此程式只核對停止結果，不發出終止指令。"
+}

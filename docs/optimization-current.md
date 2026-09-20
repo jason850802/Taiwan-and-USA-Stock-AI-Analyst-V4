@@ -1,6 +1,6 @@
 # 最佳化後的現況責任與驗收入口
 
-更新：2026-09-21，第11票。進度以[正式票據](../.scratch/optimization-followup/issues)為準；第12票的最終整合結果另由該票保存。此文件描述01～10完成後的責任，不覆寫[第一輪歷史報告](optimization-2026-09-20.md)或`.planning/`。
+更新：2026-09-21，第12票。進度以[正式票據](../.scratch/optimization-followup/issues)為準；最終整合結果見[最終報告](optimization-final.md)與[12驗收入口](../.scratch/optimization-followup/evidence/12/README.md)。此文件描述目前責任，不覆寫[第一輪歷史報告](optimization-2026-09-20.md)或`.planning/`。
 
 ## 使用者操作到資料的路徑
 
@@ -13,6 +13,7 @@
 | 庫存請求排程 | `components/portfolio/holdingPriceQueue.ts` | 單一hook實例的三個槽位，含匯率；FX首批優先。尚未開始的同key舊工作可取代，已開始者占槽至實際完成。不是整站或跨分頁全域限流。 |
 | 基本面及解讀 | `components/FundamentalsPanel.tsx`、`services/finmind.ts` | 畫面和AI狀態各屬其股票；服務按最新請求發布快取；舊回應不能污染再次查閱。財報整理、日期和提示詞不改。 |
 | 長報告 | `utils/framePublisher.ts`、`App.tsx`、`components/portfolio/useHealthCheck.ts` | 接收服務的累積全文，同影格只保留最新常規提交，完成同步發布全文。取消的是過期顯示，不新增後端傳輸中止協定。單檔健檢按股票隔離；批次仍等全文完成後分配。 |
+| 健檢移除／重加 | `components/portfolio/useHealthCheck.ts` | 移除時連同沒有影格排程的批次世代一起失效，清除已移除的結果及視窗指向；重加同代碼也不接收舊持股報告。仍有效的其他股票繼續完成。 |
 | 後端Yahoo | `api/_lib/yahoo.ts` | 同執行個體共用cookie／crumb握手；只有實際使用的世代能被認證失敗使其失效。既有錯誤分類、沿用時間與重試契約不變。 |
 | 視窗及指標設定 | `components/ui/Modal.tsx`、`components/ChartToolbar.tsx` | 最上層視窗管理焦點循環與Escape，動態控制項及StrictMode重播保留真正來源；指標設定更新不卸載正在操作的輸入。 |
 
@@ -51,9 +52,9 @@ UI身分守衛、共用服務世代和排程槽位是三個不同責任。刪掉
 | 共用行情、最新價、財報世代 | `services/yahoo.revalidation.test.ts`、`yahoo.loading.test.ts`、`finmind.loading.test.ts`；02～04的隔離App原始結果 |
 | 庫存三槽、移除與重疊更新 | `components/portfolio/holdingPriceQueue.test.ts`；`evidence/05/fixture-server.mjs`及該票README |
 | 握手與真handler鏈 | `api/_lib/yahoo.handshake.test.ts`；fake upstream與測試環境隔離，不打真Yahoo |
-| 容量／權限／別名／跨日 | `services/quoteCache.bounds.test.ts`、`finmind.bounds.test.ts`；`evidence/08/profile-server.mjs 12`與`app-server.mjs 12`將重跑結果另存12 |
-| 長報告及片段邊界 | `utils/framePublisher.test.ts`；`evidence/09/fixture-server.mjs 12`及`summarize.mjs 12` |
-| 鍵盤及兩尺寸 | `evidence/10/fixture-server.mjs 12`、`native-plan.mjs`及`verify-evidence.mjs 12`；必須以原生鍵盤工具派送按鍵 |
+| 容量／權限／別名／跨日 | `services/quoteCache.bounds.test.ts`、`finmind.bounds.test.ts`；`evidence/08/profile-server.mjs 12`與`evidence/12/cache-app-server.mjs 12`將重跑結果另存12 |
+| 長報告及片段邊界 | `utils/framePublisher.test.ts`；`evidence/12/stream-server.mjs 12`、`evidence/09/summarize.mjs 12`及`evidence/12/verify-stream-ui.mjs` |
+| 鍵盤及兩尺寸 | `evidence/12/keyboard-server.mjs 12`、`evidence/10/native-plan.mjs`及`evidence/12/verify-keyboard.mjs`；必須以原生鍵盤工具派送按鍵 |
 | 來源與包大小 | `scripts/audit-source-usage.mjs`、`scripts/measure-initial-bundle.mjs --skip-build --json`；後者要求dist對應目前來源 |
 
 上述`evidence/`都相對`.scratch/optimization-followup/`。05等未提供12輸出參數的舊工具不可直接重跑後覆蓋歷史原始檔，須使用12提供的輸出轉接。每票README列origin與啟動方式；停止只處理本次已核實命令列的PID。

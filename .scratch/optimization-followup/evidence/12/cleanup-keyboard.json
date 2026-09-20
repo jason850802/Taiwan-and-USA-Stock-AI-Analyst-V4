@@ -1,0 +1,9 @@
+{
+  "fixturePid": 5016,
+  "origin": "http://127.0.0.1:4183",
+  "checkedAt": "2026-09-20T22:44:20.298Z",
+  "processAbsent": true,
+  "portClosed": true,
+  "startup": "keyboard/startup.json",
+  "note": "此程式只核對停止結果，不發出終止指令。"
+}

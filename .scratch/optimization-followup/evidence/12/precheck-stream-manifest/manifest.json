@@ -1,0 +1,265 @@
+{
+  "reason": "09清單漏列config/twFeeRates.ts；12改以94個可達產品加vite建置設定完整綁定後重跑，不補蓋舊證據",
+  "rows": [
+    {
+      "file": "before-market-0.json",
+      "sha256": "c2c6fd0aba795d5c988a53e2ebf81eb6cfcce5ef59604548d872a1e3bdfe28ca"
+    },
+    {
+      "file": "before-market-1.json",
+      "sha256": "b71ceabe1f91ca964590e0c694506d217cd76f2ce9089207413d0c5678c7ff5d"
+    },
+    {
+      "file": "before-market-2.json",
+      "sha256": "4350deb7c696f7cbd3b9ad734020ea79f6c66bfc36046741cc2161f8d32188d5"
+    },
+    {
+      "file": "before-market-3.json",
+      "sha256": "66fd26effd7a92462dd7476b8af9d59aad92131ea78d95eface8adce7b68f423"
+    },
+    {
+      "file": "before-market-4.json",
+      "sha256": "9e4e010aaceddffb5e0c418b55fd3a3c1cace83d2fcc6dc80e724d598bfe1a56"
+    },
+    {
+      "file": "before-market-5.json",
+      "sha256": "631ca9db675dd676d37cb24e38538ba3ca1cea45dc66eba06375a8124ad32caf"
+    },
+    {
+      "file": "before-market-6.json",
+      "sha256": "d2be98863453fef0e7e1f73e481ec2cc8a1640489213fc19431e4e86ceeb5ce9"
+    },
+    {
+      "file": "after-market-0.json",
+      "sha256": "9ee99ed262e4034451d6d62242dba6b92de07f944a7d4c935e1fdbffaa6cd300"
+    },
+    {
+      "file": "after-market-1.json",
+      "sha256": "8472fa4820c81b56e100198b9e9a584a3a0b4a220d042219e5ef968372c0672d"
+    },
+    {
+      "file": "after-market-2.json",
+      "sha256": "58ff7f28924a32b3d897e26ced37032a227a618d0c76df3a936afefb1e092b9f"
+    },
+    {
+      "file": "after-market-3.json",
+      "sha256": "aeaa9a815a86c0b49251fd2aa305dbc8b91060d721c2020a721738124a287822"
+    },
+    {
+      "file": "after-market-4.json",
+      "sha256": "b07b3081bc1cf64cf602783d0e3a6f10ef82ce9eccb54a3e7b1fa8a3cf47b15d"
+    },
+    {
+      "file": "after-market-5.json",
+      "sha256": "b4cc06f6c6067fd0a164f6bb59e729eb587e57f6ea13b4b8d366dd7e6598eb7f"
+    },
+    {
+      "file": "after-market-6.json",
+      "sha256": "d788ded0b4d57b8f694df76659944494b7cb2ecb627a488e1f998dc4b54008ca"
+    },
+    {
+      "file": "app-market-0.json",
+      "sha256": "39c765cd1a6cf7fa47aad29887c4c9e6037120a5bde48141f56f2e6464ce000e"
+    },
+    {
+      "file": "app-empty-0.json",
+      "sha256": "b1418a86d14fe5d8ae6cd84ba9c130f8f2232ad03d5c3c2d337dfbe1f28baf24"
+    },
+    {
+      "file": "app-single-0.json",
+      "sha256": "e7bb232f4a5ade4f38ab843d98fb73e08a0dab99f95b06491cdb2f86307d1f8d"
+    },
+    {
+      "file": "app-slow-0.json",
+      "sha256": "e4f1fd10c11120ee880b657424e074c94d9d63d92ab9a8d818193a41c7e5df30"
+    },
+    {
+      "file": "app-partial-error-0.json",
+      "sha256": "c22e9a336da840291f470be996173cab8dfb69b02c3e18eef69e44ba683a5efc"
+    },
+    {
+      "file": "app-empty-error-0.json",
+      "sha256": "c2df16d7d57a8de2a618bcebcae0c36b05c8e8939fa896959ee9b72e0d12eb8e"
+    },
+    {
+      "file": "app-paused-frame-0.json",
+      "sha256": "7c74a4c6df34575402f94606e1752190e11aa96c6c9e898ca03d6cb94ec7c435"
+    },
+    {
+      "file": "app-cache-hit-0.json",
+      "sha256": "48bf62e9d9616eeec44e8a5d769b0b24ae4499ddff6992b03d8d437e2b6556bd"
+    },
+    {
+      "file": "app-switch-0.json",
+      "sha256": "cbea53a8d2d3dbe2bfb193d442546966aee595ae8517f26367a17bf57ba524b8"
+    },
+    {
+      "file": "app-restart-0.json",
+      "sha256": "617b9ffd518d9091df5ef677af0fb235e7658d67f26888a0d303d853b0f8c7e0"
+    },
+    {
+      "file": "app-view-cancel-0.json",
+      "sha256": "80405dd0c8fe1cdcb0adf96b45d1e37ea787905526b489fa05a41367c8d69405"
+    },
+    {
+      "file": "app-health-0.json",
+      "sha256": "690c6c5420d4b0f27c687b64698806cc3cc5ddc7e753546d93744f7168242896"
+    },
+    {
+      "file": "app-health-switch-0.json",
+      "sha256": "199ba092ff2ee6298437936a77dab016e097c497470bd362430619792fd22c4c"
+    },
+    {
+      "file": "app-health-unmount-0.json",
+      "sha256": "db106c667377d42c42c70bd971d95d4970537e353750eeed73a5b8ef04105c22"
+    },
+    {
+      "file": "app-batch-supersede-0.json",
+      "sha256": "35be748f37960b4e10818bf7245c4ee5a4e3301dd1aa34a884a01e9d257cb22e"
+    },
+    {
+      "file": "stream-summary.json",
+      "sha256": "3d1fc155481a3c835da34422088fd9fd28db7a130d2eae90d48c0f926dfd2ed7"
+    },
+    {
+      "file": "stream-startup.json",
+      "sha256": "00adf76e071a4d06e6029d36d6f472552e8baeaf4f20d8c12f7e2fa732dec846"
+    },
+    {
+      "file": "app-healthguard-desktop-0.json",
+      "sha256": "2617df0bfc9a927a8194b91beef1afe5426726a99e03df998512ccaffb5bd70d"
+    },
+    {
+      "file": "app-healthguard-narrow-0.json",
+      "sha256": "2ea09e0c85a7f0ba01e9b941fe77668b3673d9a434e1b28fd7036fb70bb4ff51"
+    },
+    {
+      "file": "stream-ui-desktop/app-empty-0.json",
+      "sha256": "342ca956973166083aa89ff3ac9a9d64c0fd788e1ffe5c32ceedff8ffc8abe4d"
+    },
+    {
+      "file": "stream-ui-desktop/app-single-0.json",
+      "sha256": "df047286f1f1c8491d643b53a8888ef09330f6122dda2584f03feb17096b518f"
+    },
+    {
+      "file": "stream-ui-desktop/app-slow-0.json",
+      "sha256": "c901335d0593fc09bfa2a7a3a6015ca3728832942081bd33068fbec9c9f3a33d"
+    },
+    {
+      "file": "stream-ui-desktop/app-partial-error-0.json",
+      "sha256": "b9aa951e842fc189c41160efa95e4d4475291527726d5ac5902ef8b6353a6b2b"
+    },
+    {
+      "file": "stream-ui-desktop/app-empty-error-0.json",
+      "sha256": "a3083c239110c9088d41719e8962591769d8d0c8449888f98b1c45a4a0f5a56f"
+    },
+    {
+      "file": "stream-ui-desktop/app-paused-frame-0.json",
+      "sha256": "3b33f408e77b3643f6751e772fe51ef4377cb689ddb76da74f1a8688fb380951"
+    },
+    {
+      "file": "stream-ui-desktop/app-cache-hit-0.json",
+      "sha256": "16fea45a9d1ae0c141be795a0c6eb829117ee08bbe7df4c6383c98433f00f0a3"
+    },
+    {
+      "file": "stream-ui-desktop/app-switch-0.json",
+      "sha256": "2dd4c63a50cdd1d08068463c802f1e97de72002b0126b3e171f833b86a36f4e2"
+    },
+    {
+      "file": "stream-ui-desktop/app-restart-0.json",
+      "sha256": "bef16b76b5f86e4de205e6b3fa43c2ba5eae7cb43b726e6966f1697483149907"
+    },
+    {
+      "file": "stream-ui-desktop/app-view-cancel-0.json",
+      "sha256": "ab84f6b464005ef5a6afdfda289b0fd92751da15e026dddb6198c86512552070"
+    },
+    {
+      "file": "stream-ui-desktop/app-health-0.json",
+      "sha256": "b082e1d854c843aff18dae580e34658d9d85cb71812cda5018e2e6853fca2953"
+    },
+    {
+      "file": "stream-ui-desktop/app-health-switch-0.json",
+      "sha256": "a344a3921f57187a28d63f0a5fe8e8bc7170917cbbecfa0eccd07f8ea2ed8883"
+    },
+    {
+      "file": "stream-ui-desktop/app-health-unmount-0.json",
+      "sha256": "aabf0648003edcdd502c0f0abeb4c59f82c430c9bc7338dc3153b8c5d0693aab"
+    },
+    {
+      "file": "stream-ui-desktop/app-batch-supersede-0.json",
+      "sha256": "d8a4d95880ed65ebc54fa814b9d9164b315c4fca0cc362b3b384f1eaa9ffd9d3"
+    },
+    {
+      "file": "stream-ui-desktop/app-market-0.json",
+      "sha256": "821e914f359711493d7ae1a491ff1cc4e0cc56e5d66b768e28b2081be3849d62"
+    },
+    {
+      "file": "stream-ui-desktop/layout-final.json",
+      "sha256": "15e61470d164f7d9ffde01eb6e570b6fcb1f7c6be9b101d4cd0517bb42a0b0e1"
+    },
+    {
+      "file": "stream-ui-narrow/app-empty-0.json",
+      "sha256": "8ab558485e85f343b14bf838e0c755480073c9d92df8c0d4d763629c64af7cdb"
+    },
+    {
+      "file": "stream-ui-narrow/app-single-0.json",
+      "sha256": "f809a7f37e014ea950af48c2423e7de274c40dfe06b53f8e6300a7db985904a9"
+    },
+    {
+      "file": "stream-ui-narrow/app-slow-0.json",
+      "sha256": "360e16d200ea8fdb37b4486efd82bd6632e02dd604338992db544ec171090020"
+    },
+    {
+      "file": "stream-ui-narrow/app-partial-error-0.json",
+      "sha256": "0704772907a98401562c2468b1fb7d51ea4560c8c1abed4a5a440ebc3b1b5534"
+    },
+    {
+      "file": "stream-ui-narrow/app-empty-error-0.json",
+      "sha256": "3b0a02d5e03e4e69877065486f03e432bf81f7750ab82beeace671ad9699d108"
+    },
+    {
+      "file": "stream-ui-narrow/app-paused-frame-0.json",
+      "sha256": "40cb6bbaceed9d62f36ef668e0a669ea3de9bec2399ed2c00e52fdca69a6e658"
+    },
+    {
+      "file": "stream-ui-narrow/app-cache-hit-0.json",
+      "sha256": "4e8e1db5164637676508228d8d744949f5438989b0ed5bed273a98d46071e99f"
+    },
+    {
+      "file": "stream-ui-narrow/app-switch-0.json",
+      "sha256": "cea0edcf7475d130ecf9544659115bca6b21fc46e85a1161cd24fa0bee0e7912"
+    },
+    {
+      "file": "stream-ui-narrow/app-restart-0.json",
+      "sha256": "d23f560111dfd0304d1301e6e140ba26fa2c73a199c9a0ac3fe16175ffdea218"
+    },
+    {
+      "file": "stream-ui-narrow/app-view-cancel-0.json",
+      "sha256": "21150b9b7f7507d95193015b956d3dc4953b98e5c961472abdd8f2f3f202180d"
+    },
+    {
+      "file": "stream-ui-narrow/app-health-0.json",
+      "sha256": "d60b5fb45c86dd2767e1e025344fa85ab12d3ed57b8cad1de2f0a9faf51839be"
+    },
+    {
+      "file": "stream-ui-narrow/app-health-switch-0.json",
+      "sha256": "f891b5c5d7fb510a130e9134f12fc1fee31c55cf0b16f727ad2fb1b13284cdc9"
+    },
+    {
+      "file": "stream-ui-narrow/app-health-unmount-0.json",
+      "sha256": "63bf1eee98a178e075d428b4a0eb03ca2708ce1743ae790b4087532b392f0af4"
+    },
+    {
+      "file": "stream-ui-narrow/app-batch-supersede-0.json",
+      "sha256": "5e20cdd73d2ae09ba88e3c42597ced97fcf31ff139a9b62a168bed97ec05dbfc"
+    },
+    {
+      "file": "stream-ui-narrow/app-market-0.json",
+      "sha256": "e3604bd43b22bbd3023d21689cb39e0396a0af8d6f561296c5815ba8ee616311"
+    },
+    {
+      "file": "stream-ui-narrow/layout-final.json",
+      "sha256": "42da0fed729f69a850c3a8c9933c23179780b5a3d975c6ac464e5680bcda58b6"
+    }
+  ]
+}

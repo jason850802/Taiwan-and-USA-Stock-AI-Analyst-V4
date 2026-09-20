@@ -1,6 +1,6 @@
 # 06 — 後端 Yahoo 握手共用與失效恢復
 
-Status: resolved — 2026-09-21
+Status: resolved — 2026-09-21；最終提交 `513f6347bfb77dedced2b8f5e0d85fef68ed8cbb`
 Blocked by: 01
 Type: task
 
@@ -35,3 +35,5 @@ Type: task
 2026-09-21：依自動執行授權開始 06。固定比較點為 `12c544f4a58d2fe07b46e523e7ddfc796eb11f12`，開始時工作區乾淨。測試採用既有公開 `fetchYahooWithHandshake`／handler 邊界、假 fetch 與假時鐘；不輸出真實憑證，不更改原有測試。
 
 17 項新增測試與原 Yahoo 40 項皆通過；完整 gate 44 檔／773 項通過。單一在途握手在入口排除同世代反序發布；控制新握手完成前／後才回舊 401 及反序主回應，確認新配對不被清除。測試方式與限制見 [06 證據](../evidence/06/README.md)。[獨立覆核](../evidence/06/code-review.md) Standards／Spec 各 OPEN:0；最終 hash 於 12 回填，續接 07。
+
+2026-09-21：第12票依Git主線回填最終提交 `513f6347bfb77dedced2b8f5e0d85fef68ed8cbb`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

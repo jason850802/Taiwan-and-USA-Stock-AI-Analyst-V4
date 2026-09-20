@@ -1,0 +1,123 @@
+// 在全組封存通過後，從原始摘要產生交接報告；不手填效能數據或改寫歷史量測。
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+const dir = fileURLToPath(new URL('./', import.meta.url)), root = fileURLToPath(new URL('../../../../', import.meta.url));
+const read = file => JSON.parse(readFileSync(path.join(dir,file),'utf8'));
+const seal = read('final-seal.json'), queue = read('queue-summary.json'), cache = read('profile-summary.json');
+const stream = read('stream-summary.json'), market = read('market.json'), bundle = read('bundle.json'), lineage = read('lineage.json'), commits = read('commits.json');
+const oldBundle = JSON.parse(readFileSync(new URL('../01/bundle-baseline.json', import.meta.url),'utf8'));
+const oldMarket = JSON.parse(readFileSync(new URL('../01/market-baseline.json', import.meta.url),'utf8'));
+const n = value => Number(value.toFixed(1)).toLocaleString('en-US');
+const pct = (before,after) => ((after / before - 1) * 100).toFixed(2) + '%';
+const numstat = lineage.productNumstat.split('\n').filter(Boolean).map(line => line.split('\t'));
+const additions = numstat.reduce((sum,row)=>sum+Number(row[0]),0), deletions = numstat.reduce((sum,row)=>sum+Number(row[1]),0);
+const queueRows = queue.rows.map(row => `| ${row.count} | ${Math.max(...row.before.peaks)} → ${Math.max(...row.after.peaks)} | ${row.before.requestCounts[0]} → ${row.after.requestCounts[0]} | ${n(row.before.firstVisibleMs.median)} → ${n(row.after.firstVisibleMs.median)} | ${n(row.before.allCompleteMs.median)} → ${n(row.after.allCompleteMs.median)} | ${n(row.before.allCompleteMs.max)} → ${n(row.after.allCompleteMs.max)} |`).join('\n');
+const cacheRows = cache.comparison.map(row => `| ${row.count} | ${row.before.bytes.toLocaleString('en-US')} → ${row.after.bytes.toLocaleString('en-US')} | ${n(row.before.totalRoundServiceMs.median)} → ${n(row.after.totalRoundServiceMs.median)} | ${n(row.before.wallMs.median)} → ${n(row.after.wallMs.median)} | ${row.before.chartRequests[0].join('/')} → ${row.after.chartRequests[0].join('/')} |`).join('\n');
+const marketRows = market.results.map((row,index)=>`| ${row.symbol}／${row.interval} | ${row.outputBars} | ${n(oldMarket.results[index].medianMs)} → ${n(row.medianMs)} | ${pct(oldMarket.results[index].medianMs,row.medianMs)} | 相同 |`).join('\n');
+const summaries = {
+  '05':'庫存重疊更新共用最多3個實際請求槽，含匯率；最新force完成、失敗釋槽、移除後不啟動排隊工作。',
+  '06':'同一後端執行個體共用Yahoo cookie／crumb握手，舊401不能失效新配對。',
+  '07':'完成30／100檔三週期三輪與跨日量測，決定容量、計數單位、淘汰與超大項目策略。',
+  '08':'實作行情／基本面記憶體及session界線，別名共同淘汰，quota／denied／corrupt安全降級。',
+  '09':'市場及單檔健檢合併影格提交，結束立即提交全文，過期顯示按請求世代失效。',
+  '10':'共用視窗正反焦點循環、來源回復、疊層及StrictMode；指標輸入保留焦點與可辨識名稱。',
+  '11':'核對94個正式模組用途，沒有安全可刪項目時保留護欄，補現況責任與驗收入口。',
+};
+const ticketRows = commits.rows.filter(row=>Number(row.ticket)>=5).map(row=>`| ${row.ticket} | ${summaries[row.ticket]} | \`${row.commit.slice(0,7)}\` |`).join('\n');
+const b=stream.comparison.before,a=stream.comparison.after;
+const report = `# 最佳化計畫最終報告
+
+日期：2026-09-21。第05～12票完整流程已完成，01～12全部結案；第12票功能、效能封存及獨立Standards／Spec覆核均通過，兩軸OPEN 0／NEW 0。正式結果見[12正式票](../.scratch/optimization-followup/issues/12-final-acceptance.md)和[覆核紀錄](../.scratch/optimization-followup/evidence/12/code-review.md)。
+
+## 使用者可看到的結果
+
+基本面換股與重試保持正確股票；K線切離再回能收到完整歷史；庫存強制更新不被舊價格／匯率蓋回。大量持股會逐檔更新且重疊批次共用三槽。長報告減少重複畫面提交，完成時保留全文。視窗能使用Tab／Shift+Tab／Escape並返回來源，指標輸入不再因更新而失焦。
+
+第12票另修正一項整合缺口：批次健檢發出後刪除AAPL，再以不同成本重新加入，舊批次不得發布到新持股。修正只限世代失效及移除結果清理；保留未移除股票完成，沒有改金融、提示詞或服務內容。
+
+| 票號 | 交付 | 最終提交 |
+|---|---|---|
+${ticketRows}
+| 12 | 全部整合矩陣、健檢移除／重加回歸、逐票提交回填與本報告 | 最終交接及Git主線取得 |
+
+完整40位提交、父鏈與逐票覆核位置見[commits.json](../.scratch/optimization-followup/evidence/12/commits.json)。第12票提交不寫進自己的內容以免反覆改hash；交接回覆提供最終SHA。
+
+## 第一輪與本輪的界線
+
+第一輪成果已由01保存：日期格式器重用、AI模組延後下載、圖表減少無關重繪、搜尋並行／取消、報價請求共用及11項未用宣告清理。01也保存接手前已存在的圖表／報告延遲載入，但不將它算成第一輪新收益。本輪從已保存的01提交 \`ade5dca\` 向前改善，不把第一輪歷史數字冒充這次重跑。歷史報告[保持原樣](optimization-2026-09-20.md)。
+
+首屏由01的 **${oldBundle.totalRawKb} KiB raw／${oldBundle.totalGzipKb} KiB gzip** 到最終 **${bundle.totalRawKb}／${bundle.totalGzipKb} KiB**，增加 **${pct(oldBundle.totalRawKb,bundle.totalRawKb)}／${pct(oldBundle.totalGzipKb,bundle.totalGzipKb)}**，兩者均低於5%調查門檻。這是新增正確性、容量及可及性護欄的體積代價，不宣稱總bundle更小。
+
+## 固定行情輸出與處理時間
+
+固定UTC時間、空session、force、零假網路延遲，每組一次暖機後五次中位數。四組完整輸出SHA-256與01全部相同；最終冷啟動另列 **${n(market.coldStartMs)} ms**，不混入暖態。
+
+| 標的／週期 | 輸出棒數 | 中位數 ms：01 → 最終 | 變化 | 全輸出SHA |
+|---|---:|---:|---:|---|
+${marketRows}
+
+以上同資料的本機微基準不能表示真實提供商速度或網站SLA。[原始行情結果](../.scratch/optimization-followup/evidence/12/market.json)與[首屏清單](../.scratch/optimization-followup/evidence/12/bundle.json)可直接重算。
+
+## 庫存三槽：請求峰值與等待代價
+
+前版本為04完成、05排隊前的固定來源 \`0366f5f\`，後版本為本次12候選；同機器、80 ms假HTTP延遲、固定資料與單檔失敗。每種版本／持股數各有冷頁面、排除暖機與五份正式樣本。
+
+| 持股數 | HTTP峰值 前→後 | 請求數 前→後 | 首檔 ms 前→後 | 全部 ms 前→後 | 最差全部 ms 前→後 |
+|---:|---|---|---|---|---|
+${queueRows}
+
+匯率獲得首批槽位，30檔未完時連續更新仍不超過三個實際請求，最後更新成功。降低瞬時請求量會延長全量完成時間，沒有隱藏此取捨。[全部樣本與冷暖分列](../.scratch/optimization-followup/evidence/12/queue-summary.json)。
+
+## 快取：有界工作集與全量重訪成本
+
+行情記憶體預算128 MiB、160份唯一payload、320keys；session4 MiB／64keys。基本面記憶體2 MiB／128項，session1 MiB／128keys。記憶體以JSON UTF-16估值加key計數，別名共用payload；這不是heap、瀏覽器配額或實際物件記憶體量測。
+
+下表前值是07的同資料集歷史樣本，後值是12重新執行；刻意標明跨時段比較。全部原始樣本、三輪耗時、冷頁面與最差值均保留。
+
+| 持股數 | 行情保留估值 bytes 前→後 | 三輪服務合計 ms 前→後 | 整頁 ms 前→後 | 三輪K線請求數 前→後 |
+|---:|---|---|---|---|
+${cacheRows}
+
+30／100檔三週期超出預算，第二、三輪全量重訪命中率從100%降至0%，因此會再次抓取。近期十檔三週期的第二次重訪仍為30次呼叫、0次K線請求（名錄查詢另計）；基本面當日重訪命中、跨日只保留當日項目。同步best-effort持久化保留，沒有新增延後寫入。quota、暫時denied後恢復、壞JSON及超大項目均有真實服務／正式App案例，非快取sentinel保持完整。[完整資源摘要](../.scratch/optimization-followup/evidence/12/profile-summary.json)。
+
+## 長報告：合併提交與完成觀察延遲
+
+相同100 KiB UTF-8 Markdown／1,000片段，在相同development React.Profiler配置，以MessageChannel分送假HTTP body。before入口取自09前固定提交；其餘共用元件使用相同版本。不是正式production計時，也不保證真實AI端到端速度。
+
+| 五次中位數 | 修改前 | 最終 |
+|---|---:|---:|
+| 內容變更提交次數 | ${n(b.commits.median)} | ${n(a.commits.median)} |
+| Markdown累計render ms | ${n(b.renderMs.median)} | ${n(a.renderMs.median)} |
+| 整段完成 ms | ${n(b.wallMs.median)} | ${n(a.wallMs.median)} |
+| 串流完成到觀察全文 ms | ${n(b.completionLagMs.median)} | ${n(a.completionLagMs.median)} |
+
+片段快速抵達時可能只剩最終一次提交；慢片段、部分失敗、暫停影格、取消及重啟另外驗證。輸入、服務快取、最終公開props與可讀全文各自使用一致的雜湊口徑，表格與清單保持完整。最後觀察延遲單獨回報，不把它藏進渲染收益。[原始統計](../.scratch/optimization-followup/evidence/12/stream-summary.json)。
+
+## 測試與功能矩陣
+
+- 最終完整gate **47個Vitest檔／805項通過**；比01多78項，7個新測試檔。01原有42個test／snapshot的Git差異及原始bytes均不變，沒有新增skip／todo／only。型別、build、秘密掃描全綠且未降級；package／lock對01及原始計畫起點皆零差異。
+- 02～05固定候選重跑88份（包含21個排程後效能樣本），38份為正式App；另有21個排程前效能樣本。基本面／行情及庫存App在兩尺寸驗證，市場另有每尺寸17個原生按鍵與64→51根縮放讀值。
+- 快取14頁profile、1頁含6類故障、5頁正式App。串流14頁前後profile、15個宿主尺寸正式App、32個指定兩尺寸App（含2個真實表單健檢回歸），另2個長報告DOM版面檢查。
+- 共用視窗、分析、新增、匯入及指標完整原生矩陣15案，**${seal.groups.trustedKeyboardEvents}個可信原生按鍵**；與純hook／Profiler宿主分開。健檢另有精確修改前紅燈及6個公開hook綠燈。
+
+全部分組、來源／工具／原始檔指紋及清理紀錄見[final-seal.json](../.scratch/optimization-followup/evidence/12/final-seal.json)；重跑命令見[12驗收入口](../.scratch/optimization-followup/evidence/12/README.md)。不使用precheck檔案湊通過數。
+
+## 瘦身與保留範圍
+
+相對01的正式產品diff共${numstat.length}檔、新增${additions}行／刪除${deletions}行，淨增${additions-deletions}行；測試、工具與報告分開，不把它們刪掉以製造瘦身。共用請求槽、session容量helper及影格publisher消除重複責任；來源掃描 **94／94可達**。
+
+11票沒有找到可證明安全刪除的整檔或正式宣告，因此沒有刪快取別名、取消護欄或金融無值處理。較大的App、行情、Portfolio及報表拆分保留後續另行規劃，沒有在本計畫整批重寫。第一輪11項未用宣告清理只列為歷史成果。[現況責任入口](optimization-current.md)。
+
+## 覆核、限制與回復
+
+逐票Standards／Spec已各自保存。12整合初審的1項MEDIUM健檢產品缺口已最小修正；2項串流證據方法缺口補保存DOM探針及runId。續作核對又補齊來源清單的1項MEDIUM方法缺口：串流、鍵盤與快取正式App採94個可達產品加vite設定的精確95檔集合，舊樣本保留precheck後重新執行，不以相同檔數冒充來源完整。Spec的1項LOW第一輪收益措辭已更正。最終獨立Standards確認CLOSED 4／OPEN 0／NEW 0；Spec確認上述相關修正及措辭問題皆關閉，OPEN 0／NEW 0。完整候選及原始封存的獨立核對見[12覆核](../.scratch/optimization-followup/evidence/12/code-review.md)。
+
+兩尺寸是桌面瀏覽器內實際1440×900與390×844 viewport，沒有手機硬體或螢幕閱讀器驗收。paused-frame是控制RAF，不等同完整背景分頁節流。既有Recharts尺寸warning與故障注入503分開記錄；早期Desktop歷史buffer不完整，因此正式證據另由頁面啟動前捕捉例外及本機假HTTP逐案保存。
+
+所有應用API只用隔離本機假資料，未新增套件、未改真實庫存、金融語意、AI提示詞／型號、部署設定，沒有推送、部署或正式發版。後端握手只保證單執行個體共用；本機快取估值不代表實際heap，效能樣本不保證真實市場或AI品質。
+
+回復以指定票最終commit的反向修改為單位，先確認後續依賴及未提交使用者修改；需要撤回整批05～12時按12→05反向處理，保留01～04及第一輪成果。不要reset回原始HEAD或覆寫投資組合本體。
+`;
+writeFileSync(path.join(root,'docs/optimization-final.md'),report,'utf8');
+console.log(JSON.stringify({ report:'docs/optimization-final.md', productFiles:numstat.length, additions, deletions, testCount:805 }));

@@ -1,6 +1,6 @@
 # 07 — 快取壓力實測與容量決策
 
-Status: resolved — 2026-09-21
+Status: resolved — 2026-09-21；最終提交 `d80a8941344a6c3f1e4bdf93c09ce636564a677f`
 Blocked by: 03、05
 Type: task
 
@@ -37,3 +37,5 @@ Type: task
 2026-09-21：開始 07，固定比較點 `513f6347bfb77dedced2b8f5e0d85fef68ed8cbb`，工作區乾淨，03／05 已 resolved。測量使用隔離 origin 與合成行情；產品程式不改，觀測工具的編譯期探針、記憶體估值與瀏覽器實測分別標記。
 
 30／100 檔各 7 份樣本及故障場景完成，完整數據、最差值及可重跑入口見 [07 證據](../evidence/07/README.md)。100 檔行情唯一 payload 大小估值約 1.15 GB；別名不重複計 payload。交付 [容量決策](../evidence/07/capacity-decision.md) 與機器可讀 JSON，採有界同步持久化，不修改 TTL／金融語意。正式 Standards／Spec 均 OPEN:0，紀錄見 [雙軸覆核](../evidence/07/code-review.md)；依整批授權接續 08，最終 hash 於 12 回填。
+
+2026-09-21：第12票依Git主線回填最終提交 `d80a8941344a6c3f1e4bdf93c09ce636564a677f`；原候選覆核與當時進度說明保留為歷史，整合結果見 [12最終報告](../evidence/12/README.md)。

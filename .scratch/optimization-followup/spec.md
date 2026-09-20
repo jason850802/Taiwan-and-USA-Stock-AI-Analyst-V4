@@ -1,8 +1,8 @@
 # 後續最佳化規格
 
-Status: ready-for-agent
+Status: resolved — 2026-09-21
 
-規劃日期：2026-09-20。使用者已採用 PLAN 並開始執行 01；本規格維持 ready-for-agent，全部正式票結案後才可 resolved。
+規劃日期：2026-09-20。01～12正式票均已完成；05～12依使用者整批授權逐票執行，最終整合驗收及獨立Standards／Spec覆核皆無未解項目。成果、量測代價與限制見[最終報告](../../docs/optimization-final.md)及[12驗收入口](evidence/12/README.md)。
 
 ## 問題
 

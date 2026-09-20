@@ -1,0 +1,390 @@
+{
+  "beforeBaseline": "0366f5fb1d58d963323cc9d519f49ec87217a048",
+  "afterCandidate": "8a6f5e4c9ff0f388528f9974fafe5c3bdc02b880",
+  "method": "前版本為04完成、05三槽排隊前的來源；後版本為12最終候選。同一80ms假HTTP／資料集，各0冷啟動、1暖機、2～6五次完整樣本。不是01全部功能的等同基準。",
+  "rows": [
+    {
+      "count": 1,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 213.5,
+          "allCompleteMs": 213.5
+        },
+        "warmup": {
+          "firstVisibleMs": 228.90000000596046,
+          "allCompleteMs": 228.90000000596046
+        },
+        "firstVisibleMs": {
+          "samples": [
+            179.5,
+            187.90000000596046,
+            186.1000000089407,
+            184.79999999701977,
+            186.5
+          ],
+          "median": 186.1000000089407,
+          "min": 179.5,
+          "max": 187.90000000596046
+        },
+        "allCompleteMs": {
+          "samples": [
+            179.5,
+            188,
+            186.1000000089407,
+            184.79999999701977,
+            186.5
+          ],
+          "median": 186.1000000089407,
+          "min": 179.5,
+          "max": 188
+        },
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "peaks": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 924.5999999940395,
+          "allCompleteMs": 924.5999999940395
+        },
+        "warmup": {
+          "firstVisibleMs": 204.6000000089407,
+          "allCompleteMs": 204.6000000089407
+        },
+        "firstVisibleMs": {
+          "samples": [
+            198.70000000298023,
+            185.5,
+            180.59999999403954,
+            196.3999999910593,
+            191.80000001192093
+          ],
+          "median": 191.80000001192093,
+          "min": 180.59999999403954,
+          "max": 198.70000000298023
+        },
+        "allCompleteMs": {
+          "samples": [
+            198.79999999701977,
+            185.5,
+            180.59999999403954,
+            196.5,
+            191.80000001192093
+          ],
+          "median": 191.80000001192093,
+          "min": 180.59999999403954,
+          "max": 198.79999999701977
+        },
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "peaks": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 10,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 179.29999999701977,
+          "allCompleteMs": 188
+        },
+        "warmup": {
+          "firstVisibleMs": 203.5,
+          "allCompleteMs": 207.5
+        },
+        "firstVisibleMs": {
+          "samples": [
+            196.20000000298023,
+            179.59999999403954,
+            187.20000000298023,
+            183.5,
+            187.90000000596046
+          ],
+          "median": 187.20000000298023,
+          "min": 179.59999999403954,
+          "max": 196.20000000298023
+        },
+        "allCompleteMs": {
+          "samples": [
+            203.6000000089407,
+            197.29999999701977,
+            190.90000000596046,
+            189.09999999403954,
+            193.59999999403954
+          ],
+          "median": 193.59999999403954,
+          "min": 189.09999999403954,
+          "max": 203.6000000089407
+        },
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "peaks": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "fxStartPositions": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 195.70000000298023,
+          "allCompleteMs": 476.59999999403954
+        },
+        "warmup": {
+          "firstVisibleMs": 182.09999999403954,
+          "allCompleteMs": 455.70000000298023
+        },
+        "firstVisibleMs": {
+          "samples": [
+            197.1000000089407,
+            192.90000000596046,
+            208.5,
+            231.69999998807907,
+            197.1000000089407
+          ],
+          "median": 197.1000000089407,
+          "min": 192.90000000596046,
+          "max": 231.69999998807907
+        },
+        "allCompleteMs": {
+          "samples": [
+            474.70000000298023,
+            455,
+            472.79999999701977,
+            514.5,
+            469.30000001192093
+          ],
+          "median": 472.79999999701977,
+          "min": 455,
+          "max": 514.5
+        },
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "peaks": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 30,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 201.79999999701977,
+          "allCompleteMs": 517
+        },
+        "warmup": {
+          "firstVisibleMs": 215,
+          "allCompleteMs": 505.19999998807907
+        },
+        "firstVisibleMs": {
+          "samples": [
+            194.59999999403954,
+            198.90000000596046,
+            199.09999999403954,
+            191.69999998807907,
+            194.40000000596046
+          ],
+          "median": 194.59999999403954,
+          "min": 191.69999998807907,
+          "max": 199.09999999403954
+        },
+        "allCompleteMs": {
+          "samples": [
+            540.7999999970198,
+            518.4000000059605,
+            524.2999999970198,
+            505.69999998807907,
+            516.3000000119209
+          ],
+          "median": 518.4000000059605,
+          "min": 505.69999998807907,
+          "max": 540.7999999970198
+        },
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "peaks": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "fxStartPositions": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 200.6000000089407,
+          "allCompleteMs": 1125.2000000029802
+        },
+        "warmup": {
+          "firstVisibleMs": 195.6000000089407,
+          "allCompleteMs": 1127.7999999970198
+        },
+        "firstVisibleMs": {
+          "samples": [
+            187.59999999403954,
+            173.30000001192093,
+            191,
+            187.90000000596046,
+            183
+          ],
+          "median": 187.59999999403954,
+          "min": 173.30000001192093,
+          "max": 191
+        },
+        "allCompleteMs": {
+          "samples": [
+            1139.5,
+            1143.1000000089407,
+            1110.7000000029802,
+            1122.5,
+            1105.7999999970198
+          ],
+          "median": 1122.5,
+          "min": 1105.7999999970198,
+          "max": 1143.1000000089407
+        },
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "peaks": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "rawHashes": {
+    "before-load-1-0.json": "31c5bf42bf39574f3e0b612d7bcaae0e9029d871cd78913c1553c4ddecd431b2",
+    "before-load-1-1.json": "8ffaa8acdbdc5de5d91f1a6406df3cfd3f9de277cc26bbfde5a74349f1f0796b",
+    "before-load-1-2.json": "01c0f389fd41c126a47ec797602ccf0eb059083b6660ecf32d6c2b73240a9a76",
+    "before-load-1-3.json": "bee2ab4a27e16b536febbc60d3909e382b61ee72a6dfe2f2f32fb14256812bb1",
+    "before-load-1-4.json": "280c6d4ba7d39f0f6c4e8b45792dd5ed4a3c02f263e2c04f133841a5a04bb218",
+    "before-load-1-5.json": "03b251e7191d48bca042fd5c4edf42eacdd7375344775f4a0e30f99374f128d0",
+    "before-load-1-6.json": "81b57f7582edf17f4ef3d8f31584ec5ead9cdca6f44f23301c61f81041050f90",
+    "after-load-1-0.json": "59b8fdef2cf23edb166d6c14834bc4217fefdc093e8b58417f4e6081b9d6cdc0",
+    "after-load-1-1.json": "a6822f7bf2bd1b268a9686abc3ff6b37593d9e8b59828521905682e29c06abc8",
+    "after-load-1-2.json": "9f28129e45001ff0c287f01284164c08dee5f60339b9c8408d100e8a6ff86d00",
+    "after-load-1-3.json": "8c08ef0c702a9249bad6b026496dce302ce431e8243d4643c412d0c6dab29474",
+    "after-load-1-4.json": "c684a634954e3b3377618889fa6dbdb5e8fbecf505ce87e1afdf40561fcbb0ed",
+    "after-load-1-5.json": "ae4cd2aaf838215f37da86d33aee2b0b12b6e13533b6676d4d7e6f71200dfcee",
+    "after-load-1-6.json": "a90dafcd4f0fd137a68b73779fcaa03ced62916c51c4de8f3178739e85b34fa7",
+    "before-load-10-0.json": "fbc1fca54c8243b87c635e7863c62fafb7442ad3cc660da753417d520bcf931e",
+    "before-load-10-1.json": "897bc95e6b3e8c188aaff2c22f7ae1e9fa80aaf540ff232ba241affc7bc1fa58",
+    "before-load-10-2.json": "9b958b778737a21da80fe39144729fabdcf25172931c62f191d77c39a3f46614",
+    "before-load-10-3.json": "d0547c1ba4c7d03fc0bf45e9510ac9da3d9bed0fd8c7092a7ad3c366427d4360",
+    "before-load-10-4.json": "62298ccb3cac968eac50ce19a229f7903e09ee1d69f21097e25db4e0df779db1",
+    "before-load-10-5.json": "6526148cad1a0898296f6c031ee40fb848b13e3d2863d002f12c3ae9caceeb46",
+    "before-load-10-6.json": "1cc977f9dd0808e11d1484d74d110b70610546744b44c9dee1f57f24757c4852",
+    "after-load-10-0.json": "6fafd8c30b636ac7f352dcdecb5163770793a83222af745fa041779571f1cd09",
+    "after-load-10-1.json": "e34eee00dd889a019dc4da20638bdda73fa0bcc2765872dd0d6d5aed476ceeab",
+    "after-load-10-2.json": "83ff5dea908c98e9bceecf64473810929c583180ce5e15718de6a3e2db9a31cd",
+    "after-load-10-3.json": "34adb8ebde1dafd444833198040ea691d7bba9a6f30447e4bb04c0424167729d",
+    "after-load-10-4.json": "418c17569cc5832727d24c7eb2e8c50d20821b2f914f26159542817de35c319c",
+    "after-load-10-5.json": "d85432eedbd29749509613de7320d9868d4d2efd3765865d0b42fae25e2917f6",
+    "after-load-10-6.json": "4f182ac5065960c9e5e7c26fecac54feb85d13f5d8a727217af7b3dc6c271ba2",
+    "before-load-30-0.json": "138047d739d9476f29baa9edb5c46af7844fc221bf33f93bc52f24a1ad1244b1",
+    "before-load-30-1.json": "92ebad72935ccc2efedebd88dd54eafc264e9f0c2bd30dcabdea468f4183e9f0",
+    "before-load-30-2.json": "b2661b50b286d7ae74df98843441ffb4b95a4f15cbf65b4e80811fdf8fe060b5",
+    "before-load-30-3.json": "11c19069b128b6386c07bb7035d20d2593f104e7af0f3e3ad204421d74a4dbf6",
+    "before-load-30-4.json": "6eae0a9985bd3cc57ab0fe794f82d94ea691a2e18f0067b76e901d713253e246",
+    "before-load-30-5.json": "45859af9fd6c69bab9169d996085894aded0749968d43b6a0390aed1a31ce080",
+    "before-load-30-6.json": "d92d059f6f5fb79aa4e2f3bb4d7c50742c76ad9265c3db06c69f58ab024dc56f",
+    "after-load-30-0.json": "5aea573b9b0dd63a93afd6205af204b3f802d3a826a22634b7b8ef292e809a2b",
+    "after-load-30-1.json": "c86f315ab0495235ab3635026ebe00bc6266b6ca388153d41f3f724dc7415dbf",
+    "after-load-30-2.json": "f6ca0fc7edb2b9e979e1c4f3f4f1ad56a7857bcf2711855731fc3b4663332882",
+    "after-load-30-3.json": "7bd40a86960e82f410aea489b7b45dc92089df291f52ac53891d7aedcee52f17",
+    "after-load-30-4.json": "f50ba0e5c7f22ab8fc1e71a00031a4d8acf557f7339f3f00356cfc04231ec1b1",
+    "after-load-30-5.json": "65c4716f140a9e34d0180ffa60d9da0b502a820153b93af82ccbdad9c57f2292",
+    "after-load-30-6.json": "e749e3663beb418dff61f1b52816f3a4348f988442f365c42c8be11e1a0c2900"
+  }
+}

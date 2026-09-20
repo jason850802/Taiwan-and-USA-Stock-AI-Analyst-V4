@@ -26,3 +26,7 @@ git log 6493c4c78b8282db1dae1202ca94df9aa08e8b40..04fa1b7e14a26da3464145293f2545
 最終Spec修正覆核另發現 **1項LOW證據缺口**：最後一輪清理紀錄仍指向第一輪PID。產品及行為規格維持0項。已保留舊紀錄、由作業系統及metadata找回真正最後一輪PID17228與一致指紋，並實際停止後記錄4183 listener=0；詳見`recovered-process.json`、`cleanup.json`與README。原Spec reviewer已核對PID、建立時間、停止前後listener、全部原始檔指紋及現況：**CLOSED 1／OPEN 0／NEW 0**。
 
 尺寸為同源iframe中的實際1440×900及390×844，不是手機硬體或螢幕閱讀器。初始來源focus為測試定位，其後鍵盤均原生；匯入來源也有跨控制項原生Tab導航證據。既有scrollbar導致382px內容寬與原生捲動動畫的兩次工具precheck另存，不混入正式結果。
+
+## 第12票回填的主線識別
+
+最終主線提交為 `eb1dcfac70094fcbdcdacf9c873b589e5f52c6b4`，包含上述 StrictMode 修正、15案重新驗收與雙軸結論。標頭 `04fa1b7` 只代表首次覆核候選，不代表修正後最終來源。第12票另以當前整合來源重跑原生矩陣，結果存於 `../12/keyboard/`，不覆寫本票歷史樣本。

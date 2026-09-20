@@ -1,0 +1,227 @@
+{
+  "baseline": "06aa1cc8268479b8227269519c794be6a47a4f0d",
+  "ticket": "12",
+  "inputBytes": 102400,
+  "inputChunks": 1000,
+  "method": "相同development React.Profiler；sample0冷頁面、sample1排除暖機、sample2..6五次中位數；MessageChannel分送假HTTP片段，非真實網路速度",
+  "comparison": {
+    "before": {
+      "cold": {
+        "initialModuleReadyMs": 535.5,
+        "wallMs": 26362.10000000894,
+        "renderMs": 18312.799999818206,
+        "commits": 998
+      },
+      "excludedWarmup": 1,
+      "measuredSamples": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "commits": {
+        "median": 996,
+        "worst": 997
+      },
+      "renderMs": {
+        "median": 18050.39999961853,
+        "worst": 18086.000000223517
+      },
+      "wallMs": {
+        "median": 25532.40000000596,
+        "worst": 25770.29999999702
+      },
+      "completionLagMs": {
+        "median": 51.69999998807907,
+        "worst": 56.20000000298023
+      },
+      "inputSha256": "08684be38df54515dbcdab46f565e3f78d0e00a4f7834b4a469477d11a2ead3b",
+      "visibleSha256": "b24197d195d6d8e9d9a7f93ee63640edb9a75cd80b5e8ca5c14aa08fbe7cb9ec",
+      "profileBundleSha256": "848dce306850ba52f68cab5b2e1ea3e463cfe31e29bc7c9dc2db38d2d3252fac"
+    },
+    "after": {
+      "cold": {
+        "initialModuleReadyMs": 528,
+        "wallMs": 590.4000000059605,
+        "renderMs": 64,
+        "commits": 1
+      },
+      "excludedWarmup": 1,
+      "measuredSamples": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "commits": {
+        "median": 1,
+        "worst": 1
+      },
+      "renderMs": {
+        "median": 49.1000000089407,
+        "worst": 55.6000000089407
+      },
+      "wallMs": {
+        "median": 500.19999998807907,
+        "worst": 509.70000000298023
+      },
+      "completionLagMs": {
+        "median": 58.70000000298023,
+        "worst": 81.8999999910593
+      },
+      "inputSha256": "08684be38df54515dbcdab46f565e3f78d0e00a4f7834b4a469477d11a2ead3b",
+      "visibleSha256": "b24197d195d6d8e9d9a7f93ee63640edb9a75cd80b5e8ca5c14aa08fbe7cb9ec",
+      "profileBundleSha256": "48d306c759a174159f18ad8bd65d26bf12fa78337cbe0701c3d4a5c86f2f94b7"
+    }
+  },
+  "appCases": 15,
+  "checked": [
+    {
+      "file": "before-market-0.json",
+      "sha256": "f5358a7ae6bb3c51a2fb3aad445c9cf150734932a8149c314a1b532b756110ec",
+      "passed": true
+    },
+    {
+      "file": "before-market-1.json",
+      "sha256": "b438a43c077507c4473045782e002035dbbbfd7c28cb77c1e3043f1724e5162b",
+      "passed": true
+    },
+    {
+      "file": "before-market-2.json",
+      "sha256": "0ee42a39ba0145961fd52aa0c469198fab71371cb1f50217c1f6b04ba0a451bc",
+      "passed": true
+    },
+    {
+      "file": "before-market-3.json",
+      "sha256": "e47c31b746a2c5f27d501b680237ac8cfb5c6e9aad5db677756e00966f8bad03",
+      "passed": true
+    },
+    {
+      "file": "before-market-4.json",
+      "sha256": "3b7912d1fc502eb02f47781fa1c91aa9cee7492c55cab801b1688473e742cbce",
+      "passed": true
+    },
+    {
+      "file": "before-market-5.json",
+      "sha256": "1063073a9d2cbfee91da9103dee5a0626b0e35d98c4566c718655032cbcb3dec",
+      "passed": true
+    },
+    {
+      "file": "before-market-6.json",
+      "sha256": "63ec0f4bc544f54ea5609cc1e8a1528737660dc1458c42747dc906801f39389e",
+      "passed": true
+    },
+    {
+      "file": "after-market-0.json",
+      "sha256": "61acfeca3aed47927c7210c2c851158db69282c3a6ad76ad4b16b4fabb1845c7",
+      "passed": true
+    },
+    {
+      "file": "after-market-1.json",
+      "sha256": "1487366c9517b26758ab9efd4a7e9bf85886b2186f5fd94b8fd2115171c6bbb2",
+      "passed": true
+    },
+    {
+      "file": "after-market-2.json",
+      "sha256": "98b38a4331dca7139629e33bd815a6a1d5aacec11215022975495ffcf37ba1f7",
+      "passed": true
+    },
+    {
+      "file": "after-market-3.json",
+      "sha256": "7a18743848f225b8d112de6782398e3259b7eb77a7fd4173c69aa734d7b06305",
+      "passed": true
+    },
+    {
+      "file": "after-market-4.json",
+      "sha256": "0c4c4223037bac54aa8f5ff3e71e4870a8539c3cb98a318c3bd08ec780b728e6",
+      "passed": true
+    },
+    {
+      "file": "after-market-5.json",
+      "sha256": "288e3cb5cb90d4f2b026fa4f7bbc3f7d2c55b418c43244b277301ceacbf03126",
+      "passed": true
+    },
+    {
+      "file": "after-market-6.json",
+      "sha256": "896ea9e2df151645b9919f74847dd094faa5b4d4b76dfde8e1a696a84d1f4eaf",
+      "passed": true
+    },
+    {
+      "file": "app-market-0.json",
+      "sha256": "9d33f01af20596bf70e2c176c3db429eba06ed7f9f6ed3c5aae79ee9c4a4651a",
+      "passed": true
+    },
+    {
+      "file": "app-empty-0.json",
+      "sha256": "0dae96142f817393402cd32970ab75c2d72f51666b342c6b146bf079608dd36d",
+      "passed": true
+    },
+    {
+      "file": "app-single-0.json",
+      "sha256": "7e16b1fc77a4621f037a42655b01c6c08a90583177b9b6d28abc99eec69f968c",
+      "passed": true
+    },
+    {
+      "file": "app-slow-0.json",
+      "sha256": "60544f9010fe3f41ddeca9be6aa04a41e50cd24412040a3fc7b0ad1b5d124f1f",
+      "passed": true
+    },
+    {
+      "file": "app-partial-error-0.json",
+      "sha256": "782c2cfa23571727f4202c2179900dba84358328e94b9d328e40f7950f5d0600",
+      "passed": true
+    },
+    {
+      "file": "app-empty-error-0.json",
+      "sha256": "8262b6a6b12097071a67d6664ab67af63c72d0c3f6aa8243b5b4a3aacf4f328b",
+      "passed": true
+    },
+    {
+      "file": "app-paused-frame-0.json",
+      "sha256": "da8c812b16a2745ecb3f5ae76013edda776abd0d6b60b633c6cab3e517c50dba",
+      "passed": true
+    },
+    {
+      "file": "app-cache-hit-0.json",
+      "sha256": "817b36d2d3256ddc8240e720d7fcbde0bb7308a19a2b272ec67b99d6fe4ac9f2",
+      "passed": true
+    },
+    {
+      "file": "app-switch-0.json",
+      "sha256": "8801a06b9c378b22ea9797df605c9ec12dedd2bd5545a7353efe96325c4ea00d",
+      "passed": true
+    },
+    {
+      "file": "app-restart-0.json",
+      "sha256": "7d2ed80a706ce3ecada11614e7b9b8085a643378f7fd6bf797b22107dc412b3b",
+      "passed": true
+    },
+    {
+      "file": "app-view-cancel-0.json",
+      "sha256": "d89582049eef4740dca42c264321d1f13bf4ca093828a5522c7bb86cd17c2ab8",
+      "passed": true
+    },
+    {
+      "file": "app-health-0.json",
+      "sha256": "9179835a7be9aa4220a79ed2126a74c13fc6080d98568f20a32e43de8d4562f4",
+      "passed": true
+    },
+    {
+      "file": "app-health-switch-0.json",
+      "sha256": "44a53b3fb5fa8c8f7c6966f7be5164c06fce27270618bf24a6c40920fcdbc5fd",
+      "passed": true
+    },
+    {
+      "file": "app-health-unmount-0.json",
+      "sha256": "45a696b57a4393f72fdaef176f3164dd648f49e051264680d370be4cd155b4bc",
+      "passed": true
+    },
+    {
+      "file": "app-batch-supersede-0.json",
+      "sha256": "d4b8ec1e8b90ca24c646f1313b20e5d8b5cb497a552c3a0632bf4c39409d98d0",
+      "passed": true
+    }
+  ]
+}

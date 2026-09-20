@@ -1,0 +1,9 @@
+{
+    "candidate":  "c86d7f7c703782eef3a51151c4b1e2feb49c27dc",
+    "command":  "git -c core.commitGraph=false -c core.multiPackIndex=false fsck --connectivity-only --no-dangling HEAD",
+    "exitCode":  0,
+    "output":  [
+
+               ],
+    "persistentGitSettingsChanged":  false
+}

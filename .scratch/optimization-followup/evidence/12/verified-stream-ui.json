@@ -1,0 +1,343 @@
+{
+  "integrationRunId": "5b4915dd-b4ff-4dab-b600-f13484968106",
+  "sourceHashes": {
+    "App.tsx": "b49096851db6029964370ae4f9463c6b501cd7bb74c58e9943c71981bf799790",
+    "api/_lib/config.ts": "339bf8774c49ee9eb12ec69adc4605d04b7ba2ae4ff3d31bb441e1e1e0fc8f40",
+    "api/_lib/finmind.ts": "05179a8c38fb92f7368ba9e7dbf0f18b6dceec95274d52c7a8a019e629c29833",
+    "api/_lib/guard.ts": "397c23dc8c27888d14f14c069c2e81c4e4cefb9dfdfb92d6200b0510397c4068",
+    "api/_lib/http.ts": "b358e9931b5f65acf4e04eeaeea199a76b8486033deed223104c09e7e1261251",
+    "api/_lib/llm.ts": "a16d13e8622095ac623fe96b7908756a27145123a57f92081d19bc16b7269509",
+    "api/_lib/ratelimit.ts": "3d604628651fd3003f43a31c9d68d4d5e310f5ed53838e1f5038c6ccbbd1e630",
+    "api/_lib/yahoo.ts": "69c91143887334fe38ed89d71245fa173d11bdf4af4f0dfa060b769d273d84fb",
+    "api/finmind.ts": "4b868aa456b90da77ed85ef73f02d88dfc0d15e9dfbf745ff4664f8f507a364c",
+    "api/gemini-stream.ts": "d64a9097502520cc27301e1647afa54a8fd6d26621610029e0beb9b7064168df",
+    "api/gemini.ts": "e0830661abcf25e47abe94ed337bc8de553d91a9db71d11b4172f5202415c44d",
+    "api/yahoo/chart.ts": "b499f3870a0c3ec811a6b7a1a6417c5aa32fc73357e259eac88111f467d1e449",
+    "api/yahoo/search.ts": "5b81ae8b13dd28d7b5973aff91685769d6e893ce8fbc35222922c7eaa5d2bd79",
+    "components/AnalysisResult.tsx": "1de15e4337f5212119b900168609e1c437610af25ae50a0a4eb1d81137742e1a",
+    "components/ChartToolbar.tsx": "cb98457eaa6d284fc8a2a159230787b9ae419bc16f133be1be2fdbcd6a044d57",
+    "components/EntryChecklist.tsx": "62e9ad59eb0379a83033bf34e9c115d7067c47e5b101dd3d2ceea0066174046f",
+    "components/ErrorBoundary.tsx": "93f0a8065902feb42840fff9adec9908fcc1cf87793b964760c4de2447018999",
+    "components/FundamentalsPanel.tsx": "ecd87c12e5a0750eae584b793fcee0150d3330bb2501f6337af6952724c790ba",
+    "components/Portfolio.tsx": "c6326ce5e180c3970abc31231f36ef98af9092082a3df16c12a1d438c2c973ec",
+    "components/QuoteHeader.tsx": "718a6f03172ee9cb95c4d30afef331d15925d6a6ddf9d8f955c4d28370408086",
+    "components/Sidebar.tsx": "9d304a640949cb1a4fb853a8248845b4f32fef4b5be340b2e677b8ef41d45a86",
+    "components/StockChart.tsx": "1e500b426a8bfd068357bb1d17a68d8ac92925bd99299c0a2b570e3fbd837cf1",
+    "components/StockSearch.tsx": "14f6984276b0308100ccf38818620d6819a3efeb27e974ce4ca99bc2880c8449",
+    "components/fundamentals/DividendTable.tsx": "9586b96f2b2b40dff23ab2a2ce5960e62d90705ee682eb22bf1fbe1a02b4f290",
+    "components/fundamentals/FinancialHealthCards.tsx": "77db1782cc696dfd4bb0c158720ff0124b490f1efe99fd663ab470d559e876a5",
+    "components/fundamentals/MonthlyRevenueChart.tsx": "bde24d724a6c966a817c4c172693fd7f22c7ac55c96ca397ff770b2b953f0e01",
+    "components/fundamentals/QuarterlyTrendCharts.tsx": "0fc898f94d7b1f73bd346811d4cb3bfd71530ee7081805a8c54033e961fec67f",
+    "components/fundamentals/ValuationHeader.tsx": "325a51bcd0bb58921eccb6a7c947bda7869bb539ffc69f047368223a7efc9a73",
+    "components/portfolio/HoldingsTable.tsx": "f39820c45304a123d590538bf1d5a18e87291f619f829543822022adb98032dc",
+    "components/portfolio/ImportStatementModal.tsx": "c89869f772fa6a8f2d1c58a9f01b0f7a9b6dc05b8a08fa696225fac7ee586eab",
+    "components/portfolio/PnlHistoryChart.tsx": "884a6a4ab7a143fcafae437781113ca70877610c4c96150e050aff4e68d683af",
+    "components/portfolio/PnlHistorySection.tsx": "c1a642fb903028042c9020555d2dd79c39752f7e940a0943428a45658a535694",
+    "components/portfolio/RealizedLedger.tsx": "4db8db68937c0386c5e576966540ea078bb89466a95a4717fe79c0a74f896961",
+    "components/portfolio/RestoreBackupModal.tsx": "a8d9613b8e94f917dedc5d5499ce58b4add3d08868789380b133b4488b6ee45d",
+    "components/portfolio/SellModal.tsx": "c7c6325dd4f678145121cb88059b3dc33f5cd15db51bd58865c090f8f33644c3",
+    "components/portfolio/holdingPriceQueue.ts": "d4a28bdbfda48e0dafedcfe59631062891b2a8ba5d86316c4d6340cff4418b1e",
+    "components/portfolio/useDailySnapshot.ts": "15006145030650d4d80d4018112e1192fbda72c709e31c0c075707b4d4a2c5e6",
+    "components/portfolio/useHealthCheck.ts": "f21c10dccaa22f8e89380957e8918a99c3f85bd83ee19e7ba8d90cc43d2556be",
+    "components/portfolio/useHoldingPrices.ts": "8d5df33205109a3d982c2d54eb4b547fa9aa10d34775d3b3fab64a2a3ef2be5f",
+    "components/portfolio/useLotDividendUpdate.ts": "7f06fd1dd3cf7faeb789e29ba5fff0f2e3c29c6fd3168c7f2375081fac23493b",
+    "components/portfolio/usePortfolioBackup.ts": "a58a225468350c71f7fc0d046bf0e4c870e66fd7ba3cbdbaeb547acc0ac35ac0",
+    "components/portfolio/usePortfolioForm.ts": "c942a538d44a71982e6abd06338d13914c2c26ed323948ae67682dd0aa445ac9",
+    "components/ui/Badge.tsx": "a1c21a5e714063576ae612de4b245bb239cae40bee2d427954f4dda9ccc2b1bf",
+    "components/ui/Banner.tsx": "99b69a02b56484c77278c13e50641413f842d6e1d857b08a1d1440dbdd476d51",
+    "components/ui/Button.tsx": "b9c6c035f5a3bd21e4eff9e6f7d36d0d36e9c161fbb5d75d5f5dd5d6e3a5d409",
+    "components/ui/Card.tsx": "16294824d22895981a5e1f3baaab3cf0203f3537a2046fea290a5afabbacadd6",
+    "components/ui/MarkdownReport.tsx": "4489f6f8d7a5086801e51cfff71053801ed0fb1d4dcbf220a131b058b17eadb4",
+    "components/ui/Modal.tsx": "7f8ff2617b4fef86d06284213226876c88f1bb9a52c647c2a93ac7f8c65a36fe",
+    "components/ui/Skeleton.tsx": "56268bc77c8eb60ccd2e6504c3bf4a3d246d025983985248357abdde714c51c7",
+    "components/ui/StatCard.tsx": "a46d0a0a5360d61387312927a0f7cf0cab49acf76c34d1a22ef4ef752a383b1b",
+    "config/twFeeRates.ts": "991a92f8d42e89d4eb6c3ab1c65b77ba1edc8df8fd95815f5d3e9ac8aa2a8dd0",
+    "index.tsx": "1629934007b53fe858d8c7e1ab4c81eb616a903de2c450ea2a0b8ec1c7ef3d71",
+    "services/_shared/apiClient.ts": "c7b57c11259226517df62445489d0bf5467983c4e8c5d5f726a978efd5de97ca",
+    "services/_shared/boundedSession.ts": "73d778ad2c374a49e88778661f8a615582a7c1623d0879b9542ed47c7de9aed7",
+    "services/_shared/geminiCache.ts": "b4aa6bf739cd7a672c3b6bb8d46544180372b73d4382cac377528889834d77c0",
+    "services/_shared/healthDecision.ts": "e7b543e495dc122a58ae6dfcce48ef6616ba4c36148a6fca0e5241189cf08d5b",
+    "services/fetchError.ts": "45b80684acc1f311480a0aa09b5afca62cbe53a02321c70958dd88439501e4f9",
+    "services/finmind.ts": "3603d08e4261fac431ee2cace039b5b6e4e27e6fbad315a0dc9829c4a9de2416",
+    "services/gemini.ts": "643716da0e3d8f359525ad3ab5c4b91b3f38c83191a4a6e0ef821d5f70db8142",
+    "services/quoteCache.ts": "cc5abe590c6dbc68d3bc9c091823239682b8fc1e8c0a79ca940650857a989d2f",
+    "services/stockDirectory.ts": "28d2e11a5990ac7f779589bc3d8344ab7d0261052522cd4c30e99f32c6e11668",
+    "services/yahoo.ts": "6c0bdca5daa63442fc72eb4d8f89369ade1715651663a34a5b3c38d0b4ad8b19",
+    "types.ts": "ac0e1c89c6bc5b9e577fc23df5283a3a3c7a75b6892498f6a4e8dfa731b6d9d5",
+    "utils/backfillPipeline.ts": "3d8fbc1e16e0b196132d5e5ac4ff3a7c96bd68e3eea7a2df4c8ca0e71f87738b",
+    "utils/closeSeriesCache.ts": "24ec32c11d7f3196d44f102f6a4f905cefe41743e2114309c18a4f9e93ab303d",
+    "utils/dividendEstimator.ts": "2f3f82abaad9839b671835048f6c70a5c0e87488f9b5504725ec8b0750b3e952",
+    "utils/entryFilter.ts": "d3e3e9f3a712e270dcf4563b28bd1ba2b53dbc216e895b1d8e0230f179f548f5",
+    "utils/framePublisher.ts": "cd3265dd53a47965f7867c053cc3d43f97f0256a272f3bf721571ec9182be4a9",
+    "utils/fx.ts": "3263a8ac4814be01db26e97d1376a1bb4fbca712517caae4e7148ef16603c4f9",
+    "utils/importPlan.ts": "1a0738f3bffc044eb869e000235621b6a3d42f828424d927fbd0654386d3cf96",
+    "utils/importReplay.ts": "dfccfed4a086e594e4ad249e4f05a19230a5ff87725694541f5bf1f90211599a",
+    "utils/importStore.ts": "20e4650932c7586e0c26d5e0b41ac4ff312bfae04c9b5337c2d3ca557aacdccb",
+    "utils/market.ts": "27f2289645f3eb482e67d84037c835e4185cb40c18e969f56c60bbeeb9383370",
+    "utils/math.ts": "723e52755a891515bab8376d5b98646cfeffb1fc2fc5c1d593f4be41a72782f6",
+    "utils/panMath.ts": "f35a13b2ba1a23410f2278f7dca4b2c982985e0e80b87debeb7a05e42e845070",
+    "utils/persistentStore.ts": "f35aba008583a90ab0b730f797fc88c04fb4c406ff21c4cb7b70ef4165fd3eb9",
+    "utils/portfolioBackup.ts": "7da4221710e4af02a623affc58824100fc6068b094b981b2c855d082c8a50e71",
+    "utils/portfolioFees.ts": "e564c97c6841ef664011188454c4714e870cf37c815b350547981ba60eaf8e46",
+    "utils/portfolioGrouping.ts": "b0209ee2fcd7ac17475ab4428beece7c769c0eaf170e722410ae91cbdc5cb09a",
+    "utils/portfolioHistory.ts": "c78f3cd0a9b910d35acb1f06f5760b07f7a2560131e2f44c9920067dc714c99c",
+    "utils/portfolioHistoryStore.ts": "b71f9ef1cde6f1218c2c84b8f52208fb6b6b44a1007ea6ddf59813b59c6affc1",
+    "utils/portfolioItemsStore.ts": "62de203efa76e8048e4a726a970b78cdfea9b6878cdd09929500a0092b3a0442",
+    "utils/portfolioLedger.ts": "e5e9cbf85eb61a71af9f5d18019470f49ae627764f81c79bf0aa3e6167faa0f2",
+    "utils/quoteTime.ts": "4dcf5867c1d2ec7ef4ba9cd5af759c80b9f3d571ef508e499dc7bfac60071f5e",
+    "utils/shareUnits.ts": "f0fa312ce3c818c1cf848a57311fd465fe574b3c81b45c769ce23aa23ee18463",
+    "utils/statementParsers/cathay.ts": "4594a45c0e7a2e07b60f57e170d2617e2830c2b157626de6e592ddfbcbfb5e25",
+    "utils/statementParsers/cathayTw.ts": "43bca0629bbdf3aed639a03890ce7af15f6776f35b7302ce12d2712cfb17314b",
+    "utils/statementParsers/index.ts": "c4c31c2214506fd557dc9c26f9327bf2c1b46029c5bde81fc3fa5ee985253662",
+    "utils/statementParsers/sinopac.ts": "df280e1e58da58f60c222e37f2b69ff552daeebf9db4a1568e8c2bad5f938810",
+    "utils/statementParsers/twSymbolResolver.ts": "3478b08e6871ec2f0c7980b9d949c66f40b261e9368f6b3f9ff16815e825c7e8",
+    "utils/statementParsers/xlsxReader.ts": "3008127747cfdf29de82427c3ea3e49aa296fd5048888fd2a0499f1b3a2ce71c",
+    "utils/txnStore.ts": "19c61ec4d5f162c90bb9464140b54c38eefc2aeef4f7c4d64842b096815a69fb",
+    "utils/volume.ts": "5f253158a65f92aea16d76d64dd41e78a6be337775618bcc18f55785102e3f3c",
+    "utils/workerPool.ts": "8835dfb5776e9124f80ce850e1840156cb47130c62dc78af9f25daeabff7eb0f",
+    "vite.config.ts": "45e31a9caaa94dc428b6fc383b474ba876c56370c45d10eeb4bb6afbda980ccd"
+  },
+  "buildIndexSha256": "c517770a21f9a456dc17c19ae0124c4fc6f8a0cefcc547653e1a3180518c454c",
+  "appCases": 32,
+  "layoutChecks": 2,
+  "rows": [
+    {
+      "file": "stream-ui-desktop/app-market-0.json",
+      "passed": true,
+      "sha256": "81479d5c8f8b87cb5ead75040c90047f055206c2a0e999f33168f1f84a16ae56",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-empty-0.json",
+      "passed": true,
+      "sha256": "be940b7874c90b6f0f7637314ac456b659319575712d43a289266642367fee54",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-single-0.json",
+      "passed": true,
+      "sha256": "547c05c9ec67d592c161c4e4e345f742c918202b6d550f38ef507c7dbaa628c2",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-slow-0.json",
+      "passed": true,
+      "sha256": "811e0f2943824cfe66948f986b18a611471b4dc1e17a963cdf690459ae9aa602",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-partial-error-0.json",
+      "passed": true,
+      "sha256": "61de295586b22d33e3851e713e1f13bf1bdd3c85b285bbc833e68376536d2b51",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-empty-error-0.json",
+      "passed": true,
+      "sha256": "0f323c5400c979407dc45e171efe56cb40b0ac931194c0ec3c7b04ecaeefeb06",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-paused-frame-0.json",
+      "passed": true,
+      "sha256": "936c8f596dd0b8fef3c2b91fc6045dd2e71a7267643594a0499f5c6da8082759",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-cache-hit-0.json",
+      "passed": true,
+      "sha256": "16f6ed9525434f6519ddfa99e98f7fa486d9aea7e426e4c404419947029f85a1",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-switch-0.json",
+      "passed": true,
+      "sha256": "7a071499df927d74db470304b2e1e199020080d0c46dea01f7534db5a037c048",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-restart-0.json",
+      "passed": true,
+      "sha256": "a58447863f169c99149b76dedd84bc03a5d694d30881ff17238f97e082f158d1",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-view-cancel-0.json",
+      "passed": true,
+      "sha256": "1d933b5354872c2b24428df232c2abd43700afd2a69c012feb7aec8a1e882f33",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-health-0.json",
+      "passed": true,
+      "sha256": "718fb4942c274a09af3509f5ba459aa34f3397a144cd51cff4ab3952d26a14e9",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-health-switch-0.json",
+      "passed": true,
+      "sha256": "3c34691ecbc8dde4754f5965e5df2dbd50dc099f81738cf5c3364e55f3bc25e7",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-health-unmount-0.json",
+      "passed": true,
+      "sha256": "c42f620e3fb0a97c7b6bd19434fcea92d54529eb8f6247f5717c1bed6164ca7a",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/app-batch-supersede-0.json",
+      "passed": true,
+      "sha256": "61690f1804a205f3cad204bb7fec188fb682a4108effb4b77eb3a9adb29617cc",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-desktop/layout-final.json",
+      "passed": true,
+      "sha256": "36b01fd4ff6c4af9ad53cc1b64f175a834de8d3222c535c3cc875ff8a2c61fac",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "app-healthguard-desktop-0.json",
+      "passed": true,
+      "sha256": "925aafbe22b3b177edcbb6087f8627c06065f10eeb0e624ee9f43d6e0efd64d3",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "file": "stream-ui-narrow/app-market-0.json",
+      "passed": true,
+      "sha256": "d71250aae2d12d73a8911b3ebe6497d4df6c70819b6ffd458edddbc667d1bcb5",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-empty-0.json",
+      "passed": true,
+      "sha256": "16819baa889f9e6a76cf3e7db1f608638c39a01a3be7ae70c02d334448e650d7",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-single-0.json",
+      "passed": true,
+      "sha256": "82c51bc5d8ef63d5e4204b8431897b77d16f7b8fe17a2c2b15685eff68faaf08",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-slow-0.json",
+      "passed": true,
+      "sha256": "7ddd7c9ba0a1618e4a09dedc7883d5c1d3f45d03283883a6130f4a2300360647",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-partial-error-0.json",
+      "passed": true,
+      "sha256": "efc718b4f404ef579cf0e076fc43b6f06ae764a0a2cb1bbe69502c436d37f9c2",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-empty-error-0.json",
+      "passed": true,
+      "sha256": "f8b53cb770fe3556ba35874e2fbb7f1bd1bb348dfc93181b4a2da54058099d91",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-paused-frame-0.json",
+      "passed": true,
+      "sha256": "4839940e38bb8f63dfe594df8069519d96e04eb9dfd635f433db05e83b814e75",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-cache-hit-0.json",
+      "passed": true,
+      "sha256": "19d6eadef66a89d9ea067c0da2b88097b7c130ced74bc32582a98c0a0f42b154",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-switch-0.json",
+      "passed": true,
+      "sha256": "3079a0ee01bc1157fcdec0a403e86b69f4844bc5c3c25eacd72d07ebdc02451b",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-restart-0.json",
+      "passed": true,
+      "sha256": "5ef97da4e775c070ec5c62c43652b6265626075e2fcecf0b016997b360f940ea",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-view-cancel-0.json",
+      "passed": true,
+      "sha256": "4165d0e3449682099cadacc924a070a3605a746969498dc6685eefe45d272433",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-health-0.json",
+      "passed": true,
+      "sha256": "e6dfe48236a45b5ff44de4d314d72d804b474c8dddaf51f6a3a37fbe76f5a761",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-health-switch-0.json",
+      "passed": true,
+      "sha256": "7c9262f88c17ac5c810df3147311db5c7ef3f10cdd7b3e659be937df06952aac",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-health-unmount-0.json",
+      "passed": true,
+      "sha256": "cf2da4f7b40a0923f7d853649725613bc11536a822cc6c45a31e29caa3b02395",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/app-batch-supersede-0.json",
+      "passed": true,
+      "sha256": "362f7d87ec8b597a0f7299052232047556e670aca47adce5e239c597fee75e2c",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "stream-ui-narrow/layout-final.json",
+      "passed": true,
+      "sha256": "a0c92a8ee2c99da2c984481c4cdb789755fa05b6fc92c7f6d8f1e673a7a9854e",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "file": "app-healthguard-narrow-0.json",
+      "passed": true,
+      "sha256": "f56a6617c2af38984ab7a695dc8083d4454635f1105d9421a80700eb65ddea04",
+      "width": 390,
+      "height": 844
+    }
+  ]
+}

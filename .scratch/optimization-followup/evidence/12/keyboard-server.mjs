@@ -1,0 +1,23 @@
+// 12沿用10的原生鍵盤場景；只補完整來源集合與執行識別，不改寫10的工具或證據。
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { createHash, randomUUID } from 'node:crypto';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import path from 'node:path';
+const root = fileURLToPath(new URL('../../../../', import.meta.url));
+const dir = fileURLToPath(new URL('./', import.meta.url));
+const original = fileURLToPath(new URL('../10/fixture-server.mjs', import.meta.url));
+if (process.argv[2] !== '12') throw Error('只允許12鍵盤輸出');
+const sourceFiles = [...new Set([...JSON.parse(readFileSync(path.join(dir, 'audit.json'), 'utf8')).files.map(row => row.path), 'vite.config.ts'])].sort();
+const tools = { 'keyboard-server.mjs': createHash('sha256').update(readFileSync(fileURLToPath(import.meta.url))).digest('hex') };
+const runId = randomUUID();
+mkdirSync(path.join(dir, 'keyboard'), { recursive: true });
+writeFileSync(path.join(dir, 'keyboard/startup.json'), JSON.stringify({ runId, pid: process.pid, startedAt: new Date().toISOString(), sourceFiles, tools }, null, 2) + '\n');
+let source = readFileSync(original, 'utf8').replaceAll('import.meta.url', JSON.stringify(pathToFileURL(original).href));
+const declaration = /const paths = [\s\S]*?\r?\nconst sourceHashes =/;
+if ([...source.matchAll(new RegExp(declaration.source, 'g'))].length !== 1) throw Error('10來源清單邊界改變');
+source = source.replace(declaration, `const paths = ${JSON.stringify(sourceFiles)};\nconst sourceHashes =`);
+source = source.replace("from 'esbuild'", `from ${JSON.stringify(pathToFileURL(path.join(root, 'node_modules/esbuild/lib/main.js')).href)}`);
+source = source.replace("from '../07/fixtures.mjs'", `from ${JSON.stringify(pathToFileURL(path.resolve(path.dirname(original), '../07/fixtures.mjs')).href)}`);
+if (source.split('const binding = { baseline:').length !== 2) throw Error('10證據綁定邊界改變');
+source = source.replace('const binding = { baseline:', `const binding = { integrationRunId: ${JSON.stringify(runId)}, integrationTools: ${JSON.stringify(tools)}, baseline:`);
+await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
