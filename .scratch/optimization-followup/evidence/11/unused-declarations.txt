@@ -1,0 +1,3 @@
+utils/backfillPipeline.test.ts(8,32): error TS6133: 'vi' is declared but its value is never read.
+
+exit_code=2

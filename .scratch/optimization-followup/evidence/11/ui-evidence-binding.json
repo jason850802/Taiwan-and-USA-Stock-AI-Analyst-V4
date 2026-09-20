@@ -1,0 +1,84 @@
+{
+  "historicalTicket": "10",
+  "newNativeInputsThisTicket": 0,
+  "sourceMatches": true,
+  "buildMatches": true,
+  "cases": [
+    {
+      "name": "green-desktop-modal",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-fallback",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-conditional",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-analysis",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-add",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-import",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-desktop-indicator",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-modal",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-fallback",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-conditional",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-analysis",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-add",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-import",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-indicator",
+      "passed": true,
+      "rawMatches": true
+    },
+    {
+      "name": "green-narrow-scroll",
+      "passed": true,
+      "rawMatches": true
+    }
+  ],
+  "note": "相同產品的已驗證UI結果，不冒充11重新操作；12另重跑完整整合。"
+}

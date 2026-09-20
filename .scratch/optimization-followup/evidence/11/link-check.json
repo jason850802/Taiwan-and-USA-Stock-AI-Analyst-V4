@@ -1,0 +1,41 @@
+{
+    "document":  "docs/optimization-current.md",
+    "count":  8,
+    "missing":  [
+
+                ],
+    "links":  [
+                  {
+                      "target":  "../.scratch/optimization-followup/issues",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "optimization-2026-09-20.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/evidence/05/measurement-results.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/evidence/08/README.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/evidence/09/README.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/evidence/10/README.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/acceptance.md",
+                      "exists":  true
+                  },
+                  {
+                      "target":  "../.scratch/optimization-followup/evidence/11/README.md",
+                      "exists":  true
+                  }
+              ]
+}
