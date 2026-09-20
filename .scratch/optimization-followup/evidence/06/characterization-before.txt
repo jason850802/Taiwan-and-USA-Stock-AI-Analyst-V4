@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ api/_lib/yahoo.handshake.test.ts (10 tests) 39ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  01:10:33
+   Duration  755ms (transform 37ms, setup 0ms, collect 25ms, tests 39ms, environment 0ms, prepare 334ms)
+
+
+
+exit_code=0

@@ -1,0 +1,51 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ❯ api/_lib/yahoo.handshake.test.ts (11 tests | 1 failed) 43ms
+   ✓ Yahoo 握手既有公開契約 > 主請求 401 只在 500ms 後重試一次，使用新配對 20ms
+   ✓ Yahoo 握手既有公開契約 > 主請求 429 只在 500ms 後重試一次，使用新配對 3ms
+   ✓ Yahoo 握手既有公開契約 > 401 第二次仍失敗則傳遞原分類，不增加嘗試 2ms
+   ✓ Yahoo 握手既有公開契約 > 429 第二次仍失敗則傳遞原分類，不增加嘗試 2ms
+   ✓ Yahoo 握手既有公開契約 > 主請求 403 原樣回傳 Response，由呼叫端判讀內容 1ms
+   ✓ Yahoo 握手既有公開契約 > 主請求 404 原樣回傳 Response，由呼叫端判讀內容 1ms
+   ✓ Yahoo 握手既有公開契約 > 主請求 500 原樣回傳 Response，由呼叫端判讀內容 1ms
+   ✓ Yahoo 握手既有公開契約 > crumb 403 是 UPSTREAM_ERROR，不套用 401／429 的重試 2ms
+   ✓ Yahoo 握手既有公開契約 > 暖請求沿用配對，十分鐘沿用窗結束才重新握手 1ms
+   ✓ Yahoo 握手既有公開契約 > 網路逾時沿用 UPSTREAM_ERROR，不自行加重試 1ms
+   × Yahoo 握手共用與世代 > 十個冷請求只做一組握手，全部使用相同 cookie／crumb 配對 6ms
+     → expected { cookies: 10, crumbs: 10 } to deeply equal { cookies: 1, crumbs: 1 }
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  01:10:57
+   Duration  754ms (transform 34ms, setup 0ms, collect 25ms, tests 43ms, environment 0ms, prepare 363ms)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  api/_lib/yahoo.handshake.test.ts > Yahoo 握手共用與世代 > 十個冷請求只做一組握手，全部使用相同 cookie／crumb 配對
+AssertionError: expected { cookies: 10, crumbs: 10 } to deeply equal { cookies: 1, crumbs: 1 }
+
+- Expected
++ Received
+
+  {
+-   "cookies": 1,
+-   "crumbs": 1,
++   "cookies": 10,
++   "crumbs": 10,
+  }
+
+ ❯ api/_lib/yahoo.handshake.test.ts:108:30
+    106|     const results = await Promise.all(Array.from({ length: 10 }, () =>…
+    107|     expect(results.every(response => response.status === 200)).toBe(tr…
+    108|     expect(network.counts()).toEqual({ cookies: 1, crumbs: 1 });
+       |                              ^
+    109|     expect(network.quotes).toEqual(Array.from({ length: 10 }, () => ({…
+    110|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+exit_code=1

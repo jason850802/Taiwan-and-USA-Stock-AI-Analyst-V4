@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ api/_lib/yahoo.test.ts (40 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  40 passed (40)
+   Start at  01:09:28
+   Duration  731ms (transform 38ms, setup 0ms, collect 39ms, tests 6ms, environment 0ms, prepare 362ms)
+
+
+
+exit_code=0

@@ -82,9 +82,15 @@ const BROWSER_HEADERS = {
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 };
 
-let cachedCookie: string | null = null;
-let cachedCrumb: string | null = null;
-let crumbFetchedAt = 0;
+interface YahooCredentials { cookie: string; crumb: string }
+interface CrumbGeneration {
+  credentials?: YahooCredentials;
+  fetchedAt?: number;
+  pending?: Promise<YahooCredentials>;
+}
+
+// 一組配對與其在途工作共用身分；失效只作用於實際使用的世代。
+let crumbGeneration: CrumbGeneration = {};
 
 function classifyStatus(status: number): YahooClassifiedError {
   if (status === 401) {
@@ -98,10 +104,8 @@ function classifyStatus(status: number): YahooClassifiedError {
   return new YahooClassifiedError('UPSTREAM_ERROR');
 }
 
-function clearCrumbCache(): void {
-  cachedCookie = null;
-  cachedCrumb = null;
-  crumbFetchedAt = 0;
+function clearCrumbCache(generation: CrumbGeneration): void {
+  if (crumbGeneration === generation) crumbGeneration = {};
 }
 
 async function fetchCookie(): Promise<string> {
@@ -153,30 +157,42 @@ async function fetchCrumb(cookie: string): Promise<string> {
   return crumb;
 }
 
-async function ensureCrumb(forceRefresh = false): Promise<{
-  cookie: string;
-  crumb: string;
-}> {
-  const cacheIsFresh = Date.now() - crumbFetchedAt < CRUMB_TTL_MS;
-  if (!forceRefresh && cachedCookie && cachedCrumb && cacheIsFresh) {
-    return { cookie: cachedCookie, crumb: cachedCrumb };
+function currentCrumbGeneration(): CrumbGeneration {
+  if (crumbGeneration.credentials && Date.now() - crumbGeneration.fetchedAt! >= CRUMB_TTL_MS) {
+    crumbGeneration = {};
   }
+  return crumbGeneration;
+}
 
-  const cookie = await fetchCookie();
-  const crumb = await fetchCrumb(cookie);
-  cachedCookie = cookie;
-  cachedCrumb = crumb;
-  crumbFetchedAt = Date.now();
-
-  return { cookie, crumb };
+async function ensureCrumb(generation: CrumbGeneration): Promise<YahooCredentials> {
+  if (generation.credentials) return generation.credentials;
+  if (generation.pending) return generation.pending;
+  const pending = (async () => {
+    const cookie = await fetchCookie();
+    const crumb = await fetchCrumb(cookie);
+    return { cookie, crumb };
+  })();
+  generation.pending = pending;
+  try {
+    const credentials = await pending;
+    // 舊工作仍能回覆原本的等待者，但不能重新成為全域的有效憑證。
+    if (crumbGeneration === generation) {
+      generation.credentials = credentials;
+      generation.fetchedAt = Date.now();
+    }
+    return credentials;
+  } finally {
+    if (generation.pending === pending) generation.pending = undefined;
+  }
 }
 
 export async function fetchYahooWithHandshake(
   buildUrl: (params: { cookie: string; crumb: string }) => string,
 ): Promise<Response> {
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    const generation = currentCrumbGeneration();
     try {
-      const { cookie, crumb } = await ensureCrumb(attempt > 0);
+      const { cookie, crumb } = await ensureCrumb(generation);
       const response = await fetch(buildUrl({ cookie, crumb }), {
         headers: {
           ...BROWSER_HEADERS,
@@ -200,8 +216,8 @@ export async function fetchYahooWithHandshake(
         throw classifiedError;
       }
 
-      // Yahoo 可能使 cookie/crumb 同時失效；兩者必須一起清除後再握手一次。
-      clearCrumbCache();
+      // 配對一起失效；其他請求已更新時沿用更新世代，不讓遲到的認證錯誤清掉它。
+      clearCrumbCache(generation);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
     }
   }
