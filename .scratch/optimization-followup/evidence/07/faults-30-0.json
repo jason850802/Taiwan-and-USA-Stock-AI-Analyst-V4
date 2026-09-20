@@ -1,0 +1,431 @@
+{
+  "passed": true,
+  "findings": [
+    {
+      "mode": "quota",
+      "bars": 2500,
+      "price": 348.9093638133738,
+      "per": 15
+    },
+    {
+      "mode": "denied",
+      "bars": 2500,
+      "price": 348.9093638133738,
+      "per": 15
+    },
+    {
+      "mode": "corrupt",
+      "recoveredBars": 2500
+    },
+    {
+      "mode": "serialization",
+      "returnedWithoutThrow": true
+    },
+    {
+      "mode": "oversize",
+      "bars": 20000,
+      "price": 2099.5301637643834,
+      "retained": {
+        "fundamentals": {
+          "keys": 3,
+          "uniquePayloads": 3,
+          "aliases": 0,
+          "estimatedPayloadBytes": 19476,
+          "estimatedKeyBytes": 150,
+          "largestPayloadBytes": 6492,
+          "unmeasurable": 0,
+          "dates": [
+            "2026-09-20"
+          ]
+        },
+        "quote": {
+          "keys": 5,
+          "uniquePayloads": 5,
+          "aliases": 0,
+          "estimatedPayloadBytes": 68800894,
+          "estimatedKeyBytes": 112,
+          "largestPayloadBytes": 50065242,
+          "unmeasurable": 1
+        },
+        "persisted": {
+          "quote": {
+            "keys": 0,
+            "bytes": 0
+          },
+          "fundamentals": {
+            "keys": 1,
+            "bytes": 6492
+          }
+        }
+      }
+    }
+  ],
+  "sentinelsIntact": true,
+  "count": 30,
+  "sample": 0,
+  "scenario": "faults",
+  "wallMs": 818.1000000089407,
+  "initialModuleReadyMs": 43.8999999910593,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1536
+  },
+  "environment": {
+    "clockStart": "2026-09-20T04:00:00Z",
+    "timezone": "Asia/Taipei",
+    "fakeNetworkDelayMs": 0,
+    "network": "瀏覽器 fetch 邊界同步回應合成資料；請求數為服務 fetch 次數，不是外網 HTTP",
+    "bytes": "唯一物件序列化 UTF-16 長度加 key 長度代理值；不是實際 heap"
+  },
+  "metrics": {
+    "conversion": [
+      {
+        "name": "processYahooResult",
+        "ms": 14.399999991059303
+      },
+      {
+        "name": "enrichChartData",
+        "ms": 8.899999991059303
+      },
+      {
+        "name": "processYahooResult",
+        "ms": 24.200000002980232
+      },
+      {
+        "name": "enrichChartData",
+        "ms": 10.700000002980232
+      },
+      {
+        "name": "processYahooResult",
+        "ms": 25.200000002980232
+      },
+      {
+        "name": "enrichChartData",
+        "ms": 3.8999999910593033
+      },
+      {
+        "name": "processYahooResult",
+        "ms": 204.40000000596046
+      },
+      {
+        "name": "enrichChartData",
+        "ms": 55.8999999910593
+      }
+    ],
+    "serialization": [
+      {
+        "kind": "quote",
+        "ms": 6.200000002980232,
+        "bytes": 6245220,
+        "ok": true
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0,
+        "bytes": 6492,
+        "ok": true
+      },
+      {
+        "kind": "quote",
+        "ms": 6.5999999940395355,
+        "bytes": 6245224,
+        "ok": true
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0,
+        "bytes": 6492,
+        "ok": true
+      },
+      {
+        "kind": "quote",
+        "ms": 6.5,
+        "bytes": 6245208,
+        "ok": true
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0.09999999403953552,
+        "bytes": 6492,
+        "ok": true
+      },
+      {
+        "kind": "quote",
+        "ms": 13.199999988079071,
+        "ok": false
+      },
+      {
+        "kind": "quote",
+        "ms": 101.6000000089407,
+        "bytes": 50065242,
+        "ok": true
+      }
+    ],
+    "storage": [
+      {
+        "kind": "quote",
+        "ms": 0,
+        "ok": false,
+        "error": "QuotaExceededError"
+      },
+      {
+        "kind": "quote",
+        "ms": 0,
+        "ok": false,
+        "error": "QuotaExceededError"
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0,
+        "ok": false,
+        "error": "QuotaExceededError"
+      },
+      {
+        "kind": "quote",
+        "ms": 0,
+        "ok": false,
+        "error": "SecurityError"
+      },
+      {
+        "kind": "quote",
+        "ms": 0,
+        "ok": false,
+        "error": "SecurityError"
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0,
+        "ok": false,
+        "error": "SecurityError"
+      },
+      {
+        "kind": "quote",
+        "ms": 24,
+        "bytes": 6245208,
+        "ok": true
+      },
+      {
+        "kind": "fundamentals",
+        "ms": 0.20000000298023224,
+        "bytes": 6492,
+        "ok": true
+      },
+      {
+        "kind": "quote",
+        "ms": 12.599999994039536,
+        "ok": false,
+        "error": "QuotaExceededError"
+      },
+      {
+        "kind": "quote",
+        "ms": 23.5,
+        "ok": false,
+        "error": "QuotaExceededError"
+      }
+    ],
+    "requests": [
+      {
+        "path": "/api/yahoo/chart",
+        "symbol": "FAULTQUOTA",
+        "interval": "1d",
+        "range": "10y",
+        "dataset": null
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockInfo"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockFinancialStatements"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockBalanceSheet"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockCashFlowsStatement"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockPER"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockMonthRevenue"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockDividend"
+      },
+      {
+        "path": "/api/yahoo/chart",
+        "symbol": "FAULTDENIED",
+        "interval": "1d",
+        "range": "10y",
+        "dataset": null
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockInfo"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockFinancialStatements"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockBalanceSheet"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockCashFlowsStatement"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockPER"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockMonthRevenue"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockDividend"
+      },
+      {
+        "path": "/api/yahoo/chart",
+        "symbol": "CORRUPT",
+        "interval": "1d",
+        "range": "10y",
+        "dataset": null
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockInfo"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockFinancialStatements"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockBalanceSheet"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockCashFlowsStatement"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockPER"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockMonthRevenue"
+      },
+      {
+        "path": "/api/finmind",
+        "symbol": null,
+        "interval": null,
+        "range": null,
+        "dataset": "TaiwanStockDividend"
+      },
+      {
+        "path": "/api/yahoo/chart",
+        "symbol": "OVERSIZE",
+        "interval": "1d",
+        "range": "10y",
+        "dataset": null
+      }
+    ],
+    "longTasks": [
+      {
+        "start": 140.79999999701977,
+        "duration": 60
+      },
+      {
+        "start": 212.20000000298023,
+        "duration": 105
+      }
+    ],
+    "errors": []
+  },
+  "baseline": "513f6347bfb77dedced2b8f5e0d85fef68ed8cbb",
+  "sourceHashes": {
+    "services/yahoo.ts": "6c0bdca5daa63442fc72eb4d8f89369ade1715651663a34a5b3c38d0b4ad8b19",
+    "services/quoteCache.ts": "72ac070f004ef2e4458c37f9cb0cd195a2fa094273e0d7296404b77925b1d8cc",
+    "services/finmind.ts": "b38728ba5bbc233c0023e7dca2e0eb6ce08047f1ed936e880f8cdecdf1281344"
+  },
+  "instrumentationHashes": {
+    "bootstrap.js": "c7b7278a8f7c4a35a41cc2266194acbcc5bfd0f2066de9c9deb9483888379dab",
+    "fixtures.mjs": "baed94095b529f7b0520946611b91322506e6f79240d8d275c102f23398df743",
+    "profile.mjs": "b2818d569d9abd1cb4d9066befe8f89a6b75dbc974b7a2dc234081734607d7a3",
+    "profile-server.mjs": "7a0efa10af0cb18a9702a129bb08adee8b9e905e0103cb99906f01898c722c34"
+  },
+  "probeBundleSha256": "256656ca1e871a3e8143c0b97c189f501c4c08aa0d5d73aaeed1b5ea71e26dcb",
+  "node": "v26.4.0"
+}

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "sourceTicket": "07",
+  "units": "唯一 entry 的 JSON UTF-16 字元數乘二，加所有保留 key 的 UTF-16 字元數乘二；屬資源預算代理值，不是 heap 上限",
+  "quote": {
+    "memoryBytes": 134217728,
+    "memoryPayloads": 160,
+    "memoryKeys": 320,
+    "maxEntryBytes": 8388608,
+    "sessionBytes": 4194304,
+    "sessionKeys": 64,
+    "maxSessionEntryBytes": 2097152,
+    "eviction": "payload 最近使用優先保留；淘汰最久未用 payload 及其全部記憶體別名；同 key 新值取代時使舊別名及舊持久化失效",
+    "aliases": "同一 entry 物件身分只計一份 payload，別名 key 逐把計數與估算 bytes；session 回填走相同記憶體容量檢查",
+    "oversize": "大於單項門檻、序列化失敗或單項連同 key 已超容量者不保留於快取；本次服務結果照常回傳，可由 UI 呈現",
+    "sessionPolicy": "獨立同步 best-effort 容量；只保留符合單項大小的自家 key，較大行情只留記憶體；未知存取順序的既存 key 依掃描順序初始化 LRU，此後讀寫更新順序",
+    "workset": "最後十檔各日／週／小時三週期，另容納最多一百檔最新價；測試資料約 115 MB，加索引仍低於 128 MiB；該近期集合第二次重訪 chartRequests=0",
+    "expectedTradeoff": "不承諾三十或一百檔的全循環仍全部命中；超過近期工作集會重抓，需在08列出命中率、請求數與耗時"
+  },
+  "fundamentals": {
+    "memoryBytes": 2097152,
+    "memoryEntries": 128,
+    "maxEntryBytes": 262144,
+    "sessionBytes": 1048576,
+    "sessionKeys": 128,
+    "maxSessionEntryBytes": 262144,
+    "eviction": "讀寫時清除非當日日期 key，再淘汰最久未使用項目至容量內",
+    "staleCompletion": "請求完成時若原 key 日期已非今日，只回傳原呼叫結果，不把過去日期重寫入快取",
+    "workset": "一百檔當日資料約649200 bytes，加key約654200 bytes，可全部保留；新日期不累積前一日的一百份",
+    "oversize": "超過單項門檻或序列化失敗者本次照常回傳，但不留長期快取"
+  },
+  "persistence": {
+    "deferred": false,
+    "reason": "觀測到大型原生setItem最差31.4ms，但未有延後寫入的穩定對照收益證據；先將單項持久化限制為2MiB（基本面256KiB）及總量有界，避免為此引入flush／卸載／重載競態。08再量同條件結果，必要時回報殘餘成本。",
+    "memory": "同步即時發布；記憶體容量與持久化成功彼此獨立",
+    "failure": "只操作 quote_cache_v1: 或 tw_fund_ 命名空間；quota可淘汰自家持久化項目後最多重試一次，仍失敗即略過；拒絕存取、壞JSON、序列化失敗不能阻斷本次資料結果",
+    "preserve": "既有資料形狀、命名空間、TTL、股票沿用窗、FX60分鐘沿用窗、日期換算、金融語意、使用者本體與設定全部保持原樣"
+  }
+}
