@@ -17,7 +17,7 @@ import {
   useYAxisScale,
   usePlotArea
 } from 'recharts';
-import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
+import { StockDataPoint, IndicatorSettings } from '../types';
 import { calculateSMA } from '../utils/math';
 import { computeWindowBounds, buildPanSession, clampTranslate, commitOffset, PanSession } from '../utils/panMath';
 import { ZoomIn, ZoomOut } from 'lucide-react';
@@ -31,7 +31,6 @@ interface StockChartProps {
   // 「標的|週期」identity——變更＝換了一條 K 線序列，觸發視窗重置。
   // 兩段式補全交換（2y→10y 同標的）identity 不變 → 不重置 → 天然零跳動。
   seriesKey: string;
-  onToggleSetting?: (key: keyof IndicatorSettings) => void;
 }
 
 // ----------------------------------------------------------------------
@@ -40,7 +39,7 @@ interface StockChartProps {
 
 // Custom crosshair cursor — vertical line centered on the active bar
 const CrosshairCursor = (props: any) => {
-  const { points, width, height, top, left } = props;
+  const { points, height, top } = props;
   if (!points || points.length === 0) return null;
   const x = points[0].x;
   return (
@@ -375,7 +374,6 @@ const COMMON_Y_AXIS_PROPS = {
 interface MainPriceChartProps {
   displayData: any[];
   settings: IndicatorSettings;
-  isTaiwanStock: boolean;
   volumeCells: React.ReactNode;
   /** pan 模式顯式尺寸（拖曳 session 期間非 null）：緩衝層寬 × 容器高 */
   panDims: { width: number; height: number } | null;
@@ -386,7 +384,6 @@ interface MainPriceChartProps {
 const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
   displayData,
   settings,
-  isTaiwanStock,
   volumeCells,
   panDims,
   onMouseMove,
@@ -568,7 +565,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
   );
 });
 
-const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, seriesKey, onToggleSetting }) => {
+const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, seriesKey }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [panel1View, setPanel1View] = useState<PanelView>('foreign');
   const [panel2View, setPanel2View] = useState<PanelView>('trust');
@@ -968,7 +965,6 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
             <MainPriceChart
               displayData={mainDisplayData}
               settings={settings}
-              isTaiwanStock={isTaiwanStock}
               volumeCells={mainVolumeCells}
               panDims={panDims}
               onMouseMove={handleMouseMove}
@@ -1042,4 +1038,4 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, 
   );
 };
 
-export default StockChart;
+export default React.memo(StockChart);

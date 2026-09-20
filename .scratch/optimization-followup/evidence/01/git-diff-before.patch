@@ -1,0 +1,703 @@
+diff --git a/App.tsx b/App.tsx
+index 5226ab2..6cb95ca 100644
+--- a/App.tsx
++++ b/App.tsx
+@@ -8,8 +8,6 @@ import type { ImportApplyPayload } from './components/portfolio/ImportStatementM
+ import Sidebar from './components/Sidebar';
+ import ChartToolbar from './components/ChartToolbar';
+ import QuoteHeader from './components/QuoteHeader';
+-import StockChart from './components/StockChart';
+-import AnalysisResult from './components/AnalysisResult';
+ import Banner from './components/ui/Banner';
+ import Button from './components/ui/Button';
+ import Card from './components/ui/Card';
+@@ -17,17 +15,18 @@ import Modal from './components/ui/Modal';
+ import EntryChecklist from './components/EntryChecklist';
+ import StockSearch from './components/StockSearch';
+ import { getStockData } from './services/yahoo';
+-import { analyzeEntryWithGemini } from './services/gemini';
+ import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
+ import { isTwStock } from './utils/market';
+ import { loadPortfolioItems, savePortfolioItems } from './utils/portfolioItemsStore';
+ import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
+ import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
+-import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
++import { estimateVolumeTrend } from './utils/volume';
+ 
+ // 非首屏分頁懶載（D-1d）：切頁時才下載對應 chunk，首屏不 modulepreload
+ const Portfolio = lazy(() => import('./components/Portfolio'));
+ const FundamentalsPanel = lazy(() => import('./components/FundamentalsPanel'));
++const StockChart = lazy(() => import('./components/StockChart'));
++const AnalysisResult = lazy(() => import('./components/AnalysisResult'));
+ 
+ // 懶載分頁切換時的 Suspense fallback（沿用專案 Loader2 載入覆蓋層 pattern，禁止空白）
+ const tabFallback = (
+@@ -37,6 +36,20 @@ const tabFallback = (
+   </div>
+ );
+ 
++const chartFallback = (
++  <div className="min-h-[420px] flex flex-col items-center justify-center gap-2">
++    <Loader2 className="animate-spin text-blue-400" size={32} />
++    <span className="text-slate-300 text-sm">載入圖表中…</span>
++  </div>
++);
++
++const reportFallback = (
++  <div className="min-h-[300px] flex flex-col items-center justify-center gap-2 bg-surface-card border border-surface-line rounded-card">
++    <Loader2 className="animate-spin text-ai" size={28} />
++    <span className="text-slate-300 text-sm">載入分析報告中…</span>
++  </div>
++);
++
+ type AppView = 'dashboard' | 'portfolio' | 'fundamentals';
+ 
+ const App: React.FC = () => {
+@@ -268,6 +281,7 @@ const App: React.FC = () => {
+       }, 100);
+ 
+       // ── AI 解讀層（依濾網客觀結論寫報告，單次呼叫）──
++      const { analyzeEntryWithGemini } = await import('./services/gemini');
+       const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode, (partial) => setAnalysis(partial));
+       setAnalysis(report);
+     } catch (err: any) {
+@@ -520,10 +534,9 @@ const App: React.FC = () => {
+                         setSettings={setIndicatorSettings}
+                       />
+                       <div className="relative min-h-[420px]">
+-                        <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} onToggleSetting={(key: keyof IndicatorSettings) => {
+-                          if (key === 'maLines') return;
+-                          setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
+-                        }} />
++                        <Suspense fallback={chartFallback}>
++                          <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} />
++                        </Suspense>
+                         {/* 切週期／換標的載入覆蓋層：不透明底遮住舊週期的圖（不再 blur 透出誤導），
+                             蓋住 K 線與其下所有副圖，不覆蓋 ChartToolbar（z-20 > StockChart 內縮放鈕 z-10）；
+                             快取命中切回 loading 不觸發 → 骨架屏自然不出現。資料就緒 loading 轉 false 即移除 */}
+@@ -553,7 +566,9 @@ const App: React.FC = () => {
+                         )}
+                         <div className="xl:col-span-7">
+                           {analysis || analyzing ? (
+-                               <AnalysisResult content={analysis} loading={analyzing} />
++                               <Suspense fallback={reportFallback}>
++                                 <AnalysisResult content={analysis} loading={analyzing} />
++                               </Suspense>
+                           ) : !entryResult ? (
+                                <div className="bg-surface-card border border-surface-line border-dashed rounded-card p-5 flex items-center justify-center gap-3 text-center">
+                                   <Bot className="text-slate-500 w-5 h-5 shrink-0" />
+diff --git a/components/FundamentalsPanel.tsx b/components/FundamentalsPanel.tsx
+index 65de41b..95f32d6 100644
+--- a/components/FundamentalsPanel.tsx
++++ b/components/FundamentalsPanel.tsx
+@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
+ import { Bot } from 'lucide-react';
+ import { TwFundamentals } from '../types';
+ import { getTwFundamentals } from '../services/finmind';
+-import { analyzeFundamentals } from '../services/gemini';
+ import AnalysisResult from './AnalysisResult';
+ import Banner from './ui/Banner';
+ import Button from './ui/Button';
+@@ -65,6 +64,7 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol })
+     setAiLoading(true);
+     setAiError(null);
+     try {
++      const { analyzeFundamentals } = await import('../services/gemini');
+       const report = await analyzeFundamentals(fundamentals);
+       setAiResults(prev => new Map(prev).set(fundamentals.stockId, report));
+     } catch (err: any) {
+diff --git a/components/Portfolio.tsx b/components/Portfolio.tsx
+index d00ec8a..d6c44af 100644
+--- a/components/Portfolio.tsx
++++ b/components/Portfolio.tsx
+@@ -1,7 +1,6 @@
+ import React, { useEffect, useState } from 'react';
+ import { PortfolioItem, RealizedTrade } from '../types';
+ import { getStockData } from '../services/yahoo';
+-import { analyzeTradeDecision } from '../services/gemini';
+ import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
+ import { SellInput } from '../utils/portfolioLedger';
+ import { lotCostTwd, hasBuyRate } from '../utils/fx';
+@@ -102,6 +101,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
+         recentData = data;
+       } catch { /* continue without recent data */ }
+ 
++      const { analyzeTradeDecision } = await import('../services/gemini');
+       const result = await analyzeTradeDecision(
+         sym, buyDate, buyPrice, buyReason,
+         currentPriceData?.price,
+diff --git a/components/StockChart.tsx b/components/StockChart.tsx
+index 0ee8c8a..b228adf 100644
+--- a/components/StockChart.tsx
++++ b/components/StockChart.tsx
+@@ -17,7 +17,7 @@ import {
+   useYAxisScale,
+   usePlotArea
+ } from 'recharts';
+-import { StockDataPoint, IndicatorSettings, MALineConfig } from '../types';
++import { StockDataPoint, IndicatorSettings } from '../types';
+ import { calculateSMA } from '../utils/math';
+ import { computeWindowBounds, buildPanSession, clampTranslate, commitOffset, PanSession } from '../utils/panMath';
+ import { ZoomIn, ZoomOut } from 'lucide-react';
+@@ -31,7 +31,6 @@ interface StockChartProps {
+   // 「標的|週期」identity——變更＝換了一條 K 線序列，觸發視窗重置。
+   // 兩段式補全交換（2y→10y 同標的）identity 不變 → 不重置 → 天然零跳動。
+   seriesKey: string;
+-  onToggleSetting?: (key: keyof IndicatorSettings) => void;
+ }
+ 
+ // ----------------------------------------------------------------------
+@@ -40,7 +39,7 @@ interface StockChartProps {
+ 
+ // Custom crosshair cursor — vertical line centered on the active bar
+ const CrosshairCursor = (props: any) => {
+-  const { points, width, height, top, left } = props;
++  const { points, height, top } = props;
+   if (!points || points.length === 0) return null;
+   const x = points[0].x;
+   return (
+@@ -375,7 +374,6 @@ const COMMON_Y_AXIS_PROPS = {
+ interface MainPriceChartProps {
+   displayData: any[];
+   settings: IndicatorSettings;
+-  isTaiwanStock: boolean;
+   volumeCells: React.ReactNode;
+   /** pan 模式顯式尺寸（拖曳 session 期間非 null）：緩衝層寬 × 容器高 */
+   panDims: { width: number; height: number } | null;
+@@ -386,7 +384,6 @@ interface MainPriceChartProps {
+ const MainPriceChart: React.FC<MainPriceChartProps> = React.memo(({
+   displayData,
+   settings,
+-  isTaiwanStock,
+   volumeCells,
+   panDims,
+   onMouseMove,
+@@ -568,7 +565,7 @@ const SubPanelChart: React.FC<SubPanelChartProps> = React.memo(({
+   );
+ });
+ 
+-const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, seriesKey, onToggleSetting }) => {
++const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock, chipDataUnavailable, seriesKey }) => {
+   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+   const [panel1View, setPanel1View] = useState<PanelView>('foreign');
+   const [panel2View, setPanel2View] = useState<PanelView>('trust');
+@@ -968,7 +965,6 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock,
+             <MainPriceChart
+               displayData={mainDisplayData}
+               settings={settings}
+-              isTaiwanStock={isTaiwanStock}
+               volumeCells={mainVolumeCells}
+               panDims={panDims}
+               onMouseMove={handleMouseMove}
+@@ -1042,4 +1038,4 @@ const StockChart: React.FC<StockChartProps> = ({ data, settings, isTaiwanStock,
+   );
+ };
+ 
+-export default StockChart;
++export default React.memo(StockChart);
+diff --git a/components/StockSearch.tsx b/components/StockSearch.tsx
+index a887a43..0efe75e 100644
+--- a/components/StockSearch.tsx
++++ b/components/StockSearch.tsx
+@@ -1,4 +1,4 @@
+-import React, { useEffect, useRef, useState, useCallback } from 'react';
++import React, { useEffect, useId, useRef, useState, useCallback } from 'react';
+ import { Search, Loader2 } from 'lucide-react';
+ import { ensureTaiwanDirectory, searchStocks, StockDirEntry, Market } from '../services/stockDirectory';
+ import Button from './ui/Button';
+@@ -38,6 +38,32 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+   const boxRef = useRef<HTMLDivElement>(null);
+   const debounceRef = useRef<number | undefined>(undefined);
+   const reqIdRef = useRef(0);
++  const searchAbortRef = useRef<AbortController | null>(null);
++  const searchValueRef = useRef(value);
++  const listId = useId();
++
++  const cancelSearch = useCallback(() => {
++    window.clearTimeout(debounceRef.current);
++    searchAbortRef.current?.abort();
++    reqIdRef.current += 1;
++    setSearching(false);
++  }, []);
++
++  useEffect(() => () => {
++    window.clearTimeout(debounceRef.current);
++    searchAbortRef.current?.abort();
++    reqIdRef.current += 1;
++  }, []);
++
++  // 父層的快捷選取也會改 value，必須使舊查詢失效；輸入中的值由 runSearch 同步登記。
++  useEffect(() => {
++    if (searchValueRef.current === value) return;
++    searchValueRef.current = value;
++    cancelSearch();
++    setResults([]);
++    setActive(-1);
++    setOpen(false);
++  }, [value, cancelSearch]);
+ 
+   // 預熱台股名錄（prefetch：多數搜尋到達時 memCache 已就緒；searchStocks 內部自行 await）
+   useEffect(() => { ensureTaiwanDirectory().then(() => setDirReady(true)).catch(() => {}); }, []);
+@@ -52,8 +78,13 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+   }, []);
+ 
+   const runSearch = useCallback((q: string) => {
+-    window.clearTimeout(debounceRef.current);
+-    if (!q.trim()) { setResults([]); setOpen(false); setSearching(false); return; }
++    searchValueRef.current = q;
++    cancelSearch();
++    setResults([]);
++    setActive(-1);
++    if (!q.trim()) { setOpen(false); return; }
++    const controller = new AbortController();
++    searchAbortRef.current = controller;
+     setSearching(true);
+     setOpen(true); // 查詢開始即開面板——名錄載入等中間態面板需要掛載點
+     const myId = ++reqIdRef.current;
+@@ -63,13 +94,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+         setResults(r);
+         setActive(-1);
+         if (phase === 'final') setSearching(false); // local 上屏後 spinner 續轉，final 收斂
+-      });
++      }, controller.signal);
+     }, 180);
+-  }, []);
++  }, [cancelSearch]);
+ 
+   const handleChange = (v: string) => { onValueChange(v); runSearch(v); };
+ 
+   const pick = (e: StockDirEntry) => {
++    cancelSearch();
+     const sym = e.id;
+     onValueChange(sym);
+     setOpen(false);
+@@ -78,11 +110,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+   };
+ 
+   const submitCurrent = () => {
++    cancelSearch();
+     setOpen(false);
++    setResults([]);
+     if (value.trim()) onSelect(value.trim());
+   };
+ 
+   const onKeyDown = (e: React.KeyboardEvent) => {
++    if (e.key === 'Escape') { cancelSearch(); setOpen(false); return; }
+     if (!open || results.length === 0) {
+       if (e.key === 'Enter') { e.preventDefault(); submitCurrent(); }
+       return;
+@@ -93,7 +128,7 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+       e.preventDefault();
+       if (active >= 0 && active < results.length) pick(results[active]);
+       else submitCurrent();
+-    } else if (e.key === 'Escape') setOpen(false);
++    }
+   };
+ 
+   return (
+@@ -105,6 +140,12 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors z-10" size={18} />
+         <input
+           type="text"
++          role="combobox"
++          aria-label="股票代碼或公司名稱"
++          aria-autocomplete="list"
++          aria-expanded={open && results.length > 0}
++          aria-controls={open && results.length > 0 ? listId : undefined}
++          aria-activedescendant={open && active >= 0 && active < results.length ? `${listId}-${active}` : undefined}
+           value={value}
+           onChange={(e) => handleChange(e.target.value)}
+           onFocus={() => { if (results.length) setOpen(true); }}
+@@ -117,12 +158,15 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+ 
+         {/* 懸浮結果清單 */}
+         {open && results.length > 0 && (
+-          <ul className="absolute z-30 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-800 border border-slate-600 rounded-xl shadow-2xl shadow-black/50 py-1">
++          <ul id={listId} role="listbox" aria-label="股票搜尋結果" className="absolute z-30 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-800 border border-slate-600 rounded-xl shadow-2xl shadow-black/50 py-1">
+             {results.map((e, i) => {
+               const b = marketBadge[e.market];
+               return (
+                 <li
+                   key={`${e.id}-${i}`}
++                  id={`${listId}-${i}`}
++                  role="option"
++                  aria-selected={i === active}
+                   onMouseDown={(ev) => { ev.preventDefault(); pick(e); }}
+                   onMouseEnter={() => setActive(i)}
+                   className={`px-4 py-2.5 cursor-pointer flex items-center gap-3 ${i === active ? 'bg-blue-600/20' : 'hover:bg-slate-700/50'}`}
+@@ -136,14 +180,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
+             })}
+           </ul>
+         )}
+-        {/* 空結果三態決策鏈：名錄未就緒（!dirReady）／查詢中不渲染（searching）／終態才見「找不到」 */}
++        {/* 查詢尚未完成時顯示進度，只有終態才顯示「找不到」。 */}
+         {open && value.trim() && results.length === 0 && (
+-          !dirReady ? (
+-            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
++          !dirReady || searching ? (
++            <div role="status" className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
+               <Loader2 className="animate-spin shrink-0" size={14} />
+-              載入名錄中…
++              {!dirReady ? '載入名錄中…' : '搜尋中…'}
+             </div>
+-          ) : searching ? null : (
++          ) : (
+             <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
+               找不到符合「{value}」的股票
+             </div>
+diff --git a/components/portfolio/HoldingsTable.tsx b/components/portfolio/HoldingsTable.tsx
+index 983d915..09e0f10 100644
+--- a/components/portfolio/HoldingsTable.tsx
++++ b/components/portfolio/HoldingsTable.tsx
+@@ -12,7 +12,7 @@
+ //   - TW 批次列的成本均價可編輯；US 為換算顯示值、不可編輯（固定成本欄才可編輯）。
+ import React, { useState } from 'react';
+ import { PortfolioItem } from '../../types';
+-import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
++import { calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
+ import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
+ import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
+ import { fmtShares } from '../../utils/shareUnits';
+diff --git a/components/portfolio/ImportStatementModal.tsx b/components/portfolio/ImportStatementModal.tsx
+index 400bcc1..12cff51 100644
+--- a/components/portfolio/ImportStatementModal.tsx
++++ b/components/portfolio/ImportStatementModal.tsx
+@@ -30,8 +30,6 @@ interface ImportStatementModalProps {
+ const inputCls = `bg-surface-inset border border-surface-line rounded-ctl px-2 py-1 text-sm text-white
+   placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent transition-colors`;
+ 
+-const fmt = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
+-
+ const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClose, existingLots, onApply }) => {
+   const [busy, setBusy] = useState(false);
+   const [error, setError] = useState<string | null>(null);
+diff --git a/components/portfolio/useHealthCheck.ts b/components/portfolio/useHealthCheck.ts
+index 965f7ca..0afc0c1 100644
+--- a/components/portfolio/useHealthCheck.ts
++++ b/components/portfolio/useHealthCheck.ts
+@@ -8,7 +8,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
+ import { PortfolioItem, StockDataPoint } from '../../types';
+ import { getStockData } from '../../services/yahoo';
+ import { classifyCaught, type FetchErrorKind } from '../../services/fetchError';
+-import { analyzePortfolioHealth, PortfolioHealthItem } from '../../services/gemini';
++import type { PortfolioHealthItem } from '../../services/gemini';
+ import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../../services/_shared/healthDecision';
+ import { estimateVolumeTrend } from '../../utils/volume';
+ import { isTwStock } from '../../utils/portfolioFees';
+@@ -119,6 +119,7 @@ export const useHealthCheck = (
+         return;
+       }
+ 
++      const { analyzePortfolioHealth } = await import('../../services/gemini');
+       const result = await analyzePortfolioHealth([healthItem], (partial) => {
+         if (healthSeqRef.current[symbol] !== gen) return;
+         setHealthResults(prev => {
+@@ -201,6 +202,7 @@ export const useHealthCheck = (
+       if (healthItems.length === 0) return; // 全部失敗：已逐檔標記，本輪不打 LLM
+ 
+       // 批次仍只打一筆串流請求；部分文本尚不能安全切成 per-symbol 段落，故不寫回。
++      const { analyzePortfolioHealth } = await import('../../services/gemini');
+       const result = await analyzePortfolioHealth(healthItems, () => {});
+ 
+       // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
+diff --git a/components/ui/Banner.tsx b/components/ui/Banner.tsx
+index 6c536c9..3426420 100644
+--- a/components/ui/Banner.tsx
++++ b/components/ui/Banner.tsx
+@@ -15,7 +15,10 @@ const variantClasses: Record<BannerProps['variant'], string> = {
+ };
+ 
+ const Banner: React.FC<BannerProps> = ({ variant, onDismiss, onRetry, children }) => (
+-  <div className={`rounded-ctl px-4 py-3 flex items-center gap-3 ${variantClasses[variant]}`}>
++  <div
++    role={variant === 'error' ? 'alert' : 'status'}
++    className={`rounded-ctl px-4 py-3 flex items-center gap-3 ${variantClasses[variant]}`}
++  >
+     <div className="flex-1 text-sm">{children}</div>
+     {onRetry && (
+       <Button variant="ghost" size="sm" onClick={onRetry}>
+diff --git a/services/gemini.ts b/services/gemini.ts
+index 0a31d98..716d29b 100644
+--- a/services/gemini.ts
++++ b/services/gemini.ts
+@@ -557,7 +557,6 @@ export const analyzeTradeDecision = async (
+   let latestIndicators = '';
+   if (recentData && recentData.length > 0) {
+     const last15 = recentData.slice(-15);
+-    const latest = recentData[recentData.length - 1];
+ 
+     recentDataStr = '\n\n【近期走勢（最近15筆日K，含指標）】\n' + last15.map(d => {
+       const volUnit = isTaiwanStock
+diff --git a/services/stockDirectory.ts b/services/stockDirectory.ts
+index 113f49a..fff52ff 100644
+--- a/services/stockDirectory.ts
++++ b/services/stockDirectory.ts
+@@ -1,5 +1,5 @@
+ // stockDirectory.ts — 股票名錄與搜尋（支援中文公司名子字串搜尋）
+-// 台股：FinMind TaiwanStockInfo 全清單（瀏覽器直連，快取於 localStorage）
++// 台股：FinMind TaiwanStockInfo 全清單（同源後端，快取於 localStorage）
+ // 美股/海外：Yahoo Finance search 端點（透過同源後端即時查詢）
+ 
+ import { proxyHeaders } from './_shared/apiClient';
+@@ -163,13 +163,14 @@ export function mapYahooQuote(x: any): StockDirEntry | null {
+ }
+ 
+ // ── Yahoo 搜尋（美股/台股，英文名或代碼）──
+-export async function searchYahoo(query: string, limit = 8): Promise<StockDirEntry[]> {
++export async function searchYahoo(query: string, limit = 8, signal?: AbortSignal): Promise<StockDirEntry[]> {
+   const q = query.trim();
+-  if (!q) return [];
++  if (!q || signal?.aborted) return [];
+   const qs = new URLSearchParams({ q, limit: String(limit) }).toString();
+   try {
+     const res = await fetch(`/api/yahoo/search?${qs}`, {
+       headers: { ...proxyHeaders },
++      signal,
+     });
+     if (!res.ok) return [];
+     const json = await res.json();
+@@ -189,10 +190,14 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
+ export async function searchStocks(
+   query: string,
+   onResults: (results: StockDirEntry[], phase: 'local' | 'final') => void,
++  signal?: AbortSignal,
+ ): Promise<void> {
+   const q = query.trim();
+-  if (!q) return;
++  if (!q || signal?.aborted) return;
++  // 海外搜尋與名錄載入互不相依；先並行發出，保留本地先上屏的順序。
++  const yahooPromise = hasCJK(q) ? null : searchYahoo(q, 8, signal);
+   const dir = await ensureTaiwanDirectory();
++  if (signal?.aborted) return;
+   // 含中文 → 只用台股本地（最快、最準；保證 0 網路請求）
+   if (hasCJK(q)) {
+     onResults(searchTaiwan(dir, q, 15), 'final');
+@@ -201,7 +206,8 @@ export async function searchStocks(
+   // 純英文/代碼 → 本地先上屏，再併入 Yahoo 海外結果（去重）
+   const tw = searchTaiwan(dir, q, 15);
+   if (tw.length > 0) onResults(tw, 'local');
+-  const yahoo = await searchYahoo(q, 8); // 內部 try/catch，永不 throw
++  const yahoo = await yahooPromise!; // 內部 try/catch，永不 throw
++  if (signal?.aborted) return;
+   const seen = new Set(tw.map(e => e.id));
+   const merged = [...tw];
+   for (const y of yahoo) {
+diff --git a/services/yahoo.ts b/services/yahoo.ts
+index 5efc7cd..66854f9 100644
+--- a/services/yahoo.ts
++++ b/services/yahoo.ts
+@@ -49,21 +49,32 @@ interface YahooChartResponse {
+ 
+ // --- Helper Functions ---
+ 
++const dateFormats = {
++  date: { year: 'numeric', month: '2-digit', day: '2-digit' },
++  intraday: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' },
++  clock: { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric' },
++  period: { year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short' },
++} satisfies Record<string, Intl.DateTimeFormatOptions>;
++const dateFormatters = new Map<string, Intl.DateTimeFormat>();
++
++// 同一行情會轉換數千根 K 棒；僅重用格式器，日期與時區轉換規則維持原樣。
++const getDateFormatter = (timeZone: string, format: keyof typeof dateFormats) => {
++  const key = `${timeZone}|${format}`;
++  let formatter = dateFormatters.get(key);
++  if (!formatter) {
++    formatter = new Intl.DateTimeFormat('en-US', { ...dateFormats[format], timeZone, hour12: false });
++    if (dateFormatters.size >= 32) dateFormatters.delete(dateFormatters.keys().next().value!);
++    dateFormatters.set(key, formatter);
++  }
++  return formatter;
++};
++
+ const formatExchangeDate = (timestamp: number, timezone: string, interval: string) => {
+     const date = new Date(timestamp * 1000);
+     const isIntraday = interval === '15m' || interval === '60m';
+     
+     try {
+-        const options: Intl.DateTimeFormatOptions = {
+-            timeZone: timezone,
+-            year: 'numeric',
+-            month: '2-digit',
+-            day: '2-digit',
+-            hour: isIntraday ? '2-digit' : undefined,
+-            minute: isIntraday ? '2-digit' : undefined,
+-            hour12: false
+-        };
+-        const formatter = new Intl.DateTimeFormat('en-US', options);
++        const formatter = getDateFormatter(timezone, isIntraday ? 'intraday' : 'date');
+         const parts = formatter.formatToParts(date);
+         
+         const p: any = {};
+@@ -88,16 +99,7 @@ const getExchangeTime = (timestamp: number, timezone: string, isTaiwan: boolean)
+         const effectiveTimezone = isTaiwan ? 'Asia/Taipei' : timezone;
+         
+         const date = new Date(timestamp * 1000);
+-        const options: Intl.DateTimeFormatOptions = {
+-            timeZone: effectiveTimezone,
+-            year: 'numeric',
+-            month: '2-digit',
+-            day: '2-digit',
+-            hour: 'numeric',
+-            minute: 'numeric',
+-            hour12: false
+-        };
+-        const formatter = new Intl.DateTimeFormat('en-US', options);
++        const formatter = getDateFormatter(effectiveTimezone, 'clock');
+         const parts = formatter.formatToParts(date);
+         
+         let h = 0, m = 0;
+@@ -123,14 +125,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
+     const date = new Date(timestamp * 1000);
+     const now = new Date();
+     
+-    const formatter = new Intl.DateTimeFormat('en-US', {
+-        timeZone: timezone,
+-        year: 'numeric',
+-        month: 'numeric',
+-        day: 'numeric',
+-        weekday: 'short',
+-        hour12: false
+-    });
++    const formatter = getDateFormatter(timezone, 'period');
+     
+     const parts = formatter.formatToParts(date);
+     const p: any = {};
+@@ -151,13 +146,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
+     const targetD = String(d.getDate()).padStart(2, '0');
+     const targetDateStr = `${targetY}-${targetM}-${targetD}`;
+     
+-    const nowFormatter = new Intl.DateTimeFormat('en-US', {
+-        timeZone: timezone,
+-        year: 'numeric',
+-        month: '2-digit',
+-        day: '2-digit',
+-        hour12: false
+-    });
++    const nowFormatter = getDateFormatter(timezone, 'date');
+     const nowParts = nowFormatter.formatToParts(now);
+     const np: any = {};
+     nowParts.forEach(({type, value}) => np[type] = value);
+@@ -169,14 +158,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
+ const getPeriodStartDate = (timestamp: number, interval: string, timezone: string): string => {
+     const date = new Date(timestamp * 1000);
+     
+-    const parts = new Intl.DateTimeFormat('en-US', {
+-        timeZone: timezone,
+-        year: 'numeric',
+-        month: 'numeric',
+-        day: 'numeric',
+-        weekday: 'short',
+-        hour12: false
+-    }).formatToParts(date);
++    const parts = getDateFormatter(timezone, 'period').formatToParts(date);
+     
+     const p: any = {};
+     parts.forEach(({type, value}) => p[type] = value);
+@@ -476,15 +458,7 @@ export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
+   return { ...cached, fetchedAt: entry.cachedAt };
+ };
+ 
+-export const getLatestPrice = async (
+-  symbol: string,
+-  opts?: GetLatestPriceOpts,
+-): Promise<LatestPriceResult> => {
+-  if (!opts?.force) {
+-    const cached = peekLatestPrice(symbol);
+-    if (cached) return cached;
+-  }
+-
++const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
+   const response = await fetchRawData(symbol, '1d', '5d');
+   const result = response.chart.result![0];
+   const meta = result.meta;
+@@ -513,17 +487,37 @@ export const getLatestPrice = async (
+     if (chineseName) name = chineseName;
+   }
+ 
+-  const latest: LatestPriceCacheResult = { price: latestPrice, name, date };
+-  const fetchedAt = Date.now();
+-  if (Number.isFinite(latestPrice) && latestPrice > 0) {
+-    writeQuoteCache(buildLatestPriceCacheKey(symbol), {
+-      cachedAt: fetchedAt,
+-      shortTtlOnly: false,
+-      result: latest,
+-    });
++  return { price: latestPrice, name, date, fetchedAt: Date.now() };
++};
++
++const inflightLatestPrices = new Map<string, Promise<LatestPriceResult>>();
++
++export const getLatestPrice = async (
++  symbol: string,
++  opts?: GetLatestPriceOpts,
++): Promise<LatestPriceResult> => {
++  const key = buildLatestPriceCacheKey(symbol);
++  if (!opts?.force) {
++    const cached = peekLatestPrice(symbol);
++    if (cached) return cached;
++    const pending = inflightLatestPrices.get(key);
++    if (pending) return { ...await pending };
+   }
+ 
+-  return { ...latest, fetchedAt };
++  // 強制更新仍發新請求；較早到達的舊請求不得覆寫較新一輪的快取。
++  const request = fetchLatestPrice(symbol)
++    .then(latest => {
++      if (inflightLatestPrices.get(key) === request && Number.isFinite(latest.price) && latest.price > 0) {
++        const { fetchedAt, ...result } = latest;
++        writeQuoteCache(key, { cachedAt: fetchedAt, shortTtlOnly: false, result });
++      }
++      return latest;
++    })
++    .finally(() => {
++      if (inflightLatestPrices.get(key) === request) inflightLatestPrices.delete(key);
++    });
++  inflightLatestPrices.set(key, request);
++  return { ...await request };
+ };
+ 
+ // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。
+diff --git a/utils/math.ts b/utils/math.ts
+index 68095d3..466c466 100644
+--- a/utils/math.ts
++++ b/utils/math.ts
+@@ -1,5 +1,3 @@
+-import { StockDataPoint } from '../types';
+-
+ export const calculateSMA = (data: number[], period: number): (number | null)[] => {
+   if (data.length < period) return new Array(data.length).fill(null);
+   const sma = new Array(data.length).fill(null);
+@@ -166,4 +164,4 @@ export const calculateKDJ = (highs: number[], lows: number[], closes: number[],
+   }
+   
+   return { K, D, J };
+-};
+\ No newline at end of file
++};
+diff --git a/utils/statementParsers/index.ts b/utils/statementParsers/index.ts
+index 2b30328..629a5b1 100644
+--- a/utils/statementParsers/index.ts
++++ b/utils/statementParsers/index.ts
+@@ -4,7 +4,7 @@
+ //   國泰台股 .csv（UTF-8 BOM，股名開頭）｜ 國泰複委託美股 .csv（Big5，交易日期開頭）
+ // xlsx 套件為動態 import（懶載，不進首屏 bundle，D-01）。
+ import { ParsedTxn, BrokerId } from '../../types';
+-import { parseSinopacRows, unwrapSheetRows, type ParseOutput } from './sinopac';
++import { parseSinopacRows, type ParseOutput } from './sinopac';
+ import { parseCathayCsv, decodeBig5 } from './cathay';
+ import {
+   parseCathayTwRows, parseCathayTwCsv, looksLikeCathayTwXlsx, looksLikeCathayTwCsv,
+diff --git a/vite.config.ts b/vite.config.ts
+index 511f64b..933b418 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -42,8 +42,6 @@ export default defineConfig({
+       output: {
+         manualChunks: {
+           vendor: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime'],
+-          recharts: ['recharts'],
+-          markdown: ['react-markdown', 'remark-gfm'],
+         },
+       },
+     },

@@ -1,0 +1,124 @@
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 gate
+> node scripts/run-gate.mjs
+
+
+=== [1/5] tsc --noEmit ===
+
+=== [2/5] vitest run ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ utils/shareUnits.test.ts (6 tests) 13ms
+npm.cmd : (node:9688) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+位於 線路:2 字元:108
++ ... tem.Text.UTF8Encoding($false); $lines=& npm.cmd run gate 2>&1; $code= ...
++                                           ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:9688) Exp...s not provided.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ api/_lib/config.test.ts (24 tests) 16ms
+ ✓ utils/geminiCache.test.ts (8 tests) 18ms
+ ✓ api/_lib/finmind.test.ts (36 tests) 21ms
+ ✓ utils/geminiRules.test.ts (12 tests) 17ms
+ ✓ services/stockDirectory.loading.test.ts (6 tests) 191ms
+(node:19920) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/geminiPrompts.test.ts (8 tests) 31ms
+(node:23596) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/portfolioHealthStreaming.test.ts (1 test) 21ms
+ ✓ utils/workerPool.test.ts (7 tests) 114ms
+ ✓ services/quoteCache.test.ts (9 tests) 22ms
+ ✓ utils/portfolioLedger.test.ts (38 tests) 34ms
+ ✓ services/yahoo.maWarmup.test.ts (7 tests) 25ms
+stderr | utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ utils/portfolioBackup.test.ts (42 tests) 17ms
+ ✓ utils/persistentStore.test.ts (26 tests) 13ms
+ ✓ api/_lib/ratelimit.test.ts (16 tests) 88ms
+ ✓ services/yahoo.loading.test.ts (8 tests) 615ms
+ ✓ utils/math.test.ts (23 tests) 8ms
+ ✓ utils/backfillPipeline.test.ts (20 tests) 483ms
+ ✓ utils/importReplay.test.ts (29 tests) 11ms
+ ✓ api/_lib/guard.test.ts (27 tests) 9ms
+ ✓ utils/portfolioHistory.test.ts (30 tests) 10ms
+ ✓ api/_lib/yahoo.test.ts (40 tests) 10ms
+ ✓ utils/backfillFromTxns.test.ts (20 tests) 6ms
+ ✓ utils/portfolioFees.test.ts (27 tests) 5ms
+ ✓ utils/statementParsers/cathayTw.test.ts (30 tests) 7ms
+ ✓ utils/dividendEstimator.test.ts (20 tests) 6ms
+ ✓ utils/entryFilter.test.ts (9 tests) 5ms
+ ✓ utils/statementParsers/parsers.test.ts (24 tests) 11ms
+ ✓ utils/market.test.ts (17 tests) 5ms
+ ✓ utils/importPlan.test.ts (8 tests) 7ms
+ ✓ utils/fetchError.test.ts (8 tests) 5ms
+ ✓ utils/quoteTime.test.ts (4 tests) 3ms
+ ✓ utils/portfolioGrouping.test.ts (5 tests) 3ms
+ ✓ utils/appLazyBoundaries.test.ts (2 tests) 2ms
+ ✓ utils/viteConfigGuard.test.ts (5 tests) 1552ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（serve）後仍是 VITE_ 且無 define——plugin 沒有偷改  1354ms
+ ✓ api/_lib/http.test.ts (47 tests) 5ms
+ ✓ api/_lib/llm.test.ts (14 tests) 5ms
+ ✓ api/gemini-stream.test.ts (4 tests) 6ms
+ ✓ api/_lib/llm.claude-cli.test.ts (53 tests) 2644ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > spawn 完整執行檔路徑，argv 逐項為現行順序，且 prompt 不進 argv  2311ms
+ ✓ components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 5ms
+
+ Test Files  40 passed (40)
+      Tests  727 passed (727)
+   Start at  17:29:57
+   Duration  17.44s (transform 5.08s, setup 0ms, collect 23.09s, tests 6.07s, environment 8ms, prepare 26.10s)
+
+
+=== [3/5] vite build ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 build
+> vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 2678 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.64 kB │ gzip:   0.41 kB
+dist/assets/index-YaWf-Iy0.css              28.03 kB │ gzip:   5.78 kB
+dist/assets/StatCard-BGyPvfqc.js             0.47 kB │ gzip:   0.30 kB
+dist/assets/AnalysisResult-DT_7KZbk.js       0.79 kB │ gzip:   0.47 kB
+dist/assets/xlsxReader-Bboq1lzx.js           2.67 kB │ gzip:   1.43 kB
+dist/assets/ReferenceLine-CXfBJIMy.js        4.40 kB │ gzip:   1.82 kB
+dist/assets/FundamentalsPanel-D-LrYSsZ.js   13.80 kB │ gzip:   4.03 kB
+dist/assets/ComposedChart-CmttWN3E.js       17.67 kB │ gzip:   6.11 kB
+dist/assets/StockChart-CRsBO-W-.js          34.17 kB │ gzip:  10.78 kB
+dist/assets/gemini-ROsN-TuM.js              52.66 kB │ gzip:  22.03 kB
+dist/assets/index-CXpBV1v0.js               96.19 kB │ gzip:  34.55 kB
+dist/assets/Portfolio-6T9QV7Xw.js          131.62 kB │ gzip:  40.76 kB
+dist/assets/Skeleton-DEUFukPD.js           159.72 kB │ gzip:  48.54 kB
+dist/assets/vendor-CmCSiRIh.js             193.77 kB │ gzip:  60.50 kB
+dist/assets/CartesianChart-BHDF7qMu.js     357.16 kB │ gzip: 106.97 kB
+✓ built in 15.26s
+
+=== [4/5] 金鑰掃描 ===
+  · .env 來源：本目錄（6 筆）
+  ✓ 乾淨（掃 dist/ 15 檔、追蹤原始碼 175 檔、.env 值 6 筆）
+
+=== [5/5] package.json / package-lock.json diff ===
+  ✓ 與 HEAD 完全一致
+
+✓ GATE 全綠（機械部分）。
+  runtime 類驗證腳本管不到，仍須人工：console 零紅字、UI 數字要量、快取換乾淨代號。
+(node:19048) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security 
+vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

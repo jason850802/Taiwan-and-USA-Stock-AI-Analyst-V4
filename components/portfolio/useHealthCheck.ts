@@ -8,7 +8,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { PortfolioItem, StockDataPoint } from '../../types';
 import { getStockData } from '../../services/yahoo';
 import { classifyCaught, type FetchErrorKind } from '../../services/fetchError';
-import { analyzePortfolioHealth, PortfolioHealthItem } from '../../services/gemini';
+import type { PortfolioHealthItem } from '../../services/gemini';
 import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../../utils/volume';
 import { isTwStock } from '../../utils/portfolioFees';
@@ -119,6 +119,7 @@ export const useHealthCheck = (
         return;
       }
 
+      const { analyzePortfolioHealth } = await import('../../services/gemini');
       const result = await analyzePortfolioHealth([healthItem], (partial) => {
         if (healthSeqRef.current[symbol] !== gen) return;
         setHealthResults(prev => {
@@ -201,6 +202,7 @@ export const useHealthCheck = (
       if (healthItems.length === 0) return; // 全部失敗：已逐檔標記，本輪不打 LLM
 
       // 批次仍只打一筆串流請求；部分文本尚不能安全切成 per-symbol 段落，故不寫回。
+      const { analyzePortfolioHealth } = await import('../../services/gemini');
       const result = await analyzePortfolioHealth(healthItems, () => {});
 
       // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底

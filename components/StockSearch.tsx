@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useId, useRef, useState, useCallback } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { ensureTaiwanDirectory, searchStocks, StockDirEntry, Market } from '../services/stockDirectory';
 import Button from './ui/Button';
@@ -38,6 +38,32 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
   const boxRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<number | undefined>(undefined);
   const reqIdRef = useRef(0);
+  const searchAbortRef = useRef<AbortController | null>(null);
+  const searchValueRef = useRef(value);
+  const listId = useId();
+
+  const cancelSearch = useCallback(() => {
+    window.clearTimeout(debounceRef.current);
+    searchAbortRef.current?.abort();
+    reqIdRef.current += 1;
+    setSearching(false);
+  }, []);
+
+  useEffect(() => () => {
+    window.clearTimeout(debounceRef.current);
+    searchAbortRef.current?.abort();
+    reqIdRef.current += 1;
+  }, []);
+
+  // 父層的快捷選取也會改 value，必須使舊查詢失效；輸入中的值由 runSearch 同步登記。
+  useEffect(() => {
+    if (searchValueRef.current === value) return;
+    searchValueRef.current = value;
+    cancelSearch();
+    setResults([]);
+    setActive(-1);
+    setOpen(false);
+  }, [value, cancelSearch]);
 
   // 預熱台股名錄（prefetch：多數搜尋到達時 memCache 已就緒；searchStocks 內部自行 await）
   useEffect(() => { ensureTaiwanDirectory().then(() => setDirReady(true)).catch(() => {}); }, []);
@@ -52,8 +78,13 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
   }, []);
 
   const runSearch = useCallback((q: string) => {
-    window.clearTimeout(debounceRef.current);
-    if (!q.trim()) { setResults([]); setOpen(false); setSearching(false); return; }
+    searchValueRef.current = q;
+    cancelSearch();
+    setResults([]);
+    setActive(-1);
+    if (!q.trim()) { setOpen(false); return; }
+    const controller = new AbortController();
+    searchAbortRef.current = controller;
     setSearching(true);
     setOpen(true); // 查詢開始即開面板——名錄載入等中間態面板需要掛載點
     const myId = ++reqIdRef.current;
@@ -63,13 +94,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
         setResults(r);
         setActive(-1);
         if (phase === 'final') setSearching(false); // local 上屏後 spinner 續轉，final 收斂
-      });
+      }, controller.signal);
     }, 180);
-  }, []);
+  }, [cancelSearch]);
 
   const handleChange = (v: string) => { onValueChange(v); runSearch(v); };
 
   const pick = (e: StockDirEntry) => {
+    cancelSearch();
     const sym = e.id;
     onValueChange(sym);
     setOpen(false);
@@ -78,11 +110,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
   };
 
   const submitCurrent = () => {
+    cancelSearch();
     setOpen(false);
+    setResults([]);
     if (value.trim()) onSelect(value.trim());
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') { cancelSearch(); setOpen(false); return; }
     if (!open || results.length === 0) {
       if (e.key === 'Enter') { e.preventDefault(); submitCurrent(); }
       return;
@@ -93,7 +128,7 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
       e.preventDefault();
       if (active >= 0 && active < results.length) pick(results[active]);
       else submitCurrent();
-    } else if (e.key === 'Escape') setOpen(false);
+    }
   };
 
   return (
@@ -105,6 +140,12 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors z-10" size={18} />
         <input
           type="text"
+          role="combobox"
+          aria-label="股票代碼或公司名稱"
+          aria-autocomplete="list"
+          aria-expanded={open && results.length > 0}
+          aria-controls={open && results.length > 0 ? listId : undefined}
+          aria-activedescendant={open && active >= 0 && active < results.length ? `${listId}-${active}` : undefined}
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           onFocus={() => { if (results.length) setOpen(true); }}
@@ -117,12 +158,15 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
 
         {/* 懸浮結果清單 */}
         {open && results.length > 0 && (
-          <ul className="absolute z-30 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-800 border border-slate-600 rounded-xl shadow-2xl shadow-black/50 py-1">
+          <ul id={listId} role="listbox" aria-label="股票搜尋結果" className="absolute z-30 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-800 border border-slate-600 rounded-xl shadow-2xl shadow-black/50 py-1">
             {results.map((e, i) => {
               const b = marketBadge[e.market];
               return (
                 <li
                   key={`${e.id}-${i}`}
+                  id={`${listId}-${i}`}
+                  role="option"
+                  aria-selected={i === active}
                   onMouseDown={(ev) => { ev.preventDefault(); pick(e); }}
                   onMouseEnter={() => setActive(i)}
                   className={`px-4 py-2.5 cursor-pointer flex items-center gap-3 ${i === active ? 'bg-blue-600/20' : 'hover:bg-slate-700/50'}`}
@@ -136,14 +180,14 @@ const StockSearch: React.FC<StockSearchProps> = ({ value, onValueChange, onSelec
             })}
           </ul>
         )}
-        {/* 空結果三態決策鏈：名錄未就緒（!dirReady）／查詢中不渲染（searching）／終態才見「找不到」 */}
+        {/* 查詢尚未完成時顯示進度，只有終態才顯示「找不到」。 */}
         {open && value.trim() && results.length === 0 && (
-          !dirReady ? (
-            <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
+          !dirReady || searching ? (
+            <div role="status" className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
               <Loader2 className="animate-spin shrink-0" size={14} />
-              載入名錄中…
+              {!dirReady ? '載入名錄中…' : '搜尋中…'}
             </div>
-          ) : searching ? null : (
+          ) : (
             <div className="absolute z-30 left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl px-4 py-3 text-sm text-slate-400">
               找不到符合「{value}」的股票
             </div>

@@ -1,0 +1,9 @@
+假資料驗收站：http://127.0.0.1:4175
+GET /api/finmind ?dataset=TaiwanStockInfo&data_id=2330
+GET /api/finmind ?dataset=TaiwanStockInstitutionalInvestorsBuySell&data_id=2330&start_date=2021-09-20
+GET /api/finmind ?dataset=TaiwanStockPrice&data_id=2330&start_date=2021-09-20
+GET /api/yahoo/chart ?symbol=2330.TW&interval=1d&range=2y
+GET /api/yahoo/chart ?symbol=2330.TW&interval=1d&range=10y
+GET /api/yahoo/chart ?symbol=FAIL&interval=1d&range=2y
+GET /api/yahoo/chart ?symbol=FAIL&interval=1d&range=10y
+GET /api/yahoo/search ?q=SLOW&limit=8

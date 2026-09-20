@@ -15,7 +15,10 @@ const variantClasses: Record<BannerProps['variant'], string> = {
 };
 
 const Banner: React.FC<BannerProps> = ({ variant, onDismiss, onRetry, children }) => (
-  <div className={`rounded-ctl px-4 py-3 flex items-center gap-3 ${variantClasses[variant]}`}>
+  <div
+    role={variant === 'error' ? 'alert' : 'status'}
+    className={`rounded-ctl px-4 py-3 flex items-center gap-3 ${variantClasses[variant]}`}
+  >
     <div className="flex-1 text-sm">{children}</div>
     {onRetry && (
       <Button variant="ghost" size="sm" onClick={onRetry}>

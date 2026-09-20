@@ -557,7 +557,6 @@ export const analyzeTradeDecision = async (
   let latestIndicators = '';
   if (recentData && recentData.length > 0) {
     const last15 = recentData.slice(-15);
-    const latest = recentData[recentData.length - 1];
 
     recentDataStr = '\n\n【近期走勢（最近15筆日K，含指標）】\n' + last15.map(d => {
       const volUnit = isTaiwanStock

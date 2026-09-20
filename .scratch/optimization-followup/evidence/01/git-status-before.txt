@@ -1,0 +1,26 @@
+## main...origin/main [ahead 29]
+ M App.tsx
+ M components/FundamentalsPanel.tsx
+ M components/Portfolio.tsx
+ M components/StockChart.tsx
+ M components/StockSearch.tsx
+ M components/portfolio/HoldingsTable.tsx
+ M components/portfolio/ImportStatementModal.tsx
+ M components/portfolio/useHealthCheck.ts
+ M components/ui/Banner.tsx
+ M services/gemini.ts
+ M services/stockDirectory.ts
+ M services/yahoo.ts
+ M utils/math.ts
+ M utils/statementParsers/index.ts
+ M vite.config.ts
+?? .scratch/optimization-2026-09-18/
+?? .scratch/optimization-followup/
+?? PLAN.md
+?? docs/optimization-2026-09-20.md
+?? scripts/audit-source-usage.mjs
+?? scripts/benchmark-market-data.mjs
+?? scripts/measure-initial-bundle.mjs
+?? services/stockDirectory.loading.test.ts
+?? services/yahoo.loading.test.ts
+?? utils/appLazyBoundaries.test.ts

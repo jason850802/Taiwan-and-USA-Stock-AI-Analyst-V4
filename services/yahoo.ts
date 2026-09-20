@@ -49,21 +49,32 @@ interface YahooChartResponse {
 
 // --- Helper Functions ---
 
+const dateFormats = {
+  date: { year: 'numeric', month: '2-digit', day: '2-digit' },
+  intraday: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' },
+  clock: { year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric' },
+  period: { year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short' },
+} satisfies Record<string, Intl.DateTimeFormatOptions>;
+const dateFormatters = new Map<string, Intl.DateTimeFormat>();
+
+// 同一行情會轉換數千根 K 棒；僅重用格式器，日期與時區轉換規則維持原樣。
+const getDateFormatter = (timeZone: string, format: keyof typeof dateFormats) => {
+  const key = `${timeZone}|${format}`;
+  let formatter = dateFormatters.get(key);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-US', { ...dateFormats[format], timeZone, hour12: false });
+    if (dateFormatters.size >= 32) dateFormatters.delete(dateFormatters.keys().next().value!);
+    dateFormatters.set(key, formatter);
+  }
+  return formatter;
+};
+
 const formatExchangeDate = (timestamp: number, timezone: string, interval: string) => {
     const date = new Date(timestamp * 1000);
     const isIntraday = interval === '15m' || interval === '60m';
     
     try {
-        const options: Intl.DateTimeFormatOptions = {
-            timeZone: timezone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: isIntraday ? '2-digit' : undefined,
-            minute: isIntraday ? '2-digit' : undefined,
-            hour12: false
-        };
-        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const formatter = getDateFormatter(timezone, isIntraday ? 'intraday' : 'date');
         const parts = formatter.formatToParts(date);
         
         const p: any = {};
@@ -88,16 +99,7 @@ const getExchangeTime = (timestamp: number, timezone: string, isTaiwan: boolean)
         const effectiveTimezone = isTaiwan ? 'Asia/Taipei' : timezone;
         
         const date = new Date(timestamp * 1000);
-        const options: Intl.DateTimeFormatOptions = {
-            timeZone: effectiveTimezone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: false
-        };
-        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const formatter = getDateFormatter(effectiveTimezone, 'clock');
         const parts = formatter.formatToParts(date);
         
         let h = 0, m = 0;
@@ -123,14 +125,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
     const date = new Date(timestamp * 1000);
     const now = new Date();
     
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        weekday: 'short',
-        hour12: false
-    });
+    const formatter = getDateFormatter(timezone, 'period');
     
     const parts = formatter.formatToParts(date);
     const p: any = {};
@@ -151,13 +146,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
     const targetD = String(d.getDate()).padStart(2, '0');
     const targetDateStr = `${targetY}-${targetM}-${targetD}`;
     
-    const nowFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour12: false
-    });
+    const nowFormatter = getDateFormatter(timezone, 'date');
     const nowParts = nowFormatter.formatToParts(now);
     const np: any = {};
     nowParts.forEach(({type, value}) => np[type] = value);
@@ -169,14 +158,7 @@ const getPeriodEndDate = (timestamp: number, interval: string, timezone: string)
 const getPeriodStartDate = (timestamp: number, interval: string, timezone: string): string => {
     const date = new Date(timestamp * 1000);
     
-    const parts = new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        weekday: 'short',
-        hour12: false
-    }).formatToParts(date);
+    const parts = getDateFormatter(timezone, 'period').formatToParts(date);
     
     const p: any = {};
     parts.forEach(({type, value}) => p[type] = value);
@@ -476,15 +458,7 @@ export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
   return { ...cached, fetchedAt: entry.cachedAt };
 };
 
-export const getLatestPrice = async (
-  symbol: string,
-  opts?: GetLatestPriceOpts,
-): Promise<LatestPriceResult> => {
-  if (!opts?.force) {
-    const cached = peekLatestPrice(symbol);
-    if (cached) return cached;
-  }
-
+const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
   const response = await fetchRawData(symbol, '1d', '5d');
   const result = response.chart.result![0];
   const meta = result.meta;
@@ -513,17 +487,37 @@ export const getLatestPrice = async (
     if (chineseName) name = chineseName;
   }
 
-  const latest: LatestPriceCacheResult = { price: latestPrice, name, date };
-  const fetchedAt = Date.now();
-  if (Number.isFinite(latestPrice) && latestPrice > 0) {
-    writeQuoteCache(buildLatestPriceCacheKey(symbol), {
-      cachedAt: fetchedAt,
-      shortTtlOnly: false,
-      result: latest,
-    });
+  return { price: latestPrice, name, date, fetchedAt: Date.now() };
+};
+
+const inflightLatestPrices = new Map<string, Promise<LatestPriceResult>>();
+
+export const getLatestPrice = async (
+  symbol: string,
+  opts?: GetLatestPriceOpts,
+): Promise<LatestPriceResult> => {
+  const key = buildLatestPriceCacheKey(symbol);
+  if (!opts?.force) {
+    const cached = peekLatestPrice(symbol);
+    if (cached) return cached;
+    const pending = inflightLatestPrices.get(key);
+    if (pending) return { ...await pending };
   }
 
-  return { ...latest, fetchedAt };
+  // 強制更新仍發新請求；較早到達的舊請求不得覆寫較新一輪的快取。
+  const request = fetchLatestPrice(symbol)
+    .then(latest => {
+      if (inflightLatestPrices.get(key) === request && Number.isFinite(latest.price) && latest.price > 0) {
+        const { fetchedAt, ...result } = latest;
+        writeQuoteCache(key, { cachedAt: fetchedAt, shortTtlOnly: false, result });
+      }
+      return latest;
+    })
+    .finally(() => {
+      if (inflightLatestPrices.get(key) === request) inflightLatestPrices.delete(key);
+    });
+  inflightLatestPrices.set(key, request);
+  return { ...await request };
 };
 
 // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。

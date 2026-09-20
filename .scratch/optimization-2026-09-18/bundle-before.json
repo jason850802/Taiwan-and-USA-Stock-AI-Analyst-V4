@@ -1,0 +1,18 @@
+{
+  "initialJsAssets": [
+    {
+      "file": "assets/index-BuEEq5hf.js",
+      "rawBytes": 147341,
+      "gzipBytes": 55027
+    },
+    {
+      "file": "assets/vendor-CmCSiRIh.js",
+      "rawBytes": 193774,
+      "gzipBytes": 60504
+    }
+  ],
+  "totalRawKb": 333.12,
+  "totalGzipKb": 112.82,
+  "budgetKb": null,
+  "withinBudget": null
+}

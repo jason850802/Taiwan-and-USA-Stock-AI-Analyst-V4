@@ -42,8 +42,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime'],
-          recharts: ['recharts'],
-          markdown: ['react-markdown', 'remark-gfm'],
         },
       },
     },

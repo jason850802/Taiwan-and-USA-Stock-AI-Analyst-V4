@@ -12,7 +12,7 @@
 //   - TW 批次列的成本均價可編輯；US 為換算顯示值、不可編輯（固定成本欄才可編輯）。
 import React, { useState } from 'react';
 import { PortfolioItem } from '../../types';
-import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
+import { calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
 import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
 import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
 import { fmtShares } from '../../utils/shareUnits';

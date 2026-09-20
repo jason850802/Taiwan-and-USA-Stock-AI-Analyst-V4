@@ -1,5 +1,5 @@
 // stockDirectory.ts — 股票名錄與搜尋（支援中文公司名子字串搜尋）
-// 台股：FinMind TaiwanStockInfo 全清單（瀏覽器直連，快取於 localStorage）
+// 台股：FinMind TaiwanStockInfo 全清單（同源後端，快取於 localStorage）
 // 美股/海外：Yahoo Finance search 端點（透過同源後端即時查詢）
 
 import { proxyHeaders } from './_shared/apiClient';
@@ -163,13 +163,14 @@ export function mapYahooQuote(x: any): StockDirEntry | null {
 }
 
 // ── Yahoo 搜尋（美股/台股，英文名或代碼）──
-export async function searchYahoo(query: string, limit = 8): Promise<StockDirEntry[]> {
+export async function searchYahoo(query: string, limit = 8, signal?: AbortSignal): Promise<StockDirEntry[]> {
   const q = query.trim();
-  if (!q) return [];
+  if (!q || signal?.aborted) return [];
   const qs = new URLSearchParams({ q, limit: String(limit) }).toString();
   try {
     const res = await fetch(`/api/yahoo/search?${qs}`, {
       headers: { ...proxyHeaders },
+      signal,
     });
     if (!res.ok) return [];
     const json = await res.json();
@@ -189,10 +190,14 @@ export async function searchYahoo(query: string, limit = 8): Promise<StockDirEnt
 export async function searchStocks(
   query: string,
   onResults: (results: StockDirEntry[], phase: 'local' | 'final') => void,
+  signal?: AbortSignal,
 ): Promise<void> {
   const q = query.trim();
-  if (!q) return;
+  if (!q || signal?.aborted) return;
+  // 海外搜尋與名錄載入互不相依；先並行發出，保留本地先上屏的順序。
+  const yahooPromise = hasCJK(q) ? null : searchYahoo(q, 8, signal);
   const dir = await ensureTaiwanDirectory();
+  if (signal?.aborted) return;
   // 含中文 → 只用台股本地（最快、最準；保證 0 網路請求）
   if (hasCJK(q)) {
     onResults(searchTaiwan(dir, q, 15), 'final');
@@ -201,7 +206,8 @@ export async function searchStocks(
   // 純英文/代碼 → 本地先上屏，再併入 Yahoo 海外結果（去重）
   const tw = searchTaiwan(dir, q, 15);
   if (tw.length > 0) onResults(tw, 'local');
-  const yahoo = await searchYahoo(q, 8); // 內部 try/catch，永不 throw
+  const yahoo = await yahooPromise!; // 內部 try/catch，永不 throw
+  if (signal?.aborted) return;
   const seen = new Set(tw.map(e => e.id));
   const merged = [...tw];
   for (const y of yahoo) {

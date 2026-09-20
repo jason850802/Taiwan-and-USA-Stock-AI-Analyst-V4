@@ -1,5 +1,3 @@
-import { StockDataPoint } from '../types';
-
 export const calculateSMA = (data: number[], period: number): (number | null)[] => {
   if (data.length < period) return new Array(data.length).fill(null);
   const sma = new Array(data.length).fill(null);

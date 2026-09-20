@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Bot } from 'lucide-react';
 import { TwFundamentals } from '../types';
 import { getTwFundamentals } from '../services/finmind';
-import { analyzeFundamentals } from '../services/gemini';
 import AnalysisResult from './AnalysisResult';
 import Banner from './ui/Banner';
 import Button from './ui/Button';
@@ -65,6 +64,7 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
     setAiLoading(true);
     setAiError(null);
     try {
+      const { analyzeFundamentals } = await import('../services/gemini');
       const report = await analyzeFundamentals(fundamentals);
       setAiResults(prev => new Map(prev).set(fundamentals.stockId, report));
     } catch (err: any) {

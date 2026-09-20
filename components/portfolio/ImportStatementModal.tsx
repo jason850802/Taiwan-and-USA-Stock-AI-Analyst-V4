@@ -30,8 +30,6 @@ interface ImportStatementModalProps {
 const inputCls = `bg-surface-inset border border-surface-line rounded-ctl px-2 py-1 text-sm text-white
   placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-accent transition-colors`;
 
-const fmt = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
-
 const ImportStatementModal: React.FC<ImportStatementModalProps> = ({ open, onClose, existingLots, onApply }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

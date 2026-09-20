@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../types';
 import { getStockData } from '../services/yahoo';
-import { analyzeTradeDecision } from '../services/gemini';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
@@ -102,6 +101,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         recentData = data;
       } catch { /* continue without recent data */ }
 
+      const { analyzeTradeDecision } = await import('../services/gemini');
       const result = await analyzeTradeDecision(
         sym, buyDate, buyPrice, buyReason,
         currentPriceData?.price,

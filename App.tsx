@@ -8,8 +8,6 @@ import type { ImportApplyPayload } from './components/portfolio/ImportStatementM
 import Sidebar from './components/Sidebar';
 import ChartToolbar from './components/ChartToolbar';
 import QuoteHeader from './components/QuoteHeader';
-import StockChart from './components/StockChart';
-import AnalysisResult from './components/AnalysisResult';
 import Banner from './components/ui/Banner';
 import Button from './components/ui/Button';
 import Card from './components/ui/Card';
@@ -17,23 +15,38 @@ import Modal from './components/ui/Modal';
 import EntryChecklist from './components/EntryChecklist';
 import StockSearch from './components/StockSearch';
 import { getStockData } from './services/yahoo';
-import { analyzeEntryWithGemini } from './services/gemini';
 import { runEntryFilter, EntryFilterResult } from './utils/entryFilter';
 import { isTwStock } from './utils/market';
 import { loadPortfolioItems, savePortfolioItems } from './utils/portfolioItemsStore';
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
-import { estimateVolumeTrend, VolumeProjection } from './utils/volume';
+import { estimateVolumeTrend } from './utils/volume';
 
 // 非首屏分頁懶載（D-1d）：切頁時才下載對應 chunk，首屏不 modulepreload
 const Portfolio = lazy(() => import('./components/Portfolio'));
 const FundamentalsPanel = lazy(() => import('./components/FundamentalsPanel'));
+const StockChart = lazy(() => import('./components/StockChart'));
+const AnalysisResult = lazy(() => import('./components/AnalysisResult'));
 
 // 懶載分頁切換時的 Suspense fallback（沿用專案 Loader2 載入覆蓋層 pattern，禁止空白）
 const tabFallback = (
   <div className="flex flex-col items-center justify-center gap-2 py-24">
     <Loader2 className="animate-spin text-blue-400" size={32} />
     <span className="text-slate-300 text-sm">載入中…</span>
+  </div>
+);
+
+const chartFallback = (
+  <div className="min-h-[420px] flex flex-col items-center justify-center gap-2">
+    <Loader2 className="animate-spin text-blue-400" size={32} />
+    <span className="text-slate-300 text-sm">載入圖表中…</span>
+  </div>
+);
+
+const reportFallback = (
+  <div className="min-h-[300px] flex flex-col items-center justify-center gap-2 bg-surface-card border border-surface-line rounded-card">
+    <Loader2 className="animate-spin text-ai" size={28} />
+    <span className="text-slate-300 text-sm">載入分析報告中…</span>
   </div>
 );
 
@@ -268,6 +281,7 @@ const App: React.FC = () => {
       }, 100);
 
       // ── AI 解讀層（依濾網客觀結論寫報告，單次呼叫）──
+      const { analyzeEntryWithGemini } = await import('./services/gemini');
       const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode, (partial) => setAnalysis(partial));
       setAnalysis(report);
     } catch (err: any) {
@@ -520,10 +534,9 @@ const App: React.FC = () => {
                         setSettings={setIndicatorSettings}
                       />
                       <div className="relative min-h-[420px]">
-                        <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} onToggleSetting={(key: keyof IndicatorSettings) => {
-                          if (key === 'maLines') return;
-                          setIndicatorSettings(prev => ({ ...prev, [key]: !prev[key] }));
-                        }} />
+                        <Suspense fallback={chartFallback}>
+                          <StockChart data={data} settings={indicatorSettings} isTaiwanStock={isTaiwanStock} chipDataUnavailable={info?.chipDataUnavailable} seriesKey={`${info?.symbol ?? symbol}|${interval}`} />
+                        </Suspense>
                         {/* 切週期／換標的載入覆蓋層：不透明底遮住舊週期的圖（不再 blur 透出誤導），
                             蓋住 K 線與其下所有副圖，不覆蓋 ChartToolbar（z-20 > StockChart 內縮放鈕 z-10）；
                             快取命中切回 loading 不觸發 → 骨架屏自然不出現。資料就緒 loading 轉 false 即移除 */}
@@ -553,7 +566,9 @@ const App: React.FC = () => {
                         )}
                         <div className="xl:col-span-7">
                           {analysis || analyzing ? (
-                               <AnalysisResult content={analysis} loading={analyzing} />
+                               <Suspense fallback={reportFallback}>
+                                 <AnalysisResult content={analysis} loading={analyzing} />
+                               </Suspense>
                           ) : !entryResult ? (
                                <div className="bg-surface-card border border-surface-line border-dashed rounded-card p-5 flex items-center justify-center gap-3 text-center">
                                   <Bot className="text-slate-500 w-5 h-5 shrink-0" />

@@ -4,7 +4,7 @@
 //   國泰台股 .csv（UTF-8 BOM，股名開頭）｜ 國泰複委託美股 .csv（Big5，交易日期開頭）
 // xlsx 套件為動態 import（懶載，不進首屏 bundle，D-01）。
 import { ParsedTxn, BrokerId } from '../../types';
-import { parseSinopacRows, unwrapSheetRows, type ParseOutput } from './sinopac';
+import { parseSinopacRows, type ParseOutput } from './sinopac';
 import { parseCathayCsv, decodeBig5 } from './cathay';
 import {
   parseCathayTwRows, parseCathayTwCsv, looksLikeCathayTwXlsx, looksLikeCathayTwCsv,
