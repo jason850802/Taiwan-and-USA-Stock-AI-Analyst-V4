@@ -20,6 +20,7 @@ const intervals: { label: string; value: TimeInterval }[] = [
 const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, settings, setSettings }) => {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -28,7 +29,10 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
       if (!popoverRef.current?.contains(event.target as Node)) setOpen(false);
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     };
 
     document.addEventListener('mousedown', handleMouseDown);
@@ -54,9 +58,12 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
     setSettings({ ...settings, maLines: newLines });
   };
 
-  const ToggleItem = ({ label, sKey, color }: { label: string, sKey: keyof IndicatorSettings, color: string }) => (
+  // 普通 render 函式保持控制項的 DOM 身分，輸入更新不會卸載並失去鍵盤焦點。
+  const renderToggleItem = ({ label, sKey, color }: { label: string, sKey: keyof IndicatorSettings, color: string }) => (
       <button
+        key={sKey}
         onClick={() => toggleSetting(sKey)}
+        aria-pressed={Boolean(settings[sKey])}
         className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium border transition-all mb-1 ${
             settings[sKey]
             ? 'bg-slate-800 border-slate-700 text-slate-200'
@@ -71,8 +78,9 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
       </button>
   );
 
-  const MALineItem = ({ line, index }: { line: MALineConfig, index: number }) => (
+  const renderMALineItem = (line: MALineConfig, index: number) => (
     <div
+      key={index}
       className={`flex items-center gap-2 w-full px-3 py-1.5 rounded-lg text-xs font-medium border transition-all mb-1 ${
         line.enabled
           ? 'bg-slate-800 border-slate-700 text-slate-200'
@@ -81,6 +89,8 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
     >
       <button
         onClick={() => updateMALine(index, { enabled: !line.enabled })}
+        aria-label={`顯示第 ${index + 1} 條均線（MA${line.period}）`}
+        aria-pressed={line.enabled}
         className="shrink-0"
       >
         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: line.enabled ? line.color : '#334155' }}></div>
@@ -88,6 +98,7 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
       <span className="shrink-0">MA</span>
       <input
         type="number"
+        aria-label={`第 ${index + 1} 條均線天數`}
         min={1}
         max={999}
         value={line.period}
@@ -102,12 +113,14 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
       <div className="ml-auto flex items-center gap-1.5">
         <input
           type="color"
+          aria-label={`第 ${index + 1} 條均線顏色`}
           value={line.color}
           onChange={(e) => updateMALine(index, { color: e.target.value })}
           className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent p-0"
           title="選擇顏色"
         />
-        <button onClick={() => updateMALine(index, { enabled: !line.enabled })}>
+        <button onClick={() => updateMALine(index, { enabled: !line.enabled })}
+          aria-label={`顯示第 ${index + 1} 條均線（MA${line.period}）`} aria-pressed={line.enabled}>
           {line.enabled ? <Eye size={14} className="text-slate-400" /> : <EyeOff size={14} />}
         </button>
       </div>
@@ -122,6 +135,7 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
             key={item.value}
             type="button"
             onClick={() => setInterval(item.value)}
+            aria-pressed={interval === item.value}
             className={`px-3 py-1 text-xs transition-colors ${
               interval === item.value
                 ? 'bg-accent/15 text-accent font-medium'
@@ -136,6 +150,8 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
       <button
         type="button"
         onClick={() => toggleSetting('useAdjusted')}
+        aria-label="還原權值"
+        aria-pressed={settings.useAdjusted}
         title="若均線數值與券商/Yahoo 網頁不同，可切換此選項。日線/週線通常使用還原權值。"
         className="flex items-center gap-2 px-2 py-1 text-xs text-slate-300 rounded-ctl hover:bg-surface-inset transition-colors"
       >
@@ -148,6 +164,7 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
 
       <div ref={popoverRef} className="relative ml-auto">
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => setOpen(current => !current)}
           aria-expanded={open}
@@ -163,18 +180,16 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ interval, setInterval, sett
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">均線（可自訂天數）</p>
-                {settings.maLines.map((line, index) => (
-                  <MALineItem key={index} line={line} index={index} />
-                ))}
+                {settings.maLines.map(renderMALineItem)}
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 font-bold uppercase mb-2 ml-1">技術指標</p>
-                <ToggleItem label="MACD" sKey="showMACD" color="#fb923c" />
-                <ToggleItem label="RSI (14)" sKey="showRSI" color="#38bdf8" />
-                <ToggleItem label="KD - K" sKey="showK" color="#facc15" />
-                <ToggleItem label="KD - D" sKey="showD" color="#f472b6" />
-                <ToggleItem label="KD - J" sKey="showJ" color="#c084fc" />
-                <ToggleItem label="布林通道" sKey="showBB" color="#8b5cf6" />
+                {renderToggleItem({ label: 'MACD', sKey: 'showMACD', color: '#fb923c' })}
+                {renderToggleItem({ label: 'RSI (14)', sKey: 'showRSI', color: '#38bdf8' })}
+                {renderToggleItem({ label: 'KD - K', sKey: 'showK', color: '#facc15' })}
+                {renderToggleItem({ label: 'KD - D', sKey: 'showD', color: '#f472b6' })}
+                {renderToggleItem({ label: 'KD - J', sKey: 'showJ', color: '#c084fc' })}
+                {renderToggleItem({ label: '布林通道', sKey: 'showBB', color: '#8b5cf6' })}
               </div>
             </div>
           </div>

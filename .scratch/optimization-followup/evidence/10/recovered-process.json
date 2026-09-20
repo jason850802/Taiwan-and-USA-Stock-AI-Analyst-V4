@@ -1,0 +1,10 @@
+{
+    "pid":  17228,
+    "createdAt":  "2026-09-21T04:10:13.3498530+08:00",
+    "commandLine":  "\"C:\\Program Files\\nodejs\\node.exe\" .scratch/optimization-followup/evidence/10/fixture-server.mjs",
+    "observedAt":  "2026-09-21T04:35:29.2786797+08:00",
+    "baseline":  "04fa1b7e14a26da3464145293f25451faa6fe534",
+    "buildIndexSha256":  "46dadbe906fb0b922f76fb4cf230facdb9acc0ed3207f8eb79dbd45567ff13f1",
+    "harnessSha256":  "f4762dee3301e6f02777d86afeb5a946db6d98c68389f8ac50637f7c5ec742d3",
+    "listenerCount":  1
+}
