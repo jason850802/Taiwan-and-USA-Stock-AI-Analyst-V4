@@ -1,0 +1,18 @@
+{
+  "initialJsAssets": [
+    {
+      "file": "assets/index-lD-FpjCn.js",
+      "rawBytes": 102465,
+      "gzipBytes": 36740
+    },
+    {
+      "file": "assets/vendor-CmCSiRIh.js",
+      "rawBytes": 193774,
+      "gzipBytes": 60504
+    }
+  ],
+  "totalRawKb": 289.3,
+  "totalGzipKb": 94.96,
+  "budgetKb": null,
+  "withinBudget": null
+}

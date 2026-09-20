@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ utils/framePublisher.test.ts (6 tests) 4ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  03:11:43
+   Duration  750ms (transform 29ms, setup 0ms, collect 30ms, tests 4ms, environment 0ms, prepare 375ms)
+
+
+
+exit_code=0

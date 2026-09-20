@@ -4,7 +4,7 @@
 // healthSeqRef 世代守衛（改前先想）：單檔與批次對同一 symbol 重疊在飛行時，
 // 較早起跑者的落地結果不得覆蓋較晚起跑者——兩個 handler 必須共用同一個 ref，
 // 拆開這個 hook 前先確認守衛仍然橫跨兩者。
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { PortfolioItem, StockDataPoint } from '../../types';
 import { getStockData } from '../../services/yahoo';
 import { classifyCaught, type FetchErrorKind } from '../../services/fetchError';
@@ -14,6 +14,9 @@ import { estimateVolumeTrend } from '../../utils/volume';
 import { isTwStock } from '../../utils/portfolioFees';
 import { runWithConcurrency } from '../../utils/workerPool';
 import type { PriceData } from './useHoldingPrices';
+import { createFramePublisher } from '../../utils/framePublisher';
+
+interface HealthResult { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }
 
 /**
  * 行情抓取失敗的健檢文案（T3）：依錯誤 kind 分流，不再無條件寫「可能限流中」。
@@ -44,7 +47,7 @@ export const useHealthCheck = (
   usdTwdRate: number,
 ) => {
   // 庫存健檢 狀態（per-stock）
-  const [healthResults, setHealthResults] = useState<Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>>({});
+  const [healthResults, setHealthResults] = useState<Record<string, HealthResult>>({});
   const [healthModalSymbol, setHealthModalSymbol] = useState<string | null>(null);
   const [batchChecking, setBatchChecking] = useState(false);
   const [batchFailedCount, setBatchFailedCount] = useState(0);
@@ -56,6 +59,28 @@ export const useHealthCheck = (
   // 健檢寫回世代守衛（per-symbol 單調遞增，比照 App.tsx fetchSeqRef 模式）：
   // 單檔與批次對同一 symbol 重疊在飛行時，較早起跑者的落地結果不得覆蓋較晚起跑者
   const healthSeqRef = useRef<Record<string, number>>({});
+  const mountedRef = useRef(false);
+  const displaysRef = useRef(new Map<string, ReturnType<typeof createFramePublisher<HealthResult>>>());
+  useLayoutEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      displaysRef.current.forEach(display => display.cancel());
+      displaysRef.current.clear();
+      // StrictMode 重掛載也不可讓舊請求重新取得相同世代。
+      Object.keys(healthSeqRef.current).forEach(symbol => { healthSeqRef.current[symbol]++; });
+    };
+  }, []);
+  useLayoutEffect(() => {
+    const symbols = new Set(items.map(item => item.symbol));
+    for (const [symbol, display] of displaysRef.current) {
+      if (!symbols.has(symbol)) {
+        display.cancel();
+        displaysRef.current.delete(symbol);
+        healthSeqRef.current[symbol]++;
+      }
+    }
+  }, [items]);
   // 行情抓取失敗的種類（per-symbol，T3）：buildHealthItem 一律吞錯不 throw，
   // 但失敗文案要能說出「限流」還是「後端沒開」，所以把 kind 留在這裡給文案讀。
   const healthFetchKindRef = useRef<Record<string, FetchErrorKind | null>>({});
@@ -103,32 +128,31 @@ export const useHealthCheck = (
 
   // ── 單檔庫存健檢 ──────────────────────────────────────────────────────
   const handleSingleHealthCheck = useCallback(async (symbol: string) => {
-    if (!items.some(i => i.symbol === symbol)) return;
+    if (!mountedRef.current || !items.some(i => i.symbol === symbol)) return;
 
     const gen = healthSeqRef.current[symbol] = (healthSeqRef.current[symbol] ?? 0) + 1;
+    displaysRef.current.get(symbol)?.cancel();
+    const isCurrent = () => mountedRef.current && healthSeqRef.current[symbol] === gen;
+    const display = createFramePublisher<HealthResult>(value => {
+      if (isCurrent()) setHealthResults(prev => isCurrent() ? { ...prev, [symbol]: value } : prev);
+    });
+    displaysRef.current.set(symbol, display);
     setHealthModalSymbol(symbol);
     setHealthResults(prev => ({ ...prev, [symbol]: { status: 'loading', decision: '', fullResult: '' } }));
 
     try {
       const healthItem = await buildHealthItem(symbol);
-      if (!healthItem) return;
+      if (!healthItem || !isCurrent()) return;
       if (healthItem.recentData.length === 0) {
         // 行情抓取失敗：空資料送 LLM 只會在 formatHealthCheckData 拋錯，直接誠實標記可重試
-        if (healthSeqRef.current[symbol] !== gen) return;
-        setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '。') } }));
+        display.finish({ status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(healthFetchKindRef.current[symbol], '。') });
         return;
       }
 
       const { analyzePortfolioHealth } = await import('../../services/gemini');
+      if (!isCurrent()) return;
       const result = await analyzePortfolioHealth([healthItem], (partial) => {
-        if (healthSeqRef.current[symbol] !== gen) return;
-        setHealthResults(prev => {
-          if (healthSeqRef.current[symbol] !== gen) return prev;
-          return {
-            ...prev,
-            [symbol]: { status: 'loading', decision: '', fullResult: partial },
-          };
-        });
+        if (isCurrent()) display.push({ status: 'loading', decision: '', fullResult: partial });
       });
 
       // 決策：優先 json 機器區，失敗 fallback regex（舊行為是下限）
@@ -139,11 +163,12 @@ export const useHealthCheck = (
         : (extractDecisionByRegex(result) ?? '分析完成');
       const fullResult = parsed ? parsed.cleanedMarkdown : result;
 
-      if (healthSeqRef.current[symbol] !== gen) return;
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'done', decision, fullResult } }));
+      if (isCurrent()) display.finish({ status: 'done', decision, fullResult });
     } catch (e) {
-      if (healthSeqRef.current[symbol] !== gen) return;
-      setHealthResults(prev => ({ ...prev, [symbol]: { status: 'error', decision: '分析失敗', fullResult: analysisFailMarkdown(classifyCaught(e)) } }));
+      if (isCurrent()) display.finish({ status: 'error', decision: '分析失敗', fullResult: analysisFailMarkdown(classifyCaught(e)) });
+    } finally {
+      display.cancel();
+      if (displaysRef.current.get(symbol) === display) displaysRef.current.delete(symbol);
     }
   }, [items, buildHealthItem]);
 
@@ -154,12 +179,16 @@ export const useHealthCheck = (
     const symbols = targetSet === null
       ? allSymbols
       : allSymbols.filter(symbol => targetSet.has(symbol));
-    if (symbols.length === 0 || batchChecking) return;
+    if (!mountedRef.current || symbols.length === 0 || batchChecking) return;
 
     setBatchFailedCount(failedHealthSymbols.filter(symbol => symbols.includes(symbol)).length);
     setBatchChecking(true);
     const gens: Record<string, number> = {};
-    symbols.forEach(s => { gens[s] = healthSeqRef.current[s] = (healthSeqRef.current[s] ?? 0) + 1; });
+    symbols.forEach(s => {
+      displaysRef.current.get(s)?.cancel();
+      displaysRef.current.delete(s);
+      gens[s] = healthSeqRef.current[s] = (healthSeqRef.current[s] ?? 0) + 1;
+    });
     setHealthResults(prev => {
       const next = { ...prev };
       symbols.forEach(s => { next[s] = { status: 'loading', decision: '', fullResult: '' }; });
@@ -177,6 +206,7 @@ export const useHealthCheck = (
         const it = await buildHealthItem(symbols[idx]);
         if (it) results[idx] = it;
       });
+      if (!mountedRef.current) return;
 
       // 行情抓取失敗（recentData 空）的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——
       // 空資料會讓 formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮
@@ -203,6 +233,7 @@ export const useHealthCheck = (
 
       // 批次仍只打一筆串流請求；部分文本尚不能安全切成 per-symbol 段落，故不寫回。
       const { analyzePortfolioHealth } = await import('../../services/gemini');
+      if (!mountedRef.current) return;
       const result = await analyzePortfolioHealth(healthItems, () => {});
 
       // fallback 階梯：json 機器區 → 切段 → regex → 全文兜底
@@ -213,6 +244,7 @@ export const useHealthCheck = (
       const decisionMap = new Map((parsed?.decisions ?? []).map(d => [d.symbol, d.decision]));
 
       setHealthResults(prev => {
+        if (!mountedRef.current) return prev;
         const next = { ...prev };
         okSymbols.forEach(symbol => {
           if (healthSeqRef.current[symbol] !== gens[symbol]) return;
@@ -228,6 +260,7 @@ export const useHealthCheck = (
         return next;
       });
     } catch (e) {
+      if (!mountedRef.current) return;
       const kind = classifyCaught(e);
       setHealthResults(prev => {
         const next = { ...prev };
@@ -238,8 +271,10 @@ export const useHealthCheck = (
         return next;
       });
     } finally {
-      setBatchFailedCount(0);
-      setBatchChecking(false);
+      if (mountedRef.current) {
+        setBatchFailedCount(0);
+        setBatchChecking(false);
+      }
     }
   }, [items, batchChecking, buildHealthItem, failedHealthSymbols]);
 

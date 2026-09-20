@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback, Suspense, lazy } from 'react';
 import { RealizedTrade } from './types';
 import { buildSellResult, SellInput } from './utils/portfolioLedger';
 import { loadRealizedTrades, saveRealizedTrades, loadSnapshots, saveSnapshots } from './utils/portfolioHistoryStore';
@@ -21,6 +21,7 @@ import { loadPortfolioItems, savePortfolioItems } from './utils/portfolioItemsSt
 import { StockDataPoint, TimeInterval, StockInfo, IndicatorSettings, PortfolioItem } from './types';
 import { Search, Bot, Wallet, DollarSign, Zap, BrainCircuit, Loader2 } from 'lucide-react';
 import { estimateVolumeTrend } from './utils/volume';
+import { createFramePublisher } from './utils/framePublisher';
 
 // 非首屏分頁懶載（D-1d）：切頁時才下載對應 chunk，首屏不 modulepreload
 const Portfolio = lazy(() => import('./components/Portfolio'));
@@ -206,8 +207,31 @@ const App: React.FC = () => {
   // 防競態（B-1）：連點多檔股票時，reqId＋AbortController 保證畫面只反映最後一次請求。
   const fetchSeqRef = useRef(0);
   const fetchAbortRef = useRef<AbortController | null>(null);
+  const analysisSeqRef = useRef(0);
+  const analysisMountedRef = useRef(false);
+  const analysisFrameRef = useRef<ReturnType<typeof createFramePublisher<string>> | null>(null);
+  const analysisScrollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelAnalysis = useCallback(() => {
+    analysisSeqRef.current++;
+    analysisFrameRef.current?.cancel();
+    analysisFrameRef.current = null;
+    if (analysisScrollRef.current !== null) clearTimeout(analysisScrollRef.current);
+    analysisScrollRef.current = null;
+    if (analysisMountedRef.current) setAnalyzing(false);
+  }, []);
+
+  useEffect(() => {
+    analysisMountedRef.current = true;
+    return () => {
+      analysisMountedRef.current = false;
+      cancelAnalysis();
+    };
+  }, [cancelAnalysis]);
 
   const fetchData = async (sym: string, intvl: TimeInterval) => {
+    // 換股／換週期即使尚未到貨，也不能再接收舊報告的畫面更新。
+    cancelAnalysis();
     const reqId = ++fetchSeqRef.current;
     fetchAbortRef.current?.abort(); // 中止前一請求（主要成本在 Yahoo chart 握手）
     const controller = new AbortController();
@@ -259,8 +283,16 @@ const App: React.FC = () => {
   }
 
   const handleRunAnalysis = async () => {
+    cancelAnalysis();
+    const generation = analysisSeqRef.current;
+    const isCurrent = () => analysisMountedRef.current && analysisSeqRef.current === generation;
+    const display = createFramePublisher<string>(content => {
+      if (isCurrent()) setAnalysis(previous => isCurrent() ? content : previous);
+    });
+    analysisFrameRef.current = display;
     setShowAnalysisModal(false);
     setAnalyzing(true);
+    setAnalysis('');
     setEntryResult(null);
     const userPosition = {
         hasHolding: hasHolding === true,
@@ -274,20 +306,27 @@ const App: React.FC = () => {
       if (interval === '1d') {
         try { weeklyData = (await getStockData(sym, '1wk')).data; } catch { /* ignore */ }
       }
+      if (!isCurrent()) return;
       const filter = runEntryFilter(sym, data, weeklyData, volumeProj);
       setEntryResult(filter);
-      setTimeout(() => {
-          document.getElementById('ai-analysis-section')?.scrollIntoView({ behavior: 'smooth' });
+      analysisScrollRef.current = setTimeout(() => {
+          if (isCurrent()) document.getElementById('ai-analysis-section')?.scrollIntoView({ behavior: 'smooth' });
+          analysisScrollRef.current = null;
       }, 100);
 
       // ── AI 解讀層（依濾網客觀結論寫報告，單次呼叫）──
       const { analyzeEntryWithGemini } = await import('./services/gemini');
-      const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode, (partial) => setAnalysis(partial));
-      setAnalysis(report);
+      if (!isCurrent()) return;
+      const report = await analyzeEntryWithGemini(filter, userPosition, analysisMode, partial => {
+        if (isCurrent()) display.push(partial);
+      });
+      if (isCurrent()) display.finish(report);
     } catch (err: any) {
-      setAnalysis(err.message || '分析失敗，請稍後再試。');
+      if (isCurrent()) display.finish(err.message || '分析失敗，請稍後再試。');
     } finally {
-      setAnalyzing(false);
+      display.cancel();
+      if (analysisFrameRef.current === display) analysisFrameRef.current = null;
+      if (isCurrent()) setAnalyzing(false);
     }
   };
 
@@ -431,7 +470,10 @@ const App: React.FC = () => {
 
       <Sidebar
         currentView={currentView}
-        setView={setCurrentView}
+        setView={view => {
+          if (view !== 'dashboard') cancelAnalysis();
+          setCurrentView(view);
+        }}
       />
 
       <main className="flex-1 p-4 md:p-8 overflow-y-auto">
