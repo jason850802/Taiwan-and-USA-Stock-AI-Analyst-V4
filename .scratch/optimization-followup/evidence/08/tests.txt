@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ services/quoteCache.bounds.test.ts (15 tests | 13 skipped) 46ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 13 skipped (15)
+   Start at  02:17:42
+   Duration  794ms (transform 51ms, setup 0ms, collect 34ms, tests 46ms, environment 0ms, prepare 369ms)
+
+
+
+exit_code=0

@@ -8,6 +8,7 @@ import type {
   TwValuation,
 } from '../types';
 import { proxyHeaders } from './_shared/apiClient';
+import { createBoundedSessionStore } from './_shared/boundedSession';
 import { DataFetchError } from './fetchError';
 
 export type FinMindDataset =
@@ -288,26 +289,107 @@ function buildDividends(rows: any[], n = 5): TwDividendRecord[] {
 // ── 前端雙層快取：模組層 Map（切頁往返不重抓）＋ sessionStorage（F5 不重抓、跨日失效）──
 const memoryCache = new Map<string, TwFundamentals>();
 const latestRequests = new Map<string, symbol>();
+const FUND_PREFIX = 'tw_fund_';
+const MEMORY_MAX_BYTES = 2 * 1024 * 1024;
+const MEMORY_MAX_ENTRIES = 128;
+const MEMORY_MAX_ENTRY_BYTES = 256 * 1024;
+const SESSION_MAX_BYTES = 1024 * 1024;
+const SESSION_MAX_KEYS = 128;
+const SESSION_MAX_ENTRY_BYTES = 256 * 1024;
+const memoryLru = new Map<string, number>();
+let memoryBytes = 0;
+const fundSession = createBoundedSessionStore({
+  prefix: FUND_PREFIX,
+  maxBytes: SESSION_MAX_BYTES,
+  maxKeys: SESSION_MAX_KEYS,
+  maxEntryBytes: SESSION_MAX_ENTRY_BYTES,
+});
 
-function cacheKeyFor(stockId: string): string {
-  return `tw_fund_${stockId}_${taipeiTodayStr()}`;
+function cacheKeyFor(stockId: string, today = taipeiTodayStr()): string {
+  return `${FUND_PREFIX}${stockId}_${today}`;
 }
 
-function readSessionCache(key: string): TwFundamentals | null {
+function keyBytes(key: string): number {
+  return key.length * 2;
+}
+
+function removeMemoryKey(key: string): void {
+  memoryCache.delete(key);
+  const bytes = memoryLru.get(key);
+  if (bytes !== undefined) memoryBytes -= bytes;
+  memoryLru.delete(key);
+}
+
+function touchMemoryKey(key: string): void {
+  const bytes = memoryLru.get(key);
+  if (bytes === undefined) return;
+  memoryLru.delete(key);
+  memoryLru.set(key, bytes);
+}
+
+function enforceMemoryBounds(): void {
+  while (memoryLru.size > MEMORY_MAX_ENTRIES || memoryBytes > MEMORY_MAX_BYTES) {
+    const oldest = memoryLru.keys().next().value as string | undefined;
+    if (!oldest) break;
+    removeMemoryKey(oldest);
+  }
+}
+
+function writeMemoryCache(key: string, data: TwFundamentals, payloadBytes: number): boolean {
+  const totalBytes = payloadBytes + keyBytes(key);
+  if (payloadBytes > MEMORY_MAX_ENTRY_BYTES || totalBytes > MEMORY_MAX_BYTES) {
+    removeMemoryKey(key);
+    return false;
+  }
+  removeMemoryKey(key);
+  memoryCache.set(key, data);
+  memoryLru.set(key, totalBytes);
+  memoryBytes += totalBytes;
+  enforceMemoryBounds();
+  return memoryCache.get(key) === data;
+}
+
+function cleanupOldDates(today: string): void {
+  for (const key of [...memoryCache.keys()]) {
+    if (key.startsWith(FUND_PREFIX) && !key.endsWith(`_${today}`)) removeMemoryKey(key);
+  }
+  fundSession.removeWhere(key => !key.endsWith(`_${today}`));
+}
+
+function readSessionCache(key: string): { data: TwFundamentals; payloadBytes: number } | null {
+  const raw = fundSession.read(key);
+  if (!raw) return null;
   try {
-    const raw = sessionStorage.getItem(key);
-    return raw ? JSON.parse(raw) as TwFundamentals : null;
+    return { data: JSON.parse(raw) as TwFundamentals, payloadBytes: raw.length * 2 };
   } catch {
+    fundSession.remove(key);
     return null;
   }
 }
 
-function writeSessionCache(key: string, data: TwFundamentals): void {
-  try {
-    sessionStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // 儲存失敗（無痕模式／容量已滿）非致命，略過即可
+function writeSessionCache(key: string, payload: string): void {
+  fundSession.write(key, payload);
+}
+
+function publishCache(key: string, data: TwFundamentals): void {
+  let payload: string | undefined;
+  try { payload = JSON.stringify(data); }
+  catch {
+    removeMemoryKey(key);
+    fundSession.remove(key);
+    return;
   }
+  if (typeof payload !== 'string') {
+    removeMemoryKey(key);
+    fundSession.remove(key);
+    return;
+  }
+  const payloadBytes = payload.length * 2;
+  if (!writeMemoryCache(key, data, payloadBytes)) {
+    fundSession.remove(key);
+    return;
+  }
+  writeSessionCache(key, payload);
 }
 
 // ── 主入口 ──────────────────────────────────────────────
@@ -316,15 +398,23 @@ export const getTwFundamentals = async (
   stockId: string,
   opts: { force?: boolean } = {},
 ): Promise<TwFundamentals> => {
-  const cacheKey = cacheKeyFor(stockId);
+  const today = taipeiTodayStr();
+  cleanupOldDates(today);
+  const cacheKey = cacheKeyFor(stockId, today);
 
   if (opts.force) {
-    memoryCache.delete(cacheKey);
-    try { sessionStorage.removeItem(cacheKey); } catch { /* ignore */ }
+    removeMemoryKey(cacheKey);
+    fundSession.remove(cacheKey);
   } else {
-    const cached = memoryCache.get(cacheKey) ?? readSessionCache(cacheKey);
+    const memoryHit = memoryCache.get(cacheKey);
+    if (memoryHit) {
+      touchMemoryKey(cacheKey);
+      return memoryHit;
+    }
+    const sessionHit = readSessionCache(cacheKey);
+    const cached = sessionHit?.data;
     if (cached) {
-      memoryCache.set(cacheKey, cached);
+      writeMemoryCache(cacheKey, cached, sessionHit.payloadBytes);
       return cached;
     }
   }
@@ -334,9 +424,8 @@ export const getTwFundamentals = async (
   try {
     const fundamentals = await fetchTwFundamentals(stockId);
     // 同股舊請求仍回覆原呼叫端，但不能把後續查閱使用的雙層快取倒退。
-    if (latestRequests.get(cacheKey) === requestId) {
-      memoryCache.set(cacheKey, fundamentals);
-      writeSessionCache(cacheKey, fundamentals);
+    if (latestRequests.get(cacheKey) === requestId && cacheKey === cacheKeyFor(stockId)) {
+      publishCache(cacheKey, fundamentals);
     }
     return fundamentals;
   } finally {

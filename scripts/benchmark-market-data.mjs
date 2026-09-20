@@ -10,7 +10,8 @@ const FAKE_DELAY_MS = 0;
 
 const originalTz = process.env.TZ;
 process.env.TZ = FIXED_TZ;
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
+// 此工具只以 SSR 載入行情服務；不啟動前端相依掃描，避免關站時的掃描競態污染 JSON 輸出。
+const server = await createServer({ optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true }, appType: 'custom' });
 const originalFetch = globalThis.fetch;
 const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
 const OriginalDate = globalThis.Date;

@@ -1,0 +1,135 @@
+{
+  "profiles": [
+    {
+      "file": "profile-30-0.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-1.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-2.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-3.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-4.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-5.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-30-6.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-0.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-1.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-2.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-3.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-4.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-5.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    },
+    {
+      "file": "profile-100-6.json",
+      "passed": true,
+      "recentChartRequests": 0,
+      "fingerprint": "d7dbe96000b5c113352c3fd15f36514cd5e410f8c05c964886663c9f7a764df4"
+    }
+  ],
+  "faultPage": {
+    "passed": true,
+    "sentinelsIntact": true
+  },
+  "apps": [
+    {
+      "file": "app-pressure.json",
+      "passed": true,
+      "requests": 190,
+      "injectedStorageFailures": 0,
+      "errors": 0,
+      "sentinelsIntact": true
+    },
+    {
+      "file": "app-quota.json",
+      "passed": true,
+      "requests": 12,
+      "injectedStorageFailures": 2,
+      "errors": 0,
+      "sentinelsIntact": true
+    },
+    {
+      "file": "app-denied.json",
+      "passed": true,
+      "requests": 12,
+      "injectedStorageFailures": 13,
+      "errors": 0,
+      "sentinelsIntact": true
+    },
+    {
+      "file": "app-corrupt.json",
+      "passed": true,
+      "requests": 12,
+      "injectedStorageFailures": 0,
+      "errors": 0,
+      "sentinelsIntact": true
+    },
+    {
+      "file": "app-oversize.json",
+      "passed": true,
+      "requests": 14,
+      "injectedStorageFailures": 0,
+      "errors": 0,
+      "sentinelsIntact": true
+    }
+  ],
+  "allPassed": true
+}

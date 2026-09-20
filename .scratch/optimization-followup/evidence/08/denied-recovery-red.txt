@@ -1,0 +1,59 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ❯ services/quoteCache.bounds.test.ts (15 tests | 2 failed | 13 skipped) 53ms
+   ↓ 行情可重建快取容量 > 超過 160 個 payload 時淘汰最久未使用項目，近期讀取仍保留
+   ↓ 行情可重建快取容量 > 同 key 改寫成超過 8 MiB 的 payload 時舊別名與舊持久化都不會復活
+   ↓ 行情可重建快取容量 > 記憶體 bytes 超過 128 MiB 時以 payload LRU 淘汰，單項仍低於 8 MiB
+   ↓ 行情可重建快取容量 > 別名 key 超過 320 時淘汰整個最舊 payload，不留下同物件的其他別名
+   ↓ 行情可重建快取容量 > 改寫既有別名時使舊 payload 的其他別名與持久化一起失效
+   ↓ 行情可重建快取容量 > 循環新值不拋錯，且不讓同 key 的舊記憶體、別名或 session 值復活
+   ↓ 行情可重建快取容量 > session 最多保留 64 keys，重載仍能讀近期項且不碰 sentinel
+   ↓ 行情可重建快取容量 > session 4 MiB 總預算與 2 MiB 單項上限獨立於 memory
+   ↓ 行情可重建快取容量 > 真實 quota 只淘汰自家 LRU 後重試一次，sentinel 不受影響
+   ↓ 行情可重建快取容量 > 舊 canonical 已只剩 session 時，改成新 payload 的 memory alias 也會使舊持久化失效
+   ↓ 行情可重建快取容量 > 初始化 session 索引時剔除超過 2 MiB 的舊自家 entry，不清 sentinel
+   ↓ 行情可重建快取容量 > 初始化大量歷史 session keys 時立刻收斂索引與儲存到 64 keys
+   ↓ 行情可重建快取容量 > JSON.stringify 回傳 undefined 時視同不可序列化，不拋錯也不留舊值
+   × 行情可重建快取容量 > Storage denied 期間同 key 寫入 oversize 新值，恢復後舊持久化與 alias 都不復活 37ms
+     → expected { cachedAt: 1, …(2) } to be null
+   × 行情可重建快取容量 > Storage denied 期間同 key 寫入 circular 新值，恢復後舊持久化與 alias 都不復活 15ms
+     → expected { cachedAt: 1, …(2) } to be null
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 13 skipped (15)
+   Start at  02:15:19
+   Duration  839ms (transform 54ms, setup 0ms, collect 35ms, tests 53ms, environment 0ms, prepare 375ms)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  services/quoteCache.bounds.test.ts > 行情可重建快取容量 > Storage denied 期間同 key 寫入 oversize 新值，恢復後舊持久化與 alias 都不復活
+ FAIL  services/quoteCache.bounds.test.ts > 行情可重建快取容量 > Storage denied 期間同 key 寫入 circular 新值，恢復後舊持久化與 alias 都不復活
+AssertionError: expected { cachedAt: 1, …(2) } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "cachedAt": 1,
+  "result": {
+    "id": "old",
+  },
+  "shortTtlOnly": false,
+}
+
+ ❯ services/quoteCache.bounds.test.ts:309:49
+    307|
+    308|       storage.setDenied(false);
+    309|       expect(cache.readQuoteCache('DENIED|1d')).toBeNull();
+       |                                                 ^
+    310|       expect(cache.readQuoteCache('DENIED.TW|1d')).toBeNull();
+    311|       expect(storage.getItem('sentinel')).toBe('keep');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+exit_code=1

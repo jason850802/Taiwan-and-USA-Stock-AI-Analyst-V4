@@ -11,6 +11,7 @@
 // 盤中 10 分鐘／收盤後沿用到下一交易日開盤（台美各依自己交易時段）。
 
 import { marketOf } from '../utils/market';
+import { createBoundedSessionStore } from './_shared/boundedSession';
 
 export type QuoteMarket = 'TW' | 'US';
 
@@ -123,6 +124,100 @@ export function isLatestPriceCacheFresh(cachedAtMs: number, nowMs: number, symbo
 // ── 雙層快取存取 ──
 const SS_PREFIX = 'quote_cache_v1:';
 const memCache = new Map<string, QuoteCacheEntry>();
+const MEMORY_MAX_BYTES = 128 * 1024 * 1024;
+const MEMORY_MAX_PAYLOADS = 160;
+const MEMORY_MAX_KEYS = 320;
+const MEMORY_MAX_ENTRY_BYTES = 8 * 1024 * 1024;
+const SESSION_MAX_BYTES = 4 * 1024 * 1024;
+const SESSION_MAX_KEYS = 64;
+const SESSION_MAX_ENTRY_BYTES = 2 * 1024 * 1024;
+
+interface QuotePayloadMeta {
+  bytes: number;
+  keys: Set<string>;
+}
+
+// Map 保留正式 payload；這份索引只存計數與 key 關係，不保存第二份 JSON。
+const payloadLru = new Map<QuoteCacheEntry, QuotePayloadMeta>();
+let memoryPayloadBytes = 0;
+let memoryKeyBytes = 0;
+const quoteSession = createBoundedSessionStore({
+  prefix: SS_PREFIX,
+  maxBytes: SESSION_MAX_BYTES,
+  maxKeys: SESSION_MAX_KEYS,
+  maxEntryBytes: SESSION_MAX_ENTRY_BYTES,
+});
+
+function keyBytes(key: string): number {
+  return key.length * 2;
+}
+
+function touchPayload(entry: QuoteCacheEntry): void {
+  const meta = payloadLru.get(entry);
+  if (!meta) return;
+  payloadLru.delete(entry);
+  payloadLru.set(entry, meta);
+}
+
+function removePayload(entry: QuoteCacheEntry): void {
+  const meta = payloadLru.get(entry);
+  if (!meta) return;
+  for (const key of meta.keys) {
+    if (memCache.get(key) === entry) memCache.delete(key);
+    memoryKeyBytes -= keyBytes(key);
+  }
+  memoryPayloadBytes -= meta.bytes;
+  payloadLru.delete(entry);
+}
+
+function invalidatePayload(entry: QuoteCacheEntry): void {
+  const meta = payloadLru.get(entry);
+  const persistentKeys = [...(meta?.keys ?? [])].map(key => SS_PREFIX + key);
+  removePayload(entry);
+  persistentKeys.forEach(storageKey => quoteSession.remove(storageKey));
+}
+
+function invalidateKey(key: string): void {
+  const previous = memCache.get(key);
+  if (previous) invalidatePayload(previous);
+  quoteSession.remove(SS_PREFIX + key);
+}
+
+function enforceMemoryBounds(): void {
+  while (
+    payloadLru.size > MEMORY_MAX_PAYLOADS
+    || memCache.size > MEMORY_MAX_KEYS
+    || memoryPayloadBytes + memoryKeyBytes > MEMORY_MAX_BYTES
+  ) {
+    const oldest = payloadLru.keys().next().value as QuoteCacheEntry | undefined;
+    if (!oldest) break;
+    removePayload(oldest);
+  }
+}
+
+function writeMemoryKey(key: string, entry: QuoteCacheEntry, bytes: number): boolean {
+  const previous = memCache.get(key);
+  if (previous && previous !== entry) invalidatePayload(previous);
+
+  let meta = payloadLru.get(entry);
+  if (!meta) {
+    if (bytes > MEMORY_MAX_ENTRY_BYTES || bytes + keyBytes(key) > MEMORY_MAX_BYTES) return false;
+    meta = { bytes, keys: new Set() };
+    payloadLru.set(entry, meta);
+    memoryPayloadBytes += bytes;
+  } else if (meta.bytes !== bytes) {
+    memoryPayloadBytes += bytes - meta.bytes;
+    meta.bytes = bytes;
+  }
+  if (!meta.keys.has(key)) {
+    meta.keys.add(key);
+    memCache.set(key, entry);
+    memoryKeyBytes += keyBytes(key);
+  }
+  touchPayload(entry);
+  enforceMemoryBounds();
+  return memCache.get(key) === entry;
+}
 
 function isValidEntry(x: any): x is QuoteCacheEntry {
   return !!x && typeof x === 'object'
@@ -133,53 +228,64 @@ function isValidEntry(x: any): x is QuoteCacheEntry {
 
 export function readQuoteCache(key: string): QuoteCacheEntry | null {
   const hit = memCache.get(key);
-  if (hit) return hit;
+  if (hit) {
+    touchPayload(hit);
+    return hit;
+  }
   // sessionStorage 層（best-effort）：Node 環境/無痕模式/壞損 JSON 一律 silent 回 null
   try {
-    const raw = sessionStorage.getItem(SS_PREFIX + key);
+    const raw = quoteSession.read(SS_PREFIX + key);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (!isValidEntry(parsed)) {
-      sessionStorage.removeItem(SS_PREFIX + key);
+      quoteSession.remove(SS_PREFIX + key);
       return null;
     }
-    memCache.set(key, parsed); // 讀到即回填 memory（權威層）
+    writeMemoryKey(key, parsed, raw.length * 2); // 讀到即回填 memory（權威層）
     return parsed;
   } catch {
-    try { sessionStorage.removeItem(SS_PREFIX + key); } catch { /* ignore */ }
+    quoteSession.remove(SS_PREFIX + key);
     return null;
   }
 }
 
 export function writeQuoteCache(key: string, entry: QuoteCacheEntry): void {
-  memCache.set(key, entry); // memory 必寫（權威層）
-
-  // sessionStorage best-effort：1d|10y 一檔約 1.5-2.5MB，~5MB 配額只放得下 1-2 檔大 entry——
-  // 可接受，主要痛點（同 session 內切週期/切回標的）memory 層全覆蓋。
-  let payload: string;
+  let payload: string | undefined;
   try {
     payload = JSON.stringify(entry);
   } catch {
-    return; // 序列化失敗（循環參照等理論情境）→ 放棄 sessionStorage 層
+    invalidateKey(key);
+    return;
   }
-  try {
-    sessionStorage.setItem(SS_PREFIX + key, payload);
-  } catch {
-    // QuotaExceeded 之類：best-effort 清掉所有自家前綴 key 再重試一次，再失敗就放棄
-    try {
-      const own: string[] = [];
-      for (let i = 0; i < sessionStorage.length; i += 1) {
-        const k = sessionStorage.key(i);
-        if (k && k.startsWith(SS_PREFIX)) own.push(k);
-      }
-      own.forEach(k => sessionStorage.removeItem(k));
-      sessionStorage.setItem(SS_PREFIX + key, payload);
-    } catch { /* silent，絕不 throw——memory 層仍有效 */ }
+  if (typeof payload !== 'string') {
+    invalidateKey(key);
+    return;
   }
+  const bytes = payload.length * 2;
+  if (bytes > MEMORY_MAX_ENTRY_BYTES || bytes + keyBytes(key) > MEMORY_MAX_BYTES) {
+    invalidateKey(key);
+    return;
+  }
+  writeMemoryKey(key, entry, bytes);
+  quoteSession.write(SS_PREFIX + key, payload);
 }
 
 // 只寫 memory 的別名（同一 entry 參照，零成本）——
 // 供 yahoo.ts 把 `2330|1d` 與 `2330.TW|1d` 指向同一份快取。
 export function writeMemoryAlias(aliasKey: string, entry: QuoteCacheEntry): void {
-  memCache.set(aliasKey, entry);
+  const previous = memCache.get(aliasKey);
+  if (previous && previous !== entry) invalidatePayload(previous);
+  else if (!previous) quoteSession.remove(SS_PREFIX + aliasKey);
+  let meta = payloadLru.get(entry);
+  if (!meta) {
+    let payload: string | undefined;
+    try { payload = JSON.stringify(entry); }
+    catch { invalidateKey(aliasKey); return; }
+    if (typeof payload !== 'string') { invalidateKey(aliasKey); return; }
+    const bytes = payload.length * 2;
+    if (bytes > MEMORY_MAX_ENTRY_BYTES) { invalidateKey(aliasKey); return; }
+    writeMemoryKey(aliasKey, entry, bytes);
+    return;
+  }
+  writeMemoryKey(aliasKey, entry, meta.bytes);
 }

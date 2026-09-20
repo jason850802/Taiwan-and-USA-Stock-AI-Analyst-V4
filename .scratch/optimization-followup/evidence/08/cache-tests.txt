@@ -1,0 +1,25 @@
+=== types ===
+
+
+exit_code=0
+=== tests ===
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ services/stockDirectory.loading.test.ts (6 tests) 72ms
+ ✓ services/quoteCache.test.ts (9 tests) 17ms
+ ✓ services/yahoo.maWarmup.test.ts (7 tests) 24ms
+ ✓ services/finmind.loading.test.ts (4 tests) 131ms
+ ✓ services/yahoo.loading.test.ts (8 tests) 218ms
+ ✓ services/quoteCache.bounds.test.ts (13 tests) 222ms
+ ✓ services/finmind.bounds.test.ts (11 tests) 304ms
+ ✓ services/yahoo.revalidation.test.ts (19 tests) 415ms
+
+ Test Files  8 passed (8)
+      Tests  77 passed (77)
+   Start at  02:11:44
+   Duration  1.40s (transform 486ms, setup 0ms, collect 806ms, tests 1.40s, environment 1ms, prepare 3.92s)
+
+
+
+exit_code=0

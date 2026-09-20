@@ -1,0 +1,16 @@
+{
+    "profilePid":  29904,
+    "appPid":  19748,
+    "ports":  [
+                  {
+                      "port":  4180,
+                      "listeners":  0
+                  },
+                  {
+                      "port":  4181,
+                      "listeners":  0
+                  }
+              ],
+    "browserTab":  "230300112 retained for next ticket",
+    "checkedAt":  "2026-09-21T02:35:07.1041468+08:00"
+}

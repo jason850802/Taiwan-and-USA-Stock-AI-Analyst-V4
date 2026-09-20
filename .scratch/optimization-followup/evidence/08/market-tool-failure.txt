@@ -1,0 +1,252 @@
+下午6:13:03 [vite] (client) Re-optimizing dependencies because vite config has changed
+{
+  "environment": {
+    "node": "v26.4.0",
+    "timezone": "UTC",
+    "fixedNow": "2026-09-20T04:00:00.000Z",
+    "cacheMode": "forceRefresh + empty sessionStorage",
+    "fakeNetworkDelayMs": 0
+  },
+  "coldStartMs": 942.33,
+  "warmupRuns": 1,
+  "measuredRuns": 5,
+  "results": [
+    {
+      "symbol": "AAPL",
+      "interval": "1d",
+      "inputBars": 2500,
+      "outputBars": 2500,
+      "medianMs": 22.82,
+      "sha256": "58b94b8b00fd34cf3d14ba07c0c455e16a9ed5d0c978911a2c5e8bf030c0acac"
+    },
+    {
+      "symbol": "2330.TW",
+      "interval": "1d",
+      "inputBars": 2500,
+      "outputBars": 2500,
+      "medianMs": 21.15,
+      "sha256": "71bd8885399f1b0f9f9b3ebf34f6675f730d83ba01780e7d28ed14c7c0d852d5"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "1wk",
+      "inputBars": 520,
+      "outputBars": 520,
+      "medianMs": 9.42,
+      "sha256": "79b4f970c6300ae10aefb6f1e34282abc3be862fc61f3eb489c8e0a7fde285e0"
+    },
+    {
+      "symbol": "AAPL",
+      "interval": "60m",
+      "inputBars": 1600,
+      "outputBars": 1600,
+      "medianMs": 13.89,
+      "sha256": "0b841ab24ff416f399c3261cada985d1e1ff4655a13ba23355d4bd6b314cd2b5"
+    }
+  ]
+}
+
+Error:   Failed to scan for dependencies from entries:
+  E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/index.html
+
+  [31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:10:24:
+[37m      10 │ import StockSearch from [32m'./StockSearch'[37m;
+         ╵                         [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:11:28:
+[37m      11 │ import ValuationHeader from [32m'./fundamentals/ValuationHeader'[37m;
+         ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:12:32:
+[37m      12 │ import MonthlyRevenueChart from [32m'./fundamentals/MonthlyRevenueChart'[37m;
+         ╵                                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:13:33:
+[37m      13 │ ...t QuarterlyTrendCharts from [32m'./fundamentals/QuarterlyTrendCharts'[37m;
+         ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:14:33:
+[37m      14 │ ...t FinancialHealthCards from [32m'./fundamentals/FinancialHealthCards'[37m;
+         ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:15:26:
+[37m      15 │ import DividendTable from [32m'./fundamentals/DividendTable'[37m;
+         ╵                           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/FundamentalsPanel.tsx:78:51:
+[37m      78 │ ...onst { analyzeFundamentals } = await import([32m'../services/gemini'[37m);
+         ╵                                                [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:11:21:
+[37m      11 │ import StatCard from [32m'./ui/StatCard'[37m;
+         ╵                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:13:18:
+[37m      13 │ import Modal from [32m'./ui/Modal'[37m;
+         ╵                   [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:15:22:
+[37m      15 │ import SellModal from [32m'./portfolio/SellModal'[37m;
+         ╵                       [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:16:27:
+[37m      16 │ import RealizedLedger from [32m'./portfolio/RealizedLedger'[37m;
+         ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:17:30:
+[37m      17 │ import PnlHistorySection from [32m'./portfolio/PnlHistorySection'[37m;
+         ╵                               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:18:57:
+[37m      18 │ ...l, { ImportApplyPayload } from [32m'./portfolio/ImportStatementModal'[37m;
+         ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:19:31:
+[37m      19 │ import RestoreBackupModal from [32m'./portfolio/RestoreBackupModal'[37m;
+         ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:20:43:
+[37m      20 │ ...t HoldingsTable, { fmt, fmtUsd } from [32m'./portfolio/HoldingsTable'[37m;
+         ╵                                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:21:33:
+[37m      21 │ import { useHoldingPrices } from [32m'./portfolio/useHoldingPrices'[37m;
+         ╵                                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:22:33:
+[37m      22 │ import { useDailySnapshot } from [32m'./portfolio/useDailySnapshot'[37m;
+         ╵                                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:23:33:
+[37m      23 │ import { usePortfolioForm } from [32m'./portfolio/usePortfolioForm'[37m;
+         ╵                                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:24:31:
+[37m      24 │ import { useHealthCheck } from [32m'./portfolio/useHealthCheck'[37m;
+         ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:25:37:
+[37m      25 │ ... { useLotDividendUpdate } from [32m'./portfolio/useLotDividendUpdate'[37m;
+         ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:26:35:
+[37m      26 │ import { usePortfolioBackup } from [32m'./portfolio/usePortfolioBackup'[37m;
+         ╵                                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/Portfolio.tsx:104:52:
+[37m      104 │ ...st { analyzeTradeDecision } = await import([32m'../services/gemini'[37m);
+          ╵                                               [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/ui/MarkdownReport.tsx:2:26:
+[37m      2 │ import ReactMarkdown from [32m'react-markdown'[37m;
+        ╵                           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    components/ui/MarkdownReport.tsx:3:22:
+[37m      3 │ import remarkGfm from [32m'remark-gfm'[37m;
+        ╵                       [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    services/yahoo.ts:7:59:
+[37m      7 │ ...sureTaiwanDirectory, resolveTaiwanSuffix } from [32m'./stockDirectory'[37m;
+        ╵                                                    [32m~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    services/yahoo.ts:17:7:
+[37m      17 │ } from [32m'./quoteCache'[37m;
+         ╵        [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mThe server is being restarted or closed. Request is outdated[0m [1m[35m[plugin vite:dep-scan][0m
+
+    utils/portfolioFees.ts:12:26:
+[37m      12 │ export { isTwStock } from [32m'./market'[37m;
+         ╵                           [32m~~~~~~~~~~[0m
+
+
+    at failureErrorWithLog (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:1467:15)
+    at E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:926:25
+    at runOnEndCallbacks (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:1307:45)
+    at buildResponseToResult (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:924:7)
+    at E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:936:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:935:54)
+    at handleRequest (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:628:17)
+    at handleIncomingPacket (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:653:7)
+    at Socket.readFromStdout (E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4\node_modules\esbuild\lib\main.js:581:7)
+
+exit_code=0
