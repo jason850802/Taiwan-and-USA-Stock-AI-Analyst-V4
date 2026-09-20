@@ -1,0 +1,60 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ❯ services/finmind.loading.test.ts (4 tests | 2 failed) 72ms
+   ✓ 基本面請求與快取歸屬 > 同股舊請求先完成=true，後續記憶體與儲存快取仍屬於新請求 51ms
+   × 基本面請求與快取歸屬 > 同股舊請求先完成=false，後續記憶體與儲存快取仍屬於新請求 9ms
+     → expected 11.11 to be 21.11 // Object.is equality
+   × 基本面請求與快取歸屬 > 新請求失敗後，舊成功不復活失效快取，下一次可重新取得資料 7ms
+     → expected [ { stockId: '2330', …(1) }, …(1) ] to have a length of 3 but got 2
+   ✓ 基本面請求與快取歸屬 > 不同股票各自快取，不因其他股票請求較晚開始而失去快取 5ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  20:47:43
+   Duration  815ms (transform 45ms, setup 0ms, collect 24ms, tests 72ms, environment 0ms, prepare 374ms)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  services/finmind.loading.test.ts > 基本面請求與快取歸屬 > 同股舊請求先完成=false，後續記憶體與儲存快取仍屬於新請求
+AssertionError: expected 11.11 to be 21.11 // Object.is equality
+
+- Expected
++ Received
+
+- 21.11
++ 11.11
+
+ ❯ services/finmind.loading.test.ts:54:62
+     52|     expect(oldResult.valuation?.per).toBe(11.11);
+     53|     expect(newResult.valuation?.per).toBe(21.11);
+     54|     expect((await getTwFundamentals('2330')).valuation?.per).toBe(21.1…
+       |                                                              ^
+     55|     vi.resetModules();
+     56|     const reloaded = await import('./finmind');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  services/finmind.loading.test.ts > 基本面請求與快取歸屬 > 新請求失敗後，舊成功不復活失效快取，下一次可重新取得資料
+AssertionError: expected [ { stockId: '2330', …(1) }, …(1) ] to have a length of 3 but got 2
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ services/finmind.loading.test.ts:72:24
+     70|     await oldRequest;
+     71|     const retry = getTwFundamentals('2330');
+     72|     expect(valuations).toHaveLength(3);
+       |                        ^
+     73|     valuations[2].finish(31.11);
+     74|     expect((await retry).valuation?.per).toBe(31.11);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+exit_code=1

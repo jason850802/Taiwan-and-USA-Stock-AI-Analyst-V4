@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ services/finmind.loading.test.ts (4 tests) 72ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  20:49:19
+   Duration  818ms (transform 47ms, setup 0ms, collect 26ms, tests 72ms, environment 0ms, prepare 368ms)
+
+
+
+exit_code=0

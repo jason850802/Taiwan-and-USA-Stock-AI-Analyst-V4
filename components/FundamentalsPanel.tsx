@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bot } from 'lucide-react';
 import { TwFundamentals } from '../types';
 import { getTwFundamentals } from '../services/finmind';
@@ -33,49 +33,72 @@ const WARNING_LABELS: Record<string, string> = {
 
 const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) => {
   const [queryText, setQueryText] = useState(initialSymbol);
-  const [activeSymbol, setActiveSymbol] = useState<string | null>(null);
+  const [requestedSymbol, setRequestedSymbol] = useState(initialSymbol);
   const [fundamentals, setFundamentals] = useState<TwFundamentals | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nonTwWarning, setNonTwWarning] = useState(false);
+  const requestSeqRef = useRef(0);
+  const mountedRef = useRef(false);
 
   // AI 解讀結果以 stockId 為 key 快取：切股票不污染、切回免重生成。
   const [aiResults, setAiResults] = useState<Map<string, string>>(new Map());
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiStates, setAiStates] = useState<Map<string, { loading: boolean; error: string | null }>>(new Map());
+  const aiRequestIdsRef = useRef(new Map<string, symbol>());
 
   const fetchFundamentals = async (code: string, force = false) => {
+    const requestId = ++requestSeqRef.current;
+    setRequestedSymbol(code);
+    // 成功資料的 stockId 與目前請求分開；等待時移除舊數字，避免用舊股生成分析。
+    setFundamentals(null);
     setLoading(true);
     setError(null);
-    setAiError(null);
     try {
       const data = await getTwFundamentals(code, { force });
+      if (requestSeqRef.current !== requestId) return;
       setFundamentals(data);
-      setActiveSymbol(code);
     } catch (err: any) {
+      if (requestSeqRef.current !== requestId) return;
       setError(err.message || '基本面資料載入失敗，請稍後再試。');
     } finally {
-      setLoading(false);
+      if (requestSeqRef.current === requestId) setLoading(false);
     }
   };
 
   const handleGenerateAi = async () => {
-    if (!fundamentals) return;
-    setAiLoading(true);
-    setAiError(null);
+    if (!fundamentals || loading || fundamentals.stockId !== requestedSymbol) return;
+    const stockId = fundamentals.stockId;
+    if (aiRequestIdsRef.current.has(stockId)) return;
+    const requestId = Symbol(stockId);
+    aiRequestIdsRef.current.set(stockId, requestId);
+    const isCurrent = () => mountedRef.current && aiRequestIdsRef.current.get(stockId) === requestId;
+    setAiStates(prev => new Map(prev).set(stockId, { loading: true, error: null }));
+    let failure: string | null = null;
     try {
       const { analyzeFundamentals } = await import('../services/gemini');
+      if (!isCurrent()) return;
       const report = await analyzeFundamentals(fundamentals);
-      setAiResults(prev => new Map(prev).set(fundamentals.stockId, report));
-    } catch (err: any) {
-      setAiError(err.message || 'AI 解讀失敗，請稍後再試。');
+      if (isCurrent()) setAiResults(prev => new Map(prev).set(stockId, report));
+    } catch (err: unknown) {
+      failure = err instanceof Error ? err.message : 'AI 解讀失敗，請稍後再試。';
     } finally {
-      setAiLoading(false);
+      // A 在背景完成仍保存 A 的報告，但不會清除 B 的 loading／錯誤。
+      if (isCurrent()) {
+        aiRequestIdsRef.current.delete(stockId);
+        setAiStates(prev => new Map(prev).set(stockId, { loading: false, error: failure }));
+      }
     }
   };
 
   useEffect(() => {
+    mountedRef.current = true;
     fetchFundamentals(initialSymbol);
+    // 卸載或 StrictMode 重掛載後，先前請求一律不得寫回這個面板。
+    return () => {
+      mountedRef.current = false;
+      requestSeqRef.current += 1;
+      aiRequestIdsRef.current.clear();
+    };
     // 僅在掛載時以 initialSymbol 起始一次；之後的股票切換由使用者在面板內搜尋自管。
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -110,9 +133,9 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
         <Banner
           variant="error"
           onDismiss={() => setError(null)}
-          onRetry={() => fetchFundamentals(activeSymbol || initialSymbol, true)}
+          onRetry={() => fetchFundamentals(requestedSymbol, true)}
         >
-          {error}
+          {requestedSymbol}：{error}
         </Banner>
       )}
 
@@ -120,7 +143,7 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
         <Banner
           variant="info"
           onDismiss={() => setFundamentals({ ...fundamentals, warnings: [] })}
-          onRetry={() => fetchFundamentals(activeSymbol || initialSymbol, true)}
+          onRetry={() => fetchFundamentals(requestedSymbol, true)}
         >
           部分資料暫時無法取得：{fundamentals.warnings.map(w => WARNING_LABELS[w] || w).join('、')}
         </Banner>
@@ -128,6 +151,7 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
 
       {loading && !fundamentals && (
         <Card>
+          <p role="status" className="text-sm text-slate-300 mb-3">正在載入 {requestedSymbol} 的基本面資料…</p>
           <Skeleton variant="lines" lines={5} />
         </Card>
       )}
@@ -142,12 +166,19 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
 
           {(() => {
             const aiContent = aiResults.get(fundamentals.stockId);
+            const aiLoading = aiStates.get(fundamentals.stockId)?.loading ?? false;
+            const aiError = aiStates.get(fundamentals.stockId)?.error;
             if (aiContent || aiLoading) {
-              return <AnalysisResult content={aiContent || ''} loading={aiLoading} title="AI 基本面解讀報告" />;
+              return (
+                <>
+                  {aiLoading && <p role="status" className="text-sm text-slate-300">正在生成 {fundamentals.stockId} 的 AI 基本面解讀…</p>}
+                  <AnalysisResult content={aiContent || ''} loading={aiLoading} title="AI 基本面解讀報告" />
+                </>
+              );
             }
             return (
               <div className="border border-dashed border-surface-line rounded-card p-6 flex flex-col items-center gap-3 text-center">
-                {aiError && <p className="text-sm text-warn">{aiError}</p>}
+                {aiError && <p role="alert" className="text-sm text-warn">{fundamentals.stockId}：{aiError}</p>}
                 <Button variant="ai" onClick={handleGenerateAi} className="inline-flex items-center gap-2">
                   <Bot className="w-4 h-4" /> {aiError ? '重試 AI 基本面解讀' : 'AI 基本面解讀'}
                 </Button>

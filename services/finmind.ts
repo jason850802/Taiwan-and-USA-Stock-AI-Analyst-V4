@@ -287,6 +287,7 @@ function buildDividends(rows: any[], n = 5): TwDividendRecord[] {
 
 // ── 前端雙層快取：模組層 Map（切頁往返不重抓）＋ sessionStorage（F5 不重抓、跨日失效）──
 const memoryCache = new Map<string, TwFundamentals>();
+const latestRequests = new Map<string, symbol>();
 
 function cacheKeyFor(stockId: string): string {
   return `tw_fund_${stockId}_${taipeiTodayStr()}`;
@@ -328,6 +329,23 @@ export const getTwFundamentals = async (
     }
   }
 
+  const requestId = Symbol(cacheKey);
+  latestRequests.set(cacheKey, requestId);
+  try {
+    const fundamentals = await fetchTwFundamentals(stockId);
+    // 同股舊請求仍回覆原呼叫端，但不能把後續查閱使用的雙層快取倒退。
+    if (latestRequests.get(cacheKey) === requestId) {
+      memoryCache.set(cacheKey, fundamentals);
+      writeSessionCache(cacheKey, fundamentals);
+    }
+    return fundamentals;
+  } finally {
+    if (latestRequests.get(cacheKey) === requestId) latestRequests.delete(cacheKey);
+  }
+};
+
+// 財報整理與 429 重試維持原樣；快取發布由主入口核對請求身分。
+const fetchTwFundamentals = async (stockId: string): Promise<TwFundamentals> => {
   const start3y = firstOfMonthMinusYears(3);
   const perStart = firstOfMonthMinusMonths(2);
 
@@ -407,9 +425,6 @@ export const getTwFundamentals = async (
     dividends,
     warnings,
   };
-
-  memoryCache.set(cacheKey, fundamentals);
-  writeSessionCache(cacheKey, fundamentals);
 
   return fundamentals;
 };
