@@ -1,0 +1,75 @@
+{
+  "suite": "after",
+  "count": 1,
+  "sample": 2,
+  "scenario": "load",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "fixedNow": "2026-09-20T04:00:00.000Z",
+  "passed": true,
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1536
+  },
+  "firstVisibleMs": 194.3999999910593,
+  "allCompleteMs": 194.3999999910593,
+  "measurement": "從第一筆 fetch 發起到 MutationObserver 觀察公開輸出，不把診斷 HTTP 排程等待當起點",
+  "network": {
+    "records": [
+      {
+        "symbol": "USDTWD=X",
+        "generation": 0,
+        "start": 67769.7426,
+        "status": 200,
+        "price": 30,
+        "end": 67854.4991
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 0,
+        "start": 67770.1035,
+        "status": 200,
+        "price": 100,
+        "end": 67854.874
+      }
+    ],
+    "active": 0,
+    "peak": 2,
+    "generation": 0,
+    "delay": 80
+  },
+  "observed": {
+    "items": [
+      {
+        "id": "fake-0",
+        "symbol": "TEST000",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      }
+    ],
+    "prices": {
+      "TEST000": {
+        "price": 100,
+        "name": "驗收 TEST000",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 30
+  },
+  "uncaught": [],
+  "console": [],
+  "httpErrors": [],
+  "source": "working-tree",
+  "hookSha256": "8d5df33205109a3d982c2d54eb4b547fa9aa10d34775d3b3fab64a2a3ef2be5f",
+  "queueSha256": "d4a28bdbfda48e0dafedcfe59631062891b2a8ba5d86316c4d6340cff4418b1e",
+  "buildIndexSha256": "6d13b3343668e05cd709cb5a5e4a44f34af146b7be356ec01e9d4d4201217fb5"
+}

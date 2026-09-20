@@ -1,0 +1,146 @@
+{
+  "method": "每組 sample 0 冷初始化另列、1 暖機、2～6 五次中位數與最差樣本",
+  "rows": [
+    {
+      "count": 1,
+      "before": {
+        "coldFirstMs": 979.2999999970198,
+        "coldAllMs": 979.2999999970198,
+        "medianFirstMs": 183.90000000596046,
+        "medianAllMs": 184.09999999403954,
+        "worstAllMs": 198.29999999701977,
+        "peak": 2,
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "after": {
+        "coldFirstMs": 980.7000000029802,
+        "coldAllMs": 980.7000000029802,
+        "medianFirstMs": 181.5,
+        "medianAllMs": 181.5,
+        "worstAllMs": 194.8999999910593,
+        "peak": 2,
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 10,
+      "before": {
+        "coldFirstMs": 210.09999999403954,
+        "coldAllMs": 214,
+        "medianFirstMs": 196.8999999910593,
+        "medianAllMs": 200.5,
+        "worstAllMs": 208.3999999910593,
+        "peak": 6,
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "fxStartPositions": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ]
+      },
+      "after": {
+        "coldFirstMs": 185.5,
+        "coldAllMs": 467,
+        "medianFirstMs": 189.79999999701977,
+        "medianAllMs": 458.5,
+        "worstAllMs": 481.29999999701977,
+        "peak": 3,
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 30,
+      "before": {
+        "coldFirstMs": 172.1000000089407,
+        "coldAllMs": 525,
+        "medianFirstMs": 197.8999999910593,
+        "medianAllMs": 517.8999999910593,
+        "worstAllMs": 530.9000000059605,
+        "peak": 6,
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "fxStartPositions": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ]
+      },
+      "after": {
+        "coldFirstMs": 178.70000000298023,
+        "coldAllMs": 1129.1000000089407,
+        "medianFirstMs": 181,
+        "medianAllMs": 1129.7000000029802,
+        "worstAllMs": 1149.7000000029802,
+        "peak": 3,
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}

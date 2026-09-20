@@ -6,6 +6,7 @@ import { PortfolioItem } from '../../types';
 import { getLatestPrice, peekLatestPrice } from '../../services/yahoo';
 import type { GetLatestPriceOpts } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
+import { createHoldingPriceQueue } from './holdingPriceQueue';
 
 export interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string; fetchedAt?: number }
 
@@ -29,6 +30,8 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
   const priceRequestsRef = useRef(new Map<string, PriceRequest>());
   const rateRequestRef = useRef<PriceRequest | null>(null);
   const hasUsRef = useRef(items.some(i => !isTwStock(i.symbol)));
+  const queueRef = useRef<ReturnType<typeof createHoldingPriceQueue> | null>(null);
+  if (!queueRef.current) queueRef.current = createHoldingPriceQueue();
   const symbolsKey = items.map(i => i.symbol).join(',');
 
   useLayoutEffect(() => {
@@ -37,6 +40,7 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
       mountedRef.current = false;
       priceRequestsRef.current.clear();
       rateRequestRef.current = null;
+      queueRef.current!.clear();
     };
   }, []);
 
@@ -45,10 +49,16 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     const symbols = new Set(items.map(i => i.symbol));
     symbolsRef.current = symbols;
     for (const symbol of priceRequestsRef.current.keys()) {
-      if (!symbols.has(symbol)) priceRequestsRef.current.delete(symbol);
+      if (!symbols.has(symbol)) {
+        priceRequestsRef.current.delete(symbol);
+        queueRef.current!.cancel(`quote:${symbol}`);
+      }
     }
     const hasUs = items.some(i => !isTwStock(i.symbol));
-    if (hasUsRef.current && !hasUs) rateRequestRef.current = null;
+    if (hasUsRef.current && !hasUs) {
+      rateRequestRef.current = null;
+      queueRef.current!.cancel('exchange-rate');
+    }
     hasUsRef.current = hasUs;
     setPrices(prev => {
       const entries = Object.entries(prev).filter(([symbol]) => symbolsRef.current.has(symbol));
@@ -78,17 +88,15 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     }
 
     publish({ price: 0, name: symbol, loading: true, error: false });
-    request.pending = (async () => {
+    request.pending = queueRef.current!.enqueue(`quote:${symbol}`, async () => {
+      if (!isCurrent()) return;
       try {
         const r = await getLatestPrice(symbol, opts);
         publish({ ...r, loading: false, error: false });
       } catch {
         publish({ price: 0, name: symbol, loading: false, error: true });
-      } finally {
-        // 只結束本次請求，不清除更新一輪的 pending 或已完成身分。
-        request.pending = undefined;
       }
-    })();
+    }).finally(() => { request.pending = undefined; });
     return request.pending;
   }, []);
 
@@ -110,13 +118,13 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     }
 
     // 空庫存新增第一檔美股時，表單仍可主動要求匯率；不以現有美股數量禁止此入口。
-    request.pending = (async () => {
+    request.pending = queueRef.current!.enqueue('exchange-rate', async () => {
+      if (!isCurrent()) return;
       try {
         const r = await getLatestPrice(USD_TWD_SYMBOL, opts);
         if (r.price > 0) publish(r.price);
       } catch { /* 保留原本失敗時沿用匯率的語意 */ }
-      finally { request.pending = undefined; }
-    })();
+    }, true).finally(() => { request.pending = undefined; });
     return request.pending;
   }, []);
 

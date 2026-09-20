@@ -1,0 +1,575 @@
+{
+  "passed": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1528
+  },
+  "input": "Desktop browser_action click 更新報價",
+  "observed": "我的庫存\n\n台股含手續費與證交稅・美股個股 0.08%・ETF $3/次\n\n含息損益\n不含息損益\n更新報價\n\n報價 12:00 更新\n\n自動估算股利\n匯入對帳單\n備份\n回灌\n全部健檢\n新增持股\n新增持股與分析\n\n總投入成本 (TWD)\n\n48,000 元\n\n美股依買入匯率換算\n\n目前市值 (TWD)\n\n396,000 元\n\nUSD/TWD 33.00\n\n已領現金股利\n\n0 元\n\n總損益 (TWD)\n\n+347,683 元\n\n+724.34% · 含息\n\n美股損益歷史（USD）\nUSD\nTWD\n總損益\n未實現\n已實現(累計)\n1月\n3月\n6月\n1年\n全部\n09-18\n10.5k\n10.5k\n10.5k\n10.5k\n10.5k\n30 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）\n美股\n美國股票\n30 檔\n1 USD ≈ 33.00 TWD\nUSD\nTWD\n+$10,490.40 (+699.36%)\n健檢\t代號 / 名稱\t成本均價 (USD)\t總股數\t總成本 (USD)\t買入匯率\t目前股價 (USD)\t目前市值 (USD)\t現金股利\t股票股利(股)\t總損益 (USD)\t\n\n\t\n\nTEST000\n\n驗收 TEST000\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST001\n\n驗收 TEST001\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST002\n\n驗收 TEST002\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST003\n\n驗收 TEST003\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST004\n\n驗收 TEST004\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST005\n\n驗收 TEST005\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST006\n\n驗收 TEST006\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST007\n\n驗收 TEST007\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST008\n\n驗收 TEST008\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST009\n\n驗收 TEST009\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST010\n\n驗收 TEST010\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST011\n\n驗收 TEST011\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST012\n\n驗收 TEST012\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST013\n\n驗收 TEST013\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST014\n\n驗收 TEST014\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST015\n\n驗收 TEST015\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST016\n\n驗收 TEST016\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST017\n\n驗收 TEST017\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST018\n\n驗收 TEST018\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST019\n\n驗收 TEST019\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST020\n\n驗收 TEST020\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST021\n\n驗收 TEST021\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST022\n\n驗收 TEST022\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST023\n\n驗收 TEST023\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST024\n\n驗收 TEST024\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST025\n\n驗收 TEST025\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST026\n\n驗收 TEST026\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST027\n\n驗收 TEST027\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST028\n\n驗收 TEST028\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t\n\n\n\t\n\nTEST029\n\n驗收 TEST029\n\n1 批\n\n\t$50.00\t1\t$50.00\t32.000\t$400.00\t$400.00\t$0.00\t0\t\n\n+$349.68\n\n(+699.36%)\n\n\t",
+  "network": {
+    "records": [
+      {
+        "symbol": "USDTWD=X",
+        "generation": 0,
+        "start": 1235456.0795,
+        "status": 200,
+        "price": 30,
+        "end": 1235616.6486
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 0,
+        "start": 1235456.3204,
+        "status": 200,
+        "price": 100,
+        "end": 1235616.8275
+      },
+      {
+        "symbol": "TEST001",
+        "generation": 0,
+        "start": 1235457.5463,
+        "status": 200,
+        "price": 100,
+        "end": 1235616.8635
+      },
+      {
+        "symbol": "USDTWD=X",
+        "generation": 2,
+        "start": 1235746.7383,
+        "status": 200,
+        "price": 32,
+        "end": 1235903.7978
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 2,
+        "start": 1235747.5053,
+        "status": 200,
+        "price": 300,
+        "end": 1235903.9615
+      },
+      {
+        "symbol": "TEST001",
+        "generation": 2,
+        "start": 1235747.9261,
+        "status": 200,
+        "price": 300,
+        "end": 1235903.9985
+      },
+      {
+        "symbol": "USDTWD=X",
+        "generation": 2,
+        "start": 1235914.4494,
+        "status": 200,
+        "price": 32,
+        "end": 1236075.9065
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 2,
+        "start": 1235915.9827,
+        "status": 200,
+        "price": 300,
+        "end": 1236076.0711
+      },
+      {
+        "symbol": "TEST001",
+        "generation": 2,
+        "start": 1235916.2406,
+        "status": 200,
+        "price": 300,
+        "end": 1236076.1084
+      },
+      {
+        "symbol": "TEST002",
+        "generation": 2,
+        "start": 1236090.3303,
+        "status": 200,
+        "price": 300,
+        "end": 1236252.3525
+      },
+      {
+        "symbol": "TEST003",
+        "generation": 2,
+        "start": 1236091.4461,
+        "status": 200,
+        "price": 300,
+        "end": 1236252.5988
+      },
+      {
+        "symbol": "TEST004",
+        "generation": 2,
+        "start": 1236093.7959,
+        "status": 200,
+        "price": 300,
+        "end": 1236252.6534
+      },
+      {
+        "symbol": "TEST005",
+        "generation": 2,
+        "start": 1236258.1993,
+        "status": 200,
+        "price": 300,
+        "end": 1236409.6286
+      },
+      {
+        "symbol": "TEST006",
+        "generation": 2,
+        "start": 1236266.0274,
+        "status": 200,
+        "price": 300,
+        "end": 1236418.9081
+      },
+      {
+        "symbol": "TEST007",
+        "generation": 2,
+        "start": 1236276.2988,
+        "status": 200,
+        "price": 300,
+        "end": 1236427.7801
+      },
+      {
+        "symbol": "TEST008",
+        "generation": 2,
+        "start": 1236415.0499,
+        "status": 200,
+        "price": 300,
+        "end": 1236565.5137
+      },
+      {
+        "symbol": "TEST009",
+        "generation": 2,
+        "start": 1236423.254,
+        "status": 200,
+        "price": 300,
+        "end": 1236580.2237
+      },
+      {
+        "symbol": "TEST010",
+        "generation": 2,
+        "start": 1236436.659,
+        "status": 200,
+        "price": 300,
+        "end": 1236585.8292
+      },
+      {
+        "symbol": "TEST011",
+        "generation": 2,
+        "start": 1236580.1844,
+        "status": 200,
+        "price": 300,
+        "end": 1236736.5877
+      },
+      {
+        "symbol": "TEST012",
+        "generation": 2,
+        "start": 1236591.724,
+        "status": 200,
+        "price": 300,
+        "end": 1236743.1747
+      },
+      {
+        "symbol": "TEST013",
+        "generation": 2,
+        "start": 1236606.8763,
+        "status": 200,
+        "price": 300,
+        "end": 1236765.0771
+      },
+      {
+        "symbol": "TEST014",
+        "generation": 2,
+        "start": 1236743.1443,
+        "status": 200,
+        "price": 300,
+        "end": 1236893.6531
+      },
+      {
+        "symbol": "TEST015",
+        "generation": 2,
+        "start": 1236755.5666,
+        "status": 200,
+        "price": 300,
+        "end": 1236905.1303
+      },
+      {
+        "symbol": "TEST016",
+        "generation": 2,
+        "start": 1236770.0581,
+        "status": 200,
+        "price": 300,
+        "end": 1236920.9104
+      },
+      {
+        "symbol": "TEST017",
+        "generation": 2,
+        "start": 1236900.583,
+        "status": 200,
+        "price": 300,
+        "end": 1237051.2024
+      },
+      {
+        "symbol": "TEST018",
+        "generation": 2,
+        "start": 1236918.0492,
+        "status": 200,
+        "price": 300,
+        "end": 1237068.6406
+      },
+      {
+        "symbol": "TEST019",
+        "generation": 2,
+        "start": 1236931.8409,
+        "status": 200,
+        "price": 300,
+        "end": 1237084.649
+      },
+      {
+        "symbol": "TEST020",
+        "generation": 2,
+        "start": 1237058.8105,
+        "status": 200,
+        "price": 300,
+        "end": 1237209.7112
+      },
+      {
+        "symbol": "TEST021",
+        "generation": 2,
+        "start": 1237071.0329,
+        "status": 200,
+        "price": 300,
+        "end": 1237231.6358
+      },
+      {
+        "symbol": "TEST022",
+        "generation": 2,
+        "start": 1237087.8101,
+        "status": 200,
+        "price": 300,
+        "end": 1237238.0025
+      },
+      {
+        "symbol": "TEST023",
+        "generation": 2,
+        "start": 1237214.6421,
+        "status": 200,
+        "price": 300,
+        "end": 1237365.6637
+      },
+      {
+        "symbol": "TEST024",
+        "generation": 2,
+        "start": 1237237.9696,
+        "status": 200,
+        "price": 300,
+        "end": 1237391.4801
+      },
+      {
+        "symbol": "TEST025",
+        "generation": 2,
+        "start": 1237252.5046,
+        "status": 200,
+        "price": 300,
+        "end": 1237405.5368
+      },
+      {
+        "symbol": "TEST026",
+        "generation": 2,
+        "start": 1237371.0625,
+        "status": 200,
+        "price": 300,
+        "end": 1237531.5955
+      },
+      {
+        "symbol": "TEST027",
+        "generation": 2,
+        "start": 1237396.0138,
+        "status": 200,
+        "price": 300,
+        "end": 1237547.7211
+      },
+      {
+        "symbol": "TEST028",
+        "generation": 2,
+        "start": 1237409.3061,
+        "status": 200,
+        "price": 300,
+        "end": 1237563.3445
+      },
+      {
+        "symbol": "TEST029",
+        "generation": 2,
+        "start": 1237535.9989,
+        "status": 200,
+        "price": 300,
+        "end": 1237696.3138
+      },
+      {
+        "symbol": "USDTWD=X",
+        "generation": 3,
+        "start": 1255532.5786,
+        "status": 200,
+        "price": 33,
+        "end": 1255685.0414
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 3,
+        "start": 1255532.7701,
+        "status": 200,
+        "price": 400,
+        "end": 1255685.2428
+      },
+      {
+        "symbol": "TEST001",
+        "generation": 3,
+        "start": 1255533.4815,
+        "status": 200,
+        "price": 400,
+        "end": 1255685.2841
+      },
+      {
+        "symbol": "TEST002",
+        "generation": 3,
+        "start": 1255690.8605,
+        "status": 200,
+        "price": 400,
+        "end": 1255841.5446
+      },
+      {
+        "symbol": "TEST003",
+        "generation": 3,
+        "start": 1255705.2925,
+        "status": 200,
+        "price": 400,
+        "end": 1255856.5651
+      },
+      {
+        "symbol": "TEST004",
+        "generation": 3,
+        "start": 1255730.0077,
+        "status": 200,
+        "price": 400,
+        "end": 1255886.1655
+      },
+      {
+        "symbol": "TEST005",
+        "generation": 3,
+        "start": 1255846.885,
+        "status": 200,
+        "price": 400,
+        "end": 1255997.4899
+      },
+      {
+        "symbol": "TEST006",
+        "generation": 3,
+        "start": 1255870.5296,
+        "status": 200,
+        "price": 400,
+        "end": 1256022.5387
+      },
+      {
+        "symbol": "TEST007",
+        "generation": 3,
+        "start": 1255902.1516,
+        "status": 200,
+        "price": 400,
+        "end": 1256052.8327
+      },
+      {
+        "symbol": "TEST008",
+        "generation": 3,
+        "start": 1256000.8666,
+        "status": 200,
+        "price": 400,
+        "end": 1256151.6611
+      },
+      {
+        "symbol": "TEST009",
+        "generation": 3,
+        "start": 1256025.91,
+        "status": 200,
+        "price": 400,
+        "end": 1256184.8032
+      },
+      {
+        "symbol": "TEST010",
+        "generation": 3,
+        "start": 1256057.2709,
+        "status": 200,
+        "price": 400,
+        "end": 1256207.2305
+      },
+      {
+        "symbol": "TEST011",
+        "generation": 3,
+        "start": 1256156.5897,
+        "status": 200,
+        "price": 400,
+        "end": 1256310.194
+      },
+      {
+        "symbol": "TEST012",
+        "generation": 3,
+        "start": 1256190.0225,
+        "status": 200,
+        "price": 400,
+        "end": 1256346.1665
+      },
+      {
+        "symbol": "TEST013",
+        "generation": 3,
+        "start": 1256212.8704,
+        "status": 200,
+        "price": 400,
+        "end": 1256365.8094
+      },
+      {
+        "symbol": "TEST014",
+        "generation": 3,
+        "start": 1256315.022,
+        "status": 200,
+        "price": 400,
+        "end": 1256469.7388
+      },
+      {
+        "symbol": "TEST015",
+        "generation": 3,
+        "start": 1256350.7217,
+        "status": 200,
+        "price": 400,
+        "end": 1256509.7092
+      },
+      {
+        "symbol": "TEST016",
+        "generation": 3,
+        "start": 1256368.9405,
+        "status": 200,
+        "price": 400,
+        "end": 1256527.4775
+      },
+      {
+        "symbol": "TEST017",
+        "generation": 3,
+        "start": 1256474.7326,
+        "status": 200,
+        "price": 400,
+        "end": 1256632.9996
+      },
+      {
+        "symbol": "TEST018",
+        "generation": 3,
+        "start": 1256514.3564,
+        "status": 200,
+        "price": 400,
+        "end": 1256667.567
+      },
+      {
+        "symbol": "TEST019",
+        "generation": 3,
+        "start": 1256531.28,
+        "status": 200,
+        "price": 400,
+        "end": 1256681.5422
+      },
+      {
+        "symbol": "TEST020",
+        "generation": 3,
+        "start": 1256653.1634,
+        "status": 200,
+        "price": 400,
+        "end": 1256810.4082
+      },
+      {
+        "symbol": "TEST021",
+        "generation": 3,
+        "start": 1256679.2702,
+        "status": 200,
+        "price": 400,
+        "end": 1256832.7724
+      },
+      {
+        "symbol": "TEST022",
+        "generation": 3,
+        "start": 1256695.9481,
+        "status": 200,
+        "price": 400,
+        "end": 1256851.5398
+      },
+      {
+        "symbol": "TEST023",
+        "generation": 3,
+        "start": 1256821.2879,
+        "status": 200,
+        "price": 400,
+        "end": 1256978.3006
+      },
+      {
+        "symbol": "TEST024",
+        "generation": 3,
+        "start": 1256842.5529,
+        "status": 200,
+        "price": 400,
+        "end": 1256993.5429
+      },
+      {
+        "symbol": "TEST025",
+        "generation": 3,
+        "start": 1256868.9128,
+        "status": 200,
+        "price": 400,
+        "end": 1257033.6129
+      },
+      {
+        "symbol": "TEST026",
+        "generation": 3,
+        "start": 1256983.3672,
+        "status": 200,
+        "price": 400,
+        "end": 1257141.5481
+      },
+      {
+        "symbol": "TEST027",
+        "generation": 3,
+        "start": 1257004.0208,
+        "status": 200,
+        "price": 400,
+        "end": 1257157.1471
+      },
+      {
+        "symbol": "TEST028",
+        "generation": 3,
+        "start": 1257036.2278,
+        "status": 200,
+        "price": 400,
+        "end": 1257188.5289
+      },
+      {
+        "symbol": "TEST029",
+        "generation": 3,
+        "start": 1257145.1439,
+        "status": 200,
+        "price": 400,
+        "end": 1257297.036
+      }
+    ],
+    "active": 0,
+    "peak": 3,
+    "generation": 3,
+    "delay": 150
+  },
+  "uncaught": [],
+  "console": [
+    {
+      "level": "warn",
+      "message": "The width(-1) and height(-1) of chart should be greater than 0,\n       please check the style of container, or the props width(100%) and height(100%),\n       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the\n       height and width."
+    }
+  ],
+  "httpErrors": [],
+  "source": "working-tree",
+  "hookSha256": "8d5df33205109a3d982c2d54eb4b547fa9aa10d34775d3b3fab64a2a3ef2be5f",
+  "queueSha256": "d4a28bdbfda48e0dafedcfe59631062891b2a8ba5d86316c4d6340cff4418b1e",
+  "buildIndexSha256": "6d13b3343668e05cd709cb5a5e4a44f34af146b7be356ec01e9d4d4201217fb5"
+}

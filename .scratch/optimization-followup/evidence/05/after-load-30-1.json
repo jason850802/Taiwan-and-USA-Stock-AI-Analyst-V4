@@ -1,0 +1,891 @@
+{
+  "suite": "after",
+  "count": 30,
+  "sample": 1,
+  "scenario": "load",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "fixedNow": "2026-09-20T04:00:00.000Z",
+  "passed": true,
+  "viewport": {
+    "width": 1536,
+    "height": 639,
+    "scrollWidth": 1536
+  },
+  "firstVisibleMs": 190.90000000596046,
+  "allCompleteMs": 1147.7000000029802,
+  "measurement": "從第一筆 fetch 發起到 MutationObserver 觀察公開輸出，不把診斷 HTTP 排程等待當起點",
+  "network": {
+    "records": [
+      {
+        "symbol": "USDTWD=X",
+        "generation": 0,
+        "start": 88028.6029,
+        "status": 200,
+        "price": 30,
+        "end": 88114.0159
+      },
+      {
+        "symbol": "TEST000",
+        "generation": 0,
+        "start": 88028.7697,
+        "status": 200,
+        "price": 100,
+        "end": 88114.2964
+      },
+      {
+        "symbol": "TEST001",
+        "generation": 0,
+        "start": 88029.2569,
+        "status": 200,
+        "price": 100,
+        "end": 88114.4433
+      },
+      {
+        "symbol": "TEST002",
+        "generation": 0,
+        "start": 88211.9959,
+        "status": 200,
+        "price": 100,
+        "end": 88306.2957
+      },
+      {
+        "symbol": "TEST003",
+        "generation": 0,
+        "start": 88213.7542,
+        "status": 200,
+        "price": 100,
+        "end": 88306.57
+      },
+      {
+        "symbol": "TEST004",
+        "generation": 0,
+        "start": 88214.2252,
+        "status": 200,
+        "price": 100,
+        "end": 88306.7383
+      },
+      {
+        "symbol": "TEST005",
+        "generation": 0,
+        "start": 88315.9715,
+        "status": 503,
+        "price": 100,
+        "end": 88407.5305
+      },
+      {
+        "symbol": "TEST006",
+        "generation": 0,
+        "start": 88316.0859,
+        "status": 200,
+        "price": 100,
+        "end": 88407.7088
+      },
+      {
+        "symbol": "TEST007",
+        "generation": 0,
+        "start": 88316.1439,
+        "status": 200,
+        "price": 100,
+        "end": 88407.7745
+      },
+      {
+        "symbol": "TEST008",
+        "generation": 0,
+        "start": 88410.8259,
+        "status": 200,
+        "price": 100,
+        "end": 88503.1839
+      },
+      {
+        "symbol": "TEST009",
+        "generation": 0,
+        "start": 88411.8019,
+        "status": 200,
+        "price": 100,
+        "end": 88503.4747
+      },
+      {
+        "symbol": "TEST010",
+        "generation": 0,
+        "start": 88412.9589,
+        "status": 200,
+        "price": 100,
+        "end": 88503.6016
+      },
+      {
+        "symbol": "TEST011",
+        "generation": 0,
+        "start": 88510.4926,
+        "status": 200,
+        "price": 100,
+        "end": 88604.1006
+      },
+      {
+        "symbol": "TEST012",
+        "generation": 0,
+        "start": 88510.6981,
+        "status": 200,
+        "price": 100,
+        "end": 88604.2888
+      },
+      {
+        "symbol": "TEST013",
+        "generation": 0,
+        "start": 88510.8966,
+        "status": 200,
+        "price": 100,
+        "end": 88604.3504
+      },
+      {
+        "symbol": "TEST014",
+        "generation": 0,
+        "start": 88611.9871,
+        "status": 200,
+        "price": 100,
+        "end": 88701.8327
+      },
+      {
+        "symbol": "TEST015",
+        "generation": 0,
+        "start": 88612.0858,
+        "status": 200,
+        "price": 100,
+        "end": 88702.0235
+      },
+      {
+        "symbol": "TEST016",
+        "generation": 0,
+        "start": 88612.1162,
+        "status": 200,
+        "price": 100,
+        "end": 88702.0756
+      },
+      {
+        "symbol": "TEST017",
+        "generation": 0,
+        "start": 88707.0132,
+        "status": 200,
+        "price": 100,
+        "end": 88794.9963
+      },
+      {
+        "symbol": "TEST018",
+        "generation": 0,
+        "start": 88707.2713,
+        "status": 200,
+        "price": 100,
+        "end": 88795.2091
+      },
+      {
+        "symbol": "TEST019",
+        "generation": 0,
+        "start": 88707.3497,
+        "status": 200,
+        "price": 100,
+        "end": 88795.4884
+      },
+      {
+        "symbol": "TEST020",
+        "generation": 0,
+        "start": 88799.736,
+        "status": 200,
+        "price": 100,
+        "end": 88880
+      },
+      {
+        "symbol": "TEST021",
+        "generation": 0,
+        "start": 88799.8394,
+        "status": 200,
+        "price": 100,
+        "end": 88880.2324
+      },
+      {
+        "symbol": "TEST022",
+        "generation": 0,
+        "start": 88799.9332,
+        "status": 200,
+        "price": 100,
+        "end": 88880.3243
+      },
+      {
+        "symbol": "TEST023",
+        "generation": 0,
+        "start": 88886.152,
+        "status": 200,
+        "price": 100,
+        "end": 88977.3019
+      },
+      {
+        "symbol": "TEST024",
+        "generation": 0,
+        "start": 88886.6725,
+        "status": 200,
+        "price": 100,
+        "end": 88977.528
+      },
+      {
+        "symbol": "TEST025",
+        "generation": 0,
+        "start": 88886.7972,
+        "status": 200,
+        "price": 100,
+        "end": 88977.5881
+      },
+      {
+        "symbol": "TEST026",
+        "generation": 0,
+        "start": 88981.5154,
+        "status": 200,
+        "price": 100,
+        "end": 89074.8392
+      },
+      {
+        "symbol": "TEST027",
+        "generation": 0,
+        "start": 88982.9467,
+        "status": 200,
+        "price": 100,
+        "end": 89075.1012
+      },
+      {
+        "symbol": "TEST028",
+        "generation": 0,
+        "start": 88983.6347,
+        "status": 200,
+        "price": 100,
+        "end": 89075.2398
+      },
+      {
+        "symbol": "TEST029",
+        "generation": 0,
+        "start": 89079.4212,
+        "status": 200,
+        "price": 100,
+        "end": 89169.9873
+      }
+    ],
+    "active": 0,
+    "peak": 3,
+    "generation": 0,
+    "delay": 80
+  },
+  "observed": {
+    "items": [
+      {
+        "id": "fake-0",
+        "symbol": "TEST000",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-1",
+        "symbol": "TEST001",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-2",
+        "symbol": "TEST002",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-3",
+        "symbol": "TEST003",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-4",
+        "symbol": "TEST004",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-5",
+        "symbol": "TEST005",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-6",
+        "symbol": "TEST006",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-7",
+        "symbol": "TEST007",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-8",
+        "symbol": "TEST008",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-9",
+        "symbol": "TEST009",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-10",
+        "symbol": "TEST010",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-11",
+        "symbol": "TEST011",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-12",
+        "symbol": "TEST012",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-13",
+        "symbol": "TEST013",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-14",
+        "symbol": "TEST014",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-15",
+        "symbol": "TEST015",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-16",
+        "symbol": "TEST016",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-17",
+        "symbol": "TEST017",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-18",
+        "symbol": "TEST018",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-19",
+        "symbol": "TEST019",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-20",
+        "symbol": "TEST020",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-21",
+        "symbol": "TEST021",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-22",
+        "symbol": "TEST022",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-23",
+        "symbol": "TEST023",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-24",
+        "symbol": "TEST024",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-25",
+        "symbol": "TEST025",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-26",
+        "symbol": "TEST026",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-27",
+        "symbol": "TEST027",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-28",
+        "symbol": "TEST028",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      },
+      {
+        "id": "fake-29",
+        "symbol": "TEST029",
+        "totalShares": 1,
+        "avgCostPrice": 50,
+        "totalCost": 1600,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "purchaseCurrency": "USD",
+        "totalCostUSD": 50,
+        "exchangeRate": 32
+      }
+    ],
+    "prices": {
+      "TEST000": {
+        "price": 100,
+        "name": "驗收 TEST000",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST001": {
+        "price": 100,
+        "name": "驗收 TEST001",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST002": {
+        "price": 100,
+        "name": "驗收 TEST002",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST003": {
+        "price": 100,
+        "name": "驗收 TEST003",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST004": {
+        "price": 100,
+        "name": "驗收 TEST004",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST005": {
+        "price": 0,
+        "name": "TEST005",
+        "loading": false,
+        "error": true
+      },
+      "TEST006": {
+        "price": 100,
+        "name": "驗收 TEST006",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST007": {
+        "price": 100,
+        "name": "驗收 TEST007",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST008": {
+        "price": 100,
+        "name": "驗收 TEST008",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST009": {
+        "price": 100,
+        "name": "驗收 TEST009",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST010": {
+        "price": 100,
+        "name": "驗收 TEST010",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST011": {
+        "price": 100,
+        "name": "驗收 TEST011",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST012": {
+        "price": 100,
+        "name": "驗收 TEST012",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST013": {
+        "price": 100,
+        "name": "驗收 TEST013",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST014": {
+        "price": 100,
+        "name": "驗收 TEST014",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST015": {
+        "price": 100,
+        "name": "驗收 TEST015",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST016": {
+        "price": 100,
+        "name": "驗收 TEST016",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST017": {
+        "price": 100,
+        "name": "驗收 TEST017",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST018": {
+        "price": 100,
+        "name": "驗收 TEST018",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST019": {
+        "price": 100,
+        "name": "驗收 TEST019",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST020": {
+        "price": 100,
+        "name": "驗收 TEST020",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST021": {
+        "price": 100,
+        "name": "驗收 TEST021",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST022": {
+        "price": 100,
+        "name": "驗收 TEST022",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST023": {
+        "price": 100,
+        "name": "驗收 TEST023",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST024": {
+        "price": 100,
+        "name": "驗收 TEST024",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST025": {
+        "price": 100,
+        "name": "驗收 TEST025",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST026": {
+        "price": 100,
+        "name": "驗收 TEST026",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST027": {
+        "price": 100,
+        "name": "驗收 TEST027",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST028": {
+        "price": 100,
+        "name": "驗收 TEST028",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      },
+      "TEST029": {
+        "price": 100,
+        "name": "驗收 TEST029",
+        "date": "2026-09-18",
+        "fetchedAt": 1789876800000,
+        "loading": false,
+        "error": false
+      }
+    },
+    "usdTwdRate": 30
+  },
+  "uncaught": [],
+  "console": [],
+  "httpErrors": [
+    {
+      "url": "/api/yahoo/chart?symbol=TEST005&interval=1d&range=5d&__fixtureRequest=7",
+      "status": 503,
+      "expected": true
+    }
+  ],
+  "source": "working-tree",
+  "hookSha256": "8d5df33205109a3d982c2d54eb4b547fa9aa10d34775d3b3fab64a2a3ef2be5f",
+  "queueSha256": "d4a28bdbfda48e0dafedcfe59631062891b2a8ba5d86316c4d6340cff4418b1e",
+  "buildIndexSha256": "6d13b3343668e05cd709cb5a5e4a44f34af146b7be356ec01e9d4d4201217fb5"
+}
