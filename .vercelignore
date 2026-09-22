@@ -5,4 +5,5 @@
 .agents
 .planning
 .codex
+.scratch
 node_modules

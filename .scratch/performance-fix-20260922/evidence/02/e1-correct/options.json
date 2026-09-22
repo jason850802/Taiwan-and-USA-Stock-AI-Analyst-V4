@@ -1,0 +1,74 @@
+﻿[
+    {
+        "route":  "yahoo/chart",
+        "i":  0,
+        "ms":  1264.7,
+        "status":  204
+    },
+    {
+        "route":  "yahoo/chart",
+        "i":  1,
+        "ms":  1109.9,
+        "status":  204
+    },
+    {
+        "route":  "yahoo/chart",
+        "i":  2,
+        "ms":  1105.1,
+        "status":  204
+    },
+    {
+        "route":  "yahoo/chart",
+        "i":  3,
+        "ms":  1080.4,
+        "status":  204
+    },
+    {
+        "route":  "yahoo/chart",
+        "i":  4,
+        "ms":  1124.8,
+        "status":  204
+    },
+    {
+        "route":  "yahoo/chart",
+        "i":  5,
+        "ms":  1104.4,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  0,
+        "ms":  1067.5,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  1,
+        "ms":  1121.4,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  2,
+        "ms":  1065.9,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  3,
+        "ms":  1096.6,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  4,
+        "ms":  1078.3,
+        "status":  204
+    },
+    {
+        "route":  "finmind",
+        "i":  5,
+        "ms":  1076,
+        "status":  204
+    }
+]
