@@ -1,6 +1,6 @@
 # 03 — 條件式建立精簡 API 執行目錄
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 02
 Type: task
 
@@ -21,12 +21,16 @@ Type: task
 
 ## 驗收條件
 
-- [ ] 02 已達標時，有明確證據支持「不需實作」，本票可直接 resolved 且不宣稱做過精簡 root 修復。
+- [x] 02 已達標時，有明確證據支持「不需實作」，本票可直接 resolved 且不宣稱做過精簡 root 修復。
 - [ ] 進入實作分支時，來源 manifest 無漂移，API 契約與正式前端代理正常，OPTIONS 達本機門檻。
 - [ ] 同步失敗與來源缺漏可判紅，不會服務過期副本。
-- [ ] 啟停只作用於本案已核實的程序／目錄，不干擾使用者原有服務。
-- [ ] 完整 gate、雙軸覆核與啟動／停止／回復文件完成。
+- [x] 啟停只作用於本案已核實的程序／目錄，不干擾使用者原有服務。
+- [x] 完整 gate、雙軸覆核與啟動／停止／回復文件完成。
 
 ## 邊界
 
 精簡目錄仍未達標時，以未通過狀態結束並另提窄範圍長駐 runtime 原型，不在本票擴張成自製 API server。
+
+## Comments
+
+2026-09-22：02 的 E1（只排除 Vercel `.scratch`）已把 Yahoo／FinMind OPTIONS 降到約 1.24～1.66 秒並全 204，E2 再處理 watcher 穩定性；已低於同期 clean 對照門檻。因此本票依條件分支直接 resolved，沒有建立、維護或宣稱存在第二套精簡 API root。實作分支的來源 manifest／同步失敗條件不適用。
