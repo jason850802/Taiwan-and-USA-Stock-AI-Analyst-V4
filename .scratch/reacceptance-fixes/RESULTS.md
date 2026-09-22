@@ -1,6 +1,6 @@
 # P1／S1 修正執行結果
 
-狀態：P1正式驗收完成，等待第一個最終提交；S1尚未開始。最後進度以票面及 [HANDOFF](HANDOFF.md) 為準。
+狀態：P1 已完成並提交；S1 實作、正式驗收、獨立雙軸覆核與最終封存均已通過，第二個提交 SHA 由交接回覆提供。
 
 ## 目前已驗證
 
@@ -20,8 +20,20 @@
 - 首屏維持291.26 KiB raw／95.79 KiB gzip。排程量測如實保留取捨：30檔請求峰值6→3，全部完成中位數約538→1034 ms；這是原05前後版差異，本票不改產品。
 - 最終seal：scope `P1-replay-109`、revision 5、88後版＋21前版、正式App 38、原根測試805，全部通過。
 
-P1提交後才開始S1實作與其專項驗收；P1的109份不改標成S1最終產品證據。
+P1 最終提交：`db2c8cb9dbf64f04b92af22264b80d209d72dead`。P1 的109份不改標成S1最終產品證據。
+
+## S1 正式驗收與封存
+
+- 修正前，完成後及在途的同碼同 lot 成本修改均未使舊報告失效；兩份精確公開 hook 紅燈在 `evidence/02/tools/runs/red-completed-change.json` 與 `red-inflight-change.json`。修正後，已保存相關成本／股數／lot 身分變更使該股票變為「需重檢」，舊全文、片段、錯誤與過期 finally 都不能覆蓋新結果；未改股票仍可完成，編輯本身不呼叫 AI。
+- S01～S13 的27個公開 hook 案例全綠，包含成本來源分支、無關欄位不失效、A→B→A、批次／單檔交錯、移除重加、StrictMode、卸載與失敗子集。指定 manifest：`evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/manifest.json`。
+- production dist 假資料 App 的桌面1440×900及窄版390×844，各18/18；原生保存、Tab／Shift+Tab／Escape與焦點、手動重跑、真請求內容、延遲舊結果及批次隔離皆核實。指定 manifest：`evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/manifest.json`。這是隔離瀏覽器驗收，不宣稱 Electron 安裝版或真 AI 輸出。
+- 新 S1 證據由本票工具、產品及 build 指紋綁定；重複、錯頁、過期URL、缺檔及竄改等9個反例全通過，記錄在 `evidence/02/negative/308131bd-6b35-46a3-8997-ea7a4f884400/result/negative.json`。
+- 完整 gate 185檔／3188項，內含原47檔／805項及歷史副本138檔／2383項，沒有改原 test／snapshot；金鑰掃描未降級。`package.json`／`package-lock.json` 不變；首屏291.26 KiB raw／95.79 KiB gzip。正式紀錄在 `evidence/02/checks/final-gate-v1.json` 與 `final-bundle-v1.json`。
+- 獨立 [Standards](evidence/02/review-standards-final.md) 與 [Spec](evidence/02/review-spec-final.md) 均為 `FINAL: PASS`、`OPEN: 0`、`NEW: 0`。Standards 預覆核的工具指紋、不可覆寫 raw 及 tracker metadata 缺口均已關閉；Spec 預覆核的共享 `fetchKind` 錯誤文案競態已改為每次準備結果的局部值。
+- [最終 S1 seal](evidence/02/seals/79d7866b-3313-41ab-b69c-784166a8dd61/seal.json) 為 `allPassed: true`，重新核對兩組指定 manifest、gate、原805項／測試快照不變、package／lock、首屏、9項反例與兩份覆核。沒有將預檢或 P1 raw 混入 S1 正式結果。
+
+本次僅使用隔離本地假資料、合成串流與 production dist 瀏覽器；沒有真 AI／真持股操作，也沒有宣稱 Electron 安裝版驗收。4184／4185 本地假站已停止且無 listener；一個較早的自建4185分頁因瀏覽器控制連接已脫離，未能由工具關閉，瀏覽器工作階段結束後應自動清理。
 
 ## 提交與回復
 
-起點 `b2bf7d8075eb31266d556afb0f874d37c3217bb4`。P1提交SHA於S1結案文件回填；未執行reset／clean／推送／部署。回復P1可在保留本地證據後revert該單一提交。
+起點 `b2bf7d8075eb31266d556afb0f874d37c3217bb4`；P1 提交 `db2c8cb9dbf64f04b92af22264b80d209d72dead`；S1 提交 SHA 在最終交接回覆提供，避免自我引用。未執行reset／clean／推送／部署。回復時先核依賴與工作樹，再依 S1→P1 反向 revert 個別提交，保留原01～12及重新驗收歷史。

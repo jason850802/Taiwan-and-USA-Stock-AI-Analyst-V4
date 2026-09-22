@@ -1,8 +1,8 @@
 # P1 與 S1 修正規格
 
-Status: claimed
+Status: resolved
 
-2026-09-21。使用者已採用本規格，01 P1 進行中，02 S1 尚未開始。入口：[PLAN](PLAN.md)；驗收：[acceptance](acceptance.md)。全部正式票結案後才將本規格改為 resolved。
+2026-09-21。使用者已採用本規格，01 P1 已由 `db2c8cb9dbf64f04b92af22264b80d209d72dead` 完成，02 S1 的正式證據、雙軸覆核及 seal 皆已通過。入口：[PLAN](PLAN.md)；驗收：[acceptance](acceptance.md)。第二個提交 SHA 由最終交接回覆提供。
 
 ## P1：每一份通過結果都屬於指定執行
 
@@ -50,4 +50,4 @@ Status: claimed
 
 兩張票都需修改前精確重現、新增公開行為回歸、最終 gate 與獨立 Standards／Spec。新增測試不修改既有測試的期望。原重新驗收報告維持當時 S1／P1 OPEN，新報告用新提交與新證據記錄 CLOSED；不得回寫歷史造成當時已修的假象。
 
-本規格描述必要行為。01已有修改前紅燈與預檢結果，獨立覆核指出的完整指紋缺口正在修正；預檢不代表最終驗收。P1／S1 仍須各自滿足票面全部條件，才能記錄 CLOSED。
+本規格描述必要行為。01 的最終提交及正式 seal 見 [結果](RESULTS.md)；02 的正式 hook／App 結果與反例另見 [S1 證據](evidence/02/README.md)。預檢不代表最終驗收，兩票仍須各自滿足票面全部條件才能記錄 CLOSED。

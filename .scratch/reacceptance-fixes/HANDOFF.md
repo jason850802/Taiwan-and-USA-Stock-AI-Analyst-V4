@@ -1,6 +1,16 @@
 # P1／S1 執行續接
 
-## 2026-09-22 最新續接（優先於下列歷程）
+## 2026-09-22 目前固定點（優先於下列歷程）
+
+分支 `codex/reacceptance-fixes-p1-s1`；P1 已獨立提交 `db2c8cb9dbf64f04b92af22264b80d209d72dead`，其109份正式結果、36/36負向矩陣、最終gate、雙軸覆核與seal均完成。S1 以該提交為起點，產品修正、正式驗收、獨立雙軸覆核與最終 seal 已完成；第二個提交 SHA 在最終交接回覆提供。下列舊段落是當時快照，不代表目前仍在等待P1。
+
+- S1 產品只修改 `components/portfolio/useHealthCheck.ts` 及 `components/portfolio/HoldingsTable.tsx`。已保存持股輸入的 lot 身分、股數及原成本分支原值形成每股票識別；相關變更使舊全文／片段／錯誤失效，顯示「需重檢」，由使用者手動重跑；單檔及批次共享世代，批次只隔離變更股票。
+- 修改前兩個公開 hook 紅燈：`evidence/02/tools/runs/red-completed-change.json`、`red-inflight-change.json`。最終 27/27：`evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/manifest.json`。production dist 兩尺寸各 18/18：`evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/manifest.json`。兩組原始檔由 `tools/s1-run.mjs` 核對產品、工具、bundle、頁面身分及雜湊。
+- S1 協定反例9/9：`evidence/02/negative/308131bd-6b35-46a3-8997-ea7a4f884400/result/negative.json`。最終 gate：`evidence/02/checks/final-gate-v1.json`，exit0、185檔／3188項、非降級金鑰掃描；首屏：`final-bundle-v1.json`，291.26 KiB raw／95.79 KiB gzip。原47檔／805項及 package／lock 不變，由最終 seal 再核。
+- Standards／Spec 最終報告分別在 `evidence/02/review-standards-final.md`、`review-spec-final.md`，兩軸均 PASS、OPEN 0、NEW 0。`evidence/02/seals/79d7866b-3313-41ab-b69c-784166a8dd61/seal.json` 為 allPassed。
+- 4184 hook 與4185 formal 的本地假站已停止，PID16044／6892不再存在且兩埠無 listener。390×844 viewport override 已還原；本輪正式窄版頁已關閉。較早一個自建4185頁因瀏覽器偵錯控制已脫離而無法用工具關閉，工作階段結束後應自動清理。
+
+## 2026-09-22 先前續接快照
 
 P1 已取得同一最終工具的109份真瀏覽器成功，尚待負向矩陣、封存與兩軸最終覆核完成才提交。S1未開始。HEAD仍為b2bf7d8，沒有本案提交。
 

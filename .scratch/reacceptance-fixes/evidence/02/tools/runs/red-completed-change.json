@@ -1,0 +1,104 @@
+{
+  "name": "completed-change",
+  "stage": "red",
+  "passed": false,
+  "readings": [
+    {
+      "step": "保存前",
+      "value": {
+        "items": [
+          {
+            "id": "aapl-lot-1",
+            "symbol": "AAPL",
+            "totalShares": 10,
+            "avgCostPrice": 10,
+            "totalCost": 3200,
+            "totalCostUSD": 100,
+            "purchaseCurrency": "USD",
+            "exchangeRate": 32,
+            "cashDividends": 0,
+            "stockDividends": 0,
+            "buyDate": "2026-01-01"
+          }
+        ],
+        "healthResults": {
+          "AAPL": {
+            "status": "done",
+            "decision": "分析完成",
+            "fullResult": "## AAPL\n\n合成 OLD 成本報告\n\n續抱"
+          }
+        },
+        "healthModalSymbol": "AAPL"
+      }
+    },
+    {
+      "step": "保存後",
+      "value": {
+        "items": [
+          {
+            "id": "aapl-lot-1",
+            "symbol": "AAPL",
+            "totalShares": 10,
+            "avgCostPrice": 10,
+            "totalCost": 3200,
+            "totalCostUSD": 200,
+            "purchaseCurrency": "USD",
+            "exchangeRate": 32,
+            "cashDividends": 0,
+            "stockDividends": 0,
+            "buyDate": "2026-01-01"
+          }
+        ],
+        "healthResults": {
+          "AAPL": {
+            "status": "done",
+            "decision": "分析完成",
+            "fullResult": "## AAPL\n\n合成 OLD 成本報告\n\n續抱"
+          }
+        },
+        "healthModalSymbol": "AAPL"
+      }
+    }
+  ],
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "error": "Error: 相關輸入保存後沒有進入 stale\n    at assert (http://127.0.0.1:4184/cases.mjs:4:56)\n    at Module.run (http://127.0.0.1:4184/cases.mjs:51:5)",
+  "final": {
+    "items": [
+      {
+        "id": "aapl-lot-1",
+        "symbol": "AAPL",
+        "totalShares": 10,
+        "avgCostPrice": 10,
+        "totalCost": 3200,
+        "totalCostUSD": 200,
+        "purchaseCurrency": "USD",
+        "exchangeRate": 32,
+        "cashDividends": 0,
+        "stockDividends": 0,
+        "buyDate": "2026-01-01"
+      }
+    ],
+    "healthResults": {
+      "AAPL": {
+        "status": "done",
+        "decision": "分析完成",
+        "fullResult": "## AAPL\n\n合成 OLD 成本報告\n\n續抱"
+      }
+    },
+    "healthModalSymbol": "AAPL"
+  },
+  "errors": [],
+  "candidate": "db2c8cb9dbf64f04b92af22264b80d209d72dead",
+  "sourceHashes": {
+    "components/portfolio/useHealthCheck.ts": "f21c10dccaa22f8e89380957e8918a99c3f85bd83ee19e7ba8d90cc43d2556be",
+    "components/portfolio/HoldingsTable.tsx": "f39820c45304a123d590538bf1d5a18e87291f619f829543822022adb98032dc",
+    "components/Portfolio.tsx": "c6326ce5e180c3970abc31231f36ef98af9092082a3df16c12a1d438c2c973ec"
+  },
+  "toolHashes": {
+    "health-input-server.mjs": "d773f744c742c87dc646a733ded1f2619b96b6f54412ed96cc3da99f57a04a6a",
+    "health-input-host.jsx": "88f2e112a9f7ad85a5a6f7577e996810184bb94238d21925ae227bfbf955a805",
+    "health-input-cases.mjs": "e459a449dc9a79da14b95341305eff99904784723e9521f0a1ea2633e4fea19c"
+  },
+  "harnessSha256": "1fab29caba644d3e3436166b96e2d0a5f30ef481ead75574dc6a1a5f7f94058c",
+  "node": "v26.4.0"
+}

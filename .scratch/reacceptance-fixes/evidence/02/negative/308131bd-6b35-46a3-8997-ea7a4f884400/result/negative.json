@@ -1,0 +1,74 @@
+{
+  "schema": "s1-negative-v1",
+  "passed": true,
+  "createdAt": "2026-09-22T11:46:42.424Z",
+  "manifests": {
+    "hook": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/manifest.json",
+    "formal": ".scratch/reacceptance-fixes/evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/manifest.json"
+  },
+  "checks": [
+    {
+      "name": "duplicate-hook-result",
+      "kind": "http",
+      "expectedStatus": 409,
+      "actualStatus": 409,
+      "body": "{\"message\":\"同案例拒絕覆寫\"}"
+    },
+    {
+      "name": "wrong-page-binding",
+      "kind": "http",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "body": "{\"message\":\"頁面初載身分不符\"}"
+    },
+    {
+      "name": "unknown-case",
+      "kind": "http",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "body": "{\"message\":\"未知 S1 案例\"}"
+    },
+    {
+      "name": "stale-version-url",
+      "kind": "http",
+      "expectedStatus": 410,
+      "actualStatus": 410,
+      "body": "{\"error\":\"過期工具 URL\"}"
+    },
+    {
+      "name": "duplicate-formal-result",
+      "kind": "http",
+      "expectedStatus": 409,
+      "actualStatus": 409,
+      "body": "{\"error\":\"同案例拒絕覆寫\"}"
+    },
+    {
+      "name": "tampered-raw-binding",
+      "kind": "verifier",
+      "rejected": true,
+      "message": "raw binding不符",
+      "copy": ".scratch/reacceptance-fixes/evidence/02/negative/a9a5df64-0b2c-41a9-bc69-fb37a757bf84/tampered-raw-binding"
+    },
+    {
+      "name": "missing-raw",
+      "kind": "verifier",
+      "rejected": true,
+      "message": "ENOENT: no such file or directory, open 'E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\02\\negative\\742ed37d-61b2-4805-80c4-c5140410252c\\missing-raw\\s01-completed-change.json'",
+      "copy": ".scratch/reacceptance-fixes/evidence/02/negative/742ed37d-61b2-4805-80c4-c5140410252c/missing-raw"
+    },
+    {
+      "name": "tampered-input-hash",
+      "kind": "verifier",
+      "rejected": true,
+      "message": "目前 S1 指紋不符",
+      "copy": ".scratch/reacceptance-fixes/evidence/02/negative/c6f089ef-982f-42dd-aae2-43b2d52db956/tampered-input-hash"
+    },
+    {
+      "name": "unexpected-file",
+      "kind": "verifier",
+      "rejected": true,
+      "message": "執行檔案完整集合不符",
+      "copy": ".scratch/reacceptance-fixes/evidence/02/negative/d9771ff6-0202-4394-8ef1-834d1c38a145/unexpected-file"
+    }
+  ]
+}

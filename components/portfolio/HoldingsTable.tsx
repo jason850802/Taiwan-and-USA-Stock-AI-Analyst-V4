@@ -19,6 +19,7 @@ import { fmtShares } from '../../utils/shareUnits';
 import { Trash2, Loader2, ChevronDown, ChevronUp, Info, HeartPulse, Banknote } from 'lucide-react';
 import Badge from '../ui/Badge';
 import type { PriceData } from './useHoldingPrices';
+import type { HealthResult } from './useHealthCheck';
 
 // ── 格式化（自 Portfolio.tsx 原樣搬出；主元件與本表共用）───────────────────
 export const fmt  = (n: number, d = 0) => n.toLocaleString('zh-TW', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -105,7 +106,7 @@ const PnLCell: React.FC<{
 
 // ── 健檢儲存格（原本兩表各一份、位元組相同——併表後收一份）──────────────────
 export interface HealthCheckProps {
-  healthResults: Record<string, { status: 'loading' | 'done' | 'error'; decision: string; fullResult: string }>;
+  healthResults: Record<string, HealthResult>;
   onHealthCheck: (symbol: string) => void;
   onShowDetail: (symbol: string) => void;
 }
@@ -122,6 +123,15 @@ const HealthCell: React.FC<HealthCheckProps & { symbol: string }> = ({ symbol, h
     </button>
   );
   if (hr.status === 'loading') return <Loader2 size={14} className="animate-spin text-danger mx-auto" />;
+  if (hr.status === 'stale') return (
+    <button
+      onClick={event => { event.stopPropagation(); onShowDetail(symbol); }}
+      title={hr.fullResult}
+      className="cursor-pointer hover:brightness-125 transition-all"
+    >
+      <Badge variant="warn">需重檢</Badge>
+    </button>
+  );
   const decVariant = hr.decision.includes('停損') ? 'danger'
     : hr.decision.includes('停利') ? 'warn'
     : hr.decision.includes('減碼') ? 'warn'
