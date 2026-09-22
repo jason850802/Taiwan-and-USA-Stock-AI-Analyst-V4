@@ -1,0 +1,54 @@
+{
+  "schema": "p1-browser-linkage-verification-v1",
+  "checkedAt": "2026-09-21T16:50:07.469Z",
+  "passed": true,
+  "observation": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-observation.json",
+  "observationSha256": "7c9f179c3fc6d80f45c7e4cebe0cbacc53d67381a685a5c3fa93d56f4960a006",
+  "verification": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-verified.json",
+  "verificationSha256": "145438086447508a1e54b54ba21105274b3dc30cbfedda1eb077a71ec26f3526",
+  "receipt": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-failed-receipt.json",
+  "receiptSha256": "82a7879c4b23ab7ac0810f9e17fb9540375cc56fc003db449b38bd09046aaa93",
+  "currentRawCount": 1,
+  "currentSuccessfulRawCount": 0,
+  "verifierSha256": "6472c38a55db2ea03c1a4ba26b729cdc3349864ca5bc2464e52702021c6c072e",
+  "runnerSha256": "42e81af94dee4f489af795f2e2363b3da04817cc9be51bd1c87589c5dea18833",
+  "rows": [
+    {
+      "name": "真觀測與實收raw連結",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.schema錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.manifest錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.originalRunId錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.originalFile錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.originalRawSha256錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕duplicate.originalPassed錯位",
+      "passed": true
+    },
+    {
+      "name": "拒絕頂層originalPassed錯位",
+      "passed": true
+    },
+    {
+      "name": "原空收件先於明標失敗fixture且目前只有該份失敗raw",
+      "passed": true
+    }
+  ],
+  "limits": "原P05空收件是既有verification保存時的事實；後續同run已執行failed-receipt，本補驗不宣稱目前仍空，也不重寫原結果。"
+}

@@ -1,0 +1,1325 @@
+{
+  "schema": "p1-replay-v1",
+  "scope": "P1-replay-109",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "manifestRevision": 5,
+  "manifestSha256": "093801d62a253e1fa885e6b93d56beb36b2905f742cd6846cd969d3800a1095a",
+  "definitionSha256": "f3b56510dda315acc4486db0cc0c236619910ea077a8466f302680991e6cec83",
+  "groups": {
+    "02": {
+      "runId": "6858a1b5-236f-45a9-81ce-3648ddcfe2f6",
+      "startupSha256": "8ca3d368922223d3a66d4a7af15c0244c9f911bd64226c4c8ac4f95fc3e83546",
+      "stateSha256": "6422a853ef32c9fdb8a57211cf91f4e40bc9a094ccd1665d8550d563cee96cee",
+      "artifactHashes": {},
+      "artifacts": [],
+      "cases": [
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-race.json",
+          "sha256": "c33d404bbe142d412bf3961db33b6228b5685fe1abacb1b7acf15c448e60f7a5",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-retry.json",
+          "sha256": "247832bcf9c6b059452b9fc9320b46c2766315885e36515601108a087f9a6c35",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-success.json",
+          "sha256": "db3a8d6e8b50e38056be2689bbc26a4882077a237a9a05cfd72c8832a4800f3e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-failure.json",
+          "sha256": "9068be6b9d6d498d8026ef2596d90a98627e58be91458727e3055b861c7cd981",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-same-symbol-early-error.json",
+          "sha256": "20b0bc57c4ec7c2d80b51a7a59451686067332671d6d5eb5772b06b64150f9a3",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-same-symbol-late-success.json",
+          "sha256": "be62e650c81624e434b3a1294225f2f0dfbee53c85106c3255f85bc8860bca12",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-cache-return.json",
+          "sha256": "4f59b6418ff2515ff486e3c0472b30394bd48d544c307a392442e9334ef90135",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-old-success-pending.json",
+          "sha256": "37156034d9ff941bc26e7a4b101ec243d674bde52cd1120045d244a7bc21e6e3",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-unmount.json",
+          "sha256": "800a4635d3399c4a6fba8d2ead0e8c8b8d21a695be29f53e607974f680e1bd14",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-return-pending.json",
+          "sha256": "250bee1e66d302c9897fb4df52872405734f85603c66f46086f3bb9f6cf9e25a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-unmount.json",
+          "sha256": "cf52f6d68c823155f3376e33ac5fd0b694b19b8302a554c96b866cc55b35acc1",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-race.json",
+          "sha256": "a7adda81996fb26922eb287c615ce6f99f8df078d48cbac09671a5e8e7c11e61",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-retry.json",
+          "sha256": "093bd973f81f54aa391f8931a4bb26ce2d2a0e3fc443d466ff8bab340dce2dad",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-success.json",
+          "sha256": "8e433ec4edcf9bf410b2e7835a031834aa6de50b57d49a4810dd6729e8e0513f",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-failure.json",
+          "sha256": "aac5bf59299911696ac0b18bf9375cd12f6c212e90149a715ad6690aa42b4365",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-same-symbol-early-error.json",
+          "sha256": "6611289c11be61d81b7ad142e15e2fcd81a3a7292b722052bcb0b53cd9e0a5b4",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-same-symbol-late-success.json",
+          "sha256": "1f4aa58888cf41b9e3d2a580f6724e2575524a5b76152be4d437fa0332c9cd15",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-cache-return.json",
+          "sha256": "19c2438c67766b8724e1e7535a078887f887f2499e6711358dc3b67aa6b9376b",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-old-success-pending.json",
+          "sha256": "89bf632bf01682db84d7df4314b3c3866b38a600c7fce6206753cd647c0c5228",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-unmount.json",
+          "sha256": "ccb55747dbe80f8cc49af93a00c069f604aa08dfa9f0593284b36b8157e616ac",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-return-pending.json",
+          "sha256": "b9fa227f3775249bc6163f417af01c24d4139a0b8dd80c3f675f26b3543f53c9",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-unmount.json",
+          "sha256": "cd0f8f26700d32a7d5deb0d3bba898f244f902414e5b12fea57b07da26260bd7",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        }
+      ]
+    },
+    "03": {
+      "runId": "65fbbede-6874-43b4-943e-7e70e6f232bf",
+      "startupSha256": "9b0e83db6a2db7cb71cdb68fd9a528ce49c0b2e542404f02ee5ec1a2cf0ab32f",
+      "stateSha256": "bfa04c69360e68d80401a011a40f45d837e0c0f259ded8db58f5bf6e093686e0",
+      "artifactHashes": {},
+      "artifacts": [],
+      "cases": [
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-stale-return.json",
+          "sha256": "698db4ff9ab92132bb8c2c398fbb53b67719ecab73b8779069da5cf0ea920d84",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-switch-return.json",
+          "sha256": "a46a1c963c4f5f9ef303a88bcb70ad819cf95d52b257c1083e7b83d964a8b15d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-tab-return.json",
+          "sha256": "249e830c54db906928078d3ab11323d02886c2aca77d5075ee2b263506a128c5",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-force-pending.json",
+          "sha256": "dcef4f51b08d6cd3a6f504070ad6538c10361e258f1c4c9b37ace6d010b91bdf",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-failure-retry.json",
+          "sha256": "89296a680bafcc681bc959e90ca02b779ebd6bb3e6f058bf85bce5606a291390",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-stale-return.json",
+          "sha256": "e28e580397b0c206c6c5611c38161c362cf9703d80d69b1cf71fcbc98fb08d1c",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-switch-return.json",
+          "sha256": "2c82479254615e472884df1afa783e36a88d3472781aae8a0607fcdab9cc5338",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-tab-return.json",
+          "sha256": "989bbc029f71da0defe31de3222382ef643e8a4a2a1b5fa773c432d897475c8a",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-force-pending.json",
+          "sha256": "5251ef96e77afe1ac1e12f17f0223f9b92ee3db11937c6fb70132b23d147f7bd",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-failure-retry.json",
+          "sha256": "a306ca78b65eb21f5b48f7b4d2b57bfc13d1442cc9f546971d61003581bf76b9",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-manual-market.json",
+          "sha256": "6febb93b51a1851f8c6b5744d88764f1792dfd2a4b8c86b00f4cbb75e647da15",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 17
+        },
+        {
+          "file": "runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-manual-market.json",
+          "sha256": "0dc63b3bcceaea3ac484a3187ab959483cba1dcd97374afad52f3e20ef41aad5",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 17
+        }
+      ]
+    },
+    "04": {
+      "runId": "c93f55fa-bd0f-4c62-9751-50af4f401b79",
+      "startupSha256": "3de2f719bbbc58446cc3dd2002d476758035069b979a67b2a3ce00b4e0027668",
+      "stateSha256": "593bf511fa6f3e80c032df75aa7ce6823e90d486f8be495a3b2428961880a8d8",
+      "artifactHashes": {
+        "holdings.js": "ba12d8669da5008336585c8be45e10f9b28a0d9492809efd3a7cbb0cb5a9e851"
+      },
+      "artifacts": [
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/artifacts/holdings.js",
+          "sha256": "ba12d8669da5008336585c8be45e10f9b28a0d9492809efd3a7cbb0cb5a9e851"
+        }
+      ],
+      "cases": [
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-new-first.json",
+          "sha256": "cf6c9be0d4e013a611cf75c6737fc2c5be9d3f6dc2acb6f1d5e094b0d0c21d48",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-first.json",
+          "sha256": "16d4d18bfbb326607d64b6fb656f38d5828cf0461cfa829dd9e950759d2bef82",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-new-failure.json",
+          "sha256": "afe9f3bbc38f259b4e12e5b405656f8c9812a558c9a12522b32caeed29552f7c",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-failure.json",
+          "sha256": "b6dfcbfeb5672f14796e9baab395dc73321c314686f2f46e4ad39bc236235d13",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-failure-first.json",
+          "sha256": "22043dec118af7f2a927b4055e7e314a15892a12f034d221177fe792edbf869c",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-general-old-first.json",
+          "sha256": "a9d16022d7ada1f603e5e1ced91836078aa8b46af00ba199ffbcc2be6c7a5f7d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-general-new-first.json",
+          "sha256": "9cd2277402b48439015b7bdab31f02ed2c37edfb08a47059a318b2fb7886c3f4",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-new-first.json",
+          "sha256": "f8e1496f652aae95eec24a743e344906e9145b306a6f92238afb7edfde1bc37e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-first.json",
+          "sha256": "9bd78f80291569327fc966ff2b6801feff083d86c74d55c15c0211cb1aae4aa3",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-new-failure.json",
+          "sha256": "090b12d5dfbda93b1b8a555d3b5a55aeff5a9cd7769b04fca096c28b2420bb02",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-failure.json",
+          "sha256": "29fc16e042a8109b0c4facb8cdd5ee26b054919d890de8635c6de10011002be5",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-failure-first.json",
+          "sha256": "408c652b8c87c07b7b9b9445e7273e3ce9dc22687a09c372a318372cbd2006d8",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-cached-during-force.json",
+          "sha256": "9968f5ded7ebe3abbf9bd6062f297a0d97e5bc8118b40031cb0545eb90532491",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-force.json",
+          "sha256": "f40167baa2d00da4139237ced95d32ab936e720eb5f0d0533f24e975fdad6456",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-us.json",
+          "sha256": "2bb5cadb4c16630e80b7ca86a6a955e1d115241ad6e460a5fe968c9804b84b92",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-tw.json",
+          "sha256": "dcf94174d8af0baa8d40fe2acd2927c769087193cdc3b638944b2393167d78dc",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-clear.json",
+          "sha256": "f9117d2de8b83472a9a7488b43ca08468e0f14da14ace8e3c5d94be7d5c4eb1b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-unmount.json",
+          "sha256": "c8150cc3f166c932d2c4d401e92e2cd855bc8591304e0a3d1103d9015facae05",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-readd.json",
+          "sha256": "8290125c7f1b6b5fdc3eea5fd9723fde790d68004354392cbed06c1b209ce855",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-failure-preserve.json",
+          "sha256": "2530b46e228b8ca3485ca994a19e797d243599525459f2ea57e3dcd9cb4b041a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-missing-fx-snapshot.json",
+          "sha256": "8da2438556c52b53932f9e2f90814cfdf7f871730eb854860b321e74b0e4951e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-form-without-us.json",
+          "sha256": "ced7fd87fc2a30a110654dfde9b28d4c5ce51d03e9a809f2b2ca8e7814a45605",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-snapshot-refresh.json",
+          "sha256": "6cf18df4228a474b9ddaf31f53a03b1f82fedc71c471dfe31b9cd59de8e0bbfb",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-app-overlap.json",
+          "sha256": "c1ab7d455f77b2cf3db4754f7139e7a883cbbaada7a0b4825d62d25466b47e29",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/narrow-green-app-overlap.json",
+          "sha256": "6259773894d9ca03b6c4aff6d57932788a05e1f2feb5da08bf29f44707eb028c",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        }
+      ]
+    },
+    "05-before": {
+      "runId": "9ba190b4-1516-48d5-ac9c-b12748a8ff3f",
+      "startupSha256": "6697e7c699858d98c27e8dc90d7d5f0f91a62c35d4ef2c988d5052918ab8ee9b",
+      "stateSha256": "ba40f3bc7a2e74ce23b651ea49b4c7a26e97d546096eb0e426be1ec08f59158f",
+      "artifactHashes": {
+        "holdings.js": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc"
+      },
+      "artifacts": [
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/artifacts/holdings.js",
+          "sha256": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc"
+        }
+      ],
+      "cases": [
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-0.json",
+          "sha256": "59d7179dd8d7f5fcccb4106c48be3c4c76567712c711a1d05a17a10bcc12e810",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-1.json",
+          "sha256": "7536abdb1b7c744aa6aec44a793542e7bab485a281663ec9263baff6776abc82",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-2.json",
+          "sha256": "9f6e024e48c49a6c40ab725874b43d7ea2c0cc689086479bbda4597b1e6b05d7",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-3.json",
+          "sha256": "b3b9e7449ce30f70675d89c90b82c290191e57048bbcc390bd5b9295bb1095e6",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-4.json",
+          "sha256": "68978e333e0cc969b5684f21c8c2adef68903d83105037024256d08846dff2bb",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-5.json",
+          "sha256": "37a63974a66a08067fceb58fff8927a8347845ae1c30bb18c52da1b62f43e20d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-6.json",
+          "sha256": "3e0497935d5c6341ddd016625de86ab5696c01540f8852ff36ee86ecae05df93",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-0.json",
+          "sha256": "1aa60923e0445ba2b85777f3f7f823c78c2a600653aa58f0a0f6ed285797e394",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-1.json",
+          "sha256": "30bb5cfcfa85165c64eb163a77ebe6fc104d7a0567940cac8531097fb6dde112",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-2.json",
+          "sha256": "6128320d96a267b1bae87ce7b06900b16b556df5660595153a2110707f9b4168",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-3.json",
+          "sha256": "c208c9d1587bf9216c8c7fda8cac01f3f428de86f34da57642e3f3fb0422e6b8",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-4.json",
+          "sha256": "1b60bb874306244ba8bd9f6f2ac3b9a91fa3267b6929f89c2a73c80852f45042",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-5.json",
+          "sha256": "ff4582c7c7de83e6c37fbc2c6483698dc2cab38f48eaff9cbb57b3b73053c509",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-6.json",
+          "sha256": "396de0e4f343d1224adbff00f7a7a49b665057a5e3efb47ac24092ad14455489",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-0.json",
+          "sha256": "466a9d114c0ce3db9a699b8337723f3302ebf7d7a744e0f696ad1d2303ae491a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-1.json",
+          "sha256": "89eca74189f16c2815c8db2bb31be18c69bb4689580f0886350ed436b8596678",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-2.json",
+          "sha256": "2e2ce9354d61bc22af0fc7811399e7b54f256a9786182367a212de0a331a6208",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-3.json",
+          "sha256": "0218ec9e91142cb29c5417de7c0f7f950f721f512e58b8ef8a7a5550b5f3efea",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-4.json",
+          "sha256": "9cf3fb5e112e05581d0acee165db474bd0c29493f007656096bcb432a1653607",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-5.json",
+          "sha256": "c772b44ecaa33bc9fdedbf448a8f28ac19a15e154d574f7612bc906973e15fb1",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-6.json",
+          "sha256": "8e3b1f4f638fd6e8fdade800e740f0fb7d2a7ba467708dde06766d3ce3fe89c9",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        }
+      ]
+    },
+    "05-after": {
+      "runId": "cb61b603-19f5-458f-b8c0-0ef6745af011",
+      "startupSha256": "3526e03ff5995472bd6ec32e477b829f48aff262b824cebc826922a50958e4af",
+      "stateSha256": "3bd61508b06761d36ae95bcc7eb8de9d35ab7c869223888dae43b3e1dd9f005d",
+      "artifactHashes": {
+        "holdings.js": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc"
+      },
+      "artifacts": [
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/artifacts/holdings.js",
+          "sha256": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc"
+        }
+      ],
+      "cases": [
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-0.json",
+          "sha256": "2e640cee32fa83b80d05cc590353eff6933228ce700a54a1d76019af35623b1d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-1.json",
+          "sha256": "69717c4b691663b7ff56035207c9b38b93b346f36de96dc61d0f4893c3f662ac",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-2.json",
+          "sha256": "54127b72f6296387eed7dddce99cbd415d74ca272d0d63984cc0842ea0db6ce5",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-3.json",
+          "sha256": "fd31b651a83441ff88f7c6255b319d987c41a55fd43189d8740a9e21e9db83c4",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-4.json",
+          "sha256": "d50e62986d90b7e9ee2019d305f9f61f15e0082f92ff61935758866954915108",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-5.json",
+          "sha256": "748fe5453a02dea320129fec878abc0a4e257baa993e5191ea5df3b05266263e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-6.json",
+          "sha256": "6671e467f223bfa01f2f12598754f5eb65d408cea66afcade31a41dd3e662093",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-0.json",
+          "sha256": "db7f6abfc7216b6b136d405a4e1d78260a1ad9af328240b4e1a5eecb0d6e479f",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-1.json",
+          "sha256": "1379e6980f333b9f78cacf48712b73e57e97d1cd88fc9c38e385055b188ed9f9",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-2.json",
+          "sha256": "cca1209e5b0a0b541a169fe0a23f68f68b843412cd980093fa12f4803d6e889a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-3.json",
+          "sha256": "161515e97337d2c4824f3089b55607c12774f8f9fe63b9222c07528129f3e14b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-4.json",
+          "sha256": "226e7cd455224de8316fd2bdc95fd055250eeb986bb8c1368214cd398bb407ca",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-5.json",
+          "sha256": "804a5b46794dd78b013a765e5b9a264e8646340e4bb88d3fe53e9c60fa9fe19b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-6.json",
+          "sha256": "4bb1a6d7d3de14bf6739434de42835e9c361c6f9f53dd5c6e3ba6c1fa795b846",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-0.json",
+          "sha256": "3723f6a36e2d09e00e0624f4268e4bb6231ae7947c73c91cdd58be7e8c1f393e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-1.json",
+          "sha256": "70193f991fee1b1edd01cc396e87aef84478a2a8b3270dddcf5edb83c70f0c81",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-2.json",
+          "sha256": "28fb8d96e8cc88ea5e5ba8c0e27c13acc590cea29eea12921d6ab5fa3e95f31d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-3.json",
+          "sha256": "532ccc8c3b841a50d87a96dffac00fe9f7f42be70970f13988dcc984cb831dad",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-4.json",
+          "sha256": "48fe6133f062998527cf1dbcf6c153111895ca57fb1e21ac9327b605785f848d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-5.json",
+          "sha256": "ffd85428c7a597a62aa0b71bd52142b9cd4308942a6f5980446acb24fa94131f",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-6.json",
+          "sha256": "7150b268738c9c4c0ea901c01941b9e7eb5f9c48d5cc276b2cfc63850d23d3b8",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-overlap-30-0.json",
+          "sha256": "a3bfee47e624a97099d8fdd0f081cf808efa3d03beae1fd280273c34449aee2c",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-remove-30-0.json",
+          "sha256": "d5da10c477193d5950004df58784918a04fbb781dbb12215ccaf456f64c2c021",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-unmount-30-0.json",
+          "sha256": "3f64e594f28c6337dee54dd21591cac89047714f06ade0cf329a0c0946287332",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-cache-30-0.json",
+          "sha256": "dbdf49e5ff5b434cc1f5bda315ec84e8ef936e4a79131219dace0ebbdac7e99b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-duplicate-30-0.json",
+          "sha256": "5310359bae92e27b9a3311d77aeb04a02e05281493d35f1a5cbaa03e9402df82",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-retry-30-0.json",
+          "sha256": "66dd3bcfba146533ad8a1f75808e00de4591d63b08e865281ac21490d4808dec",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/desktop-green-app-30-0.json",
+          "sha256": "47b75d701749d93d775e8a8e111624308551a83654cfb07e665051c31e6f6754",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/narrow-green-app-30-0.json",
+          "sha256": "0ee415784cb7fdf92392cd148fc9371b83dfc752abc9784d7ebb61cc3a7e44b2",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        }
+      ]
+    }
+  },
+  "allPassed": true,
+  "gate": {
+    "record": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.json",
+    "recordSha256": "04811da68a44d02ee7fd5bf8c104bb3d86394b01944b5242d0182c8e30951753",
+    "runnerSha256": "32dfbbd9325dfb98dd45e01ee15cb1d1c412e293701c5666ed07a32064630cdb",
+    "entrypointSha256": "81346ff27658653a09389148593782aec67f14e637b330b67cd48655ac553361",
+    "log": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.txt",
+    "logSha256": "66c7008c42375993d0dd65eacbf1ba21d6938df839199d353e8ca5515a500d37",
+    "startedAt": "2026-09-22T04:49:26.425Z",
+    "completedAt": "2026-09-22T04:50:24.339Z",
+    "rootTests": [
+      {
+        "file": "api/_lib/config.test.ts",
+        "tests": 24
+      },
+      {
+        "file": "api/_lib/finmind.test.ts",
+        "tests": 36
+      },
+      {
+        "file": "api/_lib/guard.test.ts",
+        "tests": 27
+      },
+      {
+        "file": "api/_lib/http.test.ts",
+        "tests": 47
+      },
+      {
+        "file": "api/_lib/llm.claude-cli.test.ts",
+        "tests": 53
+      },
+      {
+        "file": "api/_lib/llm.test.ts",
+        "tests": 14
+      },
+      {
+        "file": "api/_lib/ratelimit.test.ts",
+        "tests": 16
+      },
+      {
+        "file": "api/_lib/yahoo.handshake.test.ts",
+        "tests": 17
+      },
+      {
+        "file": "api/_lib/yahoo.test.ts",
+        "tests": 40
+      },
+      {
+        "file": "api/gemini-stream.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "components/fundamentals/QuarterlyTrendCharts.test.ts",
+        "tests": 7
+      },
+      {
+        "file": "components/portfolio/holdingPriceQueue.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "services/finmind.bounds.test.ts",
+        "tests": 11
+      },
+      {
+        "file": "services/finmind.loading.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "services/quoteCache.bounds.test.ts",
+        "tests": 15
+      },
+      {
+        "file": "services/quoteCache.test.ts",
+        "tests": 9
+      },
+      {
+        "file": "services/stockDirectory.loading.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "services/yahoo.loading.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "services/yahoo.maWarmup.test.ts",
+        "tests": 7
+      },
+      {
+        "file": "services/yahoo.revalidation.test.ts",
+        "tests": 19
+      },
+      {
+        "file": "utils/appLazyBoundaries.test.ts",
+        "tests": 2
+      },
+      {
+        "file": "utils/backfillFromTxns.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/backfillPipeline.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/dividendEstimator.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/entryFilter.test.ts",
+        "tests": 9
+      },
+      {
+        "file": "utils/fetchError.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/framePublisher.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "utils/geminiCache.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/geminiPrompts.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/geminiRules.test.ts",
+        "tests": 12
+      },
+      {
+        "file": "utils/importPlan.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/importReplay.test.ts",
+        "tests": 29
+      },
+      {
+        "file": "utils/market.test.ts",
+        "tests": 17
+      },
+      {
+        "file": "utils/math.test.ts",
+        "tests": 23
+      },
+      {
+        "file": "utils/persistentStore.test.ts",
+        "tests": 26
+      },
+      {
+        "file": "utils/portfolioBackup.test.ts",
+        "tests": 42
+      },
+      {
+        "file": "utils/portfolioFees.test.ts",
+        "tests": 27
+      },
+      {
+        "file": "utils/portfolioGrouping.test.ts",
+        "tests": 5
+      },
+      {
+        "file": "utils/portfolioHealthStreaming.test.ts",
+        "tests": 1
+      },
+      {
+        "file": "utils/portfolioHistory.test.ts",
+        "tests": 30
+      },
+      {
+        "file": "utils/portfolioLedger.test.ts",
+        "tests": 38
+      },
+      {
+        "file": "utils/quoteTime.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "utils/shareUnits.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "utils/statementParsers/cathayTw.test.ts",
+        "tests": 30
+      },
+      {
+        "file": "utils/statementParsers/parsers.test.ts",
+        "tests": 24
+      },
+      {
+        "file": "utils/viteConfigGuard.test.ts",
+        "tests": 5
+      },
+      {
+        "file": "utils/workerPool.test.ts",
+        "tests": 7
+      }
+    ],
+    "originalTestHashes": {
+      "api/_lib/config.test.ts": "1a3d99e9a19d9bc4847cdbd802c2e986a57d254f7ef394ef3fec2bb87819b211",
+      "api/_lib/finmind.test.ts": "66fba849184298325c2b7b92635e2c1ebdcce76a0c8ab8080d6a626a3ed754ed",
+      "api/_lib/guard.test.ts": "37b6fc3d7e60135ed0391a51aaad327675266983b11614f8bff00fb372f3f227",
+      "api/_lib/http.test.ts": "123e1cd49443bd1bcfbccfa15cefa4f3e8981e4a116b5796427c1903dd01d4ea",
+      "api/_lib/llm.claude-cli.test.ts": "0f2647cc9fe2ad6ac6924a6a2e08bc59904a222e3dcd4368342f256ede3254e7",
+      "api/_lib/llm.test.ts": "808bcb6ad71ffe314460e462052663cb4cbeb4665d712fa863e0a01c9469d885",
+      "api/_lib/ratelimit.test.ts": "16d22ccafbe09b484597a3689071bc30efc9a677fee412f2de367a7d62094244",
+      "api/_lib/yahoo.handshake.test.ts": "9e77c189bfa6e1a7dbed77b00a46b1cfe1df7150391328b4e2fbf67eb5bb4077",
+      "api/_lib/yahoo.test.ts": "018fd507fa3a0d552259cb935944953647571ebbd3e4d68de36a9286f2e826b3",
+      "api/gemini-stream.test.ts": "2d80699af49fc050a8fdfb152db05c405aa2ae2d0af1b8a26221e177b2bc14c5",
+      "components/fundamentals/QuarterlyTrendCharts.test.ts": "cc8cde6dcf40fb83cb5281c39665cca6fb56de4064bceea752326cb2bfc689cf",
+      "components/portfolio/holdingPriceQueue.test.ts": "217371be4bfc89b853b8f74742a2c2b394213a3efa2a0bf0698a7c199c197842",
+      "services/finmind.bounds.test.ts": "0396da9252e1889063e12b79fac16d7c1e52554225f06c08cc3ee7240855fc87",
+      "services/finmind.loading.test.ts": "b66a704c24328e3cd0045a3aed075b334c80a6ed7180c21bdd6ef61e2557bf9e",
+      "services/quoteCache.bounds.test.ts": "31fab796bb056dad406c29e9ad6e64804087431b303be77e1f2d6a8e203e16a2",
+      "services/quoteCache.test.ts": "8b56746018f7b4e9f24309129156d79a0ab0d808819c47718668e74adc52baa0",
+      "services/stockDirectory.loading.test.ts": "0555aa35bf745e1733a5d00eea013d85ade6281d6e9b9cc9385a59b009e4e31f",
+      "services/yahoo.loading.test.ts": "8aeec4c73a65b3a7416953b7632cc07af568323c0b1f11874d2d30cca2198506",
+      "services/yahoo.maWarmup.test.ts": "98d38b4d41b71900c2e0dbd981cafd3df4404bbe03f4003765add20c7dad15ea",
+      "services/yahoo.revalidation.test.ts": "207a22b362f94e5829c5ee34dff15cba1d13eda0864c34a33ed9bda7d967e989",
+      "utils/__snapshots__/geminiPrompts.test.ts.snap": "d4855544d5ce32dc1f79206f9a6ff52fe5862ba89780a3a2f0c7a246621095ff",
+      "utils/__snapshots__/geminiRules.test.ts.snap": "cd4d08da5fd13b6739c2b5aba88d4feeb71b93f79c198cf85bee400cce4015ce",
+      "utils/appLazyBoundaries.test.ts": "116048a5b5c59d7449173638dbe98213f1bc7ad8e0afe6567b3f867c8f647905",
+      "utils/backfillFromTxns.test.ts": "7a8827b9e7aa52f3e2646eb6680b7207c812f4fea41217a48a586e8db6e8a7ec",
+      "utils/backfillPipeline.test.ts": "e63dc5ec70399614cc9785b422e1d9d79bd2da93d519d49f55c875c8cd402ee9",
+      "utils/dividendEstimator.test.ts": "6333719fc49541a5d3ed85e2f59e9939b0790c45f1987eb11c436aa7cfe41ac9",
+      "utils/entryFilter.test.ts": "873cc24eda0357e23876b1de38e4b2ad0463da9945551be4e78eefb9ef29680b",
+      "utils/fetchError.test.ts": "06b614aa8a536f02939c57a6e35cb893521a93b12be1e5d14c9e687693144b52",
+      "utils/framePublisher.test.ts": "126b043a47c6a9f94db79ac2633a8954d0b3fda7b0863128aece285c1cb9ab59",
+      "utils/geminiCache.test.ts": "1c5b7f6d5e89ddb83529b8934f21b2115ce8be7a6f33dce465f537b890dace01",
+      "utils/geminiPrompts.test.ts": "681b541b8193be2e25cfd05df2fe9e7e4f3275d80608d2ecb1c00930acf1d97f",
+      "utils/geminiRules.test.ts": "3d883d7ef1dfac58d8a9291b19679ecf040136e97ce2beb9d23fcf6724fcfbb0",
+      "utils/importPlan.test.ts": "61d2d9a4fc48d61177eb4ca1c200f0ff28264f1cc356a74d98c505e289bdb48d",
+      "utils/importReplay.test.ts": "5d45079a160a1d513e9cca2d3ee9e6a68d17e437dae20bbefb6fbc45ef91acd8",
+      "utils/market.test.ts": "2ad23fdd935c54cb067b5a048cd3c6a38d7cee07386220593d3dc07969b72c66",
+      "utils/math.test.ts": "4936aea0c827cb56d0cedd274723b470b23b949c6a7e17499f7fd6427175df83",
+      "utils/persistentStore.test.ts": "87ac1c5f6c7555566a6694e14bace7a273e6a1b984fcfb140da80c51782afe3b",
+      "utils/portfolioBackup.test.ts": "837686eb2ad5eaf22896718f8488f56a9d08abfbf9c96d310d002801025a7e32",
+      "utils/portfolioFees.test.ts": "dcd8c53aaa2a1e3a1595fb6054db5ed3086e9fc8f418efef8700d0d13e635749",
+      "utils/portfolioGrouping.test.ts": "236ff53c55a1872cc402e40be3cc6652503b88de7f72b9f29156ac195aaf0879",
+      "utils/portfolioHealthStreaming.test.ts": "ebc0ad58df87ec4f696e08bc63beba6f8e7b0e2ec09772a4bdb19b9b98cc8e18",
+      "utils/portfolioHistory.test.ts": "87ebc537efed338e5c4a913a1180879a992a80ce99f818a468d6c1095bc958c1",
+      "utils/portfolioLedger.test.ts": "cbb924b2df71df551ec8e099d34eacb7d77bb0537bf14b5469523c12803ce155",
+      "utils/quoteTime.test.ts": "b316a210010c4ecb427336ed504586060ee66c335dd1d2260b606baacd4280d2",
+      "utils/shareUnits.test.ts": "74aed453b2b1433f313c3e84e698a5ade2591bef5a155ce949a0695ed3378862",
+      "utils/statementParsers/cathayTw.test.ts": "40d67fa0a540cb6dbce40893f08e941571b06098f9c077b1613d37cd7261d51e",
+      "utils/statementParsers/parsers.test.ts": "0e0159345485da2d1bd998ac02a1e58f96564882eab55564d5144e13c6267118",
+      "utils/viteConfigGuard.test.ts": "6a74b35b631b56a776813b91cbb18529a0466f65c0c1f116e6e8e111f34f6807",
+      "utils/workerPool.test.ts": "9bbf52d17f0778f3e549877b039b577f885a7661f86cad280b6afb5c892a5fa0"
+    },
+    "totalFiles": 185,
+    "totalTests": 3188,
+    "historicalCopyFiles": 138,
+    "historicalCopyTests": 2383,
+    "secretScanDegraded": false
+  },
+  "verifiedRawFiles": 109,
+  "counts": {
+    "replays": 88,
+    "queueBefore": 21,
+    "formalApp": 38
+  },
+  "verifications": {
+    "verified-replays.json": "c7eaceadf643b09ce69e3ec3cc25972a8f451ef4e87c0a00b20aff8b7b662241",
+    "queue-summary.json": "ddd9a4889296e190c250028d671e579d143740ec252ef975cd8ab0cb3acc4a23"
+  },
+  "note": "此封存僅涵蓋本案P1的109份新結果；歷史副本測試另列，未宣稱原213案重跑或S1已修正。"
+}

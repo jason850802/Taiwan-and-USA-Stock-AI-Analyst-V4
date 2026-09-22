@@ -12,7 +12,13 @@
 
 `precheck-stream-manifest/`及`precheck-cache-manifest/`保存來源清單漏列config的診斷樣本。12的串流、快取正式App與鍵盤轉接改用94個可達產品加vite建置設定的精確95檔集合，逐檔核對並綁定新runId；不能以同為94檔的不同集合冒充完整來源，也沒有替舊結果補蓋hash。快取14頁實際編譯探針不受App清單變動影響。
 
-## 重跑入口
+## P1 新版 replay／封存入口（2026-09-21）
+
+本案P1更新此目錄的replay-server、integration-bootstrap、verify-replays、summarize-queue及seal-results；原歷史raw與本頁當時結論保持原樣。新驗收必須使用本案明確批次manifest與每次啟站runId，操作見[新版執行手冊](../../../reacceptance-fixes/tools/README.md)。新版scope只涵蓋原02～05後版88份及05前版21份，不把本案109份稱為原213全矩陣新跑。
+
+原固定目錄replay／queue／seal命令已拒絕新PASS。以下保留原12執行紀錄；歷史重算應使用固定`b2bf7d8`的舊工具與獨立輸出副本。新版指紋或來源改變後須建立新批次，不能替舊raw補runId。
+
+## 歷史重跑入口（固定提交的舊工具）
 
 先在根目錄執行 `node .scratch/optimization-followup/evidence/check.mjs 12 gate`，再逐一使用下列隔離假站。每次完成後停止自己的程序；不要覆寫02～11歷史結果。
 

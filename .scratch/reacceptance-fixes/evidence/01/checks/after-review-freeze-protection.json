@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-09-21T10:05:25.390Z",
+  "baseline": ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json",
+  "baselineHead": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "currentHead": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "baselineSha256": "46aca5d24761bdaf3683cec70b021d60465a101b6b0660d94006bb58c5ba90e8",
+  "baselineTestFiles": 49,
+  "historicalFiles": 2233,
+  "testMismatches": [],
+  "packageMismatches": [],
+  "historyMismatches": [],
+  "changed": [
+    {
+      "file": ".scratch/optimization-followup/evidence/12/README.md",
+      "expected": "3771057ff41ced8173cc234240c50c630317ce4fabeec60c2ae4074812032626",
+      "actual": "6823abb00db1d5c48894e1a22a7ff638f208a7829a95103ff08ac950baa358b3"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/integration-bootstrap.js",
+      "expected": "11de5abcaa1e9e866cd22b11d831e589f071d1587ea824ab5c2a6b710cfa6fdd",
+      "actual": "7f53eb35e1c807fba35a2fd2c1efe979fb466d0cdb4984285aa8d45d2abea6b2"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/replay-server.mjs",
+      "expected": "a71fd012c175387a22ad05911c2e32f6157c1077958f7a4a901168b5190daf8c",
+      "actual": "9598dc074090f49980fb2e7b72227d630b90cadf943146c3d8d9f400c9948084"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+      "expected": "92f201086f2cac6b9c243eefb254c6e692c5d0acde043868998f4eb373d8801d",
+      "actual": "6468865652c7617d4485dd004bddeecb6cdd3eb2477806f636128487547f1f5b"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+      "expected": "56a1ad13376896272dd6de8940c09f8698e646f3e99c252047d2299449ac07cd",
+      "actual": "2895141d7f305c8bdd52c9a3f7b06f1bff2eb73c73726c295181a9c8abe73155"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+      "expected": "eee7dc28da3467e4968038d5b8add1c03c58b7a9d523db7ddd231444e35b9b58",
+      "actual": "1213d312d013ac5039c5729dd3dc7510119d0f0dd37277d030273ac83bf96644"
+    }
+  ],
+  "unexpectedChanges": [],
+  "passed": true
+}

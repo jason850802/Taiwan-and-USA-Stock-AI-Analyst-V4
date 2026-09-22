@@ -1,0 +1,160 @@
+{
+  "schema": "p1-structural-regression-v1",
+  "manifest": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\batches\\p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599\\manifest.json",
+  "manifestSha256": "830e21dd0eb7d92f22d71867b199c069be1d9159556b628cd72029bb96b714b0",
+  "node": "v26.4.0",
+  "bootstrapSha256": "7f53eb35e1c807fba35a2fd2c1efe979fb466d0cdb4984285aa8d45d2abea6b2",
+  "rows": [
+    {
+      "id": "P01",
+      "name": "固定五組109案例；只核批次形狀，非109份browser通過",
+      "passed": true
+    },
+    {
+      "id": "P02",
+      "name": "未選定組不回舊固定目錄找成功檔",
+      "passed": true
+    },
+    {
+      "id": "P04",
+      "name": "05前版固定來源與目前host分層",
+      "passed": true
+    },
+    {
+      "id": "P06",
+      "name": "unknown-schema",
+      "passed": true
+    },
+    {
+      "id": "P06",
+      "name": "missing-case",
+      "passed": true
+    },
+    {
+      "id": "P07",
+      "name": "missing-source",
+      "passed": true
+    },
+    {
+      "id": "P07",
+      "name": "missing-tool",
+      "passed": true
+    },
+    {
+      "id": "P07",
+      "name": "missing-build",
+      "passed": true
+    },
+    {
+      "id": "P07",
+      "name": "changed-build",
+      "passed": true
+    },
+    {
+      "id": "P08",
+      "name": "原子結果拒絕重複且保留首次失敗bytes",
+      "passed": true
+    },
+    {
+      "id": "P09",
+      "name": "非法輸出：.scratch/optimization-followup/evidence/12/new.json",
+      "passed": true
+    },
+    {
+      "id": "P09",
+      "name": "非法輸出：.scratch/reacceptance-fixes/evidence/01/../escape.json",
+      "passed": true
+    },
+    {
+      "id": "P09",
+      "name": "非法輸出：.scratch/reacceptance-fixes/evidence/01/bad:stream",
+      "passed": true
+    },
+    {
+      "id": "P09",
+      "name": "半份manifest JSON明確失敗",
+      "passed": true
+    },
+    {
+      "id": "P05",
+      "name": "原bootstrap從本頁固定ID；不向metadata認領新輪",
+      "passed": true
+    },
+    {
+      "id": "P05",
+      "name": "延後載入的新版本bootstrap不能替舊HTML換ID",
+      "passed": true
+    },
+    {
+      "id": "P03",
+      "name": "原bootstrap拒絕已有身分的結果重貼標記",
+      "passed": true
+    },
+    {
+      "id": "P12-command",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        ".scratch/optimization-followup/evidence/12/replay-server.mjs"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23\r\nexport const assert = (ok, message, status = 400) => { if (!ok) throw Object.assign(new Error(message), { status }); };\r\n                                                                                    ^\r\n\r\nError: 參數無效；新驗收必須明確指定 --manifest <本案manifest.json>，請見本案tools/README.md\r\n    at assert (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23:85)\r\n    at options (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:425:5)\r\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/optimization-followup/evidence/12/replay-server.mjs:9:14\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\r\n    at async node:internal/modules/esm/loader:646:26\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  status: 400\r\n}\r\n\r\nNode.js v26.4.0\r\n",
+      "passed": true
+    },
+    {
+      "id": "P12",
+      "name": "replay-server.mjs舊呼叫非零退出",
+      "passed": true
+    },
+    {
+      "id": "P12-command",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        ".scratch/optimization-followup/evidence/12/verify-replays.mjs"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "參數無效；新驗收必須明確指定 --manifest <本案manifest.json>，請見本案tools/README.md\n",
+      "passed": true
+    },
+    {
+      "id": "P12",
+      "name": "verify-replays.mjs舊呼叫非零退出",
+      "passed": true
+    },
+    {
+      "id": "P12-command",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        ".scratch/optimization-followup/evidence/12/summarize-queue.mjs"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "舊固定目錄入口已停用；請先用 replay-batch.mjs init，再指定 --manifest <本案manifest.json>\n",
+      "passed": true
+    },
+    {
+      "id": "P12",
+      "name": "summarize-queue.mjs舊呼叫非零退出",
+      "passed": true
+    },
+    {
+      "id": "P12-command",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        ".scratch/optimization-followup/evidence/12/seal-results.mjs"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "舊固定目錄入口已停用；請先用 replay-batch.mjs init，再指定 --manifest <本案manifest.json>\n",
+      "passed": true
+    },
+    {
+      "id": "P12",
+      "name": "seal-results.mjs舊呼叫非零退出",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "limits": "此為CLI／VM協定回歸；未啟HTTP站，未執行109案browser。P05真HTTP、P08接收端與P11活站補跑由prime另行取證；完整真raw負向矩陣使用replay-raw-regression。"
+}

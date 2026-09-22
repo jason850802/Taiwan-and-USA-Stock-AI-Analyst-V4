@@ -1,0 +1,331 @@
+
+=== [1/5] tsc --noEmit ===
+
+=== [2/5] vitest run ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4
+
+ ✓ services/finmind.bounds.test.ts (11 tests) 1042ms
+   ✓ 基本面可重建快取容量 > session 最多保留 128 keys，重載不會由被淘汰的舊 key 復活  337ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/finmind.bounds.test.ts (11 tests) 1043ms
+   ✓ 基本面可重建快取容量 > session 最多保留 128 keys，重載不會由被淘汰的舊 key 復活  330ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/finmind.bounds.test.ts (11 tests) 1044ms
+   ✓ 基本面可重建快取容量 > session 最多保留 128 keys，重載不會由被淘汰的舊 key 復活  333ms
+ ✓ services/yahoo.loading.test.ts (8 tests) 1053ms
+ ✓ services/quoteCache.bounds.test.ts (15 tests) 1074ms
+   ✓ 行情可重建快取容量 > session 4 MiB 總預算與 2 MiB 單項上限獨立於 memory  314ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/quoteCache.bounds.test.ts (15 tests) 1075ms
+   ✓ 行情可重建快取容量 > session 4 MiB 總預算與 2 MiB 單項上限獨立於 memory  314ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/quoteCache.bounds.test.ts (15 tests) 1087ms
+   ✓ 行情可重建快取容量 > session 4 MiB 總預算與 2 MiB 單項上限獨立於 memory  322ms
+ ✓ services/yahoo.revalidation.test.ts (19 tests) 1975ms
+   ✓ 共用 K 線補全的使用端生命週期 > 取消第 1 位分段使用端，不取消另一位的補全  332ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/viteConfigGuard.test.ts (5 tests) 1612ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（build）後仍是 VITE_ 且無 define——plugin 沒有偷改  325ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（serve）後仍是 VITE_ 且無 define——plugin 沒有偷改  1279ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/viteConfigGuard.test.ts (5 tests) 467ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（build）後仍是 VITE_ 且無 define——plugin 沒有偷改  324ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/yahoo.revalidation.test.ts (19 tests) 2050ms
+   ✓ 共用 K 線補全的使用端生命週期 > 取消第 1 位分段使用端，不取消另一位的補全  366ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/yahoo.revalidation.test.ts (19 tests) 2110ms
+   ✓ 共用 K 線補全的使用端生命週期 > 過期快取的第一位使用端離開後，後加入者仍收到共用背景刷新  305ms
+   ✓ 共用 K 線補全的使用端生命週期 > 取消第 1 位分段使用端，不取消另一位的補全  392ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/yahoo.revalidation.test.ts (19 tests) 2110ms
+   ✓ 共用 K 線補全的使用端生命週期 > 過期快取的第一位使用端離開後，後加入者仍收到共用背景刷新  464ms
+   ✓ 共用 K 線補全的使用端生命週期 > 10y 先到時一次 resolve 完整結果，不再通知補全或回退到晚到的 2y  384ms
+ ✓ utils/viteConfigGuard.test.ts (5 tests) 1686ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（build）後仍是 VITE_ 且無 define——plugin 沒有偷改  374ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（serve）後仍是 VITE_ 且無 define——plugin 沒有偷改  1303ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/viteConfigGuard.test.ts (5 tests) 1798ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（build）後仍是 VITE_ 且無 define——plugin 沒有偷改  413ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（serve）後仍是 VITE_ 且無 define——plugin 沒有偷改  1377ms
+ ✓ api/_lib/yahoo.handshake.test.ts (17 tests) 668ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/yahoo.handshake.test.ts (17 tests) 562ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/yahoo.handshake.test.ts (17 tests) 566ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/yahoo.handshake.test.ts (17 tests) 575ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/yahoo.loading.test.ts (8 tests) 626ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/yahoo.loading.test.ts (8 tests) 714ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/yahoo.loading.test.ts (8 tests) 742ms
+ ✓ services/finmind.loading.test.ts (4 tests) 260ms
+ ✓ services/stockDirectory.loading.test.ts (6 tests) 105ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/finmind.loading.test.ts (4 tests) 253ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/finmind.loading.test.ts (4 tests) 253ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/stockDirectory.loading.test.ts (6 tests) 88ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/stockDirectory.loading.test.ts (6 tests) 86ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/finmind.loading.test.ts (4 tests) 142ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/ratelimit.test.ts (16 tests) 43ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/ratelimit.test.ts (16 tests) 47ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/workerPool.test.ts (7 tests) 104ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/workerPool.test.ts (7 tests) 111ms
+ ✓ api/_lib/llm.claude-cli.test.ts (53 tests) 3642ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > spawn 完整執行檔路徑，argv 逐項為現行順序，且 prompt 不進 argv  444ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > mode=thinking → opus/max；mode=fast → sonnet/medium  319ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/llm.claude-cli.test.ts (53 tests) 3763ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > spawn 完整執行檔路徑，argv 逐項為現行順序，且 prompt 不進 argv  573ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > mode=thinking → opus/max；mode=fast → sonnet/medium  325ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/llm.claude-cli.test.ts (53 tests) 3634ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > spawn 完整執行檔路徑，argv 逐項為現行順序，且 prompt 不進 argv  468ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > 環境隔離：剔除宿主閘道與 API 金鑰／token 與所有 CLAUDE_CODE_* 旗標  318ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/llm.claude-cli.test.ts (53 tests) 3651ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > spawn 完整執行檔路徑，argv 逐項為現行順序，且 prompt 不進 argv  478ms
+   ✓ generateText / claude-cli — 子程序啟動契約 > 環境隔離：剔除宿主閘道與 API 金鑰／token 與所有 CLAUDE_CODE_* 旗標  332ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/stockDirectory.loading.test.ts (6 tests) 72ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/workerPool.test.ts (7 tests) 82ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/backfillPipeline.test.ts (20 tests) 326ms
+ ✓ utils/backfillPipeline.test.ts (20 tests) 317ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/config.test.ts (24 tests) 28ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/backfillPipeline.test.ts (20 tests) 327ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/backfillPipeline.test.ts (20 tests) 325ms
+ ✓ utils/workerPool.test.ts (7 tests) 85ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/ratelimit.test.ts (16 tests) 82ms
+ ✓ api/_lib/ratelimit.test.ts (16 tests) 57ms
+(node:34560) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26708) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/workspace/utils/geminiPrompts.test.ts (8 tests) 34ms
+ ✓ utils/geminiPrompts.test.ts (8 tests) 36ms
+(node:31452) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/geminiPrompts.test.ts (8 tests) 31ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/yahoo.maWarmup.test.ts (7 tests) 31ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/config.test.ts (24 tests) 37ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/yahoo.maWarmup.test.ts (7 tests) 29ms
+(node:33896) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioLedger.test.ts (38 tests) 34ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/geminiPrompts.test.ts (8 tests) 41ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/yahoo.maWarmup.test.ts (7 tests) 31ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/finmind.test.ts (36 tests) 36ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/finmind.test.ts (36 tests) 42ms
+ ✓ .scratch/reacceptance-20260921/baseline07/services/quoteCache.test.ts (9 tests) 25ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/config.test.ts (24 tests) 44ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/geminiRules.test.ts (12 tests) 31ms
+ ✓ utils/portfolioLedger.test.ts (38 tests) 41ms
+ ✓ api/_lib/finmind.test.ts (36 tests) 39ms
+ ✓ .scratch/reacceptance-20260921/workspace/services/quoteCache.test.ts (9 tests) 28ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/finmind.test.ts (36 tests) 22ms
+ ✓ services/yahoo.maWarmup.test.ts (7 tests) 21ms
+(node:10124) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioHealthStreaming.test.ts (1 test) 19ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/shareUnits.test.ts (6 tests) 14ms
+ ✓ .scratch/reacceptance-20260921/baseline11/services/quoteCache.test.ts (9 tests) 23ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/shareUnits.test.ts (6 tests) 14ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/shareUnits.test.ts (6 tests) 14ms
+ ✓ api/_lib/config.test.ts (24 tests) 39ms
+(node:30236) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/geminiCache.test.ts (8 tests) 20ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/geminiRules.test.ts (12 tests) 21ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/geminiRules.test.ts (12 tests) 21ms
+(node:33476) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/workspace/utils/geminiCache.test.ts (8 tests) 26ms
+(node:27024) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31992) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/geminiCache.test.ts (8 tests) 24ms
+ ✓ utils/portfolioHealthStreaming.test.ts (1 test) 27ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioLedger.test.ts (38 tests) 31ms
+(node:32000) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioHealthStreaming.test.ts (1 test) 26ms
+(node:26296) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioHealthStreaming.test.ts (1 test) 28ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioLedger.test.ts (38 tests) 34ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioBackup.test.ts (42 tests) 19ms
+(node:31164) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ services/quoteCache.test.ts (9 tests) 23ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/geminiCache.test.ts (8 tests) 23ms
+ ✓ utils/geminiRules.test.ts (12 tests) 19ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioBackup.test.ts (42 tests) 17ms
+stderr | .scratch/reacceptance-20260921/baseline07/utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | .scratch/reacceptance-20260921/baseline07/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | .scratch/reacceptance-20260921/baseline07/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/persistentStore.test.ts (26 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/math.test.ts (23 tests) 8ms
+stderr | .scratch/reacceptance-20260921/baseline11/utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | .scratch/reacceptance-20260921/baseline11/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | .scratch/reacceptance-20260921/baseline11/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/persistentStore.test.ts (26 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/math.test.ts (23 tests) 8ms
+ ✓ utils/shareUnits.test.ts (6 tests) 15ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/math.test.ts (23 tests) 10ms
+ ✓ utils/math.test.ts (23 tests) 9ms
+ ✓ utils/importReplay.test.ts (29 tests) 11ms
+ ✓ utils/portfolioBackup.test.ts (42 tests) 15ms
+stderr | .scratch/reacceptance-20260921/workspace/utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | .scratch/reacceptance-20260921/workspace/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | .scratch/reacceptance-20260921/workspace/utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ .scratch/reacceptance-20260921/workspace/utils/persistentStore.test.ts (26 tests) 14ms
+stderr | utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ utils/persistentStore.test.ts (26 tests) 13ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioBackup.test.ts (42 tests) 16ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioHistory.test.ts (30 tests) 13ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioHistory.test.ts (30 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/importReplay.test.ts (29 tests) 12ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/importReplay.test.ts (29 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/guard.test.ts (27 tests) 9ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/importReplay.test.ts (29 tests) 11ms
+ ✓ api/_lib/yahoo.test.ts (40 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/yahoo.test.ts (40 tests) 9ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/gemini-stream.test.ts (4 tests) 7ms
+ ✓ api/gemini-stream.test.ts (4 tests) 7ms
+ ✓ api/_lib/guard.test.ts (27 tests) 10ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/dividendEstimator.test.ts (20 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/statementParsers/cathayTw.test.ts (30 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/yahoo.test.ts (40 tests) 8ms
+ ✓ components/portfolio/holdingPriceQueue.test.ts (6 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/dividendEstimator.test.ts (20 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioHistory.test.ts (30 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/statementParsers/parsers.test.ts (24 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/statementParsers/parsers.test.ts (24 tests) 9ms
+ ✓ utils/portfolioHistory.test.ts (30 tests) 15ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/dividendEstimator.test.ts (20 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/guard.test.ts (27 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/guard.test.ts (27 tests) 11ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/statementParsers/parsers.test.ts (24 tests) 8ms
+ ✓ utils/statementParsers/cathayTw.test.ts (30 tests) 12ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/gemini-stream.test.ts (4 tests) 10ms
+ ✓ api/_lib/http.test.ts (47 tests) 7ms
+ ✓ utils/statementParsers/parsers.test.ts (24 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/backfillFromTxns.test.ts (20 tests) 7ms
+ ✓ utils/framePublisher.test.ts (6 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/http.test.ts (47 tests) 8ms
+ ✓ api/_lib/llm.test.ts (14 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/importPlan.test.ts (8 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/entryFilter.test.ts (9 tests) 5ms
+ ✓ utils/backfillFromTxns.test.ts (20 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/statementParsers/cathayTw.test.ts (30 tests) 9ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/statementParsers/cathayTw.test.ts (30 tests) 9ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/http.test.ts (47 tests) 7ms
+ ✓ utils/dividendEstimator.test.ts (20 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/entryFilter.test.ts (9 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/backfillFromTxns.test.ts (20 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/importPlan.test.ts (8 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/gemini-stream.test.ts (4 tests) 8ms
+ ✓ utils/entryFilter.test.ts (9 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/entryFilter.test.ts (9 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/yahoo.test.ts (40 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/workspace/api/_lib/llm.test.ts (14 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline07/api/_lib/llm.test.ts (14 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/backfillFromTxns.test.ts (20 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/llm.test.ts (14 tests) 8ms
+ ✓ .scratch/reacceptance-20260921/baseline11/components/portfolio/holdingPriceQueue.test.ts (6 tests) 5ms
+ ✓ utils/importPlan.test.ts (8 tests) 10ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioFees.test.ts (27 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/importPlan.test.ts (8 tests) 9ms
+ ✓ .scratch/reacceptance-20260921/baseline11/api/_lib/http.test.ts (47 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/market.test.ts (17 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioFees.test.ts (27 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/market.test.ts (17 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/framePublisher.test.ts (6 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/quoteTime.test.ts (4 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/quoteTime.test.ts (4 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/baseline07/components/portfolio/holdingPriceQueue.test.ts (6 tests) 5ms
+ ✓ .scratch/reacceptance-20260921/workspace/components/portfolio/holdingPriceQueue.test.ts (6 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/quoteTime.test.ts (4 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioFees.test.ts (27 tests) 6ms
+ ✓ utils/portfolioFees.test.ts (27 tests) 7ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/appLazyBoundaries.test.ts (2 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/portfolioGrouping.test.ts (5 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/framePublisher.test.ts (6 tests) 6ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/market.test.ts (17 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/appLazyBoundaries.test.ts (2 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/baseline07/utils/fetchError.test.ts (8 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/portfolioGrouping.test.ts (5 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/portfolioGrouping.test.ts (5 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/appLazyBoundaries.test.ts (2 tests) 3ms
+ ✓ utils/portfolioGrouping.test.ts (5 tests) 4ms
+ ✓ .scratch/reacceptance-20260921/workspace/utils/fetchError.test.ts (8 tests) 7ms
+ ✓ utils/market.test.ts (17 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/baseline11/utils/fetchError.test.ts (8 tests) 4ms
+ ✓ utils/appLazyBoundaries.test.ts (2 tests) 3ms
+ ✓ utils/fetchError.test.ts (8 tests) 5ms
+ ✓ utils/quoteTime.test.ts (4 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/workspace/components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 3ms
+ ✓ components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/baseline11/components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 3ms
+ ✓ .scratch/reacceptance-20260921/baseline07/components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 3ms
+
+ Test Files  185 passed (185)
+      Tests  3188 passed (3188)
+   Start at  19:10:51
+   Duration  14.86s (transform 13.09s, setup 0ms, collect 46.80s, tests 45.40s, environment 34ms, prepare 92.12s)
+
+
+=== [3/5] vite build ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 build
+> vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 2681 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.64 kB │ gzip:   0.41 kB
+dist/assets/index-YaWf-Iy0.css              28.03 kB │ gzip:   5.78 kB
+dist/assets/StatCard--kwu_QDZ.js             0.47 kB │ gzip:   0.30 kB
+dist/assets/AnalysisResult-GW6TjBML.js       0.79 kB │ gzip:   0.47 kB
+dist/assets/xlsxReader-Bboq1lzx.js           2.67 kB │ gzip:   1.43 kB
+dist/assets/ReferenceLine-BHmzjvUa.js        4.40 kB │ gzip:   1.82 kB
+dist/assets/FundamentalsPanel-DCqtB8K9.js   14.71 kB │ gzip:   4.35 kB
+dist/assets/ComposedChart-B6dSmNQs.js       17.67 kB │ gzip:   6.11 kB
+dist/assets/StockChart-DUikUv3O.js          34.17 kB │ gzip:  10.78 kB
+dist/assets/gemini-C5nDNauf.js              52.67 kB │ gzip:  22.03 kB
+dist/assets/index-BpOPmkNI.js              104.48 kB │ gzip:  37.59 kB
+dist/assets/Portfolio-DjHuKbeO.js          134.40 kB │ gzip:  41.92 kB
+dist/assets/Skeleton-D5GIj37S.js           159.72 kB │ gzip:  48.54 kB
+dist/assets/vendor-CmCSiRIh.js             193.77 kB │ gzip:  60.50 kB
+dist/assets/CartesianChart-BfsfAWm_.js     357.16 kB │ gzip: 106.97 kB
+✓ built in 4.96s
+
+=== [4/5] 金鑰掃描 ===
+  · .env 來源：本目錄（6 筆）
+  ✓ 乾淨（掃 dist/ 15 檔、追蹤原始碼 1199 檔、.env 值 6 筆）
+
+=== [5/5] package.json / package-lock.json diff ===
+  ✓ 與 HEAD 完全一致
+
+✓ GATE 全綠（機械部分）。
+  runtime 類驗證腳本管不到，仍須人工：console 零紅字、UI 數字要量、快取換乾淨代號。
+(node:22640) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+exit_code=0
+signal=

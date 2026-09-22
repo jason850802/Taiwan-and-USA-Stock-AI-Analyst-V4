@@ -1,0 +1,23 @@
+{
+  "round": 1,
+  "executable": "C:\\Program Files\\nodejs\\node.exe",
+  "arguments": [
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-090afddb-1313-4e6f-98e9-33d825aa7d4c\\snapshot\\.scratch\\optimization-followup\\evidence\\12\\verify-replays.mjs",
+    "03"
+  ],
+  "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-090afddb-1313-4e6f-98e9-33d825aa7d4c\\snapshot",
+  "commandFromRepo": "node .scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/snapshot/.scratch/optimization-followup/evidence/12/verify-replays.mjs 03",
+  "exitCode": 0,
+  "elapsedMs": 169.031,
+  "stdout": "{\"group\":\"03\",\"cases\":12,\"formalApp\":12,\"sourceFiles\":94,\"allPassed\":true}\n",
+  "stderr": "",
+  "consoleResult": {
+    "group": "03",
+    "cases": 12,
+    "formalApp": 12,
+    "sourceFiles": 94,
+    "allPassed": true
+  },
+  "summarySha256": "0eb85e8ad4fced0d1aa352195798fb05d1c0308e6d21be74e1909a354e53b591",
+  "summaryCases": 12
+}

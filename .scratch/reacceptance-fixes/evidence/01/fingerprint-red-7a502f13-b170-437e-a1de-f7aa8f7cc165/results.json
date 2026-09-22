@@ -1,0 +1,281 @@
+{
+  "schema": "p1-fingerprint-regression-v1",
+  "phase": "red",
+  "at": "2026-09-21T09:53:56.302Z",
+  "node": "v26.4.0",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\tools\\replay-fingerprint-regression.mjs",
+    "--phase",
+    "red",
+    "--legacy-gate",
+    ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.json",
+    "--protection",
+    ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json"
+  ],
+  "contractSha256": "cd6273c57e6a28a8f8dc80dcd663608274819b242599b8086cb6605cb12d4b96",
+  "regressionSha256": "59802be9de57a1ea0f1c81348d202945688106b1734e45eece0f7ebf5cc8e2a1",
+  "inputsSha256": "cad2388a64df7b4aafdac1270a7e16667ed766286be669017581d256b5ad17c2",
+  "runtime": {
+    "entry": "node_modules/esbuild/lib/main.js",
+    "entrySha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1",
+    "binary": "node_modules/@esbuild/win32-x64/esbuild.exe",
+    "binarySha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0",
+    "packageJson": "node_modules/@esbuild/win32-x64/package.json",
+    "packageSha256": "5b41ac77d55bf2ae0de680d83a9095904e89523c6ef42460cffd0df5ef5a6947",
+    "packageName": "@esbuild/win32-x64",
+    "version": "0.25.12",
+    "arguments": [
+      "--service=0.25.12",
+      "--ping"
+    ],
+    "launchedProcesses": 0
+  },
+  "checks": 45,
+  "failed": 29,
+  "rows": [
+    {
+      "name": "未選案fixture僅可讀契約，不能產生驗收PASS",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/index.css",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/index.css",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/postcss.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/postcss.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/tailwind.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '7c76fc37ec9f3460b9e2d764b5c037769f1f21cbd6b09e7a11b17f1b44c7a3a9'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/tailwind.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '5b41ac77d55bf2ae0de680d83a9095904e89523c6ef42460cffd0df5ef5a6947'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '32dfbbd9325dfb98dd45e01ee15cb1d1c412e293701c5666ed07a32064630cdb'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/scripts/run-gate.mjs",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- '81346ff27658653a09389148593782aec67f14e637b330b67cd48655ac553361'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:86:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:45\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:87:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "三來源均吻合原protection，沒有補写保護紀錄",
+      "passed": true,
+      "observation": [
+        {
+          "file": "index.css",
+          "sha256": "3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5",
+          "protectedSha256": "3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5"
+        },
+        {
+          "file": "postcss.config.js",
+          "sha256": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc",
+          "protectedSha256": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc"
+        },
+        {
+          "file": "tailwind.config.js",
+          "sha256": "7c76fc37ec9f3460b9e2d764b5c037769f1f21cbd6b09e7a11b17f1b44c7a3a9",
+          "protectedSha256": "7c76fc37ec9f3460b9e2d764b5c037769f1f21cbd6b09e7a11b17f1b44c7a3a9"
+        }
+      ]
+    },
+    {
+      "name": "before固定來源包含：index.css",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^[a-f0-9]{64}$/. Input:\n\n''\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:46\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "before漏欄拒絕：index.css",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:44\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "before固定來源包含：postcss.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^[a-f0-9]{64}$/. Input:\n\n''\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:46\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "before漏欄拒絕：postcss.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:44\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "before固定來源包含：tailwind.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^[a-f0-9]{64}$/. Input:\n\n''\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:46\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:98:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "before漏欄拒絕：tailwind.config.js",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:44\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:99:3\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "runtime解析結果等於實際build API將啟動的native binary",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'node_modules/@esbuild/win32-x64/esbuild.exe'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:102:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:101:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "gate工具metadata核對不等於gate成功",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:110:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:109:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "gate工具missing：runnerSha256",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:114:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:113:86\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "gate工具drift：runnerSha256",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:114:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:113:86\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "gate工具missing：entrypointSha256",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:114:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:113:86\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "gate工具drift：entrypointSha256",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:114:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:113:86\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "真實歷史gate缺工具SHA明確拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:122:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:121:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "ESBUILD_BINARY_PATH覆寫拒絕：missing-esbuild-probe",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected \"actual\" to be strictly unequal to: 0\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:131:49\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:126:67\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "ESBUILD_BINARY_PATH覆寫拒絕：node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected \"actual\" to be strictly unequal to: 0\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:131:49\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:21:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs:126:67\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    }
+  ],
+  "legacyGateUnchanged": true,
+  "scope": "只測完整指紋／metadata及拒絕路徑；沒有啟站、執行binary、重跑gate或製造成功raw。protocol-only fixture不能選案。"
+}

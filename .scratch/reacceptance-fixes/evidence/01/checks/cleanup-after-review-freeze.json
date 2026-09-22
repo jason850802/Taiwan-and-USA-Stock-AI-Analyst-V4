@@ -1,0 +1,19 @@
+{
+  "schema": "reacceptance-cleanup-observation-v1",
+  "scope": "本案P1覆核修正凍結後；新完整gate呼叫被封鎖，尚未關票",
+  "head": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "coreCompletedSessionId": 65683,
+  "gitDiffCheckExitCode": 0,
+  "gitCachedDiffCheckExitCode": 0,
+  "stagedFiles": 24,
+  "fixturePortRange": [4176, 4183],
+  "listeners": [],
+  "matchingFixtureNodeProcesses": [],
+  "newProvenanceBaselineGateRecordExists": false,
+  "closedTabs": [
+    { "tabId": "b0c48f4b-7d16-41c6-85fe-9af3718f54a3:230300312", "closed": true },
+    { "tabId": "b0c48f4b-7d16-41c6-85fe-9af3718f54a3:230300318", "closed": true }
+  ],
+  "recordKind": "真實CoS唯讀命令與Desktop關閉結果轉存；沒有執行或代替完整gate。",
+  "limits": "只盤點上述埠與本案optimization-followup fixture／replay程序；未聲稱電腦沒有其他Node程序。未stage歷史重新驗收目錄，未commit、push或部署。"
+}

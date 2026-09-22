@@ -1,0 +1,767 @@
+{
+  "schema": 1,
+  "passed": true,
+  "check": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-gate.json",
+  "checkSha256": "09f73a4e28a636bae61f304b38fbc22cdb340e0cf4e2c4f28f3a3e77782e032d",
+  "log": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-gate.txt",
+  "logSha256": "e8b5d577e9b20f46580bd66cc92fb7cb2c1d1d073bd47671e54ce2ca09d22c24",
+  "protection": ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json",
+  "original": {
+    "files": 47,
+    "tests": 805,
+    "rows": [
+      {
+        "file": "services/finmind.bounds.test.ts",
+        "tests": 11
+      },
+      {
+        "file": "services/yahoo.loading.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "services/quoteCache.bounds.test.ts",
+        "tests": 15
+      },
+      {
+        "file": "services/yahoo.revalidation.test.ts",
+        "tests": 19
+      },
+      {
+        "file": "utils/viteConfigGuard.test.ts",
+        "tests": 5
+      },
+      {
+        "file": "api/_lib/yahoo.handshake.test.ts",
+        "tests": 17
+      },
+      {
+        "file": "services/finmind.loading.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "services/stockDirectory.loading.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "api/_lib/llm.claude-cli.test.ts",
+        "tests": 53
+      },
+      {
+        "file": "utils/backfillPipeline.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/workerPool.test.ts",
+        "tests": 7
+      },
+      {
+        "file": "api/_lib/ratelimit.test.ts",
+        "tests": 16
+      },
+      {
+        "file": "utils/geminiPrompts.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/portfolioLedger.test.ts",
+        "tests": 38
+      },
+      {
+        "file": "api/_lib/finmind.test.ts",
+        "tests": 36
+      },
+      {
+        "file": "services/yahoo.maWarmup.test.ts",
+        "tests": 7
+      },
+      {
+        "file": "api/_lib/config.test.ts",
+        "tests": 24
+      },
+      {
+        "file": "utils/geminiCache.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/portfolioHealthStreaming.test.ts",
+        "tests": 1
+      },
+      {
+        "file": "services/quoteCache.test.ts",
+        "tests": 9
+      },
+      {
+        "file": "utils/geminiRules.test.ts",
+        "tests": 12
+      },
+      {
+        "file": "utils/shareUnits.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "utils/math.test.ts",
+        "tests": 23
+      },
+      {
+        "file": "utils/importReplay.test.ts",
+        "tests": 29
+      },
+      {
+        "file": "utils/portfolioBackup.test.ts",
+        "tests": 42
+      },
+      {
+        "file": "utils/persistentStore.test.ts",
+        "tests": 26
+      },
+      {
+        "file": "api/_lib/yahoo.test.ts",
+        "tests": 40
+      },
+      {
+        "file": "api/gemini-stream.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "api/_lib/guard.test.ts",
+        "tests": 27
+      },
+      {
+        "file": "components/portfolio/holdingPriceQueue.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "utils/portfolioHistory.test.ts",
+        "tests": 30
+      },
+      {
+        "file": "utils/statementParsers/cathayTw.test.ts",
+        "tests": 30
+      },
+      {
+        "file": "api/_lib/http.test.ts",
+        "tests": 47
+      },
+      {
+        "file": "utils/statementParsers/parsers.test.ts",
+        "tests": 24
+      },
+      {
+        "file": "utils/framePublisher.test.ts",
+        "tests": 6
+      },
+      {
+        "file": "api/_lib/llm.test.ts",
+        "tests": 14
+      },
+      {
+        "file": "utils/backfillFromTxns.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/dividendEstimator.test.ts",
+        "tests": 20
+      },
+      {
+        "file": "utils/entryFilter.test.ts",
+        "tests": 9
+      },
+      {
+        "file": "utils/importPlan.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/portfolioFees.test.ts",
+        "tests": 27
+      },
+      {
+        "file": "utils/portfolioGrouping.test.ts",
+        "tests": 5
+      },
+      {
+        "file": "utils/market.test.ts",
+        "tests": 17
+      },
+      {
+        "file": "utils/appLazyBoundaries.test.ts",
+        "tests": 2
+      },
+      {
+        "file": "utils/fetchError.test.ts",
+        "tests": 8
+      },
+      {
+        "file": "utils/quoteTime.test.ts",
+        "tests": 4
+      },
+      {
+        "file": "components/fundamentals/QuarterlyTrendCharts.test.ts",
+        "tests": 7
+      }
+    ]
+  },
+  "added": {
+    "files": 0,
+    "tests": 0,
+    "rows": []
+  },
+  "historicalCopies": {
+    "files": 138,
+    "tests": 2383,
+    "rows": [
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/finmind.bounds.test.ts",
+        "tests": 11
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/finmind.bounds.test.ts",
+        "tests": 11
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/quoteCache.bounds.test.ts",
+        "tests": 15
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/quoteCache.bounds.test.ts",
+        "tests": 15
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/viteConfigGuard.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/viteConfigGuard.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/yahoo.revalidation.test.ts",
+        "tests": 19
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/yahoo.revalidation.test.ts",
+        "tests": 19
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/yahoo.revalidation.test.ts",
+        "tests": 19
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/viteConfigGuard.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/yahoo.handshake.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/yahoo.handshake.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/yahoo.handshake.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/yahoo.loading.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/yahoo.loading.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/yahoo.loading.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/finmind.loading.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/finmind.loading.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/stockDirectory.loading.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/stockDirectory.loading.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/finmind.loading.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/ratelimit.test.ts",
+        "tests": 16
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/ratelimit.test.ts",
+        "tests": 16
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/workerPool.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/workerPool.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/llm.claude-cli.test.ts",
+        "tests": 53
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/llm.claude-cli.test.ts",
+        "tests": 53
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/llm.claude-cli.test.ts",
+        "tests": 53
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/stockDirectory.loading.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/workerPool.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/backfillPipeline.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/config.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/backfillPipeline.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/backfillPipeline.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/ratelimit.test.ts",
+        "tests": 16
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/geminiPrompts.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/geminiPrompts.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/yahoo.maWarmup.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/config.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/yahoo.maWarmup.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioLedger.test.ts",
+        "tests": 38
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/geminiPrompts.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/yahoo.maWarmup.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/finmind.test.ts",
+        "tests": 36
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/finmind.test.ts",
+        "tests": 36
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/services/quoteCache.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/config.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/geminiRules.test.ts",
+        "tests": 12
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/services/quoteCache.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/finmind.test.ts",
+        "tests": 36
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioHealthStreaming.test.ts",
+        "tests": 1
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/shareUnits.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/services/quoteCache.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/shareUnits.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/shareUnits.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/geminiCache.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/geminiRules.test.ts",
+        "tests": 12
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/geminiRules.test.ts",
+        "tests": 12
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/geminiCache.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioLedger.test.ts",
+        "tests": 38
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioHealthStreaming.test.ts",
+        "tests": 1
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioHealthStreaming.test.ts",
+        "tests": 1
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioLedger.test.ts",
+        "tests": 38
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioBackup.test.ts",
+        "tests": 42
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/geminiCache.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioBackup.test.ts",
+        "tests": 42
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/persistentStore.test.ts",
+        "tests": 26
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/math.test.ts",
+        "tests": 23
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/persistentStore.test.ts",
+        "tests": 26
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/math.test.ts",
+        "tests": 23
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/math.test.ts",
+        "tests": 23
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/persistentStore.test.ts",
+        "tests": 26
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioBackup.test.ts",
+        "tests": 42
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioHistory.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioHistory.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/importReplay.test.ts",
+        "tests": 29
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/importReplay.test.ts",
+        "tests": 29
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/guard.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/importReplay.test.ts",
+        "tests": 29
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/yahoo.test.ts",
+        "tests": 40
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/gemini-stream.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/dividendEstimator.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/cathayTw.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/yahoo.test.ts",
+        "tests": 40
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/dividendEstimator.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioHistory.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/parsers.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/statementParsers/parsers.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/dividendEstimator.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/guard.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/guard.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/statementParsers/parsers.test.ts",
+        "tests": 24
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/gemini-stream.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/backfillFromTxns.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/http.test.ts",
+        "tests": 47
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/importPlan.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/entryFilter.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/statementParsers/cathayTw.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/statementParsers/cathayTw.test.ts",
+        "tests": 30
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/http.test.ts",
+        "tests": 47
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/entryFilter.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/backfillFromTxns.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/importPlan.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/gemini-stream.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/entryFilter.test.ts",
+        "tests": 9
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/yahoo.test.ts",
+        "tests": 40
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/api/_lib/llm.test.ts",
+        "tests": 14
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/api/_lib/llm.test.ts",
+        "tests": 14
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/backfillFromTxns.test.ts",
+        "tests": 20
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/llm.test.ts",
+        "tests": 14
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/components/portfolio/holdingPriceQueue.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioFees.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/importPlan.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/api/_lib/http.test.ts",
+        "tests": 47
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/market.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioFees.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/market.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/framePublisher.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/quoteTime.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/quoteTime.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/components/portfolio/holdingPriceQueue.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/components/portfolio/holdingPriceQueue.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/quoteTime.test.ts",
+        "tests": 4
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioFees.test.ts",
+        "tests": 27
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/appLazyBoundaries.test.ts",
+        "tests": 2
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/portfolioGrouping.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/framePublisher.test.ts",
+        "tests": 6
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/market.test.ts",
+        "tests": 17
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/appLazyBoundaries.test.ts",
+        "tests": 2
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/utils/fetchError.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/portfolioGrouping.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/portfolioGrouping.test.ts",
+        "tests": 5
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/appLazyBoundaries.test.ts",
+        "tests": 2
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/utils/fetchError.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/utils/fetchError.test.ts",
+        "tests": 8
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/workspace/components/fundamentals/QuarterlyTrendCharts.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline11/components/fundamentals/QuarterlyTrendCharts.test.ts",
+        "tests": 7
+      },
+      {
+        "file": ".scratch/reacceptance-20260921/baseline07/components/fundamentals/QuarterlyTrendCharts.test.ts",
+        "tests": 7
+      }
+    ]
+  },
+  "protectedTestsAndSnapshots": 49
+}

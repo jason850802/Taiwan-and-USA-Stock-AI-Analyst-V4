@@ -1,0 +1,598 @@
+{
+  "schema": "p1-fingerprint-regression-v1",
+  "phase": "green",
+  "at": "2026-09-22T04:51:12.165Z",
+  "node": "v26.4.0",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\tools\\replay-fingerprint-regression.mjs",
+    "--phase",
+    "green",
+    "--legacy-gate",
+    ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.json",
+    "--protection",
+    ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json",
+    "--gate",
+    ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.json"
+  ],
+  "contractSha256": "48a0306770ba9f9182998a02a23c5a1dfe91e9d001626c295d532ea636512d29",
+  "regressionSha256": "11e79e359e5be8b671eee6e1c7bcac2b13432caf0178420fd565c0827e08d8ed",
+  "inputsSha256": "848f61b27c2852999d202590742c46ba9a80b6e84ef9eab4ba6dfd1741a1e116",
+  "runtime": {
+    "entry": "node_modules/esbuild/lib/main.js",
+    "entrySha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1",
+    "binary": "node_modules/@esbuild/win32-x64/esbuild.exe",
+    "binarySha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0",
+    "packageJson": "node_modules/@esbuild/win32-x64/package.json",
+    "packageSha256": "5b41ac77d55bf2ae0de680d83a9095904e89523c6ef42460cffd0df5ef5a6947",
+    "packageName": "@esbuild/win32-x64",
+    "version": "0.25.12",
+    "arguments": [
+      "--service=0.25.12",
+      "--ping"
+    ],
+    "launchedProcesses": 0
+  },
+  "checks": 50,
+  "failed": 0,
+  "rows": [
+    {
+      "name": "未選案fixture僅可讀契約，不能產生驗收PASS",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：sourceHashes/tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/node_modules/@esbuild/win32-x64/package.json",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/.scratch/reacceptance-fixes/run-check.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "完整集合：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "缺欄拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "雜湊漂移拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "同數異集合拒絕：toolHashes/scripts/run-gate.mjs",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "三來源均吻合原protection，沒有補寫保護紀錄",
+      "passed": true,
+      "observation": [
+        {
+          "file": "index.css",
+          "sha256": "3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5",
+          "protectedSha256": "3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5"
+        },
+        {
+          "file": "postcss.config.js",
+          "sha256": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc",
+          "protectedSha256": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc"
+        },
+        {
+          "file": "tailwind.config.js",
+          "sha256": "7c76fc37ec9f3460b9e2d764b5c037769f1f21cbd6b09e7a11b17f1b44c7a3a9",
+          "protectedSha256": "7c76fc37ec9f3460b9e2d764b5c037769f1f21cbd6b09e7a11b17f1b44c7a3a9"
+        }
+      ]
+    },
+    {
+      "name": "before固定來源包含：index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "before漏欄拒絕：index.css",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "before固定來源包含：postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "before漏欄拒絕：postcss.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "before固定來源包含：tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "before漏欄拒絕：tailwind.config.js",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "runtime解析結果等於實際build API將啟動的native binary",
+      "passed": true,
+      "observation": {
+        "entry": "node_modules/esbuild/lib/main.js",
+        "entrySha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1",
+        "binary": "node_modules/@esbuild/win32-x64/esbuild.exe",
+        "binarySha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0",
+        "packageJson": "node_modules/@esbuild/win32-x64/package.json",
+        "packageSha256": "5b41ac77d55bf2ae0de680d83a9095904e89523c6ef42460cffd0df5ef5a6947",
+        "packageName": "@esbuild/win32-x64",
+        "version": "0.25.12",
+        "arguments": [
+          "--service=0.25.12",
+          "--ping"
+        ],
+        "launchedProcesses": 0
+      }
+    },
+    {
+      "name": "gate工具metadata核對不等於gate成功",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "gate工具missing：runnerSha256",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "gate工具drift：runnerSha256",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "gate工具missing：entrypointSha256",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "gate工具drift：entrypointSha256",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "真實歷史gate缺工具SHA明確拒絕",
+      "passed": true,
+      "observation": {
+        "record": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.json",
+        "sha256": "b94863c7449536648fe5566feb8594fee03087c72793a40ee601b583d38b5d33"
+      }
+    },
+    {
+      "name": "ESBUILD_BINARY_PATH覆寫拒絕：missing-esbuild-probe",
+      "passed": true,
+      "observation": {
+        "command": [
+          "node",
+          "--input-type=module",
+          "-e",
+          "import { fingerprints } from \"file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs\"; fingerprints();"
+        ],
+        "exitCode": 1,
+        "stderr": "file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23\r\nexport const assert = (ok, message, status = 400) => { if (!ok) throw Object.assign(new Error(message), { status }); };\r\n                                                                                    ^\r\n\r\nError: P1不接受ESBUILD_BINARY_PATH；請解除覆寫後建立新批次\r\n    at assert (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23:85)\r\n    at esbuildRuntime (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:98:3)\r\n    at fingerprints (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:156:19)\r\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/[eval1]:1:146\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\r\n    at async node:internal/modules/esm/loader:227:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:224:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  status: 400\r\n}\r\n\r\nNode.js v26.4.0\r\n"
+      }
+    },
+    {
+      "name": "ESBUILD_BINARY_PATH覆寫拒絕：node_modules/@esbuild/win32-x64/esbuild.exe",
+      "passed": true,
+      "observation": {
+        "command": [
+          "node",
+          "--input-type=module",
+          "-e",
+          "import { fingerprints } from \"file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs\"; fingerprints();"
+        ],
+        "exitCode": 1,
+        "stderr": "file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23\r\nexport const assert = (ok, message, status = 400) => { if (!ok) throw Object.assign(new Error(message), { status }); };\r\n                                                                                    ^\r\n\r\nError: P1不接受ESBUILD_BINARY_PATH；請解除覆寫後建立新批次\r\n    at assert (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:23:85)\r\n    at esbuildRuntime (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:98:3)\r\n    at fingerprints (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-contract.mjs:156:19)\r\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/[eval1]:1:146\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\r\n    at async node:internal/modules/esm/loader:227:26\r\n    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:224:20)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  status: 400\r\n}\r\n\r\nNode.js v26.4.0\r\n"
+      }
+    },
+    {
+      "name": "真新gate通過完整gateDetails",
+      "passed": true,
+      "observation": {
+        "record": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.json",
+        "recordSha256": "04811da68a44d02ee7fd5bf8c104bb3d86394b01944b5242d0182c8e30951753",
+        "runnerSha256": "32dfbbd9325dfb98dd45e01ee15cb1d1c412e293701c5666ed07a32064630cdb",
+        "entrypointSha256": "81346ff27658653a09389148593782aec67f14e637b330b67cd48655ac553361",
+        "log": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.txt",
+        "logSha256": "66c7008c42375993d0dd65eacbf1ba21d6938df839199d353e8ca5515a500d37",
+        "startedAt": "2026-09-22T04:49:26.425Z",
+        "completedAt": "2026-09-22T04:50:24.339Z",
+        "rootTests": [
+          {
+            "file": "api/_lib/config.test.ts",
+            "tests": 24
+          },
+          {
+            "file": "api/_lib/finmind.test.ts",
+            "tests": 36
+          },
+          {
+            "file": "api/_lib/guard.test.ts",
+            "tests": 27
+          },
+          {
+            "file": "api/_lib/http.test.ts",
+            "tests": 47
+          },
+          {
+            "file": "api/_lib/llm.claude-cli.test.ts",
+            "tests": 53
+          },
+          {
+            "file": "api/_lib/llm.test.ts",
+            "tests": 14
+          },
+          {
+            "file": "api/_lib/ratelimit.test.ts",
+            "tests": 16
+          },
+          {
+            "file": "api/_lib/yahoo.handshake.test.ts",
+            "tests": 17
+          },
+          {
+            "file": "api/_lib/yahoo.test.ts",
+            "tests": 40
+          },
+          {
+            "file": "api/gemini-stream.test.ts",
+            "tests": 4
+          },
+          {
+            "file": "components/fundamentals/QuarterlyTrendCharts.test.ts",
+            "tests": 7
+          },
+          {
+            "file": "components/portfolio/holdingPriceQueue.test.ts",
+            "tests": 6
+          },
+          {
+            "file": "services/finmind.bounds.test.ts",
+            "tests": 11
+          },
+          {
+            "file": "services/finmind.loading.test.ts",
+            "tests": 4
+          },
+          {
+            "file": "services/quoteCache.bounds.test.ts",
+            "tests": 15
+          },
+          {
+            "file": "services/quoteCache.test.ts",
+            "tests": 9
+          },
+          {
+            "file": "services/stockDirectory.loading.test.ts",
+            "tests": 6
+          },
+          {
+            "file": "services/yahoo.loading.test.ts",
+            "tests": 8
+          },
+          {
+            "file": "services/yahoo.maWarmup.test.ts",
+            "tests": 7
+          },
+          {
+            "file": "services/yahoo.revalidation.test.ts",
+            "tests": 19
+          },
+          {
+            "file": "utils/appLazyBoundaries.test.ts",
+            "tests": 2
+          },
+          {
+            "file": "utils/backfillFromTxns.test.ts",
+            "tests": 20
+          },
+          {
+            "file": "utils/backfillPipeline.test.ts",
+            "tests": 20
+          },
+          {
+            "file": "utils/dividendEstimator.test.ts",
+            "tests": 20
+          },
+          {
+            "file": "utils/entryFilter.test.ts",
+            "tests": 9
+          },
+          {
+            "file": "utils/fetchError.test.ts",
+            "tests": 8
+          },
+          {
+            "file": "utils/framePublisher.test.ts",
+            "tests": 6
+          },
+          {
+            "file": "utils/geminiCache.test.ts",
+            "tests": 8
+          },
+          {
+            "file": "utils/geminiPrompts.test.ts",
+            "tests": 8
+          },
+          {
+            "file": "utils/geminiRules.test.ts",
+            "tests": 12
+          },
+          {
+            "file": "utils/importPlan.test.ts",
+            "tests": 8
+          },
+          {
+            "file": "utils/importReplay.test.ts",
+            "tests": 29
+          },
+          {
+            "file": "utils/market.test.ts",
+            "tests": 17
+          },
+          {
+            "file": "utils/math.test.ts",
+            "tests": 23
+          },
+          {
+            "file": "utils/persistentStore.test.ts",
+            "tests": 26
+          },
+          {
+            "file": "utils/portfolioBackup.test.ts",
+            "tests": 42
+          },
+          {
+            "file": "utils/portfolioFees.test.ts",
+            "tests": 27
+          },
+          {
+            "file": "utils/portfolioGrouping.test.ts",
+            "tests": 5
+          },
+          {
+            "file": "utils/portfolioHealthStreaming.test.ts",
+            "tests": 1
+          },
+          {
+            "file": "utils/portfolioHistory.test.ts",
+            "tests": 30
+          },
+          {
+            "file": "utils/portfolioLedger.test.ts",
+            "tests": 38
+          },
+          {
+            "file": "utils/quoteTime.test.ts",
+            "tests": 4
+          },
+          {
+            "file": "utils/shareUnits.test.ts",
+            "tests": 6
+          },
+          {
+            "file": "utils/statementParsers/cathayTw.test.ts",
+            "tests": 30
+          },
+          {
+            "file": "utils/statementParsers/parsers.test.ts",
+            "tests": 24
+          },
+          {
+            "file": "utils/viteConfigGuard.test.ts",
+            "tests": 5
+          },
+          {
+            "file": "utils/workerPool.test.ts",
+            "tests": 7
+          }
+        ],
+        "originalTestHashes": {
+          "api/_lib/config.test.ts": "1a3d99e9a19d9bc4847cdbd802c2e986a57d254f7ef394ef3fec2bb87819b211",
+          "api/_lib/finmind.test.ts": "66fba849184298325c2b7b92635e2c1ebdcce76a0c8ab8080d6a626a3ed754ed",
+          "api/_lib/guard.test.ts": "37b6fc3d7e60135ed0391a51aaad327675266983b11614f8bff00fb372f3f227",
+          "api/_lib/http.test.ts": "123e1cd49443bd1bcfbccfa15cefa4f3e8981e4a116b5796427c1903dd01d4ea",
+          "api/_lib/llm.claude-cli.test.ts": "0f2647cc9fe2ad6ac6924a6a2e08bc59904a222e3dcd4368342f256ede3254e7",
+          "api/_lib/llm.test.ts": "808bcb6ad71ffe314460e462052663cb4cbeb4665d712fa863e0a01c9469d885",
+          "api/_lib/ratelimit.test.ts": "16d22ccafbe09b484597a3689071bc30efc9a677fee412f2de367a7d62094244",
+          "api/_lib/yahoo.handshake.test.ts": "9e77c189bfa6e1a7dbed77b00a46b1cfe1df7150391328b4e2fbf67eb5bb4077",
+          "api/_lib/yahoo.test.ts": "018fd507fa3a0d552259cb935944953647571ebbd3e4d68de36a9286f2e826b3",
+          "api/gemini-stream.test.ts": "2d80699af49fc050a8fdfb152db05c405aa2ae2d0af1b8a26221e177b2bc14c5",
+          "components/fundamentals/QuarterlyTrendCharts.test.ts": "cc8cde6dcf40fb83cb5281c39665cca6fb56de4064bceea752326cb2bfc689cf",
+          "components/portfolio/holdingPriceQueue.test.ts": "217371be4bfc89b853b8f74742a2c2b394213a3efa2a0bf0698a7c199c197842",
+          "services/finmind.bounds.test.ts": "0396da9252e1889063e12b79fac16d7c1e52554225f06c08cc3ee7240855fc87",
+          "services/finmind.loading.test.ts": "b66a704c24328e3cd0045a3aed075b334c80a6ed7180c21bdd6ef61e2557bf9e",
+          "services/quoteCache.bounds.test.ts": "31fab796bb056dad406c29e9ad6e64804087431b303be77e1f2d6a8e203e16a2",
+          "services/quoteCache.test.ts": "8b56746018f7b4e9f24309129156d79a0ab0d808819c47718668e74adc52baa0",
+          "services/stockDirectory.loading.test.ts": "0555aa35bf745e1733a5d00eea013d85ade6281d6e9b9cc9385a59b009e4e31f",
+          "services/yahoo.loading.test.ts": "8aeec4c73a65b3a7416953b7632cc07af568323c0b1f11874d2d30cca2198506",
+          "services/yahoo.maWarmup.test.ts": "98d38b4d41b71900c2e0dbd981cafd3df4404bbe03f4003765add20c7dad15ea",
+          "services/yahoo.revalidation.test.ts": "207a22b362f94e5829c5ee34dff15cba1d13eda0864c34a33ed9bda7d967e989",
+          "utils/__snapshots__/geminiPrompts.test.ts.snap": "d4855544d5ce32dc1f79206f9a6ff52fe5862ba89780a3a2f0c7a246621095ff",
+          "utils/__snapshots__/geminiRules.test.ts.snap": "cd4d08da5fd13b6739c2b5aba88d4feeb71b93f79c198cf85bee400cce4015ce",
+          "utils/appLazyBoundaries.test.ts": "116048a5b5c59d7449173638dbe98213f1bc7ad8e0afe6567b3f867c8f647905",
+          "utils/backfillFromTxns.test.ts": "7a8827b9e7aa52f3e2646eb6680b7207c812f4fea41217a48a586e8db6e8a7ec",
+          "utils/backfillPipeline.test.ts": "e63dc5ec70399614cc9785b422e1d9d79bd2da93d519d49f55c875c8cd402ee9",
+          "utils/dividendEstimator.test.ts": "6333719fc49541a5d3ed85e2f59e9939b0790c45f1987eb11c436aa7cfe41ac9",
+          "utils/entryFilter.test.ts": "873cc24eda0357e23876b1de38e4b2ad0463da9945551be4e78eefb9ef29680b",
+          "utils/fetchError.test.ts": "06b614aa8a536f02939c57a6e35cb893521a93b12be1e5d14c9e687693144b52",
+          "utils/framePublisher.test.ts": "126b043a47c6a9f94db79ac2633a8954d0b3fda7b0863128aece285c1cb9ab59",
+          "utils/geminiCache.test.ts": "1c5b7f6d5e89ddb83529b8934f21b2115ce8be7a6f33dce465f537b890dace01",
+          "utils/geminiPrompts.test.ts": "681b541b8193be2e25cfd05df2fe9e7e4f3275d80608d2ecb1c00930acf1d97f",
+          "utils/geminiRules.test.ts": "3d883d7ef1dfac58d8a9291b19679ecf040136e97ce2beb9d23fcf6724fcfbb0",
+          "utils/importPlan.test.ts": "61d2d9a4fc48d61177eb4ca1c200f0ff28264f1cc356a74d98c505e289bdb48d",
+          "utils/importReplay.test.ts": "5d45079a160a1d513e9cca2d3ee9e6a68d17e437dae20bbefb6fbc45ef91acd8",
+          "utils/market.test.ts": "2ad23fdd935c54cb067b5a048cd3c6a38d7cee07386220593d3dc07969b72c66",
+          "utils/math.test.ts": "4936aea0c827cb56d0cedd274723b470b23b949c6a7e17499f7fd6427175df83",
+          "utils/persistentStore.test.ts": "87ac1c5f6c7555566a6694e14bace7a273e6a1b984fcfb140da80c51782afe3b",
+          "utils/portfolioBackup.test.ts": "837686eb2ad5eaf22896718f8488f56a9d08abfbf9c96d310d002801025a7e32",
+          "utils/portfolioFees.test.ts": "dcd8c53aaa2a1e3a1595fb6054db5ed3086e9fc8f418efef8700d0d13e635749",
+          "utils/portfolioGrouping.test.ts": "236ff53c55a1872cc402e40be3cc6652503b88de7f72b9f29156ac195aaf0879",
+          "utils/portfolioHealthStreaming.test.ts": "ebc0ad58df87ec4f696e08bc63beba6f8e7b0e2ec09772a4bdb19b9b98cc8e18",
+          "utils/portfolioHistory.test.ts": "87ebc537efed338e5c4a913a1180879a992a80ce99f818a468d6c1095bc958c1",
+          "utils/portfolioLedger.test.ts": "cbb924b2df71df551ec8e099d34eacb7d77bb0537bf14b5469523c12803ce155",
+          "utils/quoteTime.test.ts": "b316a210010c4ecb427336ed504586060ee66c335dd1d2260b606baacd4280d2",
+          "utils/shareUnits.test.ts": "74aed453b2b1433f313c3e84e698a5ade2591bef5a155ce949a0695ed3378862",
+          "utils/statementParsers/cathayTw.test.ts": "40d67fa0a540cb6dbce40893f08e941571b06098f9c077b1613d37cd7261d51e",
+          "utils/statementParsers/parsers.test.ts": "0e0159345485da2d1bd998ac02a1e58f96564882eab55564d5144e13c6267118",
+          "utils/viteConfigGuard.test.ts": "6a74b35b631b56a776813b91cbb18529a0466f65c0c1f116e6e8e111f34f6807",
+          "utils/workerPool.test.ts": "9bbf52d17f0778f3e549877b039b577f885a7661f86cad280b6afb5c892a5fa0"
+        },
+        "totalFiles": 185,
+        "totalTests": 3188,
+        "historicalCopyFiles": 138,
+        "historicalCopyTests": 2383,
+        "secretScanDegraded": false
+      }
+    },
+    {
+      "name": "真新gate負向副本：runnerSha256/missing",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "真新gate負向副本：runnerSha256/drift",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "真新gate負向副本：entrypointSha256/missing",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "真新gate負向副本：entrypointSha256/drift",
+      "passed": true,
+      "observation": null
+    }
+  ],
+  "legacyGateUnchanged": true,
+  "scope": "只測完整指紋／metadata及拒絕路徑；沒有啟站、執行binary、重跑gate或製造成功raw。protocol-only fixture不能選案。"
+}

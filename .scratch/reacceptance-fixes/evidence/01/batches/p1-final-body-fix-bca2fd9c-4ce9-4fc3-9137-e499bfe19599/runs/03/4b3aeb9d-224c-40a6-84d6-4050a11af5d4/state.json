@@ -1,0 +1,14 @@
+{
+  "schema": "p1-replay-v1",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "group": "03",
+  "runId": "4b3aeb9d-224c-40a6-84d6-4050a11af5d4",
+  "status": "failed",
+  "cases": {
+    "desktop-green-stale-return.json": {
+      "sha256": "1a6ad8d680db6fee4d4906c4f5b676698ad177cf94b37a8d5c66350e0dfb21f3",
+      "passed": false
+    }
+  },
+  "artifactHashes": {}
+}

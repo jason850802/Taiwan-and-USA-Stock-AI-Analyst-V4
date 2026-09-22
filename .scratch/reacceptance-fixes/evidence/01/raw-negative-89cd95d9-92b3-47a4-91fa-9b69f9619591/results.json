@@ -1,0 +1,963 @@
+{
+  "schema": "p1-raw-negative-v1",
+  "manifest": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+  "manifestSha256": "093801d62a253e1fa885e6b93d56beb36b2905f742cd6846cd969d3800a1095a",
+  "staleRaw": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-stale-return.json",
+  "staleSha256": "45aea1976990bda3c16fbb5be5fedd112588af7f18b08d17f0d5aa85cb134369",
+  "node": "v26.4.0",
+  "rows": [
+    {
+      "id": "P01",
+      "name": "完整真raw副本：verifier、queue、seal均可通過",
+      "passed": true,
+      "manifest": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/01-complete/manifest.json",
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\01-complete\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 0,
+          "signal": null,
+          "stdout": "{\"allPassed\":true,\"batchId\":\"bca2fd9c-4ce9-4fc3-9137-e499bfe19599\",\"manifestRevision\":5,\"cases\":109,\"formalApp\":38}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\01-complete\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 0,
+          "signal": null,
+          "stdout": "{\"allPassed\":true,\"batchId\":\"bca2fd9c-4ce9-4fc3-9137-e499bfe19599\",\"manifestRevision\":5,\"rows\":[{\"count\":1,\"before\":{\"cold\":{\"firstVisibleMs\":179.7999999821186,\"allCompleteMs\":179.7999999821186},\"warmup\":{\"firstVisibleMs\":99,\"allCompleteMs\":99.40000000596046},\"firstVisibleMs\":{\"samples\":[93,98.19999998807907,98.69999998807907,97.90000000596046,101.59999999403954],\"median\":98.19999998807907,\"min\":93,\"max\":101.59999999403954},\"allCompleteMs\":{\"samples\":[93.19999998807907,98.40000000596046,98.69999998807907,97.90000000596046,102.09999999403954],\"median\":98.40000000596046,\"min\":93.19999998807907,\"max\":102.09999999403954},\"requestCounts\":[2,2,2,2,2],\"peaks\":[2,2,2,2,2],\"fxStartPositions\":[2,2,2,2,2]},\"after\":{\"cold\":{\"firstVisibleMs\":141.40000000596046,\"allCompleteMs\":141.40000000596046},\"warmup\":{\"firstVisibleMs\":93.7999999821186,\"allCompleteMs\":93.7999999821186},\"firstVisibleMs\":{\"samples\":[92.30000001192093,98,102.39999997615814,103.30000001192093,100.80000001192093],\"median\":100.80000001192093,\"min\":92.30000001192093,\"max\":103.30000001192093},\"allCompleteMs\":{\"samples\":[92.30000001192093,98,102.39999997615814,103.30000001192093,100.80000001192093],\"median\":100.80000001192093,\"min\":92.30000001192093,\"max\":103.30000001192093},\"requestCounts\":[2,2,2,2,2],\"peaks\":[2,2,2,2,2],\"fxStartPositions\":[1,1,1,1,1]}},{\"count\":10,\"before\":{\"cold\":{\"firstVisibleMs\":100.69999998807907,\"allCompleteMs\":195},\"warmup\":{\"firstVisibleMs\":87.90000000596046,\"allCompleteMs\":194.30000001192093},\"firstVisibleMs\":{\"samples\":[90.19999998807907,93.69999998807907,100.30000001192093,100.40000000596046,97.69999998807907],\"median\":97.69999998807907,\"min\":90.19999998807907,\"max\":100.40000000596046},\"allCompleteMs\":{\"samples\":[184.30000001192093,189,186.09999999403954,194.80000001192093,190.40000000596046],\"median\":189,\"min\":184.30000001192093,\"max\":194.80000001192093},\"requestCounts\":[11,11,11,11,11],\"peaks\":[6,6,6,6,6],\"fxStartPositions\":[11,11,11,11,11]},\"after\":{\"cold\":{\"firstVisibleMs\":96.30000001192093,\"allCompleteMs\":371.40000000596046},\"warmup\":{\"firstVisibleMs\":101.89999997615814,\"allCompleteMs\":377.19999998807907},\"firstVisibleMs\":{\"samples\":[96.59999999403954,104.69999998807907,101.5,94,94.5],\"median\":96.59999999403954,\"min\":94,\"max\":104.69999998807907},\"allCompleteMs\":{\"samples\":[377.09999999403954,383,371,382.60000002384186,369.5],\"median\":377.09999999403954,\"min\":369.5,\"max\":383},\"requestCounts\":[11,11,11,11,11],\"peaks\":[3,3,3,3,3],\"fxStartPositions\":[1,1,1,1,1]}},{\"count\":30,\"before\":{\"cold\":{\"firstVisibleMs\":115.40000000596046,\"allCompleteMs\":554.4000000059605},\"warmup\":{\"firstVisibleMs\":108.60000002384186,\"allCompleteMs\":543.6000000238419},\"firstVisibleMs\":{\"samples\":[100.90000000596046,101,105.59999999403954,110.30000001192093,101],\"median\":101,\"min\":100.90000000596046,\"max\":110.30000001192093},\"allCompleteMs\":{\"samples\":[545.8000000119209,533.0999999940395,538.2999999821186,524.3000000119209,538],\"median\":538,\"min\":524.3000000119209,\"max\":545.8000000119209},\"requestCounts\":[31,31,31,31,31],\"peaks\":[6,6,6,6,6],\"fxStartPositions\":[31,31,31,31,31]},\"after\":{\"cold\":{\"firstVisibleMs\":97.90000000596046,\"allCompleteMs\":986.5},\"warmup\":{\"firstVisibleMs\":102.7999999821186,\"allCompleteMs\":1004.8999999761581},\"firstVisibleMs\":{\"samples\":[102.5,104.90000000596046,96.59999999403954,102.40000000596046,100.60000002384186],\"median\":102.40000000596046,\"min\":96.59999999403954,\"max\":104.90000000596046},\"allCompleteMs\":{\"samples\":[1002.1999999880791,1048.9000000059605,1045,1010,1034],\"median\":1034,\"min\":1002.1999999880791,\"max\":1048.9000000059605},\"requestCounts\":[31,31,31,31,31],\"peaks\":[3,3,3,3,3],\"fxStartPositions\":[1,1,1,1,1]}}]}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\01-complete\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 0,
+          "signal": null,
+          "stdout": "{\"allPassed\":true,\"scope\":\"P1-replay-109\",\"batchId\":\"bca2fd9c-4ce9-4fc3-9137-e499bfe19599\",\"manifestRevision\":5,\"replays\":88,\"queueBefore\":21,\"formalApp\":38,\"rootTestFiles\":47,\"rootTests\":805,\"historicalCopyTests\":2383}\n",
+          "stderr": ""
+        }
+      ],
+      "rawFiles": 109
+    },
+    {
+      "id": "P02",
+      "name": "缺本輪一案，另目錄仍保留同名真成功raw",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\02-missing-with-residue\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "執行尚未完整成功：03/collecting\n"
+        }
+      ],
+      "retainedSuccess": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/02-missing-with-residue/previous-success/desktop-green-stale-return.json",
+      "retainedSha256": "698db4ff9ab92132bb8c2c398fbb53b67719ecab73b8779069da5cf0ea920d84",
+      "collected": 11,
+      "expected": 12
+    },
+    {
+      "id": "P03",
+      "name": "另一真run成功raw原bytes放入指定輪，身分不符即拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\03-old-run\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ],
+      "originalStaleRaw": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-stale-return.json",
+      "staleRunId": "53905abc-e488-478f-809c-f7dd76c71020",
+      "selectedRunId": "65fbbede-6874-43b4-943e-7e70e6f232bf",
+      "copiedBytesIdentical": true
+    },
+    {
+      "id": "P04",
+      "name": "05前版真raw不能代替後版同sample",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\04-before-after\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "name": "窄版真raw不能代替桌面案",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\05-wrong-size\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw案例身分不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "name": "missing-run-id",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\06-missing-run-id\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "name": "unknown-schema",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\07-unknown-schema\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "name": "unknown-case",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\08-unknown-case\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw案例身分不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-source-hash",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\09-missing-source-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-tool-hash",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\10-missing-tool-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-build-hash",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\11-missing-build-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "changed-source-hash",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\12-changed-source-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-index-css",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\13-missing-index-css\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-postcss-config-js",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\14-missing-postcss-config-js\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-tailwind-config-js",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\15-missing-tailwind-config-js\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-runtime-tool-0",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\16-missing-runtime-tool-0\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-runtime-tool-1",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\17-missing-runtime-tool-1\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-runtime-tool-2",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\18-missing-runtime-tool-2\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "missing-runtime-tool-3",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\19-missing-runtime-tool-3\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "04真正建置產物missing拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\20-04-artifact-missing\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\20-04-artifact-missing\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/20-04-artifact-missing/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/artifacts/holdings.js",
+      "beforeSha256": "ba12d8669da5008336585c8be45e10f9b28a0d9492809efd3a7cbb0cb5a9e851",
+      "afterSha256": null
+    },
+    {
+      "id": "P07",
+      "name": "04真正建置產物drift拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\21-04-artifact-drift\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\21-04-artifact-drift\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/21-04-artifact-drift/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/artifacts/holdings.js",
+      "beforeSha256": "ba12d8669da5008336585c8be45e10f9b28a0d9492809efd3a7cbb0cb5a9e851",
+      "afterSha256": "e9b1b01f60c6bf54e6e994af39f865fdda73f72becf8d7fa07ef5dfc6fc14172"
+    },
+    {
+      "id": "P07",
+      "name": "05-before真正建置產物missing拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\22-05-before-artifact-missing\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\22-05-before-artifact-missing\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\22-05-before-artifact-missing\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/22-05-before-artifact-missing/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/artifacts/holdings.js",
+      "beforeSha256": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc",
+      "afterSha256": null
+    },
+    {
+      "id": "P07",
+      "name": "05-before真正建置產物drift拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\23-05-before-artifact-drift\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\23-05-before-artifact-drift\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\23-05-before-artifact-drift\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/23-05-before-artifact-drift/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/artifacts/holdings.js",
+      "beforeSha256": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc",
+      "afterSha256": "64dc3c0567151318a1e794348054f8c875a6d01df6252fbe4cdfbdbcadd4ee0d"
+    },
+    {
+      "id": "P07",
+      "name": "05-after真正建置產物missing拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\24-05-after-artifact-missing\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\24-05-after-artifact-missing\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\24-05-after-artifact-missing\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物檔案集合不符\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/24-05-after-artifact-missing/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/artifacts/holdings.js",
+      "beforeSha256": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc",
+      "afterSha256": null
+    },
+    {
+      "id": "P07",
+      "name": "05-after真正建置產物drift拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\25-05-after-artifact-drift\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\25-05-after-artifact-drift\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\25-05-after-artifact-drift\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "run建置產物雜湊漂移：holdings.js\n"
+        }
+      ],
+      "artifact": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/25-05-after-artifact-drift/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/artifacts/holdings.js",
+      "beforeSha256": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc",
+      "afterSha256": "7423e3a78313fc3c0f18f6a4073423192d8c536e463a29a60c1fb124f2f54cf2"
+    },
+    {
+      "id": "P07",
+      "name": "raw缺少當輪harness產物hash拒絕",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\26-missing-raw-artifact-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\26-missing-raw-artifact-hash\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\26-missing-raw-artifact-hash\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw執行／來源／工具／build不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "name": "半份raw JSON不可產生PASS",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\27-partial-json\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "Unexpected end of JSON input\n"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "name": "選擇中的路徑穿越runId不可讀取外部",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\28-path-traversal\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "組別／runId無效\n"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "name": "raw目錄多出未知case不可倒推完整性",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\29-unexpected-file\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw預期檔案集合不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "name": "verifier舊摘要不能封存本manifest",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\30-old-verifier-summary\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "分組摘要版本／run／raw不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "name": "queue舊摘要不能封存本manifest",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\31-old-queue-summary\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "05摘要版本／run／raw不符\n"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "name": "verifier通過後raw僅加空白，seal仍須核出SHA改變",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\32-raw-changed-after-verify\\manifest.json",
+            "--gate",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\checks\\body-fix-final-gate.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "raw／receipt雜湊不符：desktop-green-stale-return.json\n"
+        }
+      ],
+      "beforeSha256": "698db4ff9ab92132bb8c2c398fbb53b67719ecab73b8779069da5cf0ea920d84",
+      "afterSha256": "8d3a00a283b5f25768be879d755f381223a4c16778564c7537cd78ff95b99ec6",
+      "semanticJsonUnchanged": true
+    },
+    {
+      "id": "P11",
+      "name": "同run未完成→補齊真raw：驗證狀態回放",
+      "passed": true,
+      "calls": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\33-same-run-completion\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 1,
+          "signal": null,
+          "stdout": "",
+          "stderr": "執行尚未完整成功：03/collecting\n"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+            "--manifest",
+            "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591\\33-same-run-completion\\manifest.json"
+          ],
+          "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+          "exitCode": 0,
+          "signal": null,
+          "stdout": "{\"allPassed\":true,\"batchId\":\"bca2fd9c-4ce9-4fc3-9137-e499bfe19599\",\"manifestRevision\":5,\"cases\":109,\"formalApp\":38}\n",
+          "stderr": ""
+        }
+      ],
+      "runId": "65fbbede-6874-43b4-943e-7e70e6f232bf",
+      "limit": "這是驗證器狀態回放；真活站補案及重啟由prime的P11／P05證據覆蓋。"
+    },
+    {
+      "id": "P08",
+      "name": "真HTTP重複case明確409，原raw不變",
+      "passed": true,
+      "http": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4177/__fixture/result",
+        "status": 409,
+        "body": "{\"error\":\"同case重複送出；失敗保留，請新啟完整組\"}"
+      }
+    },
+    {
+      "id": "P09",
+      "name": "真HTTP半份JSON不寫成功檔",
+      "passed": true,
+      "http": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4177/__fixture/result",
+        "status": 400,
+        "body": "{\"error\":\"Unexpected end of JSON input\"}"
+      }
+    },
+    {
+      "id": "P05",
+      "name": "真HTTP拒絕另一真03輪ID及舊bootstrap版本",
+      "passed": true,
+      "http": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4177/__fixture/result",
+        "status": 409,
+        "body": "{\"error\":\"頁面runId缺失或已過期\"}"
+      },
+      "bootstrap": {
+        "url": "http://127.0.0.1:4177/__integration/53905abc-e488-478f-809c-f7dd76c71020/7f53eb35e1c807fba35a2fd2c1efe979fb466d0cdb4984285aa8d45d2abea6b2.js",
+        "status": 410,
+        "body": "{\"error\":\"此頁面bootstrap執行版本已過期；請完整重載本輪頁面\"}"
+      },
+      "limit": "HTTP重送與舊版本下載；真正舊browser頁面跨restart另外由prime驗證。"
+    }
+  ],
+  "originalFilesChecked": 137,
+  "changedOriginals": [],
+  "passed": true,
+  "limits": "所有副本保留原批次／runId，故障注入只為觀察拒絕。這些副本不計109案新browser。HTTP欄位只於指定origin時執行；P05真browser與P11真活站另列。"
+}

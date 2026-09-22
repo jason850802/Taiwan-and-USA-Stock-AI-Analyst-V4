@@ -1,0 +1,29 @@
+{
+  "schema": "p1-failed-http-receipt-v1",
+  "at": "2026-09-21T16:37:19.536Z",
+  "passed": true,
+  "manifest": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+  "definitionSha256": "f3b56510dda315acc4486db0cc0c236619910ea077a8466f302680991e6cec83",
+  "runId": "4b3aeb9d-224c-40a6-84d6-4050a11af5d4",
+  "first": {
+    "status": 200,
+    "body": "{\"saved\":\"desktop-green-stale-return.json\",\"runId\":\"4b3aeb9d-224c-40a6-84d6-4050a11af5d4\",\"status\":\"failed\"}"
+  },
+  "duplicate": {
+    "status": 409,
+    "body": "{\"error\":\"同case重複送出；失敗保留，請新啟完整組\"}"
+  },
+  "original": {
+    "file": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/4b3aeb9d-224c-40a6-84d6-4050a11af5d4/raw/desktop-green-stale-return.json",
+    "sha256": "1a6ad8d680db6fee4d4906c4f5b676698ad177cf94b37a8d5c66350e0dfb21f3",
+    "passed": false
+  },
+  "state": {
+    "status": "failed",
+    "beforeSha256": "6996191899dd59d8d066da60ff55106c968e0b42b1185d5dc8e8a7ed3763bc96",
+    "afterSha256": "6996191899dd59d8d066da60ff55106c968e0b42b1185d5dc8e8a7ed3763bc96",
+    "unchanged": true
+  },
+  "toolSha256": "8f4b2e9385fe1cb987a0cf193a800fb346bb9eb7d3c771f58b76b237c7aa8f58",
+  "limits": "只驗失敗HTTP收件不被重試覆寫；失敗payload明標協定fixture，不計109份真瀏覽器案例。"
+}

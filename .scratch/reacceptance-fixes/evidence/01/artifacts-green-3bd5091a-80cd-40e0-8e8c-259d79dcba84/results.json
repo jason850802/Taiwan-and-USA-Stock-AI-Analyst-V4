@@ -1,0 +1,135 @@
+{
+  "schema": "p1-artifact-regression-v1",
+  "phase": "green",
+  "at": "2026-09-21T16:38:09.840Z",
+  "rows": [
+    {
+      "name": "各組明確列實際產物集合",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "正確產物集合可重算：02",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "正確產物集合可重算：03",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "正確產物集合可重算：04",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "正確產物集合可重算：05-before",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "正確產物集合可重算：05-after",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "04/missing-hash拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "04/missing-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "04/drift拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "04/extra-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-before/missing-hash拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-before/missing-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-before/drift拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-before/extra-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-after/missing-hash拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-after/missing-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-after/drift拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "05-after/extra-file拒絕",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "初載binding保存該run精確產物hash",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "重複保存不得覆寫第一次編譯的bytes",
+      "passed": true,
+      "observation": null
+    },
+    {
+      "name": "原04build分支移到啟站前且仍只有一次build",
+      "passed": true,
+      "observation": {
+        "originalSha256": "8abb1fe396df6d13a06c3bc1498911c8cd77359d42f37f9064145de2937885dc",
+        "adaptedSha256": "5d459e144885db3a7b722e012c29df9523c3a8ffeb7a4ae5cf3e9d828b3bed83",
+        "syntaxExitCode": 0
+      }
+    },
+    {
+      "name": "原05build分支移到啟站前且仍只有一次build",
+      "passed": true,
+      "observation": {
+        "originalSha256": "11c11b60bc5ccd28cfb18d1071890b956138d7e710ba0573ab04f1a381fb72b1",
+        "adaptedSha256": "e9b4a23817a0e73232278b76a8a4510a8e8f62634364cf4ee8aa6232ef76c0e1",
+        "syntaxExitCode": 0
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\tools\\replay-artifact-regression.mjs",
+    "--phase",
+    "green"
+  ],
+  "checks": 22,
+  "failed": 0,
+  "contractSha256": "48a0306770ba9f9182998a02a23c5a1dfe91e9d001626c295d532ea636512d29",
+  "scope": "合成單元產物與原build分支轉接語法；沒有listen、真gate或browser PASS；HTTP真正servedbytes由prime新run另驗。"
+}

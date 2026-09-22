@@ -1,0 +1,58 @@
+{
+  "schema": "p1-replay-v1",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "group": "03",
+  "runId": "65fbbede-6874-43b4-943e-7e70e6f232bf",
+  "status": "complete",
+  "cases": {
+    "desktop-green-stale-return.json": {
+      "sha256": "698db4ff9ab92132bb8c2c398fbb53b67719ecab73b8779069da5cf0ea920d84",
+      "passed": true
+    },
+    "desktop-green-switch-return.json": {
+      "sha256": "a46a1c963c4f5f9ef303a88bcb70ad819cf95d52b257c1083e7b83d964a8b15d",
+      "passed": true
+    },
+    "desktop-green-tab-return.json": {
+      "sha256": "249e830c54db906928078d3ab11323d02886c2aca77d5075ee2b263506a128c5",
+      "passed": true
+    },
+    "desktop-green-force-pending.json": {
+      "sha256": "dcef4f51b08d6cd3a6f504070ad6538c10361e258f1c4c9b37ace6d010b91bdf",
+      "passed": true
+    },
+    "desktop-green-failure-retry.json": {
+      "sha256": "89296a680bafcc681bc959e90ca02b779ebd6bb3e6f058bf85bce5606a291390",
+      "passed": true
+    },
+    "narrow-green-stale-return.json": {
+      "sha256": "e28e580397b0c206c6c5611c38161c362cf9703d80d69b1cf71fcbc98fb08d1c",
+      "passed": true
+    },
+    "narrow-green-switch-return.json": {
+      "sha256": "2c82479254615e472884df1afa783e36a88d3472781aae8a0607fcdab9cc5338",
+      "passed": true
+    },
+    "narrow-green-tab-return.json": {
+      "sha256": "989bbc029f71da0defe31de3222382ef643e8a4a2a1b5fa773c432d897475c8a",
+      "passed": true
+    },
+    "narrow-green-force-pending.json": {
+      "sha256": "5251ef96e77afe1ac1e12f17f0223f9b92ee3db11937c6fb70132b23d147f7bd",
+      "passed": true
+    },
+    "narrow-green-failure-retry.json": {
+      "sha256": "a306ca78b65eb21f5b48f7b4d2b57bfc13d1442cc9f546971d61003581bf76b9",
+      "passed": true
+    },
+    "desktop-manual-market.json": {
+      "sha256": "6febb93b51a1851f8c6b5744d88764f1792dfd2a4b8c86b00f4cbb75e647da15",
+      "passed": true
+    },
+    "narrow-manual-market.json": {
+      "sha256": "0dc63b3bcceaea3ac484a3187ab959483cba1dcd97374afad52f3e20ef41aad5",
+      "passed": true
+    }
+  },
+  "artifactHashes": {}
+}

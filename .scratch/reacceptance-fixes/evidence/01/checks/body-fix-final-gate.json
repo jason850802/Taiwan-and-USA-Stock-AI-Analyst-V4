@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "startedAt": "2026-09-21T16:45:28.278Z",
+  "completedAt": "2026-09-21T16:46:17.730Z",
+  "node": "v26.4.0",
+  "command": [
+    "node",
+    "scripts/run-gate.mjs"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "runnerSha256": "32dfbbd9325dfb98dd45e01ee15cb1d1c412e293701c5666ed07a32064630cdb",
+  "entrypointSha256": "81346ff27658653a09389148593782aec67f14e637b330b67cd48655ac553361",
+  "log": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-gate.txt",
+  "logSha256": "8220a82a020f69a66aad6306c9ee323a22bfc72ee3eab1cd31107b972b1b315e",
+  "tests": 3188,
+  "testFiles": 185,
+  "fullGate": true,
+  "secretScanDegraded": false
+}

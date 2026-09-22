@@ -1,0 +1,2 @@
+{"manifest":".scratch/reacceptance-fixes/evidence/01/batches/p1-codex-final-0e924a7d-cdae-43ae-9af5-e5fdc85435b9/manifest.json","group":"03","runId":"070da936-29ba-47f9-bede-fa29e7b3ed0f","output":".scratch/reacceptance-fixes/evidence/01/batches/p1-codex-final-0e924a7d-cdae-43ae-9af5-e5fdc85435b9/runs/03/070da936-29ba-47f9-bede-fa29e7b3ed0f","origin":"http://127.0.0.1:4177","pid":32664}
+{"origin":"http://127.0.0.1:4177","pid":32664,"dist":"E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\dist"}

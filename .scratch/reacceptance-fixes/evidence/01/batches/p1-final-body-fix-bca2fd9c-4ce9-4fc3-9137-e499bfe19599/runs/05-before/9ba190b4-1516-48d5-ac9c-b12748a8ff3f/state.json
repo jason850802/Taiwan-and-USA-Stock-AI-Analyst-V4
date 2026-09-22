@@ -1,0 +1,96 @@
+{
+  "schema": "p1-replay-v1",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "group": "05-before",
+  "runId": "9ba190b4-1516-48d5-ac9c-b12748a8ff3f",
+  "status": "complete",
+  "cases": {
+    "before-load-1-0.json": {
+      "sha256": "59d7179dd8d7f5fcccb4106c48be3c4c76567712c711a1d05a17a10bcc12e810",
+      "passed": true
+    },
+    "before-load-1-1.json": {
+      "sha256": "7536abdb1b7c744aa6aec44a793542e7bab485a281663ec9263baff6776abc82",
+      "passed": true
+    },
+    "before-load-1-2.json": {
+      "sha256": "9f6e024e48c49a6c40ab725874b43d7ea2c0cc689086479bbda4597b1e6b05d7",
+      "passed": true
+    },
+    "before-load-1-3.json": {
+      "sha256": "b3b9e7449ce30f70675d89c90b82c290191e57048bbcc390bd5b9295bb1095e6",
+      "passed": true
+    },
+    "before-load-1-4.json": {
+      "sha256": "68978e333e0cc969b5684f21c8c2adef68903d83105037024256d08846dff2bb",
+      "passed": true
+    },
+    "before-load-1-5.json": {
+      "sha256": "37a63974a66a08067fceb58fff8927a8347845ae1c30bb18c52da1b62f43e20d",
+      "passed": true
+    },
+    "before-load-1-6.json": {
+      "sha256": "3e0497935d5c6341ddd016625de86ab5696c01540f8852ff36ee86ecae05df93",
+      "passed": true
+    },
+    "before-load-10-0.json": {
+      "sha256": "1aa60923e0445ba2b85777f3f7f823c78c2a600653aa58f0a0f6ed285797e394",
+      "passed": true
+    },
+    "before-load-10-1.json": {
+      "sha256": "30bb5cfcfa85165c64eb163a77ebe6fc104d7a0567940cac8531097fb6dde112",
+      "passed": true
+    },
+    "before-load-10-2.json": {
+      "sha256": "6128320d96a267b1bae87ce7b06900b16b556df5660595153a2110707f9b4168",
+      "passed": true
+    },
+    "before-load-10-3.json": {
+      "sha256": "c208c9d1587bf9216c8c7fda8cac01f3f428de86f34da57642e3f3fb0422e6b8",
+      "passed": true
+    },
+    "before-load-10-4.json": {
+      "sha256": "1b60bb874306244ba8bd9f6f2ac3b9a91fa3267b6929f89c2a73c80852f45042",
+      "passed": true
+    },
+    "before-load-10-5.json": {
+      "sha256": "ff4582c7c7de83e6c37fbc2c6483698dc2cab38f48eaff9cbb57b3b73053c509",
+      "passed": true
+    },
+    "before-load-10-6.json": {
+      "sha256": "396de0e4f343d1224adbff00f7a7a49b665057a5e3efb47ac24092ad14455489",
+      "passed": true
+    },
+    "before-load-30-0.json": {
+      "sha256": "466a9d114c0ce3db9a699b8337723f3302ebf7d7a744e0f696ad1d2303ae491a",
+      "passed": true
+    },
+    "before-load-30-1.json": {
+      "sha256": "89eca74189f16c2815c8db2bb31be18c69bb4689580f0886350ed436b8596678",
+      "passed": true
+    },
+    "before-load-30-2.json": {
+      "sha256": "2e2ce9354d61bc22af0fc7811399e7b54f256a9786182367a212de0a331a6208",
+      "passed": true
+    },
+    "before-load-30-3.json": {
+      "sha256": "0218ec9e91142cb29c5417de7c0f7f950f721f512e58b8ef8a7a5550b5f3efea",
+      "passed": true
+    },
+    "before-load-30-4.json": {
+      "sha256": "9cf3fb5e112e05581d0acee165db474bd0c29493f007656096bcb432a1653607",
+      "passed": true
+    },
+    "before-load-30-5.json": {
+      "sha256": "c772b44ecaa33bc9fdedbf448a8f28ac19a15e154d574f7612bc906973e15fb1",
+      "passed": true
+    },
+    "before-load-30-6.json": {
+      "sha256": "8e3b1f4f638fd6e8fdade800e740f0fb7d2a7ba467708dde06766d3ce3fe89c9",
+      "passed": true
+    }
+  },
+  "artifactHashes": {
+    "holdings.js": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc"
+  }
+}
