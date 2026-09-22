@@ -94,6 +94,49 @@ describe('庫存報價載入', () => {
     await getLatestPrice('AAPL');
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
+
+  it('台股價格先完成，中文名稱另行抓取並只更新同一代快取', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.startsWith('/api/finmind?')) {
+        return { ok: true, json: async () => ({ msg: 'success', data: [{ stock_id: '2330', stock_name: '台積電' }] }) };
+      }
+      return response('2330.TW', 100);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const { getLatestPrice, getLatestPriceName, patchLatestPriceName, peekLatestPrice } = await import('./yahoo');
+
+    const quote = await getLatestPrice('2330.TW');
+    expect(quote.price).toBe(100);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    const name = await getLatestPriceName('2330.TW');
+    expect(name).toBe('台積電');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(patchLatestPriceName('2330.TW', quote.fetchedAt - 1, name!)).toBe(false);
+    expect(peekLatestPrice('2330.TW')?.name).not.toBe('台積電');
+    expect(patchLatestPriceName('2330.TW', quote.fetchedAt, name!)).toBe(true);
+    expect(peekLatestPrice('2330.TW')?.name).toBe('台積電');
+    expect(peekLatestPrice('2330.TW')?.fetchedAt).toBe(quote.fetchedAt);
+  });
+
+  it('同代碼的中文名稱進行中請求會共用', async () => {
+    let resolveName!: (value: { ok: boolean; json: () => Promise<unknown> }) => void;
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      if (String(input).startsWith('/api/finmind?')) {
+        return new Promise(resolve => { resolveName = resolve; });
+      }
+      return Promise.resolve(response('2330.TW', 100));
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const { getLatestPriceName } = await import('./yahoo');
+
+    const first = getLatestPriceName('2330.TW');
+    const second = getLatestPriceName('2330.TW');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    resolveName({ ok: true, json: async () => ({ msg: 'success', data: [{ stock_id: '2330', stock_name: '台積電' }] }) });
+    await expect(Promise.all([first, second])).resolves.toEqual(['台積電', '台積電']);
+  });
 });
 
 describe('行情日期格式器重用', () => {

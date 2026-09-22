@@ -15,6 +15,13 @@ export const useDailySnapshot = (
   usdTwdRate: number,
 ) => {
   const [historyTick, setHistoryTick] = useState(0);   // 快照落地 → 通知歷史圖表重讀 localStorage
+  // 名稱只影響顯示；fetchedAt 仍代表一次有效刷新，必須保留原本觸發快照的語意。
+  const snapshotPricesKey = JSON.stringify(items.map(item => {
+    const price = prices[item.symbol];
+    return price
+      ? [item.symbol, price.price, price.date ?? null, price.fetchedAt ?? null, !!price.loading, !!price.error]
+      : [item.symbol, null];
+  }));
 
   // 守衛 A/B 內建於 computeLiveSnapshot（部分報價/缺匯率 → 該市場跳過，寧缺勿錯）。
   // fallback 32 只准表格顯示用——這裡把無效匯率轉 undefined，禁入持久化快照。
@@ -32,7 +39,7 @@ export const useDailySnapshot = (
       }
     }, 800);
     return () => clearTimeout(timer);
-  }, [items, prices, usdTwdRate]);
+  }, [items, snapshotPricesKey, usdTwdRate]);
 
   return { historyTick };
 };

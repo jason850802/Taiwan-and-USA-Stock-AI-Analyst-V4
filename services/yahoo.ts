@@ -458,7 +458,7 @@ export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
   return { ...cached, fetchedAt: entry.cachedAt };
 };
 
-const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
+const fetchLatestPriceQuote = async (symbol: string): Promise<LatestPriceResult> => {
   const response = await fetchRawData(symbol, '1d', '5d');
   const result = response.chart.result![0];
   const meta = result.meta;
@@ -479,18 +479,12 @@ const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
     }
   }
 
-  // For TW stocks, fetch Chinese name from FinMind
-  const isTW = isTwStock(meta.symbol);
-  let name = meta.longName || meta.shortName || meta.symbol;
-  if (isTW) {
-    const chineseName = await fetchFinMindStockInfo(meta.symbol);
-    if (chineseName) name = chineseName;
-  }
-
+  const name = meta.longName || meta.shortName || meta.symbol;
   return { price: latestPrice, name, date, fetchedAt: Date.now() };
 };
 
 const inflightLatestPrices = new Map<string, Promise<LatestPriceResult>>();
+const inflightLatestPriceNames = new Map<string, Promise<string | null>>();
 
 export const getLatestPrice = async (
   symbol: string,
@@ -505,7 +499,7 @@ export const getLatestPrice = async (
   }
 
   // 強制更新仍發新請求；較早到達的舊請求不得覆寫較新一輪的快取。
-  const request = fetchLatestPrice(symbol)
+  const request = fetchLatestPriceQuote(symbol)
     .then(latest => {
       if (inflightLatestPrices.get(key) === request && Number.isFinite(latest.price) && latest.price > 0) {
         const { fetchedAt, ...result } = latest;
@@ -518,6 +512,29 @@ export const getLatestPrice = async (
     });
   inflightLatestPrices.set(key, request);
   return { ...await request };
+};
+
+export const getLatestPriceName = async (symbol: string): Promise<string | null> => {
+  if (!isTwStock(symbol)) return null;
+  const key = buildLatestPriceCacheKey(symbol);
+  const pending = inflightLatestPriceNames.get(key);
+  if (pending) return pending;
+
+  const request = fetchFinMindStockInfo(symbol)
+    .finally(() => {
+      if (inflightLatestPriceNames.get(key) === request) inflightLatestPriceNames.delete(key);
+    });
+  inflightLatestPriceNames.set(key, request);
+  return request;
+};
+
+export const patchLatestPriceName = (symbol: string, fetchedAt: number, name: string): boolean => {
+  const key = buildLatestPriceCacheKey(symbol);
+  const entry = readQuoteCache(key);
+  if (!entry || entry.cachedAt !== fetchedAt) return false;
+  const result = entry.result as LatestPriceCacheResult;
+  writeQuoteCache(key, { ...entry, result: { ...result, name } });
+  return true;
 };
 
 // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。

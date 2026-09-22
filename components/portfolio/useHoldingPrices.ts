@@ -3,7 +3,7 @@
 // items 的 symbol 集合一變就自動檢查，有美股時順帶處理匯率。
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { PortfolioItem } from '../../types';
-import { getLatestPrice, peekLatestPrice } from '../../services/yahoo';
+import { getLatestPrice, getLatestPriceName, patchLatestPriceName, peekLatestPrice } from '../../services/yahoo';
 import type { GetLatestPriceOpts } from '../../services/yahoo';
 import { isTwStock } from '../../utils/portfolioFees';
 import { createHoldingPriceQueue } from './holdingPriceQueue';
@@ -12,8 +12,9 @@ export interface PriceData { price: number; name: string; loading: boolean; erro
 
 const USD_TWD_SYMBOL = 'USDTWD=X';
 
-// 物件身分代表最新有效意圖；pending 結束後仍保留身分供已排入的 state 更新核對。
+// 報價與名稱是兩條獨立生命週期：一般 cache hit 可以替換報價意圖，但不能順手使仍在途的名稱失效。
 interface PriceRequest { pending?: Promise<void> }
+interface PriceNameRequest { fetchedAt: number; pending?: Promise<void> }
 
 export const useHoldingPrices = (items: PortfolioItem[]) => {
   const [prices, setPrices] = useState<Record<string, PriceData>>(() => {
@@ -28,6 +29,9 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
   const mountedRef = useRef(false);
   const symbolsRef = useRef(new Set(items.map(i => i.symbol)));
   const priceRequestsRef = useRef(new Map<string, PriceRequest>());
+  const nameRequestsRef = useRef(new Map<string, PriceNameRequest>());
+  const enrichedNameAtRef = useRef(new Map<string, number>());
+  const nameNeedsEnrichRef = useRef(new Map<string, number>());
   const rateRequestRef = useRef<PriceRequest | null>(null);
   const hasUsRef = useRef(items.some(i => !isTwStock(i.symbol)));
   const queueRef = useRef<ReturnType<typeof createHoldingPriceQueue> | null>(null);
@@ -39,6 +43,9 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     return () => {
       mountedRef.current = false;
       priceRequestsRef.current.clear();
+      nameRequestsRef.current.clear();
+      enrichedNameAtRef.current.clear();
+      nameNeedsEnrichRef.current.clear();
       rateRequestRef.current = null;
       queueRef.current!.clear();
     };
@@ -50,8 +57,14 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     symbolsRef.current = symbols;
     for (const symbol of priceRequestsRef.current.keys()) {
       if (!symbols.has(symbol)) {
+        const nameRequest = nameRequestsRef.current.get(symbol);
+        if (nameRequest && enrichedNameAtRef.current.get(symbol) !== nameRequest.fetchedAt) {
+          nameNeedsEnrichRef.current.set(symbol, nameRequest.fetchedAt);
+        }
         priceRequestsRef.current.delete(symbol);
+        nameRequestsRef.current.delete(symbol);
         queueRef.current!.cancel(`quote:${symbol}`);
+        queueRef.current!.cancel(`name:${symbol}`);
       }
     }
     const hasUs = items.some(i => !isTwStock(i.symbol));
@@ -67,6 +80,52 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
   }, [symbolsKey]);
 
   // ── 報價抓取 ───────────────────────────────────────────────────────────
+  const enrichPriceName = useCallback((symbol: string, data: PriceData, allowStart: boolean) => {
+    if (!isTwStock(symbol) || data.fetchedAt === undefined) return;
+    const fetchedAt = data.fetchedAt;
+    const previous = nameRequestsRef.current.get(symbol);
+    if (previous?.fetchedAt === fetchedAt) return previous.pending;
+    if (enrichedNameAtRef.current.get(symbol) === fetchedAt) {
+      nameNeedsEnrichRef.current.delete(symbol);
+      return;
+    }
+    if (!allowStart && nameNeedsEnrichRef.current.get(symbol) !== fetchedAt) return;
+
+    const request: PriceNameRequest = { fetchedAt };
+    nameRequestsRef.current.set(symbol, request);
+    const isCurrent = () => mountedRef.current && symbolsRef.current.has(symbol)
+      && nameRequestsRef.current.get(symbol) === request;
+    const publishName = (name: string) => {
+      if (!isCurrent()) return;
+      setPrices(prev => {
+        if (!isCurrent()) return prev;
+        const current = prev[symbol];
+        if (!current || current.fetchedAt !== fetchedAt || current.name === name) return prev;
+        return { ...prev, [symbol]: { ...current, name } };
+      });
+    };
+
+    request.pending = queueRef.current!.enqueue(`name:${symbol}`, async () => {
+      if (!isCurrent()) return;
+      // 移除期間舊的 in-flight 名稱可能已把同代快取補好；重加後直接接回，不再重打服務。
+      if (enrichedNameAtRef.current.get(symbol) === fetchedAt) {
+        const cached = peekLatestPrice(symbol);
+        if (cached?.fetchedAt === fetchedAt) publishName(cached.name);
+        return;
+      }
+      const name = await getLatestPriceName(symbol);
+      if (!name) return;
+      if (patchLatestPriceName(symbol, fetchedAt, name)) {
+        enrichedNameAtRef.current.set(symbol, fetchedAt);
+        if (nameNeedsEnrichRef.current.get(symbol) === fetchedAt) nameNeedsEnrichRef.current.delete(symbol);
+      }
+      publishName(name);
+    }, true).finally(() => {
+      if (nameRequestsRef.current.get(symbol) === request) request.pending = undefined;
+    });
+    return request.pending;
+  }, []);
+
   const fetchPrice = useCallback(async (symbol: string, opts?: GetLatestPriceOpts) => {
     if (!mountedRef.current || !symbolsRef.current.has(symbol)) return;
     const previous = priceRequestsRef.current.get(symbol);
@@ -82,7 +141,9 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
     if (!opts?.force) {
       const cached = peekLatestPrice(symbol);
       if (cached) {
-        publish({ ...cached, loading: false, error: false });
+        const data = { ...cached, loading: false, error: false };
+        publish(data);
+        enrichPriceName(symbol, data, false);
         return;
       }
     }
@@ -92,13 +153,15 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
       if (!isCurrent()) return;
       try {
         const r = await getLatestPrice(symbol, opts);
-        publish({ ...r, loading: false, error: false });
+        const data = { ...r, loading: false, error: false };
+        publish(data);
+        enrichPriceName(symbol, data, true);
       } catch {
         publish({ price: 0, name: symbol, loading: false, error: true });
       }
-    }).finally(() => { request.pending = undefined; });
+    }, true).finally(() => { request.pending = undefined; });
     return request.pending;
-  }, []);
+  }, [enrichPriceName]);
 
   const fetchExchangeRate = useCallback(async (opts?: GetLatestPriceOpts) => {
     if (!mountedRef.current) return;
