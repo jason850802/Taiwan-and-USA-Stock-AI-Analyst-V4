@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T14:24:20.519Z",
+  "runId": "worker1-groundwork",
+  "git": {
+    "head": "f6a98d2dcc96f53f6307372e35b0c040ee58eefe",
+    "branch": "codex/reacceptance-fixes-p1-s1",
+    "trackedChangedPaths": [
+      ".scratch/reacceptance-fixes/HANDOFF.md",
+      ".vercelignore",
+      "components/portfolio/useHoldingPrices.ts",
+      "services/yahoo.loading.test.ts",
+      "services/yahoo.ts",
+      "vite.config.ts"
+    ],
+    "untrackedPathCount": 5969,
+    "untrackedPathListSha256": "b5590fcaabeca5fa6204b0f0be79c9a46c6f0afe569039fddf94679ad3c13520",
+    "untrackedByRoot": {
+      ".scratch": 5969
+    }
+  },
+  "sourceManifest": {
+    "file": "source-manifest.json",
+    "count": 173,
+    "differsFromDiagnosis": 5
+  },
+  "packageFiles": [
+    {
+      "path": "package.json",
+      "sha256": "6b61234e4e2459df4f8b936d1186921775e9ec267269c6500ec3294632c165b1"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "8e792bcb41a378104ce182ffa741ee7a235f47bfece9198f2858e6a12522d234"
+    }
+  ],
+  "packageDiffNames": [],
+  "runtime": {
+    "nodeVersion": "v26.4.0",
+    "nodeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+    "vercel": null,
+    "vercelNode": null,
+    "platform": "win32",
+    "arch": "x64",
+    "timezone": "Asia/Taipei"
+  },
+  "environment": {
+    "envFilePresent": true,
+    "variableNames": [
+      "ALLOWED_ORIGIN",
+      "CLAUDE_CLI_PATH",
+      "FINMIND_TOKEN",
+      "GEMINI_API_KEY",
+      "GEMINI_MODEL_FAST",
+      "GEMINI_MODEL_THINKING",
+      "LLM_PROVIDER"
+    ],
+    "note": "只保存變數名稱；不保存秘密值或秘密雜湊。"
+  },
+  "tools": {
+    "captureScript": {
+      "path": ".scratch/performance-fix-20260922/tools/capture-baseline-identity.mjs",
+      "sha256": "adf2ed45e1d8647882ad0af097dd95903f4e03e695332092fe136bdeb8e99019"
+    }
+  }
+}
