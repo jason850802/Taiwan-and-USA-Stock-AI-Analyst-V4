@@ -162,10 +162,12 @@ export const useHealthCheck = (
 
     let recentData: StockDataPoint[] = [];
     let volProj = null;
+    let chipDataUnavailable = false;
     let fetchKind: FetchErrorKind | null = null;
     try {
-      const { data } = await getStockData(symbol, '1d');
+      const { data, info } = await getStockData(symbol, '1d');
       recentData = data;
+      chipDataUnavailable = info.chipDataUnavailable === true;
       volProj = estimateVolumeTrend(data, isTwStock(symbol), '1d');
     } catch (e) {
       fetchKind = classifyCaught(e); // 錯誤種類隨本次輸入返回，不讓舊工作改寫新工作的錯誤文案。
@@ -173,7 +175,7 @@ export const useHealthCheck = (
 
     return {
       item: { symbol, name: p?.name || symbol, avgCostPrice: avgCostPriceInCurrentCurrency,
-        currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj },
+        currentPrice, totalShares, profitPct, recentData, volumeProjection: volProj, chipDataUnavailable },
       fetchKind,
     };
   }, [items, prices, usdTwdRate]);

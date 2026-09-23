@@ -642,6 +642,7 @@ export interface PortfolioHealthItem {
   profitPct: number;
   recentData: StockDataPoint[];
   volumeProjection?: VolumeProjectionInfo | null;
+  chipDataUnavailable?: boolean;
 }
 
 // 輸出格式同樣受 snapshot 鎖（utils/geminiRules.test.ts）：這是餵給 LLM 的資料版面，
@@ -721,12 +722,16 @@ export const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
     // 籌碼近5日
     let chipsStr = '';
     if (isTW) {
-      const last5 = item.recentData.slice(-5);
-      const foreignSum = last5.reduce((s, d) => s + (d.foreignBuySell || 0), 0);
-      const trustSum = last5.reduce((s, d) => s + (d.investmentTrustBuySell || 0), 0);
-      chipsStr = `
+      if (item.chipDataUnavailable) {
+        chipsStr = '\n近5日籌碼：資料暫時不可用';
+      } else {
+        const last5 = item.recentData.slice(-5);
+        const foreignSum = last5.reduce((s, d) => s + (d.foreignBuySell || 0), 0);
+        const trustSum = last5.reduce((s, d) => s + (d.investmentTrustBuySell || 0), 0);
+        chipsStr = `
 近5日外資合計：${Math.round(foreignSum / 1000)}張
 近5日投信合計：${Math.round(trustSum / 1000)}張`;
+      }
     }
 
     const priceCurrency = isTW ? 'TWD' : 'USD';
