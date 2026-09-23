@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:17:26.512Z",
+  "startedAt": "2026-09-23T07:17:01.251Z",
+  "variant": "clean",
+  "serviceStartId": "clean-formal-options-v6-20260923-start-2",
+  "success": true,
+  "failure": null,
+  "probeExitCode": 0,
+  "rawExists": true,
+  "identityExists": true,
+  "stopped": {
+    "vercel": {
+      "pid": 27860,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 25376 (PID �� 11904 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 11904 (PID �� 12652 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 29764 (PID �� 27860 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 12652 (PID �� 27860 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 27860 (PID �� 27576 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    },
+    "vite": {
+      "pid": 32248,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 12624 (PID �� 32248 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 15364 (PID �� 32248 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 32248 (PID �� 27576 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    }
+  }
+}

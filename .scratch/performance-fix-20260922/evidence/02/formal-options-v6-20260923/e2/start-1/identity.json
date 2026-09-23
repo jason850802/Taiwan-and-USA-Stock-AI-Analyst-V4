@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 2,
+  "runId": "formal-options-v6-20260923",
+  "createdAt": "2026-09-23T07:15:17.689Z",
+  "startedAt": "2026-09-23T07:15:14.823Z",
+  "variant": "e2",
+  "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+  "source": {
+    "head": "6eee87efb1211e7b9dd8b21238b140c17b501374",
+    "baseManifestSha256": "be1bcc559f133d34243cbf3696349085dbdaf831f9849b337b2d8f9645781854",
+    "setupFileSha256": "a9bff6217d700bac6da2aaae464dd6d868a602acef1d8e452a0e52e8b8a9a605",
+    "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v6-20260923\\full"
+  },
+  "config": {
+    "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+    "viteConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db",
+    "expected": {
+      "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v6-20260923\\full",
+      "runtimeName": "full",
+      "scratchPayload": true,
+      "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+      "viteConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db"
+    }
+  },
+  "tools": {
+    "prepare-options-formal-v2.mjs": "3c6a1a0802566998a76fd70bef447400bd5c38fb9c92f1a381ea4cc36b224abd",
+    "run-options-formal-start-v2.mjs": "6b3b7bcdbf198b1e39bbc5b4d4324d1413b01538db15fd50f9c1a38cd8c366e2",
+    "capture-options-formal.mjs": "859a133911b3a199ef3b49053b5ff0780ad2aaa61bbeb394359af2b09ca89e9f",
+    "merge-options-formal.mjs": "5ef8a134c730978bef8bb829749dab00432b98b01b9ad40cad581390694f5d13",
+    "compare-options.mjs": "242fde39b8778a20544e84e896e3b59154eedea4ae92e7ea12aa0addeb9693d9",
+    "validate-options-formal-v2.mjs": "54f69b236590e4ad1404dceb7ece1589da314d15f5447455307ebf6d8b6fde13",
+    "self-test.mjs": "2cf0ae3dd9d2ad184c83452bc301c47b4e5c1547ddfb39d6ab4f23e6790f8189"
+  },
+  "runtime": {
+    "nodeVersion": "v26.4.0",
+    "nodeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+    "ancestorNodeModulesBin": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\.bin",
+    "vercelVersion": "55.0.0",
+    "viteVersion": "6.4.1",
+    "timezone": "Asia/Taipei"
+  },
+  "services": {
+    "vite": {
+      "spawnPid": 27024,
+      "listenerPid": 27024,
+      "port": 4233,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v6-20260923\\full",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4233",
+        "--strictPort"
+      ]
+    },
+    "vercel": {
+      "spawnPid": 33756,
+      "listenerPid": 33756,
+      "port": 3033,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v6-20260923\\full",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\jason\\AppData\\Roaming\\npm\\node_modules\\vercel\\dist\\vc.js",
+        "dev",
+        "--listen",
+        "3033"
+      ]
+    }
+  },
+  "cacheMode": "fresh independent process start; OPTIONS cold first, then paired warm rounds",
+  "envVariableNames": [
+    "ALLOWED_ORIGIN",
+    "CLAUDE_CLI_PATH",
+    "FINMIND_TOKEN",
+    "GEMINI_API_KEY",
+    "GEMINI_MODEL_FAST",
+    "GEMINI_MODEL_THINKING",
+    "LLM_PROVIDER"
+  ]
+}

@@ -1,18 +1,18 @@
 # 05 — 三槽重新量測與併發實驗
 
 日期：2026-09-23  
-HEAD：`e9fa1a200255d860e3166fad0e2636b49178b894`  
+原固定資料修正提交：`e9fa1a2`；本報告追加 v5 真行情判定時主工作區 HEAD：`6eee87e`（before `444d6b1`、after `6eee87e`）。
 Node：`v26.4.0`
 
 ## 結論
 
-**固定行情仍支持「維持三槽」，但本票尚不可結案：真行情三組同期 paired 已完成，首價 40% 門檻通過，全部有效報價+FX 的 40% 門檻失敗。**
+**固定行情仍支持維持三槽；有效真行情 v5 的首價與全部報價＋匯率改善率分別為 35.97%／19.74%，雙 40% 門檻均未通過，本票保持 OPEN。**
 
 正式 `useHoldingPrices` 的 FX enqueue 次序已修正：有美股時先把 `exchange-rate` 放入同一 queue，再放入各 quote；FX 數值、失敗沿用、快取與金融計算皆未改。修正後固定 upstream 的 10／30 檔各五個 force 回合都 `pass=true`，HTTP peak 全為 **3**，FX start rank 十輪全為 **1**。30 檔 quote/FX 最大排隊中位數為 **964.8 ms**、全部有效 quote+FX **1059.3 ms**、第一個有效報價 **103.6 ms**；仍可見三槽造成的尾端排隊。
 
-隔離的 deterministic 3/4/6 實驗仍顯示，提高上限可縮短尾端，但會把 HTTP peak 由 3 提高到 4 或 6，因此目前保留三槽。先前引用的歷史診斷單輪 `16.67 / 42.02 s` 與 04 後單輪 `3.057 / 11.962 s` 只能作歷史方向觀察；正式判定改用 fresh v3 三組 interleaved before/after。六輪都 16/16 成功、HTTP peak=3、無 page error，但批次中位數為：首個有效報價 `3514.9 → 1209.6 ms`（改善 **65.59%**，PASS），全部有效報價+FX `10510.4 → 10551.8 ms`（改善 **-0.39%**，FAIL）。所以真行情雙 40% 門檻目前為 **未通過**，不是「未量」。
+隔離的 deterministic 3/4/6 實驗仍顯示，提高上限可縮短尾端，但會把 HTTP peak 由 3 提高到 4 或 6，因此目前保留三槽。歷史診斷單輪 `16.67 / 42.02 s` 與 04 後單輪 `3.057 / 11.962 s` 只能作方向觀察。原 v3 的 pair 2／3 混入同 origin 的瀏覽器快取，舊首價 65.59% PASS／全部 -0.39% FAIL **均撤銷**。正式判定改用每頁全新 port 的 v5：六輪 16/16 成功、HTTP peak=3、快取命中 0；首價 `6901.8 → 4419.4 ms`（**35.97%，FAIL**），全部報價＋匯率 `20729.8 → 16637.7 ms`（**19.74%，FAIL**）。
 
-v3 raw 的結構與請求完整性可作負向效能證據，但本輪沒有 contemporaneous `identity.json` 綁定實際 serve PID/command/source manifest/tool hashes；v1 identity 記的是不同 origins 與較早工具版本，不能回填 v3。因此 v3 即使數字通過也不能事後宣稱完整 formal provenance。這個 provenance gap 不影響目前 all+FX 已明確失敗的結論。
+v3 raw 的結構可供方法稽核，但不能作效能門檻證據；其 contemporaneous serve 身分亦不完整。v5 的來源與服務身分見 `evidence/07/true-market-07-20260923-v4/identity.json`，before 為 `444d6b1`、after 為 `6eee87e` 的獨立 runtime 副本。
 
 ## 三槽正式固定 upstream 量測
 
@@ -32,16 +32,38 @@ v3 raw 的結構與請求完整性可作負向效能證據，但本輪沒有 con
 - `evidence/05/fixed-three-slot-fx-priority-20260923-v1/summary.json`
 - `tools/verify-holdings-concurrency.mjs`
 
-## 真行情 paired protocol：v3 完整六輪
+## 真行情 paired protocol：v5 有效正式判定
 
-正式順序為 `before-1 → after-1 → before-2 → after-2 → before-3 → after-3`；before 使用 `444d6b1` 隔離來源，after 使用當時 working tree，兩者各自 cold 清除十檔與 FX 的 latest quote session cache，且每輪實際觀察到 10 quote + 1 FX + 5 name = 16 requests。六輪皆 `pass=true`、10/10 有效報價、5/5 名稱、HTTP 200、`httpPeak=3`、`pageErrors=[]`、`coreUnchanged=true`。
+三組交錯順序為 `before-1 → after-1 → before-2 → after-2 → before-3 → after-3`，每頁使用未用過的 port 建立全新 origin。六頁各有 16/16 個成功請求、10/10 個有效報價、5/5 個名稱、HTTP peak=3、0 個 429、0 個 page error，Resource Timing 快取命中均為 0。本體五鍵保持一致。來源身分與各頁 port、PID、工具雜湊存於 `evidence/07/true-market-07-20260923-v4/identity.json`；原始資料在 `evidence/05/true-market-paired-20260923-v5/`。
 
 | 指標 | before 三輪 | before 中位數 | after 三輪 | after 中位數 | 改善 | 40% |
 |---|---|---:|---|---:|---:|---|
-| 首個有效報價 | 7129.8 / 3514.9 / 334.8 ms | 3514.9 ms | 4280.1 / 268.3 / 1209.6 ms | 1209.6 ms | 65.59% | PASS |
-| 全部有效報價+FX | 21565.1 / 6411.4 / 10510.4 ms | 10510.4 ms | 17436.9 / 349.3 / 10551.8 ms | 10551.8 ms | -0.39% | FAIL |
+| 首個有效報價 | 8448.4 / 6901.8 / 6696.5 ms | 6901.8 ms | 4602.5 / 4419.4 / 4172.3 ms | 4419.4 ms | 35.97% | FAIL |
+| 全部有效報價＋匯率 | 23170.2 / 20729.8 / 20586.1 ms | 20729.8 ms | 17566.1 / 16637.7 / 16309.6 ms | 16637.7 ms | 19.74% | FAIL |
 
-### 尾端來源（2026-09-23 接手後由程式重算，不改判定）
+`verify-holdings-true-market.mjs --run-id true-market-paired-20260923-v5 --after-source-id 6eee87e` 得到 `problems=[]`、`thresholdPass=false`、exit 1。這是有效但未達標的結果；三槽與 peak=3 測試期望維持原樣。
+
+## 真行情 paired protocol：v3 快取污染，數值無效
+
+當時順序為 `before-1 → after-1 → before-2 → after-2 → before-3 → after-3`；雖清除 hook 的 session cache，仍重用瀏覽器 origin。`/api/yahoo/chart` 與 `/api/finmind` 的 `stale-while-revalidate` 讓後續頁面從 HTTP 快取取回舊資料。Resource Timing 的 `transferSize=0`、約 2 ms 回應確認此問題；經 Vercel dev 的真請求至少約 1.8 秒。下表逐頁統計 `bodyMs - startMs < 1000` 的請求，均為 16 支中的數量：
+
+| 頁面 | <1 秒請求數 | 判定 |
+|---|---:|---|
+| before-1 | 0/16 | 只有此頁可作真上游觀察 |
+| after-1 | 0/16 | 只有此頁可作真上游觀察 |
+| before-2 | 11/16 | 快取污染 |
+| after-2 | 16/16 | 快取污染；全頁約 349 ms |
+| before-3 | 10/16 | 快取污染 |
+| after-3 | 7/16 | 快取污染 |
+
+pair 2／3 不具有效 cold 條件，三組中位數與改善率不得用於 40% 門檻。下表僅保留舊工具輸出作稽核，**PASS／FAIL 標記全數無效**：
+
+| 指標 | before 三輪 | before 中位數 | after 三輪 | after 中位數 | 改善 | 40% |
+|---|---|---:|---|---:|---:|---|
+| 首個有效報價 | 7129.8 / 3514.9 / 334.8 ms | 3514.9 ms | 4280.1 / 268.3 / 1209.6 ms | 1209.6 ms | 65.59% | 無效 |
+| 全部有效報價+FX | 21565.1 / 6411.4 / 10510.4 ms | 10510.4 ms | 17436.9 / 349.3 / 10551.8 ms | 10551.8 ms | -0.39% | 無效 |
+
+### v3 尾端來源（歷史診斷，不能用於門檻判定）
 
 下表由 v3 raw 的每支 request `bodyMs - startMs` 直接計算；「慢」指單支超過 3000 ms。quote/FX 每輪共 11 支、name 共 5 支。
 
@@ -54,9 +76,9 @@ v3 raw 的結構與請求完整性可作負向效能證據，但本輪沒有 con
 | after-2 | 349.3 ms | 0 | 2317.TW 234.2 ms | 0 | 41.8 ms |
 | after-3 | 10551.8 ms | 4 | AMZN 5513.6 ms | 0 | 2574.8 ms |
 
-六輪中四輪的尾端由 quote/FX 上游單支 4～7 秒的延遲在三槽中排隊累積而成，名稱等待不是瓶頸；只有 before-2 呈現「價格快、名稱慢」的形狀，而同組 after-2 的全部完成為 349.3 ms。三組配對落在不同的上游延遲狀態，中位數取到兩邊都受慢 quote 主導的 pair 3，因此 all quote+FX 未改善。這是對失敗原因的觀察，不作為改判或重跑湊數的依據；在不提高 HTTP 上限的前提下，本票沒有可安全縮短上游單支延遲的產品手段。
+v3 的 4～7 秒單支延遲可作 pair 1 觀察，pair 2／3 的快請求受瀏覽器快取污染，不再據此推論三組尾端原因或效能改善。三槽下仍可從有效 v5 觀察到真上游批次尾端等待；本票沒有證據支持安全縮短單支上游延遲。
 
-原始資料：`evidence/05/true-market-paired-20260923-v3/before-pair-{1,2,3}.json`、`after-pair-{1,2,3}.json`。初版 verifier 曾因 `pass` 只看 raw 結構而在 `thresholdPass=false` 時錯誤 exit 0；已窄修為 `pass = raw contract && thresholdPass`，並新增 sourceId / HTTP peak 檢查。為避免覆寫舊摘要，修正版輸出為 `summary-v2.json`，對 v3 正確 `pass=false` / exit 1。
+原始資料：`evidence/05/true-market-paired-20260923-v3/before-pair-{1,2,3}.json`、`after-pair-{1,2,3}.json`。舊 `summary-v2.json` 僅修正門檻 exit code，未檢查瀏覽器快取，不能升格為有效正式判定。
 
 ## 真行情 paired protocol：v1 歷史失敗嘗試
 
@@ -89,4 +111,4 @@ v3 raw 的結構與請求完整性可作負向效能證據，但本輪沒有 con
 
 瀏覽器內 `setTimeout(35/45)` 曾受背景 timer 節流，因此正式固定 upstream 移到獨立 Node HTTP server；瀏覽器只記正式 hook 的 HTTP start / headers / body / UI visible。cold 包含模組與瀏覽器啟動效應，只保存原始值，不拿來替代五輪 force 中位數。
 
-本票目前的產品決策仍是維持三槽，因此沒有對真行情施加 4／6 候選上限，也不以假 upstream 宣稱長期不會 429。FX 首批契約已由正式 hook regression 與 fixed raw 補齊；真行情 v3 已完成，但 all quote+FX 中位數未達 40% 改善，且 v3 缺 contemporaneous serve/PID/source identity manifest，所以本票保持 OPEN。若未另行授權改變 queue 上限或其他產品契約，07 只能把這個門檻列為未通過限制，不能宣稱全案 acceptance 全綠。
+本票維持三槽，未對真行情施加 4／6 候選上限，也不以假 upstream 宣稱長期不會 429。FX 首批契約已由正式 hook regression 與 fixed raw 補齊；有效真行情 v5 雙 40% 均未通過，故本票保持 OPEN，07 不得宣稱全案 acceptance 全綠。

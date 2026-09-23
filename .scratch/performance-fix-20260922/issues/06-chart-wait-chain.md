@@ -1,6 +1,6 @@
 # 06 — 分類 K 線剩餘等待並做最小修復
 
-Status: claimed
+Status: resolved — 產品修正已於 `6eee87e` 提交；2026-09-23 補齊台／美股、日／週／月／分線的可見面板畫面時間，固定資料與回訪驗證通過。
 Blocked by: 04, 05
 Type: task
 
@@ -20,7 +20,7 @@ Type: task
 
 ## 驗收條件
 
-- [ ] 台／美股、日／週／月／分線有固定回應驗證與使用者畫面量測。
+- [x] 台／美股、日／週／月／分線有固定回應驗證與使用者畫面量測。`evidence/07/app-screen-20260923-v4/` 的 before／after 各 14 項均在可見面板及 1280×720 完成，0 page error；量測前後核對 listener PID、探針與產品副本身分，同一探針配對後未見穩定退化，暖回訪 0 chart request。原 `screen-before-desktop-full.json` 因背景節流無效，不納入判定。
 - [x] 2y 先到、10y 先到、2y 失敗、10y 補全失敗、FinMind 失敗、背景刷新、A→B→A、多訂閱與個別取消均覆蓋。另補台股 staged 最後 subscriber abort 與 context 消費前 early-abort regression，確認取消後不啟動 FinMind fallback、無 unhandled rejection 或 stale publish/cache。
 - [x] 固定上游下最終完整輸出雜湊一致；回訪不增加非預期 chart 請求。最新 `fixed-current-v4.json` 與 current/clean v1、current v2/v3 的 combined SHA-256 皆為 `516eb415aa1980af99f71c75a9e107d24faad7b90f6ce7f6fed5fa8e236f85b3`；A→B→A 無第三次 A chart。
 - [x] 若剩餘等待主要是必要上游價量，不為拆 Promise 而拆。覆核結果維持 FinMind PV／籌碼／完整歷史的必要等待；名稱沒有既定 late-update 契約，本票不擴張。
@@ -57,4 +57,4 @@ Type: task
 - Standards 硬性違規：回歸鎖原放 `.scratch/.../tools/chart-ticket06.test.ts`（違反 ADR-0002 同目錄原則，且會靠 Vitest 未排除 `.scratch` 進母體），已搬到 `services/yahoo.chipContext.test.ts`；AbortError 判斷改為同檔寫法。其餘判斷題（測試夾具與 revalidation 測試相似、`gemini.ts` 換行寫法）不擴張處理。
 - 回歸鎖 11 案；新增／改寫的 3 案以 HEAD 版與前一版 `yahoo.ts` 各跑一次皆能判紅（見 REPORT）。固定上游 `fixed-current-v7.json` 雜湊 `516eb415…f85b3` 與 v1～v6 相同。
 - 完整 gate（隔離完整 checkout `C:\pfv`，本票＋05 產品改動）：tsc 0、49 files／823 tests、build、金鑰掃描（主 worktree `.env` 6 筆值）乾淨、package／lock 一致。
-- 尚未完成：台／美股、日／週／月／分線的**使用者畫面量測**，併入 07 的正式 App 驗收執行，完成後回填本票並改 `resolved`。
+- 先前待補的使用者畫面量測已在 2026-09-23 補齊：before 與 after 的新配對皆為 14 項，來源分別是 `444d6b1` 與 `6eee87e` 的隔離 runtime；v4 在量測前後補來源身分核對，詳 `evidence/07/app-screen-20260923-v4/REVIEW.md`。產品碼提交為 `6eee87e`。舊 `screen-after-desktop.json` 保留為另一量測方法的有效參照，不與新探針作直接百分比比較。

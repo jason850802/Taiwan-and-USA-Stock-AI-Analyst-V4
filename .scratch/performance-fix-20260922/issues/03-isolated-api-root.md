@@ -1,6 +1,6 @@
 # 03 — 條件式建立精簡 API 執行目錄
 
-Status: resolved
+Status: ready-for-human — E0 正式基準不足，未實作分支尚無形式結案證據；本票仍 OPEN。
 Blocked by: 02
 Type: task
 
@@ -21,7 +21,7 @@ Type: task
 
 ## 驗收條件
 
-- [x] 02 已達標時，有明確證據支持「不需實作」，本票可直接 resolved 且不宣稱做過精簡 root 修復。
+- [ ] 02 以 fresh formal E0／E1／E2 + 同期 formal clean 證明已達標時，才可用「不需實作」分支 resolved；不得以歷史 threshold-only clean 代替。
 - [ ] 進入實作分支時，來源 manifest 無漂移，API 契約與正式前端代理正常，OPTIONS 達本機門檻。
 - [ ] 同步失敗與來源缺漏可判紅，不會服務過期副本。
 - [x] 啟停只作用於本案已核實的程序／目錄，不干擾使用者原有服務。
@@ -33,4 +33,8 @@ Type: task
 
 ## Comments
 
-2026-09-22：02 的 E1（只排除 Vercel `.scratch`）已把 Yahoo／FinMind OPTIONS 降到約 1.24～1.66 秒並全 204，E2 再處理 watcher 穩定性；已低於同期 clean 對照門檻。因此本票依條件分支直接 resolved，沒有建立、維護或宣稱存在第二套精簡 API root。實作分支的來源 manifest／同步失敗條件不適用。
+2026-09-22：舊判定曾依 E1/E2 約 1.1～1.7 秒與歷史 clean 門檻將本票直接 resolved，沒有建立第二套精簡 API root。formal review 後確認 historical clean 只能是 threshold-only sanity，且 E1 缺 formal 兩-start evidence，因此該 no-op closure 需要 fresh formal protocol 重新證明。
+
+2026-09-23：formal v2 已建立可供 fresh E0/E1/E2/clean 比較的 isolated runtime/identity 工具，但 E0 start-1 cold Yahoo OPTIONS 在 60 秒 timeout，整輪依 fail-fast 規則停止。02 尚無 formal clean-threshold/slow-reproduced 結論，故 03 的 conditional no-op 目前不能正式關票；本輪也沒有進入精簡 API root 實作分支。
+
+2026-09-23：formal v6 的 E1／E2 都通過同期 clean 門檻，顯示非產品目錄排除後的候選環境已接近精簡對照；但 E0 無合格 warm 資料、02 尚未滿足凍結的 E0 相對降幅驗收，因此「不需實作」分支不可標 resolved。維持 ready-for-agent／OPEN，不在本輪擴張 API root 實作；詳 `evidence/02/formal-options-closure-review.md`。

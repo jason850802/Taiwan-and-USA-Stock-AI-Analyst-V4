@@ -16,7 +16,13 @@ node .scratch/performance-fix-20260922/tools/capture-baseline-identity.mjs --run
 
 ## 2. 空 OPTIONS
 
-正式原始資料每列至少要有：路由、狀態、總時間、cold／warm、服務啟動識別，以及 warm 配對識別。Yahoo chart 與 FinMind 分開統計；每個服務啟動先一筆 cold，再至少五個交錯 warm pair；總共至少兩次獨立服務啟動。
+正式原始資料每列至少要有：路由、狀態、總時間、cold／warm、服務啟動識別，以及 warm 配對識別。Yahoo chart 與 FinMind 分開統計；每個服務啟動的每條路由都要有 cold，再至少五個交錯 warm pair。同一服務啟動內，每條路由的 warm pairId 不可重複，Yahoo 與 FinMind 的 pairId 集合必須一對一相同；總共至少兩次獨立服務啟動。
+
+每個 formal start 另需保存可機械核對的實際服務身分：owned spawn PID 必須等於實際 listener PID，並保存 port、完整 command、cwd、來源 HEAD／manifest、候選設定雜湊、量測工具雜湊、Node／Vercel（及同輪 Vite）版本與時區。兩個 start 的實際 PID 與 port 都必須不同；只靠呼叫端自填 `serviceStartId` 不算獨立啟動證據。
+
+E0／E1／E2 的正式 OPTIONS 比較使用同一輪建立的同期 clean reference。clean reference 自身也必須符合兩次 independent starts、每 route cold + matched warm pairs、全 204 與上述 identity 契約，且與 E0／E1／E2 綁定同一份產品來源 manifest。歷史 diagnosis clean 只能用 `threshold-only` 作方向／比較器 sanity，不能作 formal reference。
+
+Formal capture 採 fail-fast：任何 service 啟動失敗、HTTP timeout／error 或非 204 都要保存已取得的 identity、raw、log 與 status，立即停止該 start／variant 的 formal protocol；不得追加樣本、重跑同 protocol 或排除失敗列來湊綠。
 
 比較器預設使用正式協定。它必須拒絕非 204、error、缺路由、缺時間、樣本不足或啟動識別不足；門檻逐路由判定，再給總體摘要。
 
@@ -81,7 +87,7 @@ fixture 會把判定保存到 `window.__holdingsNameBlocking` 並在頁面顯示
 node .scratch/performance-fix-20260922/tools/self-test.mjs
 ```
 
-自測至少證明：歷史 clean 作 candidate 時門檻方向可通過；故意把歷史慢原站作 candidate 時比較器非零；OPTIONS status／漏列可判紅；名稱阻塞判定器對 PASS／FAIL 合成資料給出相反退出碼；既有輸出不可覆寫。
+自測至少證明：歷史 clean 作 candidate 時門檻方向可通過；故意把歷史慢原站作 candidate 時比較器非零；OPTIONS status／漏列可判紅；warm 不可跨服務啟動湊足數量，pairId 不一致、缺對應或重複可判紅；merged 同列數但內容與 raw 不同可判紅；overall 只作摘要、不額外形成門檻；名稱阻塞判定器對 PASS／FAIL 合成資料給出相反退出碼；既有輸出不可覆寫。
 
 ## 8. 每票共同收尾
 

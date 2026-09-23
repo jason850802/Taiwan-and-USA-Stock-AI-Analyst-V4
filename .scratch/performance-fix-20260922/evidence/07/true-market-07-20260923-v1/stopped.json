@@ -1,0 +1,26 @@
+{
+  "stoppedAt": "2026-09-23T07:38:46.224Z",
+  "reason": "STOP 檔",
+  "stopped": {
+    "backend": {
+      "pid": 19820,
+      "exitCode": 0
+    },
+    "before": {
+      "pid": 25696,
+      "exitCode": 0
+    },
+    "after": {
+      "pid": 25492,
+      "exitCode": 0
+    },
+    "holdingsCapture": {
+      "pid": 14240,
+      "exitCode": 0
+    },
+    "capture07": {
+      "pid": 33060,
+      "exitCode": 0
+    }
+  }
+}

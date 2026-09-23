@@ -1,6 +1,6 @@
 # 01 — 固定基準並建立可判紅迴圈
 
-Status: resolved
+Status: ready-for-human — E0 90 秒內未就緒，正式兩次 start 與暖樣本不足；凍結門檻仍 OPEN。
 Blocked by: none
 Type: task
 
@@ -28,6 +28,7 @@ Type: task
 - [x] 本體資料五鍵在隔離驗收前後逐值一致；沒有真 AI 或真帳本寫入。
 - [x] 明確記錄本輪是否重現空 OPTIONS 異常；若未重現，不做猜測式 runtime 修正。
 - [x] 原母體測試與歷史副本分列，不把重複案例計成新增覆蓋。
+- [ ] formal closure 有 fresh E0 與同期 clean 各至少兩個 actual independent starts，且每 start 每 route 1 cold + >=5 matched interleaved warm pair、全 204，並保存 actual PID/port/command/source/config/tool/runtime identity。
 
 ## 邊界
 
@@ -37,4 +38,8 @@ Type: task
 
 2026-09-22：依已採用 PLAN 開始 01；測試接縫固定為來源身分、OPTIONS 比較器與正式庫存 hook 名稱阻塞。
 
-2026-09-22：01 結案。`tools/self-test.mjs` 7/7 通過；identity 工具拒絕同 run-id 覆寫並只保存 `.env` 變數名稱。fresh E0 於正確 `/api/yahoo/chart` 與 `/api/finmind` 重現慢速；Yahoo 前四筆在 20 秒探針內逾時、後兩筆 3.09/4.19 秒，FinMind 3.93～4.19 秒。先前誤打 `/api/yahoo-chart` 的樣本保留但標為 invalid，不納入結論。原始 `npm run gate` 為 232 files/3993 tests 全綠，其中大量 `.scratch` 歷史副本屬重複母體，不宣稱為新增覆蓋。
+2026-09-22：01 原結案紀錄：`tools/self-test.mjs` 7/7 通過；identity 工具拒絕同 run-id 覆寫並只保存 `.env` 變數名稱。fresh E0 於正確 `/api/yahoo/chart` 與 `/api/finmind` 重現慢速；Yahoo 前四筆在 20 秒探針內逾時、後兩筆 3.09/4.19 秒，FinMind 3.93～4.19 秒。先前誤打 `/api/yahoo-chart` 的樣本保留但標為 invalid，不納入結論。原始 `npm run gate` 為 232 files/3993 tests 全綠，其中大量 `.scratch` 歷史副本屬重複母體，不宣稱為新增覆蓋。
+
+2026-09-23：formal v2 覆核 finding 後重新開票。已建立 `evidence/01/formal-options-v2/`：171 檔產品來源 manifest、8,960 檔 frozen `.scratch` layout、E0/E1/E2/clean config identity，以及 actual PID/port/command/tool/version capture。`self-test.mjs` 擴為 15/15，包含重複 PID／缺 identity 判紅。正式 E0 start-1 的 owned Vercel PID 40880 / port 3020、Vite PID 25780 / port 4210 身分驗證通過，但第一支 cold `/api/yahoo/chart` 在 60,018.5263 ms timeout（AbortError）；capture fail-fast 只保存這一列，未發 FinMind／warm。依 frozen protocol 已停止本輪 formal run，未執行 E0 start-2 或同期 clean，因此本票仍 OPEN。
+
+2026-09-23：formal v6 的 E1／E2／clean 已具兩次獨立 start 與完整身分、全 204，補足候選及同期 clean 證據；但 E0 start-1 在 90 秒內未就緒、start-2 依 fail-fast 未跑，沒有 E0 warm 樣本。將此記為本機啟動失敗／慢速症狀，不冒充本票要求的「兩次成功 E0 start」。依原驗收條件本票保持 OPEN；詳 `evidence/02/formal-options-closure-review.md` v6 段落。

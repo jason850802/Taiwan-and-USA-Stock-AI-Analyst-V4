@@ -1,6 +1,6 @@
 # 05 — 重量排程並決定是否需要調整上限
 
-Status: ready-for-human — 2026-09-23 產品修正（匯率先入列、HTTP 峰值維持 3）與量測結論已完成；正式真行情雙 40% 門檻的「全部有效報價+FX」未通過（-0.39%），依規則不標 resolved，待使用者決定接受為已知限制或另授權調整。
+Status: ready-for-human — 產品修正與固定行情驗證完成；有效真行情 v5 的首價改善 35.97%、全部報價＋匯率改善 19.74%，雙 40% 門檻均未通過。維持三槽，將未達標列為已知限制，本票仍 OPEN。
 Blocked by: 04
 Type: task
 
@@ -23,7 +23,7 @@ Type: task
 - [x] 有比較候選時，每組皆保存請求總數、峰值、等待、首檔／全部與錯誤數，且負載與 cache 條件一致。
 - [x] 價格改善不靠取消、漏項、背景無界併發或跳過匯率／名稱工作。
 - [x] 少量真行情只驗證選定候選，不用它宣稱長期不會 429；本票尚未選定 4/6，因此未對真行情施加候選上限。
-- [ ] 以同期三組交錯 before/after 真行情通過本 PLAN 的雙 40% 門檻。fresh v3 六輪皆 16/16 HTTP 200、peak=3、`pageErrors=[]`、本體五鍵不變；首個有效報價中位數 `3514.9 → 1209.6 ms`，改善 **65.59%**，但全部有效報價+FX 中位數 `10510.4 → 10551.8 ms`，改善 **-0.39%**，因此正式門檻未通過。`summary-v2.json` 的修正版 verifier 會 `pass=false` / exit 1；不得挑單一快 pair 或歷史單輪改判綠。
+- [ ] 以同期三組交錯 before/after 真行情通過本 PLAN 的雙 40% 門檻。v3 的 pair 2／3 受瀏覽器快取污染，兩項改善率均無效。每頁全新 port 的 v5 六輪皆 16/16 成功、HTTP peak=3、快取命中 0；首價中位數 `6901.8 → 4419.4 ms`（**35.97%**），全部有效報價＋匯率 `20729.8 → 16637.7 ms`（**19.74%**），雙門檻均 FAIL。verifier `problems=[]`、`thresholdPass=false`、exit 1。
 
 ## 邊界
 
@@ -35,13 +35,13 @@ Type: task
 
 三槽有明顯尾端排隊，因此已依條件分支跑 deterministic 3/4/6 實驗；30 檔正常延遲的 all quote+FX 為 `880 / 640 / 480 ms`，最大排隊為 `800 / 560 / 400 ms`，代價是 peak `3 / 4 / 6`。429 與 error 各候選都保留相同錯誤注入與工作規則，沒有靠漏工作取得較快數字。
 
-固定行情與 deterministic 實驗仍支持「維持三槽」：提高到 4／6 只在假上游縮短尾端，並把 peak 提到 4／6；產品 queue 常數與 peak=3 契約未改。另已修正正式 hook 原先把 FX 排在整串 quote 後面的 enqueue 次序，回歸與新 raw 證明 FX 有首批機會且 peak 仍為 3。真行情 v3 已完整跑完三組交錯 before/after，correctness 全綠但效能雙門檻只通過首價、未通過全部 quote+FX，因此本票保持 OPEN；在「不提高到 4/6」限制下沒有證據支持再改 queue 契約。v3 另缺 contemporaneous serve/PID/source identity manifest，故即使數字轉綠也不能事後升格 formal PASS。完整原始資料、方法與限制見 `evidence/05/REPORT.md`。
+固定行情與 deterministic 實驗仍支持「維持三槽」：提高到 4／6 只在假上游縮短尾端，並把 peak 提到 4／6；產品 queue 常數與 peak=3 契約未改。正式 hook 的 FX 首批入列已有回歸與固定 raw 證明。v5 真行情 correctness 全綠，但兩項 40% 效能門檻均 FAIL，故本票保持 OPEN；不以調整既定門檻或加大上限改判。完整原始資料、方法與限制見 `evidence/05/REPORT.md`。
 
 ## Comments
 
 2026-09-23（接手收斂）：
 
-- 以程式重算 v3 六個 raw，中位數與改善率和 `summary.json`／`summary-v2.json` 一致：首個有效報價 `3514.9 → 1209.6 ms`（65.59%，PASS）、全部有效報價+FX `10510.4 → 10551.8 ms`（-0.39%，FAIL）。另由 raw 逐支計算尾端來源：六輪中四輪由 quote/FX 上游單支 4～7 秒的延遲在三槽排隊累積而成，名稱等待不是瓶頸（見 REPORT「尾端來源」）；這只說明失敗原因，不改判定。
+- 前次 v3 重算只核了數值，未核瀏覽器快取。事後逐頁檢查發現 pair 2／3 分別有 7～16 支請求於 1 秒內完成，Resource Timing 顯示快取命中；舊 65.59%／-0.39% 判定撤銷，僅保留當時稽核紀錄。v5 以每頁全新 port 重量，正式判定改採 v5。
 - 雙軸覆核（獨立 sub-agent）：Standards 對本票僅一項判斷題「匯率入列順序承重卻無說明」，已在 hook 補繁中註解（報價、名稱、匯率都以優先旗標入列，同級依入列順序取槽）。Spec 核對跨重疊刷新共用上限、同 key 合併、已啟動占槽、匯率優先、移除取消與名稱納入上限五項皆保留；新回歸在 HEAD 上紅、改後綠。保留意見：「匯率優先」目前靠 `fetchAllPrices` 的入列順序，單獨呼叫 `fetchExchangeRate` 時仍排在已入列工作之後——本票未擴張佇列優先級語意，列為已知限制。
 - 完整 gate（隔離完整 checkout `C:\pfv`，只含本票產品改動）另於 commit 前執行，結果記於 07 的 RESULTS。
 - 產品決策維持三槽；未改 `holdingPriceQueue` 常數、未改 peak=3 測試期望。真行情 all quote+FX 40% 門檻 OPEN，待使用者決定。

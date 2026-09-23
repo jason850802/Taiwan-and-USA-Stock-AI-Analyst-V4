@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:11:33.892Z",
+  "setupPath": ".scratch/performance-fix-20260922/evidence/01/formal-options-v6-20260923/setup.json",
+  "setupSha256": "a9bff6217d700bac6da2aaae464dd6d868a602acef1d8e452a0e52e8b8a9a605",
+  "sourceManifestPath": ".scratch/performance-fix-20260922/evidence/01/formal-options-v6-20260923/source-manifest.json",
+  "sourceManifestFileSha256": "a7dce4d39444ce1fe77bce04919490fbe8e8d6f3887563516b6fa70da791adc4",
+  "scratchLayoutPath": ".scratch/performance-fix-20260922/evidence/01/formal-options-v6-20260923/scratch-layout.json",
+  "scratchLayoutFileSha256": "ca862fecf9cd4bd6ff5d913fd133bab14c4f5781b060c23e6f0c40cc662491d1"
+}

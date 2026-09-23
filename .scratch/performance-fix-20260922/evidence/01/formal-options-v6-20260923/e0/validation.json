@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "createdAt": "2026-09-23T07:18:13.331Z",
+  "variant": "e0",
+  "startCount": 0,
+  "serviceStartIds": [],
+  "rowCount": 0,
+  "failures": [
+    "獨立 start 少於 2",
+    "start-1 缺 identity.json",
+    "start-1 缺 raw.json",
+    "缺 merged.json"
+  ],
+  "pass": false
+}

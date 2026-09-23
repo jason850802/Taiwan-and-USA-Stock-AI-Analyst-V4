@@ -50,20 +50,34 @@ const validate = (label, rows) => {
       if (row.error) failures.push(`${label}: ${route} error=${row.error}`);
       if (!Number.isFinite(row.totalMs) || row.totalMs < 0) failures.push(`${label}: ${route} totalMs 無效`);
     }
-    if (protocol === 'formal') {
-      const warm = subset.filter(row => row.phase === 'warm');
-      if (warm.length < 5) failures.push(`${label}: ${route} warm 少於 5`);
-      if (warm.some(row => !row.pairId)) failures.push(`${label}: ${route} warm 缺 pairId`);
-    }
   }
   if (protocol === 'formal') {
     const starts = [...new Set(rows.map(row => row.serviceStartId))];
     if (starts.length < 2) failures.push(`${label}: 獨立服務啟動少於 2`);
     for (const start of starts) {
+      const pairIdsByRoute = {};
       for (const route of routes) {
-        if (!rows.some(row => row.serviceStartId === start && row.route === route && row.phase === 'cold')) {
+        const subset = rows.filter(row => row.serviceStartId === start && row.route === route);
+        if (!subset.some(row => row.phase === 'cold')) {
           failures.push(`${label}: ${start} 的 ${route} 缺 cold`);
         }
+        const warm = subset.filter(row => row.phase === 'warm');
+        if (warm.length < 5) failures.push(`${label}: ${start} 的 ${route} warm 少於 5`);
+        if (warm.some(row => !row.pairId)) failures.push(`${label}: ${start} 的 ${route} warm 缺 pairId`);
+        const pairIds = warm.map(row => row.pairId).filter(Boolean);
+        const uniquePairIds = new Set(pairIds);
+        if (uniquePairIds.size !== pairIds.length) {
+          failures.push(`${label}: ${start} 的 ${route} warm pairId 重複`);
+        }
+        pairIdsByRoute[route] = uniquePairIds;
+      }
+      const yahooPairIds = pairIdsByRoute['/api/yahoo/chart'];
+      const finmindPairIds = pairIdsByRoute['/api/finmind'];
+      if (
+        yahooPairIds.size !== finmindPairIds.size
+        || [...yahooPairIds].some(pairId => !finmindPairIds.has(pairId))
+      ) {
+        failures.push(`${label}: ${start} 的 warm pairId 未在 Yahoo/FinMind 一對一匹配`);
       }
     }
   }
@@ -107,8 +121,8 @@ for (const [label, value] of Object.entries(rows)) validate(label, value);
 const summaries = Object.fromEntries(Object.entries(rows).map(([label, value]) => [label, summarize(value)]));
 
 const checks = {};
-for (const route of [...routes, 'overall']) {
-  const get = (label) => route === 'overall' ? summaries[label].overall : summaries[label].byRoute[route];
+for (const route of routes) {
+  const get = (label) => summaries[label].byRoute[route];
   const before = get('before');
   const candidate = get('candidate');
   const reference = get('reference');

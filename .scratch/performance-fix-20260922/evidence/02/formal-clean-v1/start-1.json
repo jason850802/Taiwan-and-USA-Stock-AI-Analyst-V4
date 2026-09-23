@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T17:20:59.128Z",
+  "baseUrl": "http://127.0.0.1:3010/",
+  "serviceStartId": "clean-start-1",
+  "timeoutMs": 60000,
+  "warmPairs": 5,
+  "rows": [
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 3550.9689999999996,
+      "phase": "cold",
+      "serviceStartId": "clean-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1477.632,
+      "phase": "cold",
+      "serviceStartId": "clean-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1428.0469000000003,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1488.5362999999998,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1420.335900000001,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1673.739300000001,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1855.6473999999998,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1964.433000000001,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1785.2641999999978,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1492.5061999999998,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1569.9164000000019,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-5"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1737.7348999999995,
+      "phase": "warm",
+      "serviceStartId": "clean-start-1",
+      "pairId": "clean-start-1-warm-5"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "runId": "formal-options-v6-20260923",
+  "plan": [
+    [
+      "e0",
+      1,
+      3031,
+      4231
+    ],
+    [
+      "e1",
+      1,
+      3032,
+      4232
+    ],
+    [
+      "e2",
+      1,
+      3033,
+      4233
+    ],
+    [
+      "clean",
+      1,
+      3034,
+      4234
+    ],
+    [
+      "e0",
+      2,
+      3035,
+      4235
+    ],
+    [
+      "e1",
+      2,
+      3036,
+      4236
+    ],
+    [
+      "e2",
+      2,
+      3037,
+      4237
+    ],
+    [
+      "clean",
+      2,
+      3038,
+      4238
+    ]
+  ],
+  "log": [
+    {
+      "variant": "e0",
+      "start": 1,
+      "vercelPort": 3031,
+      "vitePort": 4231,
+      "startedAt": "2026-09-23T07:13:11.580Z",
+      "finishedAt": "2026-09-23T07:14:42.830Z",
+      "exitCode": 1,
+      "stderr": "Error: vercel ready log 等待逾時"
+    },
+    {
+      "variant": "e1",
+      "start": 1,
+      "vercelPort": 3032,
+      "vitePort": 4232,
+      "startedAt": "2026-09-23T07:14:42.831Z",
+      "finishedAt": "2026-09-23T07:15:14.650Z",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "variant": "e2",
+      "start": 1,
+      "vercelPort": 3033,
+      "vitePort": 4233,
+      "startedAt": "2026-09-23T07:15:14.650Z",
+      "finishedAt": "2026-09-23T07:15:40.640Z",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "variant": "clean",
+      "start": 1,
+      "vercelPort": 3034,
+      "vitePort": 4234,
+      "startedAt": "2026-09-23T07:15:40.640Z",
+      "finishedAt": "2026-09-23T07:16:07.321Z",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "variant": "e0",
+      "start": 2,
+      "skipped": "variant 已 fail-fast 停止"
+    },
+    {
+      "variant": "e1",
+      "start": 2,
+      "vercelPort": 3036,
+      "vitePort": 4236,
+      "startedAt": "2026-09-23T07:16:07.322Z",
+      "finishedAt": "2026-09-23T07:16:35.204Z",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "variant": "e2",
+      "start": 2,
+      "vercelPort": 3037,
+      "vitePort": 4237,
+      "startedAt": "2026-09-23T07:16:35.205Z",
+      "finishedAt": "2026-09-23T07:17:01.154Z",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "variant": "clean",
+      "start": 2,
+      "vercelPort": 3038,
+      "vitePort": 4238,
+      "startedAt": "2026-09-23T07:17:01.154Z",
+      "finishedAt": "2026-09-23T07:17:26.796Z",
+      "exitCode": 0,
+      "stderr": ""
+    }
+  ]
+}

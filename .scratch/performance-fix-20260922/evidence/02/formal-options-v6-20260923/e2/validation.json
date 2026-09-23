@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "createdAt": "2026-09-23T07:18:13.037Z",
+  "variant": "e2",
+  "startCount": 2,
+  "serviceStartIds": [
+    "e2-formal-options-v6-20260923-start-1",
+    "e2-formal-options-v6-20260923-start-2"
+  ],
+  "rowCount": 24,
+  "failures": [],
+  "pass": true
+}

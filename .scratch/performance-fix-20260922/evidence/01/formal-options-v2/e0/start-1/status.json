@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T18:00:45.646Z",
+  "startedAt": "2026-09-22T17:59:42.596Z",
+  "variant": "e0",
+  "serviceStartId": "e0-v2-start-1",
+  "success": false,
+  "failure": "Error: formal OPTIONS probe 失敗，exit=1",
+  "probeExitCode": 1,
+  "rawExists": true,
+  "identityExists": true,
+  "stopped": {
+    "vercel": {
+      "pid": 40880,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 3348 (PID �� 40880 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 40880 (PID �� 28472 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    },
+    "vite": {
+      "pid": 25780,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 11620 (PID �� 25780 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 36332 (PID �� 25780 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 25780 (PID �� 28472 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    }
+  }
+}

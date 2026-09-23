@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T16:25:41.194Z",
+  "protocol": "threshold-only",
+  "summaries": {
+    "before": {
+      "byRoute": {
+        "/api/yahoo/chart": {
+          "sampleCount": 12,
+          "coldCount": 2,
+          "warmCount": 10,
+          "medianMs": 3260.5866000000024,
+          "minMs": 2904.2189999999973,
+          "maxMs": 4705.5749
+        },
+        "/api/finmind": {
+          "sampleCount": 12,
+          "coldCount": 2,
+          "warmCount": 10,
+          "medianMs": 3331.41935,
+          "minMs": 3191.467800000006,
+          "maxMs": 3706.0411999999997
+        }
+      },
+      "overall": {
+        "sampleCount": 20,
+        "medianMs": 3289.6066999999966,
+        "minMs": 2904.2189999999973,
+        "maxMs": 4705.5749
+      }
+    },
+    "candidate": {
+      "byRoute": {
+        "/api/yahoo/chart": {
+          "sampleCount": 12,
+          "coldCount": 2,
+          "warmCount": 10,
+          "medianMs": 1166.2677999999996,
+          "minMs": 1108.3769000000002,
+          "maxMs": 1250.894400000001
+        },
+        "/api/finmind": {
+          "sampleCount": 12,
+          "coldCount": 2,
+          "warmCount": 10,
+          "medianMs": 1140.9841000000004,
+          "minMs": 1101.4767000000002,
+          "maxMs": 1229.6820000000007
+        }
+      },
+      "overall": {
+        "sampleCount": 20,
+        "medianMs": 1153.1796499999998,
+        "minMs": 1101.4767000000002,
+        "maxMs": 1250.894400000001
+      }
+    },
+    "reference": {
+      "byRoute": {
+        "/api/yahoo/chart": {
+          "sampleCount": 3,
+          "coldCount": 1,
+          "warmCount": 2,
+          "medianMs": 1690.1630499999983,
+          "minMs": 1617.028099999996,
+          "maxMs": 1763.2980000000007
+        },
+        "/api/finmind": {
+          "sampleCount": 3,
+          "coldCount": 1,
+          "warmCount": 2,
+          "medianMs": 1727.2618999999977,
+          "minMs": 1648.6538999999975,
+          "maxMs": 1805.8698999999979
+        }
+      },
+      "overall": {
+        "sampleCount": 4,
+        "medianMs": 1705.975949999999,
+        "minMs": 1617.028099999996,
+        "maxMs": 1805.8698999999979
+      }
+    }
+  },
+  "checks": {
+    "/api/yahoo/chart": {
+      "beforeMedianMs": 3260.5866000000024,
+      "candidateMedianMs": 1166.2677999999996,
+      "referenceMedianMs": 1690.1630499999983,
+      "referenceLimitMs": 2362.703812499998,
+      "slowReproduced": true,
+      "reductionFraction": 0.6423135027298466,
+      "referencePass": true,
+      "reductionPass": true,
+      "pass": true
+    },
+    "/api/finmind": {
+      "beforeMedianMs": 3331.41935,
+      "candidateMedianMs": 1140.9841000000004,
+      "referenceMedianMs": 1727.2618999999977,
+      "referenceLimitMs": 2409.077374999997,
+      "slowReproduced": true,
+      "reductionFraction": 0.6575081128708697,
+      "referencePass": true,
+      "reductionPass": true,
+      "pass": true
+    }
+  },
+  "failures": [],
+  "pass": true
+}

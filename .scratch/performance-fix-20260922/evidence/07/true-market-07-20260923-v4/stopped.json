@@ -1,0 +1,66 @@
+{
+  "stoppedAt": "2026-09-23T07:58:53.560Z",
+  "reason": "STOP 檔",
+  "stopped": {
+    "backend": {
+      "pid": 26068,
+      "exitCode": 0
+    },
+    "holdingsCapture": {
+      "pid": 16744,
+      "exitCode": 0
+    },
+    "capture07": {
+      "pid": 8156,
+      "exitCode": 0
+    },
+    "h10-before-1": {
+      "pid": 33580,
+      "exitCode": 0
+    },
+    "h10-after-1": {
+      "pid": 20016,
+      "exitCode": 0
+    },
+    "h10-before-2": {
+      "pid": 24336,
+      "exitCode": 0
+    },
+    "h10-after-2": {
+      "pid": 29564,
+      "exitCode": 0
+    },
+    "h10-before-3": {
+      "pid": 21988,
+      "exitCode": 0
+    },
+    "h10-after-3": {
+      "pid": 28020,
+      "exitCode": 0
+    },
+    "h30-before": {
+      "pid": 20004,
+      "exitCode": 0
+    },
+    "h30-after": {
+      "pid": 15328,
+      "exitCode": 0
+    },
+    "chart-before-1": {
+      "pid": 25228,
+      "exitCode": 0
+    },
+    "chart-after-1": {
+      "pid": 32252,
+      "exitCode": 0
+    },
+    "chart-before-2": {
+      "pid": 8084,
+      "exitCode": 0
+    },
+    "chart-after-2": {
+      "pid": 32180,
+      "exitCode": 0
+    }
+  }
+}
