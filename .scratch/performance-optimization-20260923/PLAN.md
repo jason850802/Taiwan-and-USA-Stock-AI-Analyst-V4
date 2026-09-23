@@ -1,6 +1,6 @@
 # 第二輪：降低實際等待時間的效能優化 PLAN
 
-建立：2026-09-23。狀態：**規劃完成，等待採用；尚未實作或重新量測。**
+建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支；下一票 02。全案效能目標全數 OPEN。** 最新交接見 [HANDOFF](HANDOFF.md)。
 
 起點：`E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`，分支 `codex/reacceptance-fixes-p1-s1`，核對 HEAD `30dfdb2`。產品基線含 `e9fa1a2`、`2bd91f4`、`6eee87e`，全部保留。
 

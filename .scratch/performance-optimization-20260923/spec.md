@@ -1,6 +1,6 @@
 # 第二輪效能優化規格
 
-Status: ready-for-agent — 計畫草案已備妥，採用後先執行基線票。目標與依賴見 [PLAN](PLAN.md)。
+Status: ready-for-agent — 已採用；01 基線票完成（B1 判紅，下一票 02 驗證長駐原型），全案仍 OPEN。目標與依賴見 [PLAN](PLAN.md)。
 
 ## 使用者問題
 

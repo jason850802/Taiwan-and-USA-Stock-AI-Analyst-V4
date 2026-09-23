@@ -1,0 +1,2558 @@
+{
+  "runId": "b1-fixed-20260923-r1",
+  "mode": "fixed",
+  "verifierSha": "01e3a84ba203",
+  "sourceHead": "4ca3c3c1eee7818f8f886be6d6f1d069f41fd4ae",
+  "options": {
+    "groups": {
+      "plain|direct|yahoo-chart|cold": {
+        "n": 2,
+        "min": 2038,
+        "median": 2144.5,
+        "max": 2251
+      },
+      "plain|direct|finmind|cold": {
+        "n": 2,
+        "min": 1834.3,
+        "median": 1840.4,
+        "max": 1846.5
+      },
+      "plain|direct|yahoo-chart|warm": {
+        "n": 20,
+        "min": 1756.1,
+        "median": 1861.4,
+        "max": 1946.2
+      },
+      "plain|proxy|yahoo-chart|warm": {
+        "n": 20,
+        "min": 0.7,
+        "median": 1.1,
+        "max": 4.3
+      },
+      "plain|direct|finmind|warm": {
+        "n": 20,
+        "min": 1737.1,
+        "median": 1836.6,
+        "max": 1947.1
+      },
+      "plain|proxy|finmind|warm": {
+        "n": 20,
+        "min": 0.7,
+        "median": 1.1,
+        "max": 1.6
+      },
+      "traced|direct|yahoo-chart|cold": {
+        "n": 2,
+        "min": 2063.9,
+        "median": 2071.9,
+        "max": 2079.9
+      },
+      "traced|direct|finmind|cold": {
+        "n": 2,
+        "min": 1931.9,
+        "median": 1972.8,
+        "max": 2013.8
+      },
+      "traced|direct|yahoo-chart|warm": {
+        "n": 20,
+        "min": 1783.3,
+        "median": 1903.5,
+        "max": 2055.4
+      },
+      "traced|direct|finmind|warm": {
+        "n": 20,
+        "min": 1798.4,
+        "median": 1912.1,
+        "max": 2056.9
+      }
+    },
+    "verdict": {
+      "yahoo-chart": {
+        "warm": {
+          "n": 20,
+          "min": 1756.1,
+          "median": 1861.4,
+          "max": 1946.2
+        },
+        "cold": {
+          "n": 2,
+          "min": 2038,
+          "median": 2144.5,
+          "max": 2251
+        },
+        "medianPass": false,
+        "eachPass": false
+      },
+      "finmind": {
+        "warm": {
+          "n": 20,
+          "min": 1737.1,
+          "median": 1836.6,
+          "max": 1947.1
+        },
+        "cold": {
+          "n": 2,
+          "min": 1834.3,
+          "median": 1840.4,
+          "max": 1846.5
+        },
+        "medianPass": false,
+        "eachPass": false
+      }
+    },
+    "traceOverheadMs": {
+      "yahoo-chart": 42.2,
+      "finmind": 75.5
+    },
+    "tracedBreakdown": {
+      "parentTotal": {
+        "n": 44,
+        "min": 1782.3,
+        "median": 1909.2,
+        "max": 2076.6
+      },
+      "parentForkToChildReady": {
+        "n": 44,
+        "min": 1719.8,
+        "median": 1849.2,
+        "max": 2004.5
+      },
+      "childPreloadToDevServer": {
+        "n": 44,
+        "min": 1634.1,
+        "median": 1756.4,
+        "max": 1910.4
+      },
+      "childHandlerTotal": {
+        "n": 44,
+        "min": 0.7,
+        "median": 0.9,
+        "max": 1.2
+      }
+    },
+    "tracedSegments": [
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o1",
+        "src": "B-trace-fixture",
+        "childPid": 32776,
+        "childInstance": "B-trace-fixture/child-32776.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 82.76200000000017,
+          "forkCallMs": 5.72,
+          "forkToChildReadyMs": 1956.8159999999998,
+          "readyToProxyMs": 3.9660000000003492,
+          "proxyRoundTripMs": 17.148999999999432,
+          "proxyResToClientHeadMs": 0.761000000000422,
+          "totalMs": 2061.454
+        },
+        "child": {
+          "bootToPreloadMs": 21.578,
+          "preloadToDevServerMs": 1852.153,
+          "devServerToHandlerLoadedMs": 54.74000000000001,
+          "handlerLoadedToReadyMs": 0.3650000000000091,
+          "startupSinceTimeOriginMs": 1928.836,
+          "devProxyToHandlerMs": 5.935000000000173,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.834999999999809,
+          "handlerHeadToDevHeadMs": 7.175000000000182,
+          "serviceTotalMs": 13.945000000000164
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.4089999999996508,
+          "proxyRoundTripMinusChildServiceMs": 3.2039999999992688,
+          "forkToReadyMinusChildStartupMs": 27.97999999999979
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o2",
+        "src": "B-trace-fixture",
+        "childPid": 17428,
+        "childInstance": "B-trace-fixture/child-17428.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 39.48700000000008,
+          "forkCallMs": 5.879,
+          "forkToChildReadyMs": 1953.4580000000005,
+          "readyToProxyMs": 0.7289999999993597,
+          "proxyRoundTripMs": 16.89600000000064,
+          "proxyResToClientHeadMs": 0.48099999999976717,
+          "totalMs": 2011.0510000000004
+        },
+        "child": {
+          "bootToPreloadMs": 20.648,
+          "preloadToDevServerMs": 1856.891,
+          "devServerToHandlerLoadedMs": 55.702,
+          "handlerLoadedToReadyMs": 0.3140000000000782,
+          "startupSinceTimeOriginMs": 1933.555,
+          "devProxyToHandlerMs": 7.865000000000009,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7870000000000346,
+          "handlerHeadToDevHeadMs": 5.83400000000006,
+          "serviceTotalMs": 14.486000000000104
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.7089999999996053,
+          "proxyRoundTripMinusChildServiceMs": 2.4100000000005366,
+          "forkToReadyMinusChildStartupMs": 19.903000000000475
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o3",
+        "src": "B-trace-fixture",
+        "childPid": 29540,
+        "childInstance": "B-trace-fixture/child-29540.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 36.164999999999964,
+          "forkCallMs": 5.314,
+          "forkToChildReadyMs": 1996.7379999999994,
+          "readyToProxyMs": 0.8760000000002037,
+          "proxyRoundTripMs": 17.527000000000044,
+          "proxyResToClientHeadMs": 0.7770000000000437,
+          "totalMs": 2052.0829999999996
+        },
+        "child": {
+          "bootToPreloadMs": 19.952,
+          "preloadToDevServerMs": 1879.318,
+          "devServerToHandlerLoadedMs": 78.64699999999993,
+          "handlerLoadedToReadyMs": 0.33400000000006,
+          "startupSinceTimeOriginMs": 1978.251,
+          "devProxyToHandlerMs": 7.990000000000009,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8420000000000982,
+          "handlerHeadToDevHeadMs": 6.0470000000000255,
+          "serviceTotalMs": 14.879000000000133
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.355000000000473,
+          "proxyRoundTripMinusChildServiceMs": 2.647999999999911,
+          "forkToReadyMinusChildStartupMs": 18.486999999999398
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o4",
+        "src": "B-trace-fixture",
+        "childPid": 24952,
+        "childInstance": "B-trace-fixture/child-24952.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 47.92200000000048,
+          "forkCallMs": 4.814,
+          "forkToChildReadyMs": 1881.4779999999992,
+          "readyToProxyMs": 0.6820000000006985,
+          "proxyRoundTripMs": 18.24699999999939,
+          "proxyResToClientHeadMs": 0.42000000000007276,
+          "totalMs": 1948.7489999999998
+        },
+        "child": {
+          "bootToPreloadMs": 20.182,
+          "preloadToDevServerMs": 1784.135,
+          "devServerToHandlerLoadedMs": 59.59999999999991,
+          "handlerLoadedToReadyMs": 0.3510000000001128,
+          "startupSinceTimeOriginMs": 1864.268,
+          "devProxyToHandlerMs": 8.285000000000082,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.0950000000000273,
+          "handlerHeadToDevHeadMs": 6.286000000000058,
+          "serviceTotalMs": 15.666000000000167
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.5000000000002274,
+          "proxyRoundTripMinusChildServiceMs": 2.5809999999992215,
+          "forkToReadyMinusChildStartupMs": 17.209999999999127
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o5",
+        "src": "B-trace-fixture",
+        "childPid": 20508,
+        "childInstance": "B-trace-fixture/child-20508.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 56.23500000000058,
+          "forkCallMs": 5.148,
+          "forkToChildReadyMs": 1919.5949999999993,
+          "readyToProxyMs": 1.2179999999989377,
+          "proxyRoundTripMs": 19.703999999999724,
+          "proxyResToClientHeadMs": 0.8389999999999418,
+          "totalMs": 1997.5909999999985
+        },
+        "child": {
+          "bootToPreloadMs": 20.76,
+          "preloadToDevServerMs": 1813.895,
+          "devServerToHandlerLoadedMs": 68.71600000000012,
+          "handlerLoadedToReadyMs": 0.3489999999999327,
+          "startupSinceTimeOriginMs": 1903.72,
+          "devProxyToHandlerMs": 8.713999999999942,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9669999999998709,
+          "handlerHeadToDevHeadMs": 6.841000000000122,
+          "serviceTotalMs": 16.521999999999935
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2700000000015734,
+          "proxyRoundTripMinusChildServiceMs": 3.181999999999789,
+          "forkToReadyMinusChildStartupMs": 15.874999999999318
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o6",
+        "src": "B-trace-fixture",
+        "childPid": 4596,
+        "childInstance": "B-trace-fixture/child-4596.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 32.68999999999869,
+          "forkCallMs": 3.403,
+          "forkToChildReadyMs": 1882.4840000000004,
+          "readyToProxyMs": 1.220999999999549,
+          "proxyRoundTripMs": 22.810999999999694,
+          "proxyResToClientHeadMs": 0.9260000000012951,
+          "totalMs": 1940.1319999999996
+        },
+        "child": {
+          "bootToPreloadMs": 22.2,
+          "preloadToDevServerMs": 1763.492,
+          "devServerToHandlerLoadedMs": 80.66399999999999,
+          "handlerLoadedToReadyMs": 0.48700000000008004,
+          "startupSinceTimeOriginMs": 1866.843,
+          "devProxyToHandlerMs": 10.17100000000005,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.0679999999999836,
+          "handlerHeadToDevHeadMs": 6.804000000000087,
+          "serviceTotalMs": 18.04300000000012
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.7730000000003656,
+          "proxyRoundTripMinusChildServiceMs": 4.767999999999574,
+          "forkToReadyMinusChildStartupMs": 15.641000000000304
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o7",
+        "src": "B-trace-fixture",
+        "childPid": 14156,
+        "childInstance": "B-trace-fixture/child-14156.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 29.76600000000144,
+          "forkCallMs": 4.801,
+          "forkToChildReadyMs": 2004.518,
+          "readyToProxyMs": 0.8139999999984866,
+          "proxyRoundTripMs": 18.294000000001688,
+          "proxyResToClientHeadMs": 0.5649999999986903,
+          "totalMs": 2053.9570000000003
+        },
+        "child": {
+          "bootToPreloadMs": 20.691,
+          "preloadToDevServerMs": 1910.416,
+          "devServerToHandlerLoadedMs": 55.23199999999997,
+          "handlerLoadedToReadyMs": 0.36599999999998545,
+          "startupSinceTimeOriginMs": 1986.705,
+          "devProxyToHandlerMs": 7.823999999999842,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9650000000001455,
+          "handlerHeadToDevHeadMs": 6.758000000000038,
+          "serviceTotalMs": 15.547000000000025
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4209999999998217,
+          "proxyRoundTripMinusChildServiceMs": 2.7470000000016626,
+          "forkToReadyMinusChildStartupMs": 17.813000000000102
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o8",
+        "src": "B-trace-fixture",
+        "childPid": 21776,
+        "childInstance": "B-trace-fixture/child-21776.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 27.279999999998836,
+          "forkCallMs": 4.787,
+          "forkToChildReadyMs": 1887.3250000000007,
+          "readyToProxyMs": 0.6059999999997672,
+          "proxyRoundTripMs": 16.538000000000466,
+          "proxyResToClientHeadMs": 0.41499999999723514,
+          "totalMs": 1932.163999999997
+        },
+        "child": {
+          "bootToPreloadMs": 20.613,
+          "preloadToDevServerMs": 1796.1029999999998,
+          "devServerToHandlerLoadedMs": 52.7800000000002,
+          "handlerLoadedToReadyMs": 0.33600000000001273,
+          "startupSinceTimeOriginMs": 1869.832,
+          "devProxyToHandlerMs": 7.656999999999925,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8669999999999618,
+          "handlerHeadToDevHeadMs": 5.761999999999944,
+          "serviceTotalMs": 14.28599999999983
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4510000000029777,
+          "proxyRoundTripMinusChildServiceMs": 2.252000000000635,
+          "forkToReadyMinusChildStartupMs": 17.49300000000062
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o9",
+        "src": "B-trace-fixture",
+        "childPid": 11724,
+        "childInstance": "B-trace-fixture/child-11724.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 20.617999999998574,
+          "forkCallMs": 4.11,
+          "forkToChildReadyMs": 1800.9060000000027,
+          "readyToProxyMs": 0.6209999999991851,
+          "proxyRoundTripMs": 17.01800000000003,
+          "proxyResToClientHeadMs": 0.38799999999901047,
+          "totalMs": 1839.5509999999995
+        },
+        "child": {
+          "bootToPreloadMs": 19.411,
+          "preloadToDevServerMs": 1713.594,
+          "devServerToHandlerLoadedMs": 52.58499999999981,
+          "handlerLoadedToReadyMs": 0.3369999999999891,
+          "startupSinceTimeOriginMs": 1785.927,
+          "devProxyToHandlerMs": 7.798000000000002,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.73700000000008,
+          "handlerHeadToDevHeadMs": 6.156999999999925,
+          "serviceTotalMs": 14.692000000000007
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4440000000004147,
+          "proxyRoundTripMinusChildServiceMs": 2.326000000000022,
+          "forkToReadyMinusChildStartupMs": 14.97900000000277
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o10",
+        "src": "B-trace-fixture",
+        "childPid": 31368,
+        "childInstance": "B-trace-fixture/child-31368.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 46.04000000000087,
+          "forkCallMs": 4.053,
+          "forkToChildReadyMs": 1786.701000000001,
+          "readyToProxyMs": 0.6620000000002619,
+          "proxyRoundTripMs": 16.360000000000582,
+          "proxyResToClientHeadMs": 0.3349999999991269,
+          "totalMs": 1850.0980000000018
+        },
+        "child": {
+          "bootToPreloadMs": 19.531,
+          "preloadToDevServerMs": 1696.5710000000001,
+          "devServerToHandlerLoadedMs": 54.0659999999998,
+          "handlerLoadedToReadyMs": 0.3220000000001164,
+          "startupSinceTimeOriginMs": 1770.49,
+          "devProxyToHandlerMs": 7.8559999999999945,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.73700000000008,
+          "handlerHeadToDevHeadMs": 5.460000000000036,
+          "serviceTotalMs": 14.053000000000111
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4829999999981283,
+          "proxyRoundTripMinusChildServiceMs": 2.307000000000471,
+          "forkToReadyMinusChildStartupMs": 16.211000000000922
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o11",
+        "src": "B-trace-fixture",
+        "childPid": 21992,
+        "childInstance": "B-trace-fixture/child-21992.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 46.391999999999825,
+          "forkCallMs": 4.262,
+          "forkToChildReadyMs": 1841.8839999999982,
+          "readyToProxyMs": 0.7160000000003492,
+          "proxyRoundTripMs": 19.27600000000166,
+          "proxyResToClientHeadMs": 0.3669999999983702,
+          "totalMs": 1908.6349999999984
+        },
+        "child": {
+          "bootToPreloadMs": 22.44,
+          "preloadToDevServerMs": 1743.346,
+          "devServerToHandlerLoadedMs": 59.98699999999985,
+          "handlerLoadedToReadyMs": 0.40200000000004366,
+          "startupSinceTimeOriginMs": 1826.175,
+          "devProxyToHandlerMs": 8.49499999999989,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.1730000000000018,
+          "handlerHeadToDevHeadMs": 6.8940000000000055,
+          "serviceTotalMs": 16.561999999999898
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.0830000000016753,
+          "proxyRoundTripMinusChildServiceMs": 2.714000000001761,
+          "forkToReadyMinusChildStartupMs": 15.708999999998241
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o12",
+        "src": "B-trace-fixture",
+        "childPid": 25940,
+        "childInstance": "B-trace-fixture/child-25940.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 20.516999999999825,
+          "forkCallMs": 3.344,
+          "forkToChildReadyMs": 1867.839,
+          "readyToProxyMs": 0.6219999999993888,
+          "proxyRoundTripMs": 17.6150000000016,
+          "proxyResToClientHeadMs": 0.6169999999983702,
+          "totalMs": 1907.2099999999991
+        },
+        "child": {
+          "bootToPreloadMs": 19.921,
+          "preloadToDevServerMs": 1773.757,
+          "devServerToHandlerLoadedMs": 59.000999999999976,
+          "handlerLoadedToReadyMs": 0.362999999999829,
+          "startupSinceTimeOriginMs": 1853.042,
+          "devProxyToHandlerMs": 8.229000000000042,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8550000000000182,
+          "handlerHeadToDevHeadMs": 5.974999999999909,
+          "serviceTotalMs": 15.058999999999969
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.0520000000008167,
+          "proxyRoundTripMinusChildServiceMs": 2.5560000000016316,
+          "forkToReadyMinusChildStartupMs": 14.797000000000025
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o13",
+        "src": "B-trace-fixture",
+        "childPid": 25316,
+        "childInstance": "B-trace-fixture/child-25316.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 48.25100000000384,
+          "forkCallMs": 4.1,
+          "forkToChildReadyMs": 1752.104999999996,
+          "readyToProxyMs": 0.5670000000027358,
+          "proxyRoundTripMs": 17.08299999999872,
+          "proxyResToClientHeadMs": 0.6369999999988067,
+          "totalMs": 1818.643
+        },
+        "child": {
+          "bootToPreloadMs": 21.003,
+          "preloadToDevServerMs": 1662.824,
+          "devServerToHandlerLoadedMs": 52.815000000000055,
+          "handlerLoadedToReadyMs": 0.3209999999999127,
+          "startupSinceTimeOriginMs": 1736.963,
+          "devProxyToHandlerMs": 7.93100000000004,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8019999999999072,
+          "handlerHeadToDevHeadMs": 6.107999999999947,
+          "serviceTotalMs": 14.840999999999894
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.8920000000000528,
+          "proxyRoundTripMinusChildServiceMs": 2.241999999998825,
+          "forkToReadyMinusChildStartupMs": 15.14199999999596
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o14",
+        "src": "B-trace-fixture",
+        "childPid": 10780,
+        "childInstance": "B-trace-fixture/child-10780.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 46.07900000000154,
+          "forkCallMs": 4.106,
+          "forkToChildReadyMs": 1797.2549999999974,
+          "readyToProxyMs": 0.5820000000021537,
+          "proxyRoundTripMs": 16.691999999999098,
+          "proxyResToClientHeadMs": 0.6159999999981665,
+          "totalMs": 1861.2239999999983
+        },
+        "child": {
+          "bootToPreloadMs": 20.43,
+          "preloadToDevServerMs": 1709.623,
+          "devServerToHandlerLoadedMs": 52.600999999999885,
+          "handlerLoadedToReadyMs": 0.3109999999999218,
+          "startupSinceTimeOriginMs": 1782.965,
+          "devProxyToHandlerMs": 7.788000000000011,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7820000000001528,
+          "handlerHeadToDevHeadMs": 5.745999999999867,
+          "serviceTotalMs": 14.316000000000031
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.131000000001677,
+          "proxyRoundTripMinusChildServiceMs": 2.375999999999067,
+          "forkToReadyMinusChildStartupMs": 14.289999999997463
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o15",
+        "src": "B-trace-fixture",
+        "childPid": 25540,
+        "childInstance": "B-trace-fixture/child-25540.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 32.06600000000253,
+          "forkCallMs": 4.161,
+          "forkToChildReadyMs": 1869.1369999999988,
+          "readyToProxyMs": 0.9099999999998545,
+          "proxyRoundTripMs": 18.985000000000582,
+          "proxyResToClientHeadMs": 0.4599999999991269,
+          "totalMs": 1921.558000000001
+        },
+        "child": {
+          "bootToPreloadMs": 22.839,
+          "preloadToDevServerMs": 1777.959,
+          "devServerToHandlerLoadedMs": 52.56700000000001,
+          "handlerLoadedToReadyMs": 0.3409999999998945,
+          "startupSinceTimeOriginMs": 1853.706,
+          "devProxyToHandlerMs": 8.947000000000116,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.086999999999989,
+          "handlerHeadToDevHeadMs": 6.5499999999999545,
+          "serviceTotalMs": 16.58400000000006
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4169999999990068,
+          "proxyRoundTripMinusChildServiceMs": 2.401000000000522,
+          "forkToReadyMinusChildStartupMs": 15.430999999998903
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o16",
+        "src": "B-trace-fixture",
+        "childPid": 17468,
+        "childInstance": "B-trace-fixture/child-17468.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 49.86000000000058,
+          "forkCallMs": 6.209,
+          "forkToChildReadyMs": 1985.1540000000023,
+          "readyToProxyMs": 1.1679999999978463,
+          "proxyRoundTripMs": 18.11200000000099,
+          "proxyResToClientHeadMs": 0.9909999999945285,
+          "totalMs": 2055.284999999996
+        },
+        "child": {
+          "bootToPreloadMs": 22.074,
+          "preloadToDevServerMs": 1886.24,
+          "devServerToHandlerLoadedMs": 56.82499999999982,
+          "handlerLoadedToReadyMs": 0.3760000000002037,
+          "startupSinceTimeOriginMs": 1965.515,
+          "devProxyToHandlerMs": 8.396999999999935,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9010000000000673,
+          "handlerHeadToDevHeadMs": 6.269999999999982,
+          "serviceTotalMs": 15.567999999999984
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.637000000003809,
+          "proxyRoundTripMinusChildServiceMs": 2.544000000001006,
+          "forkToReadyMinusChildStartupMs": 19.63900000000217
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o17",
+        "src": "B-trace-fixture",
+        "childPid": 2328,
+        "childInstance": "B-trace-fixture/child-2328.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 47.851999999991676,
+          "forkCallMs": 4.319,
+          "forkToChildReadyMs": 1857.6000000000058,
+          "readyToProxyMs": 0.6169999999983702,
+          "proxyRoundTripMs": 18.752000000000407,
+          "proxyResToClientHeadMs": 0.4879999999975553,
+          "totalMs": 1925.3089999999938
+        },
+        "child": {
+          "bootToPreloadMs": 20.34,
+          "preloadToDevServerMs": 1761.232,
+          "devServerToHandlerLoadedMs": 59.848000000000184,
+          "handlerLoadedToReadyMs": 0.3309999999999036,
+          "startupSinceTimeOriginMs": 1841.751,
+          "devProxyToHandlerMs": 8.796999999999798,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.956000000000131,
+          "handlerHeadToDevHeadMs": 6.538999999999987,
+          "serviceTotalMs": 16.291999999999916
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2200000000061664,
+          "proxyRoundTripMinusChildServiceMs": 2.460000000000491,
+          "forkToReadyMinusChildStartupMs": 15.849000000005844
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o18",
+        "src": "B-trace-fixture",
+        "childPid": 22236,
+        "childInstance": "B-trace-fixture/child-22236.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 18.992999999994936,
+          "forkCallMs": 3.381,
+          "forkToChildReadyMs": 1913.421000000002,
+          "readyToProxyMs": 0.6200000000026193,
+          "proxyRoundTripMs": 16.919000000001688,
+          "proxyResToClientHeadMs": 0.4599999999991269,
+          "totalMs": 1950.4130000000005
+        },
+        "child": {
+          "bootToPreloadMs": 22.453,
+          "preloadToDevServerMs": 1820.458,
+          "devServerToHandlerLoadedMs": 55.13599999999997,
+          "handlerLoadedToReadyMs": 0.3140000000000782,
+          "startupSinceTimeOriginMs": 1898.361,
+          "devProxyToHandlerMs": 7.813999999999851,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7700000000002092,
+          "handlerHeadToDevHeadMs": 5.911999999999807,
+          "serviceTotalMs": 14.495999999999867
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2609999999995125,
+          "proxyRoundTripMinusChildServiceMs": 2.423000000001821,
+          "forkToReadyMinusChildStartupMs": 15.060000000001992
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o19",
+        "src": "B-trace-fixture",
+        "childPid": 27856,
+        "childInstance": "B-trace-fixture/child-27856.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 34.18000000000029,
+          "forkCallMs": 3.855,
+          "forkToChildReadyMs": 1918.474000000002,
+          "readyToProxyMs": 0.6169999999983702,
+          "proxyRoundTripMs": 16.752000000000407,
+          "proxyResToClientHeadMs": 0.49699999999575084,
+          "totalMs": 1970.5199999999968
+        },
+        "child": {
+          "bootToPreloadMs": 21.835,
+          "preloadToDevServerMs": 1824.549,
+          "devServerToHandlerLoadedMs": 56.56899999999996,
+          "handlerLoadedToReadyMs": 0.34600000000000364,
+          "startupSinceTimeOriginMs": 1903.299,
+          "devProxyToHandlerMs": 6.80399999999986,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8980000000001382,
+          "handlerHeadToDevHeadMs": 6.613999999999805,
+          "serviceTotalMs": 14.315999999999804
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.0040000000030886,
+          "proxyRoundTripMinusChildServiceMs": 2.436000000000604,
+          "forkToReadyMinusChildStartupMs": 15.175000000002001
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o20",
+        "src": "B-trace-fixture",
+        "childPid": 3100,
+        "childInstance": "B-trace-fixture/child-3100.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 29.59500000000844,
+          "forkCallMs": 4.806,
+          "forkToChildReadyMs": 1758.8089999999938,
+          "readyToProxyMs": 0.7700000000040745,
+          "proxyRoundTripMs": 17.79699999999866,
+          "proxyResToClientHeadMs": 0.33599999999569263,
+          "totalMs": 1807.3070000000007
+        },
+        "child": {
+          "bootToPreloadMs": 21.342,
+          "preloadToDevServerMs": 1666.9219999999998,
+          "devServerToHandlerLoadedMs": 51.93500000000017,
+          "handlerLoadedToReadyMs": 0.2899999999999636,
+          "startupSinceTimeOriginMs": 1740.489,
+          "devProxyToHandlerMs": 8.231999999999971,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7680000000000291,
+          "handlerHeadToDevHeadMs": 5.717000000000098,
+          "serviceTotalMs": 14.717000000000098
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.017999999999347,
+          "proxyRoundTripMinusChildServiceMs": 3.079999999998563,
+          "forkToReadyMinusChildStartupMs": 18.319999999993797
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o21",
+        "src": "B-trace-fixture",
+        "childPid": 8088,
+        "childInstance": "B-trace-fixture/child-8088.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 60.84900000000198,
+          "forkCallMs": 8.159,
+          "forkToChildReadyMs": 1860.0179999999964,
+          "readyToProxyMs": 0.7340000000040163,
+          "proxyRoundTripMs": 17.78899999999703,
+          "proxyResToClientHeadMs": 0.521999999997206,
+          "totalMs": 1939.9119999999966
+        },
+        "child": {
+          "bootToPreloadMs": 21.391,
+          "preloadToDevServerMs": 1765.2189999999998,
+          "devServerToHandlerLoadedMs": 53.58900000000017,
+          "handlerLoadedToReadyMs": 0.31199999999989814,
+          "startupSinceTimeOriginMs": 1840.511,
+          "devProxyToHandlerMs": 7.872000000000071,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7829999999999018,
+          "handlerHeadToDevHeadMs": 6.697000000000116,
+          "serviceTotalMs": 15.35200000000009
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.073000000003276,
+          "proxyRoundTripMinusChildServiceMs": 2.4369999999969423,
+          "forkToReadyMinusChildStartupMs": 19.506999999996424
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-B-trace-fixture-o22",
+        "src": "B-trace-fixture",
+        "childPid": 17288,
+        "childInstance": "B-trace-fixture/child-17288.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 42.700000000004366,
+          "forkCallMs": 5.114,
+          "forkToChildReadyMs": 1752.2959999999948,
+          "readyToProxyMs": 0.5470000000059372,
+          "proxyRoundTripMs": 17.724999999998545,
+          "proxyResToClientHeadMs": 0.5009999999965657,
+          "totalMs": 1813.7690000000002
+        },
+        "child": {
+          "bootToPreloadMs": 22.877,
+          "preloadToDevServerMs": 1643.4660000000001,
+          "devServerToHandlerLoadedMs": 58.567999999999984,
+          "handlerLoadedToReadyMs": 0.3250000000000455,
+          "startupSinceTimeOriginMs": 1725.236,
+          "devProxyToHandlerMs": 8.196999999999889,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7719999999999345,
+          "handlerHeadToDevHeadMs": 5.930000000000064,
+          "serviceTotalMs": 14.898999999999887
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.0989999999997053,
+          "proxyRoundTripMinusChildServiceMs": 2.8259999999986576,
+          "forkToReadyMinusChildStartupMs": 27.059999999994716
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o1",
+        "src": "D-trace-fixture",
+        "childPid": 5436,
+        "childInstance": "D-trace-fixture/child-5436.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 122.41100000000051,
+          "forkCallMs": 7.941,
+          "forkToChildReadyMs": 1927.641,
+          "readyToProxyMs": 5.481999999999971,
+          "proxyRoundTripMs": 19.73399999999947,
+          "proxyResToClientHeadMs": 1.2849999999998545,
+          "totalMs": 2076.553
+        },
+        "child": {
+          "bootToPreloadMs": 21.405,
+          "preloadToDevServerMs": 1823.005,
+          "devServerToHandlerLoadedMs": 60.238999999999805,
+          "handlerLoadedToReadyMs": 0.37800000000015643,
+          "startupSinceTimeOriginMs": 1905.027,
+          "devProxyToHandlerMs": 7.138999999999896,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9680000000000746,
+          "handlerHeadToDevHeadMs": 6.994999999999891,
+          "serviceTotalMs": 15.101999999999862
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 3.375,
+          "proxyRoundTripMinusChildServiceMs": 4.631999999999607,
+          "forkToReadyMinusChildStartupMs": 22.614000000000033
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o2",
+        "src": "D-trace-fixture",
+        "childPid": 24952,
+        "childInstance": "D-trace-fixture/child-24952.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 67.70999999999913,
+          "forkCallMs": 4.38,
+          "forkToChildReadyMs": 1842.808000000001,
+          "readyToProxyMs": 0.8229999999994106,
+          "proxyRoundTripMs": 17.301000000000386,
+          "proxyResToClientHeadMs": 0.5239999999994325,
+          "totalMs": 1929.1659999999993
+        },
+        "child": {
+          "bootToPreloadMs": 20.248,
+          "preloadToDevServerMs": 1753.0149999999999,
+          "devServerToHandlerLoadedMs": 53.74000000000001,
+          "handlerLoadedToReadyMs": 0.29500000000007276,
+          "startupSinceTimeOriginMs": 1827.298,
+          "devProxyToHandlerMs": 8.15800000000013,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8379999999999654,
+          "handlerHeadToDevHeadMs": 6.065000000000055,
+          "serviceTotalMs": 15.06100000000015
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.765000000000782,
+          "proxyRoundTripMinusChildServiceMs": 2.2400000000002365,
+          "forkToReadyMinusChildStartupMs": 15.5100000000009
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o3",
+        "src": "D-trace-fixture",
+        "childPid": 1972,
+        "childInstance": "D-trace-fixture/child-1972.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 61.38500000000022,
+          "forkCallMs": 7.476,
+          "forkToChildReadyMs": 1819.6939999999995,
+          "readyToProxyMs": 0.6599999999998545,
+          "proxyRoundTripMs": 17.238999999999578,
+          "proxyResToClientHeadMs": 0.6290000000008149,
+          "totalMs": 1899.607
+        },
+        "child": {
+          "bootToPreloadMs": 20.643,
+          "preloadToDevServerMs": 1724.067,
+          "devServerToHandlerLoadedMs": 52.33699999999999,
+          "handlerLoadedToReadyMs": 0.3040000000000873,
+          "startupSinceTimeOriginMs": 1797.351,
+          "devProxyToHandlerMs": 7.697999999999865,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.1700000000000728,
+          "handlerHeadToDevHeadMs": 6.014999999999873,
+          "serviceTotalMs": 14.88299999999981
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.8240000000000691,
+          "proxyRoundTripMinusChildServiceMs": 2.355999999999767,
+          "forkToReadyMinusChildStartupMs": 22.342999999999392
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o4",
+        "src": "D-trace-fixture",
+        "childPid": 21556,
+        "childInstance": "D-trace-fixture/child-21556.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 60.10599999999977,
+          "forkCallMs": 5.789,
+          "forkToChildReadyMs": 1791.1000000000004,
+          "readyToProxyMs": 0.657999999999447,
+          "proxyRoundTripMs": 17.03100000000086,
+          "proxyResToClientHeadMs": 0.5010000000002037,
+          "totalMs": 1869.3960000000006
+        },
+        "child": {
+          "bootToPreloadMs": 20.578,
+          "preloadToDevServerMs": 1696.2160000000001,
+          "devServerToHandlerLoadedMs": 53.67599999999993,
+          "handlerLoadedToReadyMs": 0.29399999999986903,
+          "startupSinceTimeOriginMs": 1770.764,
+          "devProxyToHandlerMs": 7.779999999999973,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8509999999998854,
+          "handlerHeadToDevHeadMs": 5.421000000000049,
+          "serviceTotalMs": 14.051999999999907
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.2619999999992615,
+          "proxyRoundTripMinusChildServiceMs": 2.9790000000009513,
+          "forkToReadyMinusChildStartupMs": 20.336000000000467
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o5",
+        "src": "D-trace-fixture",
+        "childPid": 25404,
+        "childInstance": "D-trace-fixture/child-25404.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 54.00699999999961,
+          "forkCallMs": 4.912,
+          "forkToChildReadyMs": 1854.1929999999993,
+          "readyToProxyMs": 0.6570000000010623,
+          "proxyRoundTripMs": 17.701999999999316,
+          "proxyResToClientHeadMs": 0.7219999999997526,
+          "totalMs": 1927.280999999999
+        },
+        "child": {
+          "bootToPreloadMs": 21.16,
+          "preloadToDevServerMs": 1760.7089999999998,
+          "devServerToHandlerLoadedMs": 55.31400000000008,
+          "handlerLoadedToReadyMs": 0.3009999999999309,
+          "startupSinceTimeOriginMs": 1837.484,
+          "devProxyToHandlerMs": 7.77800000000002,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8450000000000273,
+          "handlerHeadToDevHeadMs": 6.250999999999976,
+          "serviceTotalMs": 14.874000000000024
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.1180000000008476,
+          "proxyRoundTripMinusChildServiceMs": 2.8279999999992924,
+          "forkToReadyMinusChildStartupMs": 16.708999999999378
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o6",
+        "src": "D-trace-fixture",
+        "childPid": 16448,
+        "childInstance": "D-trace-fixture/child-16448.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 20.994000000000597,
+          "forkCallMs": 3.452,
+          "forkToChildReadyMs": 1866.548999999999,
+          "readyToProxyMs": 0.6880000000001019,
+          "proxyRoundTripMs": 15.81800000000112,
+          "proxyResToClientHeadMs": 0.46499999999832653,
+          "totalMs": 1904.5139999999992
+        },
+        "child": {
+          "bootToPreloadMs": 20.763,
+          "preloadToDevServerMs": 1775.8690000000001,
+          "devServerToHandlerLoadedMs": 54.12999999999988,
+          "handlerLoadedToReadyMs": 0.33799999999996544,
+          "startupSinceTimeOriginMs": 1851.1,
+          "devProxyToHandlerMs": 6.260999999999967,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8489999999999327,
+          "handlerHeadToDevHeadMs": 6.050999999999931,
+          "serviceTotalMs": 13.16099999999983
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.1260000000008858,
+          "proxyRoundTripMinusChildServiceMs": 2.6570000000012897,
+          "forkToReadyMinusChildStartupMs": 15.44899999999916
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o7",
+        "src": "D-trace-fixture",
+        "childPid": 11688,
+        "childInstance": "D-trace-fixture/child-11688.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 35.15400000000045,
+          "forkCallMs": 4.277,
+          "forkToChildReadyMs": 1821.009,
+          "readyToProxyMs": 0.6709999999984575,
+          "proxyRoundTripMs": 17.377000000000407,
+          "proxyResToClientHeadMs": 0.6480000000010477,
+          "totalMs": 1874.8590000000004
+        },
+        "child": {
+          "bootToPreloadMs": 20.593,
+          "preloadToDevServerMs": 1730.168,
+          "devServerToHandlerLoadedMs": 54.02500000000009,
+          "handlerLoadedToReadyMs": 0.31199999999989814,
+          "startupSinceTimeOriginMs": 1805.098,
+          "devProxyToHandlerMs": 7.9659999999998945,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8830000000000382,
+          "handlerHeadToDevHeadMs": 5.912000000000035,
+          "serviceTotalMs": 14.760999999999967
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2199999999995725,
+          "proxyRoundTripMinusChildServiceMs": 2.61600000000044,
+          "forkToReadyMinusChildStartupMs": 15.911000000000058
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o8",
+        "src": "D-trace-fixture",
+        "childPid": 23416,
+        "childInstance": "D-trace-fixture/child-23416.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 22.146999999997206,
+          "forkCallMs": 4.525,
+          "forkToChildReadyMs": 1916.4750000000022,
+          "readyToProxyMs": 0.7030000000013388,
+          "proxyRoundTripMs": 18.399999999997817,
+          "proxyResToClientHeadMs": 0.4330000000009022,
+          "totalMs": 1958.1579999999994
+        },
+        "child": {
+          "bootToPreloadMs": 20.448,
+          "preloadToDevServerMs": 1821.55,
+          "devServerToHandlerLoadedMs": 58.75599999999986,
+          "handlerLoadedToReadyMs": 0.3350000000000364,
+          "startupSinceTimeOriginMs": 1901.089,
+          "devProxyToHandlerMs": 8.410000000000082,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.0139999999998963,
+          "handlerHeadToDevHeadMs": 6.5470000000000255,
+          "serviceTotalMs": 15.971000000000004
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.4810000000004493,
+          "proxyRoundTripMinusChildServiceMs": 2.4289999999978136,
+          "forkToReadyMinusChildStartupMs": 15.386000000002241
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o9",
+        "src": "D-trace-fixture",
+        "childPid": 26648,
+        "childInstance": "D-trace-fixture/child-26648.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 40.17499999999927,
+          "forkCallMs": 4.339,
+          "forkToChildReadyMs": 1787.0679999999993,
+          "readyToProxyMs": 0.7030000000013388,
+          "proxyRoundTripMs": 16.659999999999854,
+          "proxyResToClientHeadMs": 0.5940000000009604,
+          "totalMs": 1845.2000000000007
+        },
+        "child": {
+          "bootToPreloadMs": 19.513,
+          "preloadToDevServerMs": 1694.26,
+          "devServerToHandlerLoadedMs": 54.25500000000011,
+          "handlerLoadedToReadyMs": 0.33600000000001273,
+          "startupSinceTimeOriginMs": 1768.364,
+          "devProxyToHandlerMs": 6.614000000000033,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9969999999998436,
+          "handlerHeadToDevHeadMs": 6.442000000000007,
+          "serviceTotalMs": 14.052999999999884
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.160999999999376,
+          "proxyRoundTripMinusChildServiceMs": 2.606999999999971,
+          "forkToReadyMinusChildStartupMs": 18.70399999999927
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o10",
+        "src": "D-trace-fixture",
+        "childPid": 21552,
+        "childInstance": "D-trace-fixture/child-21552.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 79.0659999999989,
+          "forkCallMs": 8.78,
+          "forkToChildReadyMs": 1873.882999999998,
+          "readyToProxyMs": 0.8580000000001746,
+          "proxyRoundTripMs": 18.450000000000728,
+          "proxyResToClientHeadMs": 0.5240000000012515,
+          "totalMs": 1972.780999999999
+        },
+        "child": {
+          "bootToPreloadMs": 22.111,
+          "preloadToDevServerMs": 1769.3149999999998,
+          "devServerToHandlerLoadedMs": 59.51200000000017,
+          "handlerLoadedToReadyMs": 0.3289999999999509,
+          "startupSinceTimeOriginMs": 1851.267,
+          "devProxyToHandlerMs": 8.456000000000131,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.0019999999999527,
+          "handlerHeadToDevHeadMs": 6.442000000000007,
+          "serviceTotalMs": 15.900000000000091
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.5450000000009823,
+          "proxyRoundTripMinusChildServiceMs": 2.5500000000006366,
+          "forkToReadyMinusChildStartupMs": 22.61599999999794
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o11",
+        "src": "D-trace-fixture",
+        "childPid": 15488,
+        "childInstance": "D-trace-fixture/child-15488.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 23.620999999999185,
+          "forkCallMs": 3.972,
+          "forkToChildReadyMs": 1804.930000000004,
+          "readyToProxyMs": 0.7379999999975553,
+          "proxyRoundTripMs": 18.546000000002095,
+          "proxyResToClientHeadMs": 0.9019999999982247,
+          "totalMs": 1848.737000000001
+        },
+        "child": {
+          "bootToPreloadMs": 20.071,
+          "preloadToDevServerMs": 1710.413,
+          "devServerToHandlerLoadedMs": 57.92900000000009,
+          "handlerLoadedToReadyMs": 0.36799999999993815,
+          "startupSinceTimeOriginMs": 1788.781,
+          "devProxyToHandlerMs": 8.236999999999853,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8810000000000855,
+          "handlerHeadToDevHeadMs": 6.838999999999942,
+          "serviceTotalMs": 15.95699999999988
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.0209999999990487,
+          "proxyRoundTripMinusChildServiceMs": 2.5890000000022155,
+          "forkToReadyMinusChildStartupMs": 16.14900000000398
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o12",
+        "src": "D-trace-fixture",
+        "childPid": 7164,
+        "childInstance": "D-trace-fixture/child-7164.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 36.672999999998865,
+          "forkCallMs": 4.109,
+          "forkToChildReadyMs": 1857.833999999999,
+          "readyToProxyMs": 0.6740000000027067,
+          "proxyRoundTripMs": 19.12199999999939,
+          "proxyResToClientHeadMs": 0.4569999999985157,
+          "totalMs": 1914.7599999999984
+        },
+        "child": {
+          "bootToPreloadMs": 21.992,
+          "preloadToDevServerMs": 1758.4270000000001,
+          "devServerToHandlerLoadedMs": 61.29899999999998,
+          "handlerLoadedToReadyMs": 0.4169999999999163,
+          "startupSinceTimeOriginMs": 1842.135,
+          "devProxyToHandlerMs": 8.516000000000076,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.9859999999998763,
+          "handlerHeadToDevHeadMs": 6.985000000000127,
+          "serviceTotalMs": 16.48700000000008
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.129000000001497,
+          "proxyRoundTripMinusChildServiceMs": 2.634999999999309,
+          "forkToReadyMinusChildStartupMs": 15.698999999998932
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o13",
+        "src": "D-trace-fixture",
+        "childPid": 10304,
+        "childInstance": "D-trace-fixture/child-10304.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 43.44100000000253,
+          "forkCallMs": 5.012,
+          "forkToChildReadyMs": 1960.083999999999,
+          "readyToProxyMs": 0.6929999999993015,
+          "proxyRoundTripMs": 17.824000000000524,
+          "proxyResToClientHeadMs": 0.7289999999993597,
+          "totalMs": 2022.7710000000006
+        },
+        "child": {
+          "bootToPreloadMs": 20.701,
+          "preloadToDevServerMs": 1862.693,
+          "devServerToHandlerLoadedMs": 58.72499999999991,
+          "handlerLoadedToReadyMs": 0.3510000000001128,
+          "startupSinceTimeOriginMs": 1942.47,
+          "devProxyToHandlerMs": 8.201000000000022,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8360000000000127,
+          "handlerHeadToDevHeadMs": 6.106999999999971,
+          "serviceTotalMs": 15.144000000000005
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.1309999999994034,
+          "proxyRoundTripMinusChildServiceMs": 2.6800000000005184,
+          "forkToReadyMinusChildStartupMs": 17.613999999998896
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o14",
+        "src": "D-trace-fixture",
+        "childPid": 10788,
+        "childInstance": "D-trace-fixture/child-10788.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 53.76100000000224,
+          "forkCallMs": 4.837,
+          "forkToChildReadyMs": 1781.7029999999977,
+          "readyToProxyMs": 0.5970000000015716,
+          "proxyRoundTripMs": 18.139999999999418,
+          "proxyResToClientHeadMs": 0.3780000000006112,
+          "totalMs": 1854.5790000000015
+        },
+        "child": {
+          "bootToPreloadMs": 19.907,
+          "preloadToDevServerMs": 1685.688,
+          "devServerToHandlerLoadedMs": 58.57400000000007,
+          "handlerLoadedToReadyMs": 0.4149999999999636,
+          "startupSinceTimeOriginMs": 1764.584,
+          "devProxyToHandlerMs": 8.407999999999902,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.831000000000131,
+          "handlerHeadToDevHeadMs": 6.337999999999965,
+          "serviceTotalMs": 15.576999999999998
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 2.664999999998372,
+          "proxyRoundTripMinusChildServiceMs": 2.5629999999994197,
+          "forkToReadyMinusChildStartupMs": 17.11899999999764
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o15",
+        "src": "D-trace-fixture",
+        "childPid": 30796,
+        "childInstance": "D-trace-fixture/child-30796.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 47.86200000000099,
+          "forkCallMs": 5.171,
+          "forkToChildReadyMs": 1844.2569999999978,
+          "readyToProxyMs": 0.7890000000006694,
+          "proxyRoundTripMs": 16.458999999998923,
+          "proxyResToClientHeadMs": 0.4969999999993888,
+          "totalMs": 1909.8639999999978
+        },
+        "child": {
+          "bootToPreloadMs": 21.525,
+          "preloadToDevServerMs": 1754.279,
+          "devServerToHandlerLoadedMs": 50.52299999999991,
+          "handlerLoadedToReadyMs": 0.5960000000000036,
+          "startupSinceTimeOriginMs": 1826.923,
+          "devProxyToHandlerMs": 7.458000000000084,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7349999999999,
+          "handlerHeadToDevHeadMs": 5.754000000000133,
+          "serviceTotalMs": 13.947000000000116
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2570000000023356,
+          "proxyRoundTripMinusChildServiceMs": 2.5119999999988067,
+          "forkToReadyMinusChildStartupMs": 17.333999999997786
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o16",
+        "src": "D-trace-fixture",
+        "childPid": 33040,
+        "childInstance": "D-trace-fixture/child-33040.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 63.30400000000009,
+          "forkCallMs": 4.177,
+          "forkToChildReadyMs": 1793.2639999999992,
+          "readyToProxyMs": 0.5710000000035507,
+          "proxyRoundTripMs": 16.604999999995925,
+          "proxyResToClientHeadMs": 0.4599999999991269,
+          "totalMs": 1874.203999999998
+        },
+        "child": {
+          "bootToPreloadMs": 20.019,
+          "preloadToDevServerMs": 1703.769,
+          "devServerToHandlerLoadedMs": 54.19200000000001,
+          "handlerLoadedToReadyMs": 0.31899999999996,
+          "startupSinceTimeOriginMs": 1778.299,
+          "devProxyToHandlerMs": 7.689999999999827,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8540000000000418,
+          "handlerHeadToDevHeadMs": 5.788999999999987,
+          "serviceTotalMs": 14.332999999999856
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.3120000000021719,
+          "proxyRoundTripMinusChildServiceMs": 2.271999999996069,
+          "forkToReadyMinusChildStartupMs": 14.964999999999236
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o17",
+        "src": "D-trace-fixture",
+        "childPid": 12140,
+        "childInstance": "D-trace-fixture/child-12140.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 41.333999999995285,
+          "forkCallMs": 3.983,
+          "forkToChildReadyMs": 1805.0930000000008,
+          "readyToProxyMs": 1.1779999999998836,
+          "proxyRoundTripMs": 19.762000000002445,
+          "proxyResToClientHeadMs": 0.5140000000028522,
+          "totalMs": 1867.8810000000012
+        },
+        "child": {
+          "bootToPreloadMs": 18.708,
+          "preloadToDevServerMs": 1709.946,
+          "devServerToHandlerLoadedMs": 61.49499999999989,
+          "handlerLoadedToReadyMs": 0.4050000000002001,
+          "startupSinceTimeOriginMs": 1790.554,
+          "devProxyToHandlerMs": 8.616999999999962,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 1.094000000000051,
+          "handlerHeadToDevHeadMs": 6.625999999999976,
+          "serviceTotalMs": 16.33699999999999
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.0369999999986703,
+          "proxyRoundTripMinusChildServiceMs": 3.4250000000024556,
+          "forkToReadyMinusChildStartupMs": 14.53900000000067
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o18",
+        "src": "D-trace-fixture",
+        "childPid": 19828,
+        "childInstance": "D-trace-fixture/child-19828.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 39.65299999999843,
+          "forkCallMs": 5.483,
+          "forkToChildReadyMs": 1829.6010000000024,
+          "readyToProxyMs": 0.6310000000012224,
+          "proxyRoundTripMs": 16.82499999999709,
+          "proxyResToClientHeadMs": 0.7640000000028522,
+          "totalMs": 1887.474000000002
+        },
+        "child": {
+          "bootToPreloadMs": 25.375,
+          "preloadToDevServerMs": 1722.42,
+          "devServerToHandlerLoadedMs": 57.31399999999985,
+          "handlerLoadedToReadyMs": 0.32799999999997453,
+          "startupSinceTimeOriginMs": 1805.437,
+          "devProxyToHandlerMs": 7.567000000000007,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8300000000001546,
+          "handlerHeadToDevHeadMs": 5.860999999999876,
+          "serviceTotalMs": 14.258000000000038
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.5989999999981137,
+          "proxyRoundTripMinusChildServiceMs": 2.5669999999970514,
+          "forkToReadyMinusChildStartupMs": 24.16400000000249
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o19",
+        "src": "D-trace-fixture",
+        "childPid": 23296,
+        "childInstance": "D-trace-fixture/child-23296.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 41.786999999996624,
+          "forkCallMs": 5.99,
+          "forkToChildReadyMs": 1758.6129999999976,
+          "readyToProxyMs": 0.5720000000001164,
+          "proxyRoundTripMs": 16.986000000004424,
+          "proxyResToClientHeadMs": 0.8099999999976717,
+          "totalMs": 1818.7679999999964
+        },
+        "child": {
+          "bootToPreloadMs": 20.414,
+          "preloadToDevServerMs": 1663.365,
+          "devServerToHandlerLoadedMs": 55.6400000000001,
+          "handlerLoadedToReadyMs": 0.33199999999987995,
+          "startupSinceTimeOriginMs": 1739.751,
+          "devProxyToHandlerMs": 7.54300000000012,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.8919999999998254,
+          "handlerHeadToDevHeadMs": 6.016000000000076,
+          "serviceTotalMs": 14.451000000000022
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.7990000000036162,
+          "proxyRoundTripMinusChildServiceMs": 2.535000000004402,
+          "forkToReadyMinusChildStartupMs": 18.86199999999758
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o20",
+        "src": "D-trace-fixture",
+        "childPid": 10700,
+        "childInstance": "D-trace-fixture/child-10700.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 47.529999999998836,
+          "forkCallMs": 4.897,
+          "forkToChildReadyMs": 1805.9449999999997,
+          "readyToProxyMs": 0.5900000000037835,
+          "proxyRoundTripMs": 16.463999999999942,
+          "proxyResToClientHeadMs": 0.4419999999954598,
+          "totalMs": 1870.9709999999977
+        },
+        "child": {
+          "bootToPreloadMs": 22.839,
+          "preloadToDevServerMs": 1708.393,
+          "devServerToHandlerLoadedMs": 56.14200000000005,
+          "handlerLoadedToReadyMs": 0.3969999999999345,
+          "startupSinceTimeOriginMs": 1787.771,
+          "devProxyToHandlerMs": 7.6059999999999945,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7960000000000491,
+          "handlerHeadToDevHeadMs": 5.77800000000002,
+          "serviceTotalMs": 14.180000000000064
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.3940000000022792,
+          "proxyRoundTripMinusChildServiceMs": 2.283999999999878,
+          "forkToReadyMinusChildStartupMs": 18.17399999999975
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o21",
+        "src": "D-trace-fixture",
+        "childPid": 12532,
+        "childInstance": "D-trace-fixture/child-12532.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 46.16399999999703,
+          "forkCallMs": 4.969,
+          "forkToChildReadyMs": 1733.5069999999978,
+          "readyToProxyMs": 0.577000000004773,
+          "proxyRoundTripMs": 16.45300000000134,
+          "proxyResToClientHeadMs": 0.37700000000040745,
+          "totalMs": 1797.0780000000013
+        },
+        "child": {
+          "bootToPreloadMs": 18.681,
+          "preloadToDevServerMs": 1638.3329999999999,
+          "devServerToHandlerLoadedMs": 54.93100000000004,
+          "handlerLoadedToReadyMs": 0.31899999999996,
+          "startupSinceTimeOriginMs": 1712.264,
+          "devProxyToHandlerMs": 7.546000000000049,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.765999999999849,
+          "handlerHeadToDevHeadMs": 5.686000000000149,
+          "serviceTotalMs": 13.998000000000047
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 1.2879999999986467,
+          "proxyRoundTripMinusChildServiceMs": 2.4550000000012915,
+          "forkToReadyMinusChildStartupMs": 21.242999999997892
+        }
+      },
+      {
+        "trace": "b1-fixed-20260923-r1-D-trace-fixture-o22",
+        "src": "D-trace-fixture",
+        "childPid": 18920,
+        "childInstance": "D-trace-fixture/child-18920.jsonl#0",
+        "missing": [],
+        "workerBootEvents": 1,
+        "parent": {
+          "preForkMs": 44.72799999999552,
+          "forkCallMs": 4.607,
+          "forkToChildReadyMs": 1719.774000000005,
+          "readyToProxyMs": 0.5999999999985448,
+          "proxyRoundTripMs": 16.75800000000163,
+          "proxyResToClientHeadMs": 0.4480000000039581,
+          "totalMs": 1782.3080000000045
+        },
+        "child": {
+          "bootToPreloadMs": 18.713,
+          "preloadToDevServerMs": 1634.121,
+          "devServerToHandlerLoadedMs": 50.13300000000004,
+          "handlerLoadedToReadyMs": 0.306999999999789,
+          "startupSinceTimeOriginMs": 1703.274,
+          "devProxyToHandlerMs": 7.600000000000136,
+          "handlerBeforeFirstOutboundMs": null,
+          "handlerAfterLastOutboundMs": null,
+          "handlerTotalMs": 0.7229999999999563,
+          "handlerHeadToDevHeadMs": 5.620999999999867,
+          "serviceTotalMs": 13.94399999999996
+        },
+        "outbound": [],
+        "handshake": {
+          "ownHandshake": false,
+          "cookieMs": null,
+          "crumbMs": null,
+          "cookieToCrumbEndMs": null,
+          "chartMs": null
+        },
+        "fixtureWaitTotalMs": 0,
+        "unattributed": {
+          "clientTtfbMinusParentMs": 0.9849999999953525,
+          "proxyRoundTripMinusChildServiceMs": 2.81400000000167,
+          "forkToReadyMinusChildStartupMs": 16.500000000005002
+        }
+      }
+    ]
+  },
+  "fixed": {
+    "verdict": {
+      "quoteLocalCost": {
+        "n": 10,
+        "min": 1755.3,
+        "median": 1871.8,
+        "max": 2138.9
+      },
+      "medianPass": false
+    },
+    "singleQuote": {
+      "clientTtfb": {
+        "n": 10,
+        "min": 1926.7,
+        "median": 2050,
+        "max": 2322
+      },
+      "localCost": {
+        "n": 10,
+        "min": 1755.3,
+        "median": 1871.8,
+        "max": 2138.9
+      },
+      "fixtureWait": {
+        "n": 10,
+        "min": 171.5,
+        "median": 176.9,
+        "max": 185.7
+      },
+      "parentPreFork": {
+        "n": 10,
+        "min": 16.5,
+        "median": 31.1,
+        "max": 52.2
+      },
+      "parentForkCall": {
+        "n": 10,
+        "min": 2.9,
+        "median": 4.3,
+        "max": 5.2
+      },
+      "parentForkToChildReady": {
+        "n": 10,
+        "min": 1706.4,
+        "median": 1801.4,
+        "max": 2084
+      },
+      "parentReadyToProxy": {
+        "n": 10,
+        "min": 0.5,
+        "median": 0.6,
+        "max": 1.1
+      },
+      "parentProxyRoundTrip": {
+        "n": 10,
+        "min": 195,
+        "median": 201.1,
+        "max": 211.2
+      },
+      "childBootToPreload": {
+        "n": 10,
+        "min": 18.4,
+        "median": 20.8,
+        "max": 24.7
+      },
+      "childPreloadToDevServer": {
+        "n": 10,
+        "min": 1611.4,
+        "median": 1710.6,
+        "max": 1972
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 10,
+        "min": 50.4,
+        "median": 55.1,
+        "max": 66.1
+      },
+      "childHandlerTotal": {
+        "n": 10,
+        "min": 178.4,
+        "median": 184.3,
+        "max": 193.6
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 10,
+        "min": 1.2,
+        "median": 1.3,
+        "max": 1.8
+      },
+      "childServiceTotal": {
+        "n": 10,
+        "min": 192.2,
+        "median": 198.3,
+        "max": 208.5
+      },
+      "unattributedClientVsParent": {
+        "n": 10,
+        "min": 1.1,
+        "median": 1.9,
+        "max": 2.6
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 10,
+        "min": 14,
+        "median": 16.3,
+        "max": 20.8
+      }
+    },
+    "singleQuoteViaVite": {
+      "clientTtfb": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "localCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "fixtureWait": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentPreFork": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkCall": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentReadyToProxy": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentProxyRoundTrip": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childBootToPreload": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childServiceTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedClientVsParent": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "viteProxyHopMedianMs": null,
+    "singleFinMind": {
+      "clientTtfb": {
+        "n": 10,
+        "min": 1820.7,
+        "median": 1939.2,
+        "max": 2083.4
+      },
+      "localCost": {
+        "n": 10,
+        "min": 1767.7,
+        "median": 1879.4,
+        "max": 2025.1
+      },
+      "fixtureWait": {
+        "n": 10,
+        "min": 51.4,
+        "median": 58.8,
+        "max": 65.3
+      },
+      "parentPreFork": {
+        "n": 10,
+        "min": 18.9,
+        "median": 36.5,
+        "max": 47.3
+      },
+      "parentForkCall": {
+        "n": 10,
+        "min": 3.7,
+        "median": 4.1,
+        "max": 7.4
+      },
+      "parentForkToChildReady": {
+        "n": 10,
+        "min": 1702.3,
+        "median": 1804.4,
+        "max": 1959.7
+      },
+      "parentReadyToProxy": {
+        "n": 10,
+        "min": 0.6,
+        "median": 0.6,
+        "max": 0.8
+      },
+      "parentProxyRoundTrip": {
+        "n": 10,
+        "min": 82.3,
+        "median": 92.2,
+        "max": 97.8
+      },
+      "childBootToPreload": {
+        "n": 10,
+        "min": 19,
+        "median": 20.3,
+        "max": 29.7
+      },
+      "childPreloadToDevServer": {
+        "n": 10,
+        "min": 1606.8,
+        "median": 1714,
+        "max": 1858.7
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 10,
+        "min": 50.6,
+        "median": 53.5,
+        "max": 63.1
+      },
+      "childHandlerTotal": {
+        "n": 10,
+        "min": 65.5,
+        "median": 75.6,
+        "max": 80.3
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 10,
+        "min": 1.1,
+        "median": 1.3,
+        "max": 1.5
+      },
+      "childServiceTotal": {
+        "n": 10,
+        "min": 79.6,
+        "median": 89.7,
+        "max": 95
+      },
+      "unattributedClientVsParent": {
+        "n": 10,
+        "min": 1.3,
+        "median": 1.7,
+        "max": 2.4
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 10,
+        "min": 14.4,
+        "median": 15.5,
+        "max": 18.6
+      }
+    },
+    "batchItems": {
+      "clientTtfb": {
+        "n": 110,
+        "min": 2260,
+        "median": 2558.3,
+        "max": 2788.8
+      },
+      "localCost": {
+        "n": 110,
+        "min": 2087.8,
+        "median": 2379.2,
+        "max": 2611.1
+      },
+      "fixtureWait": {
+        "n": 110,
+        "min": 168.5,
+        "median": 177.6,
+        "max": 187
+      },
+      "parentPreFork": {
+        "n": 110,
+        "min": 25.7,
+        "median": 51.4,
+        "max": 84.7
+      },
+      "parentForkCall": {
+        "n": 110,
+        "min": 2.6,
+        "median": 4.4,
+        "max": 7
+      },
+      "parentForkToChildReady": {
+        "n": 110,
+        "min": 2013,
+        "median": 2293.3,
+        "max": 2550.7
+      },
+      "parentReadyToProxy": {
+        "n": 110,
+        "min": 0.4,
+        "median": 0.7,
+        "max": 1.1
+      },
+      "parentProxyRoundTrip": {
+        "n": 110,
+        "min": 194.9,
+        "median": 206.6,
+        "max": 226.1
+      },
+      "childBootToPreload": {
+        "n": 110,
+        "min": 19.7,
+        "median": 22,
+        "max": 30.6
+      },
+      "childPreloadToDevServer": {
+        "n": 110,
+        "min": 1916.3,
+        "median": 2187.4,
+        "max": 2442.3
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 110,
+        "min": 53.4,
+        "median": 62.1,
+        "max": 84.5
+      },
+      "childHandlerTotal": {
+        "n": 110,
+        "min": 177.2,
+        "median": 187.8,
+        "max": 197.3
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 110,
+        "min": 1.2,
+        "median": 1.4,
+        "max": 2.1
+      },
+      "childServiceTotal": {
+        "n": 110,
+        "min": 190.3,
+        "median": 201.4,
+        "max": 212
+      },
+      "unattributedClientVsParent": {
+        "n": 110,
+        "min": 1,
+        "median": 3.7,
+        "max": 24.5
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 110,
+        "min": 15.5,
+        "median": 19.2,
+        "max": 28.7
+      }
+    },
+    "batches": {
+      "firstValidQuoteMs": {
+        "n": 10,
+        "min": 2525.5,
+        "median": 2586.6,
+        "max": 2665.2
+      },
+      "allValidQuotesFxMs": {
+        "n": 10,
+        "min": 9788.9,
+        "median": 10049.6,
+        "max": 10595.5
+      },
+      "peakMax": 3,
+      "list": [
+        {
+          "batchId": "B-trace-fixture-r1",
+          "firstValidQuoteMs": 2537.1,
+          "allValidQuotesFxMs": 10000.7,
+          "peak": 3
+        },
+        {
+          "batchId": "B-trace-fixture-r2",
+          "firstValidQuoteMs": 2634.5,
+          "allValidQuotesFxMs": 10130.6,
+          "peak": 3
+        },
+        {
+          "batchId": "B-trace-fixture-r3",
+          "firstValidQuoteMs": 2625.7,
+          "allValidQuotesFxMs": 10094.8,
+          "peak": 3
+        },
+        {
+          "batchId": "B-trace-fixture-r4",
+          "firstValidQuoteMs": 2527.5,
+          "allValidQuotesFxMs": 10002.7,
+          "peak": 3
+        },
+        {
+          "batchId": "B-trace-fixture-r5",
+          "firstValidQuoteMs": 2555.1,
+          "allValidQuotesFxMs": 10025.9,
+          "peak": 3
+        },
+        {
+          "batchId": "D-trace-fixture-r1",
+          "firstValidQuoteMs": 2525.5,
+          "allValidQuotesFxMs": 9788.9,
+          "peak": 3
+        },
+        {
+          "batchId": "D-trace-fixture-r2",
+          "firstValidQuoteMs": 2612,
+          "allValidQuotesFxMs": 10268.4,
+          "peak": 3
+        },
+        {
+          "batchId": "D-trace-fixture-r3",
+          "firstValidQuoteMs": 2665.2,
+          "allValidQuotesFxMs": 10595.5,
+          "peak": 3
+        },
+        {
+          "batchId": "D-trace-fixture-r4",
+          "firstValidQuoteMs": 2603.5,
+          "allValidQuotesFxMs": 10073.2,
+          "peak": 3
+        },
+        {
+          "batchId": "D-trace-fixture-r5",
+          "firstValidQuoteMs": 2569.6,
+          "allValidQuotesFxMs": 9927.8,
+          "peak": 3
+        }
+      ]
+    },
+    "distinctChildPerRequest": true
+  },
+  "thresholdPass": false,
+  "problems": [
+    "缺 identityAfter（結束時身分未核對）"
+  ]
+}

@@ -1,0 +1,798 @@
+{
+  "source": ".scratch/performance-fix-20260922/evidence/05/true-market-paired-20260923-v5",
+  "note": "保存樣本的重算（證據核對），非本輪 fresh 量測；時間皆為瀏覽器頁面單調時鐘 ms",
+  "pages": [
+    {
+      "page": "after-pair-1",
+      "sourceId": "6eee87e",
+      "firstValidQuoteMs": 4602.5,
+      "allValidQuotesFxMs": 17566.1,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 3863.9,
+        "median": 4352.2,
+        "max": 4682.7
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.4,
+        "median": 0.9,
+        "max": 1.6
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 1.3,
+        "median": 1.9,
+        "max": 2.6
+      },
+      "firstPricedStartMs": 30.3,
+      "lastPriced": {
+        "symbol": "AMZN",
+        "slotWaitMs": 12921.8,
+        "ttfbMs": 4612.1,
+        "endMs": 17564.8
+      },
+      "namesStartedBeforeLastPriced": 0,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2277,
+        "median": 2495,
+        "max": 2591.4
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 4456,
+          "endMs": 4487.9
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 0.8,
+          "ttfbMs": 4568.8,
+          "endMs": 4600.6
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.2,
+          "ttfbMs": 4682.7,
+          "endMs": 4714.8
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 4458.7,
+          "ttfbMs": 4352.2,
+          "endMs": 8842.5
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 4571.1,
+          "ttfbMs": 3863.9,
+          "endMs": 8466.2
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 4685.1,
+          "ttfbMs": 4140.8,
+          "endMs": 8857.7
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 8436.3,
+          "ttfbMs": 4484.1,
+          "endMs": 12951.5
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 8812.7,
+          "ttfbMs": 4153.5,
+          "endMs": 12996.9
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 8828,
+          "ttfbMs": 4092.6,
+          "endMs": 12952.5
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 12921.8,
+          "ttfbMs": 4612.1,
+          "endMs": 17564.8
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 12922.6,
+          "ttfbMs": 4226.4,
+          "endMs": 17180.8
+        }
+      ]
+    },
+    {
+      "page": "after-pair-2",
+      "sourceId": "6eee87e",
+      "firstValidQuoteMs": 4419.4,
+      "allValidQuotesFxMs": 16637.7,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 3949.4,
+        "median": 4050.3,
+        "max": 4553.9
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.5,
+        "median": 1.1,
+        "max": 1.5
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 1.3,
+        "median": 1.6,
+        "max": 3.4
+      },
+      "firstPricedStartMs": 27.9,
+      "lastPriced": {
+        "symbol": "TSLA",
+        "slotWaitMs": 12621.5,
+        "ttfbMs": 3985.8,
+        "endMs": 16636.3
+      },
+      "namesStartedBeforeLastPriced": 0,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2093.5,
+        "median": 2360,
+        "max": 2382.8
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 4550.2,
+          "endMs": 4579.3
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.1,
+          "ttfbMs": 4553.9,
+          "endMs": 4583.4
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.5,
+          "ttfbMs": 4385.2,
+          "endMs": 4416
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 4390,
+          "ttfbMs": 3977.3,
+          "endMs": 8396.3
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 4552.2,
+          "ttfbMs": 4050.3,
+          "endMs": 8631.9
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 4556.3,
+          "ttfbMs": 4227.1,
+          "endMs": 8811.9
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 8369,
+          "ttfbMs": 4086.7,
+          "endMs": 12484.5
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 8604.4,
+          "ttfbMs": 4015.4,
+          "endMs": 12649
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 8784.4,
+          "ttfbMs": 3949.4,
+          "endMs": 12762.2
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 12457.4,
+          "ttfbMs": 3974.5,
+          "endMs": 16460.8
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 12621.5,
+          "ttfbMs": 3985.8,
+          "endMs": 16636.3
+        }
+      ]
+    },
+    {
+      "page": "after-pair-3",
+      "sourceId": "6eee87e",
+      "firstValidQuoteMs": 4172.3,
+      "allValidQuotesFxMs": 16309.6,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 4010,
+        "median": 4069.6,
+        "max": 4428
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.5,
+        "median": 1,
+        "max": 1.4
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 1.1,
+        "median": 2,
+        "max": 4.3
+      },
+      "firstPricedStartMs": 25.5,
+      "lastPriced": {
+        "symbol": "TSLA",
+        "slotWaitMs": 12225.9,
+        "ttfbMs": 4056.3,
+        "endMs": 16308.5
+      },
+      "namesStartedBeforeLastPriced": 0,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2110.7,
+        "median": 2252.1,
+        "max": 2383.2
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 4069.6,
+          "endMs": 4096.1
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 1,
+          "ttfbMs": 4180.7,
+          "endMs": 4208
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.3,
+          "ttfbMs": 4141.3,
+          "endMs": 4169.4
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 4071.9,
+          "ttfbMs": 4086.7,
+          "endMs": 8184.7
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 4144.7,
+          "ttfbMs": 4428,
+          "endMs": 8599.1
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 4183.2,
+          "ttfbMs": 4024.5,
+          "endMs": 8233.7
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 8159.6,
+          "ttfbMs": 4045.3,
+          "endMs": 12231.5
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 8209.1,
+          "ttfbMs": 4015,
+          "endMs": 12251
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 8574,
+          "ttfbMs": 4214.8,
+          "endMs": 12815.4
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 12207.8,
+          "ttfbMs": 4010,
+          "endMs": 16244.5
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 12225.9,
+          "ttfbMs": 4056.3,
+          "endMs": 16308.5
+        }
+      ]
+    },
+    {
+      "page": "before-pair-1",
+      "sourceId": "444d6b1",
+      "firstValidQuoteMs": 8448.4,
+      "allValidQuotesFxMs": 23170.2,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 3752.6,
+        "median": 4268.2,
+        "max": 5741.4
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.4,
+        "median": 0.8,
+        "max": 3.2
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 0.7,
+        "median": 1146.8,
+        "max": 2870.9
+      },
+      "firstPricedStartMs": 22.8,
+      "lastPriced": {
+        "symbol": "TSLA",
+        "slotWaitMs": 19391.2,
+        "ttfbMs": 3752.6,
+        "endMs": 23167.6
+      },
+      "namesStartedBeforeLastPriced": 5,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2288.3,
+        "median": 2527.7,
+        "max": 2866.6
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 5633.6,
+          "endMs": 5656.8
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 0.9,
+          "ttfbMs": 5741.4,
+          "endMs": 5765.9
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.3,
+          "ttfbMs": 5551.9,
+          "endMs": 5577.5
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 5634.9,
+          "ttfbMs": 4380.2,
+          "endMs": 10039.2
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 8423.4,
+          "ttfbMs": 4268.2,
+          "endMs": 12715.1
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 8441.6,
+          "ttfbMs": 4234.7,
+          "endMs": 12699.8
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 12306.4,
+          "ttfbMs": 4082.1,
+          "endMs": 16412.4
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 15209,
+          "ttfbMs": 4471.4,
+          "endMs": 19703.6
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 15211.4,
+          "ttfbMs": 4176,
+          "endMs": 19413.4
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 16390.3,
+          "ttfbMs": 4148.4,
+          "endMs": 20562.2
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 19391.2,
+          "ttfbMs": 3752.6,
+          "endMs": 23167.6
+        }
+      ]
+    },
+    {
+      "page": "before-pair-2",
+      "sourceId": "444d6b1",
+      "firstValidQuoteMs": 6901.8,
+      "allValidQuotesFxMs": 20729.8,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 3594.6,
+        "median": 3937.7,
+        "max": 4516.3
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.4,
+        "median": 1.2,
+        "max": 3.9
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 0.6,
+        "median": 1073.1,
+        "max": 2371.4
+      },
+      "firstPricedStartMs": 24.9,
+      "lastPriced": {
+        "symbol": "TSLA",
+        "slotWaitMs": 17106.6,
+        "ttfbMs": 3594.6,
+        "endMs": 20726.9
+      },
+      "namesStartedBeforeLastPriced": 5,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2140.3,
+        "median": 2359.9,
+        "max": 2364.5
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 4179.5,
+          "endMs": 4205.6
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 0.9,
+          "ttfbMs": 4516.3,
+          "endMs": 4543.4
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.3,
+          "ttfbMs": 4509.9,
+          "endMs": 4537.4
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 4181.7,
+          "ttfbMs": 3926.6,
+          "endMs": 8134.7
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 6875.3,
+          "ttfbMs": 3929.2,
+          "endMs": 10830.4
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 6880.3,
+          "ttfbMs": 3914.7,
+          "endMs": 10820.8
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 10251.9,
+          "ttfbMs": 3969.7,
+          "endMs": 14246.9
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 13161.5,
+          "ttfbMs": 4271.7,
+          "endMs": 17462
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 13165,
+          "ttfbMs": 3937.7,
+          "endMs": 17131
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 14222.7,
+          "ttfbMs": 3756.6,
+          "endMs": 18005.3
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 17106.6,
+          "ttfbMs": 3594.6,
+          "endMs": 20726.9
+        }
+      ]
+    },
+    {
+      "page": "before-pair-3",
+      "sourceId": "444d6b1",
+      "firstValidQuoteMs": 6696.5,
+      "allValidQuotesFxMs": 20586.1,
+      "httpPeak": 3,
+      "pricedTtfb": {
+        "n": 11,
+        "min": 3588.1,
+        "median": 3998.7,
+        "max": 4384.3
+      },
+      "pricedBodyRead": {
+        "n": 11,
+        "min": 0.3,
+        "median": 0.8,
+        "max": 1.5
+      },
+      "quotePublish": {
+        "n": 10,
+        "min": 0.6,
+        "median": 1009.1,
+        "max": 2473.1
+      },
+      "firstPricedStartMs": 24,
+      "lastPriced": {
+        "symbol": "TSLA",
+        "slotWaitMs": 16970.3,
+        "ttfbMs": 3588.1,
+        "endMs": 20583.2
+      },
+      "namesStartedBeforeLastPriced": 5,
+      "nameTtfb": {
+        "n": 5,
+        "min": 2013.1,
+        "median": 2427.1,
+        "max": 2471.1
+      },
+      "waves": [
+        {
+          "order": 0,
+          "symbol": "USDTWD=X",
+          "kind": "fx",
+          "slotWaitMs": 0,
+          "ttfbMs": 4189,
+          "endMs": 4214.5
+        },
+        {
+          "order": 1,
+          "symbol": "2330.TW",
+          "kind": "quote",
+          "slotWaitMs": 0.9,
+          "ttfbMs": 4384.3,
+          "endMs": 4409.9
+        },
+        {
+          "order": 2,
+          "symbol": "2317.TW",
+          "kind": "quote",
+          "slotWaitMs": 1.1,
+          "ttfbMs": 4197.7,
+          "endMs": 4223.4
+        },
+        {
+          "order": 3,
+          "symbol": "2454.TW",
+          "kind": "quote",
+          "slotWaitMs": 4191.9,
+          "ttfbMs": 4123.1,
+          "endMs": 8339.5
+        },
+        {
+          "order": 4,
+          "symbol": "2308.TW",
+          "kind": "quote",
+          "slotWaitMs": 6671.8,
+          "ttfbMs": 3998.7,
+          "endMs": 10694.8
+        },
+        {
+          "order": 5,
+          "symbol": "0050.TW",
+          "kind": "quote",
+          "slotWaitMs": 6767.9,
+          "ttfbMs": 3858.8,
+          "endMs": 10651.7
+        },
+        {
+          "order": 6,
+          "symbol": "AAPL",
+          "kind": "quote",
+          "slotWaitMs": 10330,
+          "ttfbMs": 3992.6,
+          "endMs": 14347.1
+        },
+        {
+          "order": 7,
+          "symbol": "MSFT",
+          "kind": "quote",
+          "slotWaitMs": 13065.6,
+          "ttfbMs": 3903,
+          "endMs": 16994
+        },
+        {
+          "order": 8,
+          "symbol": "NVDA",
+          "kind": "quote",
+          "slotWaitMs": 13098.9,
+          "ttfbMs": 4099.6,
+          "endMs": 17223.3
+        },
+        {
+          "order": 9,
+          "symbol": "AMZN",
+          "kind": "quote",
+          "slotWaitMs": 14323.6,
+          "ttfbMs": 3934.7,
+          "endMs": 18283.5
+        },
+        {
+          "order": 10,
+          "symbol": "TSLA",
+          "kind": "quote",
+          "slotWaitMs": 16970.3,
+          "ttfbMs": 3588.1,
+          "endMs": 20583.2
+        }
+      ]
+    }
+  ],
+  "byVariant": {
+    "before": {
+      "firstValidQuoteMedianMs": 6901.8,
+      "allValidQuotesFxMedianMs": 20729.8,
+      "pricedTtfbMedianOfPagesMs": 3998.7,
+      "lastPricedSlotWaitMedianMs": 17106.6,
+      "lastPricedTtfbMedianMs": 3594.6,
+      "quotePublishMaxMs": 2870.9
+    },
+    "after": {
+      "firstValidQuoteMedianMs": 4419.4,
+      "allValidQuotesFxMedianMs": 16637.7,
+      "pricedTtfbMedianOfPagesMs": 4069.6,
+      "lastPricedSlotWaitMedianMs": 12621.5,
+      "lastPricedTtfbMedianMs": 4056.3,
+      "quotePublishMaxMs": 4.3
+    }
+  }
+}

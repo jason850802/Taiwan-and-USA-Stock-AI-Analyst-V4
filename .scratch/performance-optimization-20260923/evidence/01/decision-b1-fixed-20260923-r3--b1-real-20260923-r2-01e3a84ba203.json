@@ -1,0 +1,20 @@
+{
+  "fixedRun": "b1-fixed-20260923-r3",
+  "realRun": "b1-real-20260923-r2",
+  "verifierSha": "01e3a84ba203",
+  "decision": {
+    "dispatchMs": 1836.1,
+    "singleWaitMs": 4045.7,
+    "dispatchShare": 0.454,
+    "handshakeShared": false,
+    "handshakeMs": 1511.9,
+    "handshakeShare": 0.374,
+    "dispatchSmall": false,
+    "handshakeSmall": false,
+    "skipPersistentBranch": false,
+    "next": "驗證同 handler 長駐本機原型（02）",
+    "realDispatchMs": 2224.5,
+    "realDispatchShare": 0.55
+  },
+  "problems": []
+}
