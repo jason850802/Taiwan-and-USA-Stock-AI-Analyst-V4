@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "model": "deterministic discrete-event simulation of holdingPriceQueue semantics; product default remains 3",
+  "requestDurationMs": 80,
+  "results": [
+    {
+      "count": 10,
+      "limit": 3,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 320,
+      "allPrimarySettledMs": 320,
+      "allNamesCompleteMs": 480,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 240,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 10,
+      "limit": 3,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 320,
+      "allNamesCompleteMs": 480,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 240,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 10,
+      "limit": 3,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 15,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 4
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 320,
+      "allNamesCompleteMs": 400,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 240,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    },
+    {
+      "count": 10,
+      "limit": 4,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 240,
+      "allPrimarySettledMs": 240,
+      "allNamesCompleteMs": 320,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 160,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 10,
+      "limit": 4,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 240,
+      "allNamesCompleteMs": 320,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 160,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 10,
+      "limit": 4,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 15,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 4
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 240,
+      "allNamesCompleteMs": 320,
+      "primaryQueueWaitMedianMs": 80,
+      "primaryQueueWaitMaxMs": 160,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    },
+    {
+      "count": 10,
+      "limit": 6,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 160,
+      "allPrimarySettledMs": 160,
+      "allNamesCompleteMs": 240,
+      "primaryQueueWaitMedianMs": 0,
+      "primaryQueueWaitMaxMs": 80,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 10,
+      "limit": 6,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 16,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 5
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 160,
+      "allNamesCompleteMs": 240,
+      "primaryQueueWaitMedianMs": 0,
+      "primaryQueueWaitMaxMs": 80,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 10,
+      "limit": 6,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 15,
+      "requestCountByKind": {
+        "quote": 10,
+        "fx": 1,
+        "name": 4
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 160,
+      "allNamesCompleteMs": 240,
+      "primaryQueueWaitMedianMs": 0,
+      "primaryQueueWaitMaxMs": 80,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 3,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 880,
+      "allPrimarySettledMs": 880,
+      "allNamesCompleteMs": 1280,
+      "primaryQueueWaitMedianMs": 400,
+      "primaryQueueWaitMaxMs": 800,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 30,
+      "limit": 3,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 880,
+      "allNamesCompleteMs": 1280,
+      "primaryQueueWaitMedianMs": 400,
+      "primaryQueueWaitMaxMs": 800,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 3,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 45,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 14
+      },
+      "httpPeak": 3,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 880,
+      "allNamesCompleteMs": 1200,
+      "primaryQueueWaitMedianMs": 400,
+      "primaryQueueWaitMaxMs": 800,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 4,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 640,
+      "allPrimarySettledMs": 640,
+      "allNamesCompleteMs": 960,
+      "primaryQueueWaitMedianMs": 240,
+      "primaryQueueWaitMaxMs": 560,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 30,
+      "limit": 4,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 640,
+      "allNamesCompleteMs": 960,
+      "primaryQueueWaitMedianMs": 240,
+      "primaryQueueWaitMaxMs": 560,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 4,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 45,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 14
+      },
+      "httpPeak": 4,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 640,
+      "allNamesCompleteMs": 960,
+      "primaryQueueWaitMedianMs": 240,
+      "primaryQueueWaitMaxMs": 560,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 6,
+      "scenario": "normal",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": 480,
+      "allPrimarySettledMs": 480,
+      "allNamesCompleteMs": 640,
+      "primaryQueueWaitMedianMs": 160,
+      "primaryQueueWaitMaxMs": 400,
+      "errorCount": 0,
+      "errors": []
+    },
+    {
+      "count": 30,
+      "limit": 6,
+      "scenario": "429",
+      "requestDurationMs": 80,
+      "requestCount": 46,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 15
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 480,
+      "allNamesCompleteMs": 640,
+      "primaryQueueWaitMedianMs": 160,
+      "primaryQueueWaitMaxMs": 400,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "PERF03",
+          "outcome": "429"
+        }
+      ]
+    },
+    {
+      "count": 30,
+      "limit": 6,
+      "scenario": "error",
+      "requestDurationMs": 80,
+      "requestCount": 45,
+      "requestCountByKind": {
+        "quote": 30,
+        "fx": 1,
+        "name": 14
+      },
+      "httpPeak": 6,
+      "firstValidQuoteMs": 80,
+      "allValidQuotesFxMs": null,
+      "allPrimarySettledMs": 480,
+      "allNamesCompleteMs": 640,
+      "primaryQueueWaitMedianMs": 160,
+      "primaryQueueWaitMaxMs": 400,
+      "errorCount": 1,
+      "errors": [
+        {
+          "kind": "quote",
+          "symbol": "777705.TW",
+          "outcome": "error"
+        }
+      ]
+    }
+  ]
+}

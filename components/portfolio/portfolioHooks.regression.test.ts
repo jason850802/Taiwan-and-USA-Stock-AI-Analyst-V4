@@ -142,6 +142,16 @@ const twItem = {
   stockDividends: 0,
 } as PortfolioItem;
 
+const usItems = Array.from({ length: 5 }, (_, index) => ({
+  id: `us-${index}`,
+  symbol: `PERF${index + 1}`,
+  totalShares: 1,
+  avgCostPrice: 100,
+  totalCost: 100,
+  cashDividends: 0,
+  stockDividends: 0,
+})) as PortfolioItem[];
+
 const flushAsync = async () => {
   for (let i = 0; i < 20; i++) await Promise.resolve();
 };
@@ -188,6 +198,33 @@ describe('庫存 hook 延遲資料回填', () => {
     await flushAsync();
     result = hookRuntime.render(() => useHoldingPrices([twItem]));
     expect(result.prices['2330.TW']).toMatchObject({ price: 100, name: '台積電', fetchedAt: 1000 });
+  });
+
+  it('多檔美股首批三槽會包含匯率請求', async () => {
+    const gate = deferred<void>();
+    const started: string[] = [];
+    let active = 0;
+    let peak = 0;
+    yahoo.peekLatestPrice.mockReturnValue(null);
+    yahoo.getLatestPrice.mockImplementation(async symbol => {
+      started.push(symbol);
+      active++;
+      peak = Math.max(peak, active);
+      await gate.promise;
+      active--;
+      return { price: 100, name: symbol, date: '2026-09-22', fetchedAt: 1000 };
+    });
+
+    hookRuntime.render(() => useHoldingPrices(usItems));
+    await flushAsync();
+
+    expect(started).toHaveLength(3);
+    expect(started).toContain('USDTWD=X');
+    expect(peak).toBe(3);
+
+    gate.resolve();
+    await flushAsync();
+    expect(started).toHaveLength(6);
   });
 
   it('台股在名稱在途時移除再加入，仍會安全取得名稱且保留同代報價', async () => {

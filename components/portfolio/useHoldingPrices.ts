@@ -193,9 +193,11 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
 
   const fetchAllPrices = useCallback((opts?: GetLatestPriceOpts) => {
     if (!mountedRef.current) return;
-    Array.from(symbolsRef.current).forEach(symbol => fetchPrice(symbol, opts));
     // Fetch exchange rate if any US stock exists
+    // 匯率必須先於報價入列：報價、名稱與匯率都以優先旗標入列，同級時佇列依入列順序取槽，
+    // 放在報價迴圈之後會排到所有報價後面、錯過首批三槽（回歸測試鎖此順序）。
     if (hasUsRef.current) fetchExchangeRate(opts);
+    Array.from(symbolsRef.current).forEach(symbol => fetchPrice(symbol, opts));
   }, [fetchPrice, fetchExchangeRate]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
