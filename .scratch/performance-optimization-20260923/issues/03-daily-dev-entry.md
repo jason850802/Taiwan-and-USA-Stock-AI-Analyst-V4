@@ -1,6 +1,6 @@
 # 03 — 把通過的候選接入日常開發入口
 
-Status: ready-for-agent
+Status: open
 Blocked by: 02
 Type: task
 
@@ -26,3 +26,15 @@ Type: task
 - [ ] 隔離完整 gate、獨立 Standards／Spec 覆核、精確提交與日常命令文件完成。
 
 有效否證而保留原入口時，本票可在上述分支驗收完成後 resolved，讓報價與 K 線的獨立成本工作繼續；同列「本機成本目標未過」，全案保持 OPEN。原型若缺 parity／證據則仍 blocked，不得用這個分支繞過安全檢查。
+
+## 首輪紀錄（2026-09-24，覆核後撤回結案）
+
+採用 02 候選為日常入口，修正 dev-server 到 handler 的取消訊號；Yahoo chart／search、FinMind、Gemini 串流／非串流在斷線後均停止本次上游工作，單人 cookie 握手也會取消，共享握手時另一請求仍成功。限流等待中斷線的五路由案例亦全部通過，沒有再啟動行情或 AI 上游。真 AI 不執行；以假 CLI 與假 SDK 驗證。固定資料從身分綁定的 Vite 同源入口量得暖 OPTIONS 中位 15.364 ms、固定 GET 中位 61.766 ms，各 20/20 成功。正式 App 固定台股、美股、K 線、隔離庫存及假 AI 串流可見；十檔冷庫存與 K 線的 App 可見 B1↔C 配對留在 04～07，**全案 OPEN**。資料、來源、例外、獨立 Standards／Spec 覆核與日常命令見 [03 REPORT](../evidence/03/REPORT.md)。沒有 push、部署或發版。
+
+日常啟動：`node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start`；停止以同路徑 `stop`。本票精確提交應由 Git 記錄及來源 manifest 核對，不依賴只有標題的舊 commit 訊息。
+
+## 覆核後進度（2026-09-24）
+
+獨立 Standards／Spec 覆核判定首輪均 FAIL，本票改回 OPEN。已修正日常網址為 `http://localhost:3000` 的同一來源主機名、隔離 Vite 的 envDir、抽出五路由共用的斷線監聽與解除、補共享握手取消測試、加入失聯狀態的身分核對復原命令。新證據見 [覆核後增補](../evidence/03/ADDENDUM-20260924.md)。
+
+隔離 gate 已掃到本票新檔且通過，但 59 案對等工具連續兩次在 B1 啟動時遇到 Vercel `Retrieving project…` 後的 `fetch failed`，實際執行 0 案；不得把先前 02 的 59 案當作本票 PASS。原 `localhost:3000` 的隔離 App 實測、正式部署取消／API 行為、依賴刪除重載及生命週期 raw 仍待完成。21 檔來源清單已建立；獨立 Standards／Spec 覆核均判 FAIL，見 [覆核增補](../evidence/03/REVIEW-ADDENDUM-20260924.md)。此票維持 OPEN，04 不因本輪機械 gate 通過而自動解鎖。

@@ -25,15 +25,15 @@ const CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS = 45_000;
  * - 'claude-cli'：橋接本機 Claude Code CLI（吃 Claude 訂閱，僅本機 vercel dev 用）。
  * - 其他值：明確設定錯誤，不靜默 fallback。
  */
-export async function generateText(req: GeminiRequest): Promise<{ text: string }> {
+export async function generateText(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
   const provider = (process.env.LLM_PROVIDER ?? '').trim();
 
   switch (provider) {
     case '':
     case 'gemini-api':
-      return callGeminiApiProvider(req);
+      return callGeminiApiProvider(req, signal);
     case 'claude-cli':
-      return callClaudeCli(req);
+      return callClaudeCli(req, signal);
     // 未來擴充點（僅註記，不實作）：
     // case 'codex-cli':   // OpenAI Codex CLI 橋接
     // case 'gemini-cli':  // Google Gemini CLI 橋接
@@ -55,7 +55,13 @@ export async function generateTextStream(
   switch (provider) {
     case '':
     case 'gemini-api':
-      return callGeminiApiProvider(req);
+      {
+        const controller = new AbortController();
+        cancelRef.cancel = () => controller.abort();
+        return callGeminiApiProvider(req, controller.signal).finally(() => {
+          cancelRef.cancel = undefined;
+        });
+      }
     case 'claude-cli':
       return callClaudeCliStream(req, onDelta, cancelRef);
     default:
@@ -70,7 +76,7 @@ export async function generateTextStream(
  * 預設分支：既有 Gemini API 路徑，自 api/gemini.ts handler 原樣搬移。
  * GEMINI_API_KEY 邏輯零觸碰（紅線）。
  */
-async function callGeminiApiProvider(req: GeminiRequest): Promise<{ text: string }> {
+async function callGeminiApiProvider(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
   const { prompt, systemInstruction, mode, temperature, thinkingConfig } = req;
   const apiKey = getGeminiApiKey();
 
@@ -87,7 +93,7 @@ async function callGeminiApiProvider(req: GeminiRequest): Promise<{ text: string
     ...(thinkingConfig ? { thinkingConfig } : {}),
   };
 
-  return callGeminiWithTimeout({ apiKey, model, contents, config });
+  return callGeminiWithTimeout({ apiKey, model, contents, config, signal });
 }
 
 // ---------------------------------------------------------------------------
@@ -236,7 +242,8 @@ function buildChildEnv(): NodeJS.ProcessEnv {
  * - 100s 逾時＋settled 旗標：任何出口（close/error/timeout）不遺留子程序、不重複 settle。
  * - 紅線：禁用任何「跳過 OAuth 讀取」的 CLI 旗標，一律走已登入的訂閱憑證。
  */
-function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
+function callClaudeCli(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
+  signal?.throwIfAborted();
   const exePath = findClaudeExecutable();
   const model = getClaudeCliModel(req.mode);
   const effort = getClaudeCliEffort(req.mode);
@@ -254,6 +261,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
 
   return new Promise<{ text: string }>((resolve, reject) => {
     let settled = false;
+    let onAbort: (() => void) | undefined;
     let stdout = '';
     let stderr = '';
 
@@ -287,6 +295,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
     const timeoutId = setTimeout(() => {
       if (settled) return;
       settled = true;
+      if (onAbort) signal?.removeEventListener('abort', onAbort);
       child.kill();
       reject(new ClassifiedError(
         'UPSTREAM_ERROR',
@@ -300,6 +309,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
       if (settled) return;
       settled = true;
       clearTimeout(timeoutId);
+      if (onAbort) signal?.removeEventListener('abort', onAbort);
       fn();
     };
 
@@ -366,6 +376,14 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
         resolve({ text: String(json.result ?? '') });
       });
     });
+    onAbort = () => {
+      settle(() => {
+        child.kill();
+        reject(new ClassifiedError('CANCELLED'));
+      });
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+    if (signal?.aborted) onAbort();
   });
 }
 

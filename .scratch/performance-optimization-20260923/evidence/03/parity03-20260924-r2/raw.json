@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "runId": "parity03-20260924-r2",
+  "ticket": "03",
+  "kind": "parity",
+  "createdAt": "2026-09-24T10:20:05.340Z",
+  "identity": {
+    "git": {
+      "head": "93cd7ad262bd654c9ec68f1124c160df77a71f87",
+      "branch": "codex/reacceptance-fixes-p1-s1",
+      "baselineCommit": "30dfdb23cc375ad8a65897e4fca88903dcecca9d"
+    },
+    "product": {
+      "fileCount": 175,
+      "aggregateSha256": "c534d5da7f3af74a1120e0e087ad7c38f70e3b5a1316d5d75300f9dd8d9da165",
+      "missing": [],
+      "differsFromHead": [
+        "api/_lib/yahoo.handshake.test.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts",
+        "vite.config.ts"
+      ],
+      "differsFromBaseline": [
+        "api/_lib/http.cancel.test.ts",
+        "api/_lib/http.ts",
+        "api/_lib/llm.ts",
+        "api/_lib/yahoo.handshake.test.ts",
+        "api/_lib/yahoo.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.test.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts",
+        "vite.config.ts"
+      ],
+      "equalsHead": false,
+      "equalsBaselineCommit": false,
+      "untracked": []
+    },
+    "worktree": {
+      "skipWorktree": 1841,
+      "skipWorktreeMissing": 805,
+      "hiddenModified": [
+        ".scratch/performance-fix-20260922/tools/verify-holdings-name-blocking.mjs",
+        "api/_lib/yahoo.handshake.test.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts"
+      ],
+      "trackedModified": [
+        ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+        ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+        ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+        ".scratch/reacceptance-fixes/HANDOFF.md",
+        "vite.config.ts"
+      ]
+    },
+    "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+    "entry": "c",
+    "command": "NODE_OPTIONS=--require <runtime>/persistent-functions.cjs node <APPDATA>/npm/node_modules/vercel/dist/vc.js dev --listen 127.0.0.1:<port>",
+    "dailyEquivalent": "日常為 npx vercel dev --listen 3001；npx 解析到同一全域 vc.js，本 run 省去 npx 包裝層以讓 owned PID＝listener PID",
+    "versions": {
+      "node": "v26.4.0",
+      "vercel": "55.0.0",
+      "vercelNode": "5.8.23",
+      "tsx": "4.21.0",
+      "vite": "6.4.1"
+    },
+    "tools": {
+      "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "b1-breakdown.mjs": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "c-parity.mjs": "c1a87eac3b3ecce023e0ac4d486db91862e811ec47a50a7fc4f4269bb22b65ad",
+      "c-reload.mjs": "1acfb4d7ac8c015fa072ced19c38fb78bad9415709575af56aa2378662eddcec"
+    },
+    "plan": {
+      "PLAN.md": "fdcce95e00e07ee7b74313de470b5af2b1925fbf64a330006e0b2cd921f8002b",
+      "spec.md": "c27000ba3391ace2cdd195734337f2dcfbc66d34778e89fd4a3b4bb144bb7d05",
+      "acceptance.md": "a9933e77efc7e4099d800364bd8f939f4843baf83ed074a371c431ce12756e12",
+      "issues/01-baseline-and-critical-path.md": "91f84fee2eac8ed8e162892fbef379d53ea34559f8bce59733ec5a642a53c4af",
+      "issues/02-persistent-api-prototype.md": "ef1cd98c614fde23822e7c500c4ab15a699b0296553256593fc12e839b23fb00"
+    },
+    "envFile": {
+      "present": true,
+      "relevantKeysPresent": {
+        "ALLOWED_ORIGIN": true,
+        "PROXY_SHARED_SECRET": false,
+        "FINMIND_TOKEN": true,
+        "UPSTASH_REDIS_REST_URL": false,
+        "UPSTASH_REDIS_REST_TOKEN": false,
+        "LLM_PROVIDER": true
+      },
+      "copies": 0
+    },
+    "parityTool": "c1a87eac3b3ecce023e0ac4d486db91862e811ec47a50a7fc4f4269bb22b65ad",
+    "candidateSources": {
+      "api/_lib/yahoo.ts": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "api/yahoo/chart.ts": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "api/yahoo/search.ts": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "api/finmind.ts": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "api/gemini.ts": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "api/gemini-stream.ts": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "vite.config.ts": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360"
+    }
+  },
+  "protocol": {
+    "bind": "127.0.0.1",
+    "fixtureDelayMs": 20,
+    "ttlJumpMs": 600001,
+    "ai": {
+      "deltas": 5,
+      "intervalMs": 300
+    },
+    "verifierSha": "f2bc858cc29b"
+  },
+  "configs": [
+    {
+      "config": "default",
+      "services": [],
+      "cases": []
+    }
+  ],
+  "aborted": "default/b1 vercel dev 未在 90000 ms 內就緒",
+  "identityAfter": {
+    "head": "93cd7ad262bd654c9ec68f1124c160df77a71f87",
+    "productSha256": "c534d5da7f3af74a1120e0e087ad7c38f70e3b5a1316d5d75300f9dd8d9da165",
+    "tools": {
+      "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "b1-breakdown.mjs": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "c-parity.mjs": "c1a87eac3b3ecce023e0ac4d486db91862e811ec47a50a7fc4f4269bb22b65ad",
+      "c-reload.mjs": "1acfb4d7ac8c015fa072ced19c38fb78bad9415709575af56aa2378662eddcec"
+    }
+  },
+  "finishedAt": "2026-09-24T10:20:14.755Z"
+}

@@ -158,6 +158,18 @@ function fixtureChartBody(symbol) {
 }
 
 function fixtureFinMindBody(dataset, dataId) {
+  // 03 票正式 App 固定資料：名錄請求不帶 data_id，需回可搜尋的台股代號。
+  // 原 01／02 探針與產品邏輯不受影響；每頁仍用全新 origin 避免快取污染。
+  if (process.env.PERF03_TEST_APP === '1' && dataset === 'TaiwanStockInfo' && !dataId) {
+    return {
+      msg: 'success', status: 200,
+      data: [
+        { stock_id: '2330', stock_name: '固定資料台積電', industry_category: '半導體業', type: 'twse' },
+        { stock_id: '0050', stock_name: '固定資料元大台灣50', industry_category: 'ETF', type: 'twse' },
+        { stock_id: '2317', stock_name: '固定資料鴻海', industry_category: '其他電子業', type: 'twse' },
+      ],
+    };
+  }
   return {
     msg: 'success',
     status: 200,
@@ -327,6 +339,12 @@ function install(traceDir) {
 
   const role = isChild ? 'child' : 'parent';
   const fixtureOn = isChild && process.env.PERF01_FIXTURE === '1';
+  // 03 票取消探針只用假 CLI；給原 handler 一個存在的檔案路徑通過前置檢查，
+  // 實際 spawn 仍由下方 perf01Spawn 攔截，絕不執行此路徑。
+  if (fixtureOn && process.env.PERF03_TEST_CLI === '1') {
+    process.env.CLAUDE_CLI_PATH = process.execPath;
+    process.env.LLM_PROVIDER = 'claude-cli';
+  }
   const fixtureDelayMs = Number(process.env.PERF01_FIXTURE_DELAY_MS || 50);
   const controlPath = process.env.PERF01_FIXTURE_CONTROL || '';
   const file = path.join(traceDir, `${role}-${process.pid}.jsonl`);

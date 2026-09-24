@@ -1,0 +1,8 @@
+{"ev":"parent.boot","t":687.256,"pid":13692}
+{"ev":"parent.listenCall","t":2139.181,"pid":13692,"seq":1}
+{"ev":"parent.listening","t":2140.699,"pid":13692,"seq":1}
+{"ev":"parent.recv","t":2874.755,"pid":13692,"trace":"route03-finmind-20260924-r3-cancel","layer":"entry","method":"GET","route":"/api/finmind?dataset=TaiwanStockPrice&data_id=2330"}
+{"ev":"parent.fork","t":3001.616,"pid":13692,"trace":"route03-finmind-20260924-r3-cancel","childPid":35132,"forkCallMs":32.582}
+{"ev":"parent.childReady","t":5064.02,"pid":13692,"trace":"route03-finmind-20260924-r3-cancel","childPid":35132}
+{"ev":"parent.proxyReq","t":5066.674,"pid":13692,"trace":"route03-finmind-20260924-r3-cancel","port":"64456"}
+{"ev":"parent.aborted","t":5201.03,"pid":13692,"trace":"route03-finmind-20260924-r3-cancel","layer":"entry"}

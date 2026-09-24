@@ -1,0 +1,13 @@
+{"ev":"parent.boot","t":588.586,"pid":21880}
+{"ev":"parent.listenCall","t":2028.591,"pid":21880,"seq":1}
+{"ev":"parent.listening","t":2030.033,"pid":21880,"seq":1}
+{"ev":"parent.recv","t":2871.308,"pid":21880,"trace":"chart03-final-20260924-r2-a","layer":"entry","method":"GET","route":"/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d"}
+{"ev":"parent.fork","t":2967.245,"pid":21880,"trace":"chart03-final-20260924-r2-a","childPid":7004,"forkCallMs":8.588}
+{"ev":"parent.childReady","t":4598.767,"pid":21880,"trace":"chart03-final-20260924-r2-a","childPid":7004}
+{"ev":"parent.proxyReq","t":4601.098,"pid":21880,"trace":"chart03-final-20260924-r2-a","port":"64430"}
+{"ev":"parent.recv","t":4681.081,"pid":21880,"trace":"chart03-final-20260924-r2-b","layer":"entry","method":"GET","route":"/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d"}
+{"ev":"parent.proxyReq","t":4697.066,"pid":21880,"trace":"chart03-final-20260924-r2-b","port":"64430"}
+{"ev":"parent.proxyRes","t":4734.672,"pid":21880,"trace":"chart03-final-20260924-r2-b"}
+{"ev":"parent.writeHead","t":4735.442,"pid":21880,"trace":"chart03-final-20260924-r2-b","layer":"entry","status":200}
+{"ev":"parent.finish","t":4736.244,"pid":21880,"trace":"chart03-final-20260924-r2-b","layer":"entry"}
+{"ev":"parent.aborted","t":4786.858,"pid":21880,"trace":"chart03-final-20260924-r2-a","layer":"entry"}

@@ -49,6 +49,71 @@ function isVercelDevParent(argv = process.argv, env = process.env) {
   return /[\\/]vercel[\\/]dist[\\/]vc\.js$/i.test(argv[1] || '') && argv.includes('dev');
 }
 
+function isVercelDevChild(argv = process.argv, env = process.env) {
+  return Boolean(env.VERCEL_DEV_ENTRYPOINT)
+    && /[\\/]@vercel[\\/]node[\\/]dist[\\/]dev-server\.mjs$/i.test(argv[1] || '');
+}
+
+// @vercel/node 5.8.23 的 dev-server 轉送請求時沒有傳 AbortSignal。只在該版本的
+// 本機函式子程序內包住 proxy listener 與 undici.request，讓瀏覽器斷線傳到 handler socket。
+function installCancellationBridge() {
+  const { AsyncLocalStorage } = require('node:async_hooks');
+  const { createRequire, syncBuiltinESMExports } = require('node:module');
+  const fs = require('node:fs');
+  const http = require('node:http');
+  const path = require('node:path');
+  const childFile = path.resolve(process.argv[1]);
+  const packageFile = path.resolve(path.dirname(childFile), '..', 'package.json');
+  const version = JSON.parse(fs.readFileSync(packageFile, 'utf8')).version;
+  if (version !== EXPECTED_VERSIONS.vercelNode) {
+    throw new Error(`${LOG_PREFIX} 取消橋接只驗證過 @vercel/node ${EXPECTED_VERSIONS.vercelNode}，目前為 ${version}。`);
+  }
+
+  const undici = createRequire(childFile)('undici');
+  const context = new AsyncLocalStorage();
+  const originalCreateServer = http.createServer;
+  const originalRequest = undici.request;
+  if (typeof originalRequest !== 'function') throw new Error(`${LOG_PREFIX} 找不到 undici.request 取消接縫。`);
+
+  http.createServer = function persistentCreateServer(...args) {
+    const index = typeof args[0] === 'function' ? 0 : 1;
+    const listener = args[index];
+    if (listener?.name === 'onDevRequest') {
+      args[index] = function persistentDevRequest(req, res) {
+        const controller = new AbortController();
+        const abort = () => {
+          if (!controller.signal.aborted) controller.abort();
+        };
+        req.once('aborted', abort);
+        res.once('close', () => {
+          if (!res.writableFinished) abort();
+        });
+        return context.run({ controller, res }, () => listener.call(this, req, res));
+      };
+    }
+    return originalCreateServer.apply(this, args);
+  };
+  // dev-server 以 ESM 的具名 import 取得 http.createServer；同步內建模組匯出。
+  syncBuiltinESMExports();
+  undici.request = function persistentUndiciRequest(url, options = {}) {
+    const client = context.getStore();
+    if (!client) return originalRequest.call(this, url, options);
+    const clientSignal = client.controller.signal;
+    const signal = options.signal
+      ? AbortSignal.any([options.signal, clientSignal])
+      : clientSignal;
+    return Promise.resolve(originalRequest.call(this, url, { ...options, signal })).then(response => {
+      // dev-server 直接 body.pipe(res)，未監聽來源 stream 的 error。取消時 undici
+      // 會對 BodyReadable 發出 AbortError；在此收斂它，避免子程序因未處理事件退出。
+      response.body?.on('error', error => {
+        if (!clientSignal.aborted && !client.res.destroyed) client.res.destroy(error);
+      });
+      return response;
+    });
+  };
+  log(`${LOG_PREFIX} 函式子程序取消橋接已啟用`);
+}
+
 // 轉送目標是否為本機子程序埠：http-proxy 以 url.parse 的結果組 outgoing，host 帶埠（127.0.0.1:<port>）、
 // hostname 不帶；兩種寫法都要認得，否則轉送中的請求不會被計入。
 function loopbackPort(options) {
@@ -327,12 +392,14 @@ function install() {
   log(`${LOG.enabled}（vercel ${vercelVersion}、@vercel/node ${builderPkg.version}）`);
 }
 
-install();
+if (isVercelDevChild()) installCancellationBridge();
+else install();
 
 module.exports = {
   ROOT_WATCH_FILES,
   LOG,
   isVercelDevParent,
+  isVercelDevChild,
   loopbackPort,
   createChangeFilter,
   fingerprint,

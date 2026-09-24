@@ -1,0 +1,29 @@
+{
+  "runId": "cancel03-red-20260924-r1",
+  "entry": "c",
+  "port": 4371,
+  "createdAt": "2026-09-24T04:07:15.838Z",
+  "source": {
+    "head": "6a7b029ad9cf99d399ac648c37fcc096efffbe89",
+    "scriptSha256": "ed8f3000d1bc00b38e239f76ef48e560d21aa0a6963abe6f40acc1a5094f8e53",
+    "persistentSha256": "fc7632d4a4a399759259983b8410cb6293da39e15959f062f660c0aeddbd0ee8",
+    "preloadSha256": "a34e897f53df1c4345517fb3c29bbc516d5798e4ae04d4ac91112ad886630df9"
+  },
+  "response": null,
+  "events": [],
+  "service": null,
+  "errors": [
+    "03/c vercel dev 未在 90000 ms 內就緒"
+  ],
+  "traceFiles": 1,
+  "persistent": {
+    "enabled": true,
+    "takenOver": false,
+    "spawns": [],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T04:07:25.336Z"
+}

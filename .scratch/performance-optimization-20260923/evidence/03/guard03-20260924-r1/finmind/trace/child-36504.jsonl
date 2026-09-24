@@ -1,0 +1,14 @@
+{"ev":"child.boot","t":131.27,"pid":36504,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1635.436,"pid":36504,"seq":1}
+{"ev":"child.listening","t":1651.055,"pid":36504,"seq":1}
+{"ev":"child.listenCall","t":1733.418,"pid":36504,"seq":2}
+{"ev":"child.listening","t":1734.856,"pid":36504,"seq":2}
+{"ev":"child.ready","t":1735.151,"pid":36504}
+{"ev":"child.recv","t":1743.329,"pid":36504,"trace":"guard03-20260924-r1-finmind","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=TaiwanStockPrice&data_id=2330"}
+{"ev":"child.recv","t":1750.224,"pid":36504,"trace":"guard03-20260924-r1-finmind","layer":"handler","method":"GET","route":"/api/finmind?dataset=TaiwanStockPrice&data_id=2330"}
+{"ev":"child.reqHeaders","t":1751.428,"pid":36504,"trace":"guard03-20260924-r1-finmind","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4542","x-forwarded-host":"127.0.0.1:4542","x-forwarded-proto":"http","x-forwarded-port":"4542","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4542","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1753.205,"pid":36504,"trace":"guard03-20260924-r1-finmind","seq":1,"kind":"ratelimit","pipeline":true}
+{"ev":"child.aborted","t":1886.444,"pid":36504,"trace":"guard03-20260924-r1-finmind","layer":"devProxy"}
+{"ev":"child.aborted","t":1887.519,"pid":36504,"trace":"guard03-20260924-r1-finmind","layer":"handler"}
+{"ev":"child.fetchHeaders","t":4767.94,"pid":36504,"trace":"guard03-20260924-r1-finmind","seq":1,"kind":"ratelimit","pipeline":true,"status":200,"fixture":true,"fixtureWaitMs":3012.079,"scripted":true}
+{"ev":"child.fetchBody","t":4769.905,"pid":36504,"trace":"guard03-20260924-r1-finmind","seq":1,"kind":"ratelimit","pipeline":true}

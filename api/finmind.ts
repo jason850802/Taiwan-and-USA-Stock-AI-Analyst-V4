@@ -7,11 +7,15 @@ import {
   type FinMindErrorCode,
 } from './_lib/finmind.js';
 import { marketPerMin } from './_lib/ratelimit.js';
+import { connectClientAbort } from './_lib/clientAbort.js';
 
 interface FinMindReq {
   method?: string;
   headers: Record<string, string | string[] | undefined>;
   query: Record<string, string | string[] | undefined>;
+  aborted?: boolean;
+  on?(event: 'aborted', listener: () => void): void;
+  off?(event: 'aborted', listener: () => void): void;
 }
 
 interface FinMindRes {
@@ -19,6 +23,10 @@ interface FinMindRes {
   setHeader(name: string, value: string): void;
   end(): void;
   json(data: unknown): void;
+  writableFinished?: boolean;
+  destroyed?: boolean;
+  on?(event: 'close', listener: () => void): void;
+  off?(event: 'close', listener: () => void): void;
 }
 
 const statusByCode: Record<FinMindErrorCode, number> = {
@@ -30,20 +38,22 @@ const statusByCode: Record<FinMindErrorCode, number> = {
 export const maxDuration = 30;
 
 export default async function handler(req: FinMindReq, res: FinMindRes) {
-  if (!(await applyGuards(req, res, [marketPerMin]))) return;
-
-  if (req.method !== 'GET') {
-    res.status(405).json({
-      code: 'BAD_REQUEST',
-      message: '僅支援 GET 請求。',
-    });
-    return;
-  }
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const client = connectClientAbort(req, res);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   try {
+    if (client.signal.aborted) return;
+    if (!(await applyGuards(req, res, [marketPerMin])) || client.signal.aborted) return;
+
+    if (req.method !== 'GET') {
+      res.status(405).json({
+        code: 'BAD_REQUEST',
+        message: '僅支援 GET 請求。',
+      });
+      return;
+    }
+
+    timeoutId = setTimeout(() => client.controller.abort(), 15000);
     const { dataset, dataId, startDate } = validateFinMindParams(req.query);
     const upstreamUrl = new URL('https://api.finmindtrade.com/api/v4/data');
     upstreamUrl.searchParams.set('dataset', dataset);
@@ -62,12 +72,14 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
     }
 
     const upstreamResponse = await fetch(upstreamUrl, {
-      signal: controller.signal,
+      signal: client.signal,
     });
+    if (client.disconnected) return;
     const json = await upstreamResponse.json() as {
       status?: number;
       msg?: string;
     };
+    if (client.disconnected) return;
 
     if (!upstreamResponse.ok) {
       const message = typeof json.msg === 'string' ? json.msg : '';
@@ -92,6 +104,7 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
     );
     res.status(200).json(json);
   } catch (error) {
+    if (client.disconnected) return;
     const classifiedError = error instanceof FinMindClassifiedError
       ? error
       : classifyFinMindError(error);
@@ -102,6 +115,7 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
       message: classifiedError.message,
     });
   } finally {
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
+    client.dispose();
   }
 }

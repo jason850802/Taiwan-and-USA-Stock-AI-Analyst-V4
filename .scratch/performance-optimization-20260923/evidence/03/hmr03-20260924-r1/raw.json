@@ -1,0 +1,46 @@
+{
+  "runId": "hmr03-20260924-r1",
+  "workdir": "C:/pfv7",
+  "port": 4433,
+  "createdAt": "2026-09-24T04:42:04.445Z",
+  "source": {
+    "runnerSha256": "89ec1c2ca336be048d7fa94ca4b320ddbdfae09e6518b973161d7a1790b7251b",
+    "viteConfigSha256": "d196fb891f4ad627fc067a6df906d8c35f92f9f23aa156ab0bceacb9ebc99953",
+    "originals": {
+      "App.tsx": "b49096851db6029964370ae4f9463c6b501cd7bb74c58e9943c71981bf799790",
+      "index.css": "3d23558efbb8e880fc40707d1251a87ebc7c0f2758e42ba47f004e9495a7a7c5"
+    }
+  },
+  "updates": [
+    {
+      "file": "App.tsx",
+      "updates": [
+        {
+          "type": "js-update",
+          "path": "/App.tsx"
+        },
+        {
+          "type": "js-update",
+          "path": "/index.css"
+        }
+      ]
+    },
+    {
+      "file": "index.css",
+      "updates": [
+        {
+          "type": "js-update",
+          "path": "/index.css"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 35508,
+    "listenerPid": 35508,
+    "stopped": true
+  },
+  "restored": true,
+  "finishedAt": "2026-09-24T04:42:07.883Z"
+}

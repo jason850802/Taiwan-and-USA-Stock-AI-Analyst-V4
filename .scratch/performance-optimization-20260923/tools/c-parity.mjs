@@ -22,7 +22,15 @@ import {
   EVIDENCE_BASE, VERIFIER_SHA, identityProblems, parseArgs, persistentProblems, readTraceDir, scanSecrets, writeOnceOrCompare,
 } from './verify-b1-breakdown.mjs';
 
-const TICKET = '02';
+const BASE_TICKET = '02';
+const CANDIDATE_03_SOURCES = [
+  'api/_lib/clientAbort.ts', 'api/_lib/http.cancel.test.ts', 'api/_lib/http.ts',
+  'api/_lib/llm.ts', 'api/_lib/yahoo.handshake.test.ts', 'api/_lib/yahoo.ts',
+  'api/finmind.ts', 'api/gemini-stream.test.ts', 'api/gemini-stream.ts',
+  'api/gemini.ts', 'api/yahoo/chart.ts', 'api/yahoo/search.ts', 'vite.config.ts',
+];
+const candidateSourceHashes = () => Object.fromEntries(CANDIDATE_03_SOURCES.map(file =>
+  [file, sha256(fs.readFileSync(path.join(process.cwd(), file)))]));
 // 測試用共享密鑰與假 Upstash 憑證（皆非真秘密）：只用來驗守門與限流；證據只記「有沒有帶」。
 const TEST_SHARED_SECRET = 'perf02-parity-test-secret';
 const RATELIMIT_ENV = { UPSTASH_REDIS_REST_URL: 'https://perf02-fixture.upstash.io', UPSTASH_REDIS_REST_TOKEN: 'perf02-fixture-token' };
@@ -378,10 +386,11 @@ async function startPair({ config, ports, runtimeDir, controlPath, env, running 
 
 export async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
+  const ticket = args['candidate-03'] ? '03' : BASE_TICKET;
   const runId = args['run-id'];
   const portBase = Number(args['port-base']);
   if (!Number.isInteger(portBase) || portBase < 1024 || portBase > 65000) throw new Error('需要 --port-base');
-  const { evidenceDir, runtimeDir } = claimRun({ ticket: TICKET, runId });
+  const { evidenceDir, runtimeDir } = claimRun({ ticket, runId });
   const controlPath = path.join(runtimeDir, 'control.json');
   const control = createFixtureControl(controlPath, { script: {}, delayMs: {}, ai: DEFAULT_AI });
   // 假時鐘只往前推：TTL 案例跳過 10 分鐘，限流案例對齊到新的一分鐘窗。
@@ -392,9 +401,11 @@ export async function main(argv = process.argv.slice(2)) {
   const raw = {
     schemaVersion: 1,
     runId,
+    ticket,
     kind: 'parity',
     createdAt: new Date().toISOString(),
-    identity: { ...identity('c'), parityTool: sha256(fs.readFileSync(fileURLToPath(import.meta.url))) },
+    identity: { ...identity('c'), parityTool: sha256(fs.readFileSync(fileURLToPath(import.meta.url))),
+      candidateSources: ticket === '03' ? candidateSourceHashes() : null },
     protocol: { bind: '127.0.0.1', fixtureDelayMs: FIXTURE_DELAY_MS, ttlJumpMs: TTL_JUMP_MS, ai: DEFAULT_AI, verifierSha: VERIFIER_SHA },
     configs: [],
     aborted: null,
@@ -402,7 +413,12 @@ export async function main(argv = process.argv.slice(2)) {
   const running = [];
   try {
     const product = raw.identity.product;
-    if (!product.equalsBaselineCommit || product.untracked.length) throw new Error('產品樹不等於 30dfdb2，拒絕比對');
+    if (ticket === '02' && (!product.equalsBaselineCommit || product.untracked.length)) {
+      throw new Error('產品樹不等於 30dfdb2，拒絕比對');
+    }
+    if (ticket === '03' && (product.missing.length || product.untracked.length)) {
+      throw new Error('03 候選產品樹有缺檔或未追蹤產品檔，拒絕比對');
+    }
     const plan = [
       { config: 'default', ports: { b1: portBase, c: portBase + 1 }, env: {}, cases: CONTRACT_CASES },
       { config: 'secret', ports: { b1: portBase + 2, c: portBase + 3 }, env: { PROXY_SHARED_SECRET: TEST_SHARED_SECRET }, cases: SECRET_CASES },
@@ -440,6 +456,7 @@ export async function main(argv = process.argv.slice(2)) {
   } finally {
     for (const svc of running) await stopService(svc);
     raw.identityAfter = identityAfter();
+    if (ticket === '03') raw.identityAfter.candidateSources = candidateSourceHashes();
     raw.finishedAt = new Date().toISOString();
     fs.writeFileSync(path.join(evidenceDir, 'raw.json'), `${JSON.stringify(raw, null, 2)}\n`);
   }
@@ -453,6 +470,9 @@ export function verifyParity(evidenceDir, { secrets } = {}) {
   const problems = [];
   if (raw.aborted) problems.push(`run 中止：${raw.aborted}`);
   problems.push(...identityProblems(raw.identity, raw.identityAfter));
+  if (raw.ticket === '03' && JSON.stringify(raw.identity.candidateSources) !== JSON.stringify(raw.identityAfter.candidateSources)) {
+    problems.push('03 候選來源在執行期間改變');
+  }
   const specs = new Map([...CONTRACT_CASES, ...SECRET_CASES, ...RATELIMIT_CASES].map(spec => [spec.id, spec]));
   const results = [];
   for (const config of raw.configs) {
@@ -509,7 +529,7 @@ export function verifyParity(evidenceDir, { secrets } = {}) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = parseArgs(process.argv.slice(2));
-  const run = args.verify ? Promise.resolve(verifyParity(path.join(EVIDENCE_BASE, TICKET, args.verify))) : main();
+  const run = args.verify ? Promise.resolve(verifyParity(path.join(EVIDENCE_BASE, args['candidate-03'] ? '03' : BASE_TICKET, args.verify))) : main();
   run.then(code => { process.exitCode = code; }).catch(error => {
     console.error(error.message);
     process.exitCode = 2;

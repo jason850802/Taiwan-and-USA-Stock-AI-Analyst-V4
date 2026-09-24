@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":24.343,"pid":4808,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":10,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1781.633,"pid":4808,"seq":1}
+{"ev":"child.listening","t":1797.535,"pid":4808,"seq":1}
+{"ev":"child.listenCall","t":1849.149,"pid":4808,"seq":2}
+{"ev":"child.listening","t":1850.744,"pid":4808,"seq":2}
+{"ev":"child.ready","t":1851.06,"pid":4808}
+{"ev":"child.recv","t":1854.05,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y"}
+{"ev":"child.recv","t":1862.222,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y"}
+{"ev":"child.reqHeaders","t":1862.515,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4532","x-forwarded-host":"127.0.0.1:4532","x-forwarded-proto":"http","x-forwarded-port":"4532","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4532","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1864.533,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"handler","status":400}
+{"ev":"child.finish","t":1865.973,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"handler"}
+{"ev":"child.writeHead","t":1870.981,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"devProxy","status":400}
+{"ev":"child.finish","t":1872.132,"pid":4808,"trace":"reload03-allroutes-20260924-r6-b1-11","layer":"devProxy"}

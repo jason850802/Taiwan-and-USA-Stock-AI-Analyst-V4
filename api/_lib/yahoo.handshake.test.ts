@@ -221,6 +221,63 @@ describe('Yahoo 握手共用與世代', () => {
   });
 });
 
+describe('Yahoo 共用握手的用戶端取消', () => {
+  it('兩位等待者中一位取消，不中止另一位正在使用的握手', async () => {
+    let finishCookie: ((response: Response) => void) | undefined;
+    let cookieSignal: AbortSignal | undefined;
+    let cookies = 0;
+    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'https://fc.yahoo.com') {
+        cookies += 1;
+        cookieSignal = init?.signal as AbortSignal;
+        return new Promise<Response>(resolve => { finishCookie = resolve; });
+      }
+      if (url.endsWith('/getcrumb')) return Promise.resolve(new Response('fixture-crumb'));
+      if (url.startsWith('https://fixture.invalid/quote')) return Promise.resolve(new Response('合成行情'));
+      throw new Error('不允許的測試網路');
+    }));
+    const { fetchYahooWithHandshake } = await import('./yahoo');
+    const first = new AbortController();
+    const second = new AbortController();
+    const cancelled = fetchYahooWithHandshake(quoteUrl, first.signal).catch(error => error);
+    const surviving = fetchYahooWithHandshake(quoteUrl, second.signal);
+    expect(cookies).toBe(1);
+    first.abort();
+    expect(await cancelled).toMatchObject({ name: 'AbortError' });
+    expect(cookieSignal?.aborted).toBe(false);
+    finishCookie?.(new Response('', { headers: { 'set-cookie': 'fixture=shared' } }));
+    expect((await surviving).status).toBe(200);
+    expect(cookies).toBe(1);
+  });
+
+  it('最後一位等待者取消會中止上游，下一支請求使用新世代', async () => {
+    const cookieSignals: AbortSignal[] = [];
+    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'https://fc.yahoo.com') {
+        const signal = init?.signal as AbortSignal;
+        cookieSignals.push(signal);
+        if (cookieSignals.length > 1) return Promise.resolve(new Response('', { headers: { 'set-cookie': 'fixture=fresh' } }));
+        return new Promise<Response>((_resolve, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+        });
+      }
+      if (url.endsWith('/getcrumb')) return Promise.resolve(new Response('fixture-crumb'));
+      if (url.startsWith('https://fixture.invalid/quote')) return Promise.resolve(new Response('合成行情'));
+      throw new Error('不允許的測試網路');
+    }));
+    const { fetchYahooWithHandshake } = await import('./yahoo');
+    const client = new AbortController();
+    const cancelled = fetchYahooWithHandshake(quoteUrl, client.signal).catch(error => error);
+    client.abort();
+    expect(await cancelled).toMatchObject({ name: 'AbortError' });
+    expect(cookieSignals[0].aborted).toBe(true);
+    expect((await fetchYahooWithHandshake(quoteUrl)).status).toBe(200);
+    expect(cookieSignals).toHaveLength(2);
+  });
+});
+
 describe('Yahoo 真實 handler 的合成請求鏈', () => {
   beforeEach(() => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');

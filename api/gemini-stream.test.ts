@@ -42,6 +42,8 @@ type MockRes = {
   write: ReturnType<typeof vi.fn>;
   end: ReturnType<typeof vi.fn>;
   json: ReturnType<typeof vi.fn>;
+  on: ReturnType<typeof vi.fn>;
+  writableFinished: boolean;
 };
 
 const makeRes = (): MockRes => {
@@ -50,6 +52,8 @@ const makeRes = (): MockRes => {
     write: vi.fn(() => true),
     end: vi.fn(),
     json: vi.fn(),
+    on: vi.fn(),
+    writableFinished: false,
   };
   res.status = vi.fn(() => res);
   return res as MockRes;
@@ -70,6 +74,54 @@ afterEach(() => {
 });
 
 describe('gemini-stream handler — 取消分類的靜默收尾', () => {
+  it('回應連線中斷時取消仍在執行的 provider', async () => {
+    let started = () => {};
+    const providerStarted = new Promise<void>(resolve => { started = resolve; });
+    let cancelCount = 0;
+    llmMock.generateTextStream.mockImplementation((_request, _onDelta, cancelRef) => new Promise((_resolve, reject) => {
+      cancelRef.cancel = () => {
+        cancelCount += 1;
+        reject(new ClassifiedError('CANCELLED'));
+      };
+      started();
+    }));
+    const req = makeReq();
+    const res = makeRes();
+    const done = handler(req as any, res as any);
+    await providerStarted;
+
+    const onClose = res.on.mock.calls.find(([event]) => event === 'close')?.[1] as (() => void) | undefined;
+    expect(onClose).toBeTypeOf('function');
+    onClose?.();
+    await done;
+
+    expect(cancelCount).toBe(1);
+    expect(res.write).not.toHaveBeenCalled();
+    expect(res.end).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
+
+  it('Gemini API 於斷線後以 AbortError 拒絕時不寫錯誤回應', async () => {
+    let started = () => {};
+    const providerStarted = new Promise<void>(resolve => { started = resolve; });
+    llmMock.generateTextStream.mockImplementation((_request, _onDelta, cancelRef) => new Promise((_resolve, reject) => {
+      cancelRef.cancel = () => reject(new DOMException('已取消', 'AbortError'));
+      started();
+    }));
+    const req = makeReq();
+    const res = makeRes();
+    const done = handler(req as any, res as any);
+    await providerStarted;
+    const onClose = res.on.mock.calls.find(([event]) => event === 'close')?.[1] as (() => void) | undefined;
+    onClose?.();
+    await done;
+    expect(res.write).not.toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+    expect(res.end).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
+
   it('取消（尚未寫過任何內容）：零寫入、零 status/json、res.end 恰被呼叫一次、不進錯誤 log', async () => {
     llmMock.generateTextStream.mockRejectedValue(new ClassifiedError('CANCELLED'));
     const req = makeReq();

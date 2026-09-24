@@ -1,0 +1,227 @@
+{
+  "runId": "chart03-green-20260924-r1",
+  "port": 4397,
+  "createdAt": "2026-09-24T04:30:29.467Z",
+  "source": {
+    "runnerSha256": "4927e5396a4f6947e7afbf7a1425b590a99b26421d6f3155576f7b4cdb6e025c",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "chartSha256": "239766cb6f97b5c2a45c37c250a5284e921788748bb7f397472d16d58929206a",
+    "yahooSha256": "caf2a1e5558871bb96927b469c30701ea904c801496a88767ceb5c531de3d691"
+  },
+  "reachedChart": true,
+  "a": {
+    "trace": "chart03-green-20260924-r1-a",
+    "method": "GET",
+    "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+    "totalMs": 1969.1,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "b": {
+    "trace": "chart03-green-20260924-r1-b",
+    "method": "GET",
+    "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+    "totalMs": 56.9,
+    "status": 200,
+    "headers": {
+      "cache-control": "s-maxage=60, stale-while-revalidate=300",
+      "server": "Vercel",
+      "x-vercel-id": "dev1::dev1::d2a7s-1790224235056-559c53ca4497",
+      "x-vercel-cache": "MISS",
+      "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-max-age": "86400",
+      "connection": "close",
+      "content-length": "526",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Thu, 24 Sep 2026 04:30:35 GMT",
+      "etag": "W/\"20e-0DCFLnMNQcWfhlKriUkjGQaxX+Y\""
+    },
+    "ttfbMs": 56,
+    "bytes": 526,
+    "bodySha256": "d89a1b4055a095710a5b5744b18547c7cec0a9e7866116530bdf0e09acc12618",
+    "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"NVDA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":576,\"longName\":\"FIXTURE NVDA\",\"shortName\":\"FIXTURE NVDA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[573.75,574.25,574.75,575.25,575.75],\"high\":[575,575.5,576,576.5,577],\"low\":[573,573.5,574,574.5,575],\"close\":[574,574.5,575,575.5,576],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[574,574.5,575,575.5,576]}]}}],\"error\":null}}",
+    "lines": []
+  },
+  "events": [
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-green-20260924-r1-a",
+      "ev": "child.fetchError",
+      "kind": "yahoo-chart",
+      "name": "AbortError",
+      "layer": null
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 19712,
+    "listenerPid": 19712,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 6404,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T04:30:39.429Z"
+}

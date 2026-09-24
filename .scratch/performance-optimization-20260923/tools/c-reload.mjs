@@ -27,7 +27,14 @@ import {
   EVIDENCE_BASE, ROOT, VERIFIER_SHA, identityProblems, parseArgs, persistentProblems, scanSecrets, writeOnceOrCompare,
 } from './verify-b1-breakdown.mjs';
 
-const TICKET = '02';
+const CANDIDATE03 = process.argv.includes('--candidate-03');
+const TICKET = CANDIDATE03 ? '03' : '02';
+const CANDIDATE03_FILES = [
+  'api/_lib/clientAbort.ts', 'api/_lib/http.cancel.test.ts', 'api/_lib/http.ts', 'api/_lib/llm.ts',
+  'api/_lib/yahoo.handshake.test.ts', 'api/_lib/yahoo.ts', 'api/finmind.ts', 'api/gemini-stream.test.ts',
+  'api/gemini-stream.ts', 'api/gemini.ts', 'api/yahoo/chart.ts',
+  'api/yahoo/search.ts', 'vite.config.ts',
+];
 const LIB_FILE = 'api/_lib/yahoo.ts';
 const CHART_FILE = 'api/yahoo/chart.ts';
 const SEARCH_FILE = 'api/yahoo/search.ts';
@@ -86,6 +93,10 @@ export const STEPS = [
   { id: 'delete-route', routes: [SEARCH_OK], apply: w => w.remove(SEARCH_FILE), checks: ([p]) => ({ '兩邊都找不到路由': bothStatus(p, 404) }) },
   { id: 'restore-route', routes: [SEARCH_OK], apply: w => w.restore(SEARCH_FILE), checks: ([p]) => ({ '路由還原後兩邊恢復': bothStatus(p, 200) }) },
   { id: 'restore-lib', routes: [CHART_BAD], apply: w => w.restore(LIB_FILE), checks: ([p]) => ({ '訊息還原後兩邊都回原文': !hasMarker(p.b1) && !hasMarker(p.c) }) },
+  { id: 'delete-dependency', routes: [CHART_OK, SEARCH_OK], apply: w => w.remove(LIB_FILE),
+    checks: probes => ({ '刪除共用依賴後兩邊均不得回舊碼': probes.every(p => p.b1.status !== 200 && p.c.status !== 200) }) },
+  { id: 'restore-dependency', routes: [CHART_OK, SEARCH_OK], apply: w => w.restore(LIB_FILE),
+    checks: probes => ({ '還原共用依賴後兩邊恢復': probes.every(p => bothStatus(p, 200)) }) },
   {
     // 串流進行中改碼：流程另寫在 main（兩邊同時開 50 秒的串流，候選收到第 2 段後改 api/ 檔案）。
     id: 'edit-during-stream', routes: [STREAM_ROUTE], stream: true,
@@ -115,7 +126,13 @@ function productState(workdir) {
       .filter(p => p.startsWith('api/') || FUNCTION_ROOT_FILES.includes(p)),
   };
 }
-const productClean = state => !state.differsFromBaseline.length && !state.untrackedFunctionFiles.length;
+const productClean = state => CANDIDATE03
+  ? JSON.stringify([...new Set([...state.differsFromBaseline, ...state.untrackedFunctionFiles])].sort())
+      === JSON.stringify([...CANDIDATE03_FILES].sort())
+  : !state.untrackedFunctionFiles.length && !state.differsFromBaseline.length;
+const candidateHashes = dir => Object.fromEntries(CANDIDATE03_FILES.map(file =>
+  [file, fileSha(path.join(dir, file))]));
+const candidateMatches = workdir => JSON.stringify(candidateHashes(workdir)) === JSON.stringify(candidateHashes(ROOT));
 
 const countInvalidations = logFile => (fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8').split('\n').filter(line => line.includes(PERSISTENT_LOG.invalidation)).length : 0);
 
@@ -161,7 +178,9 @@ export async function main(argv = process.argv.slice(2)) {
   // 前置檢查（認領 run-id 之前）：產品樹等於 30dfdb2、沒有會被當成函式的未追蹤檔、沒有既有測試檔。
   const head = git(workdir, ['rev-parse', 'HEAD']).trim();
   const productBefore = productState(workdir);
-  if (!productClean(productBefore)) throw new Error(`workdir 產品樹不等於 ${BASELINE_COMMIT}：${JSON.stringify(productBefore)}，拒絕執行`);
+  if (!productClean(productBefore) || (CANDIDATE03 && !candidateMatches(workdir))) {
+    throw new Error(`workdir 產品樹不等於 ${CANDIDATE03 ? '03 候選原始碼' : BASELINE_COMMIT}：${JSON.stringify(productBefore)}，拒絕執行`);
+  }
   const preexisting = PREEXISTING_FORBIDDEN.filter(name => fs.existsSync(path.join(workdir, name)));
   if (preexisting.length) throw new Error(`workdir 已有 ${preexisting.join('、')}，拒絕覆寫`);
 
@@ -179,6 +198,8 @@ export async function main(argv = process.argv.slice(2)) {
       reloadTool: sha256(fs.readFileSync(fileURLToPath(import.meta.url))),
       persistentSha256: fileSha(PERSISTENT),
       preloadSha256: fileSha(PRELOAD),
+      candidateSources: CANDIDATE03 ? candidateHashes(workdir) : null,
+      mainSources: CANDIDATE03 ? candidateHashes(ROOT) : null,
     },
     protocol: { longStream: LONG_STREAM_AI, invalidateWaitMs: INVALIDATE_WAIT_MS, editSettleMs: EDIT_SETTLE_MS, verifierSha: VERIFIER_SHA },
     steps: [], services: [], b1Crashes: [], persistent: null, cleanup: null, aborted: null,
@@ -225,7 +246,10 @@ export async function main(argv = process.argv.slice(2)) {
         logFile,
         requires,
         cwd: workdir,
-        env: probeEnv({ traceDir, fixture: { delayMs: 10, controlPath } }),
+        env: {
+          ...probeEnv({ traceDir, fixture: { delayMs: 10, controlPath } }),
+          ...(CANDIDATE03 ? { PERF03_TEST_CLI: '1' } : {}),
+        },
         onStarted: svc => {
           service.svc = svc;
           started.push(service);
@@ -334,10 +358,11 @@ export async function main(argv = process.argv.slice(2)) {
       restored: Object.entries(originals).every(([file, content]) => fs.readFileSync(path.join(workdir, file)).equals(content)),
       deleted,
       productAfter,
-      productClean: productClean(productAfter),
+      productClean: productClean(productAfter) && (!CANDIDATE03 || candidateMatches(workdir)),
       testFilesRemoved: PREEXISTING_FORBIDDEN.every(name => !fs.existsSync(path.join(workdir, name))),
     };
-    raw.identityAfter = { head: git(workdir, ['rev-parse', 'HEAD']).trim(), tools: toolHashes() };
+    raw.identityAfter = { head: git(workdir, ['rev-parse', 'HEAD']).trim(), tools: toolHashes(),
+      candidateSources: CANDIDATE03 ? candidateHashes(workdir) : null };
     raw.finishedAt = new Date().toISOString();
     fs.writeFileSync(path.join(evidenceDir, 'raw.json'), `${JSON.stringify(raw, null, 2)}\n`);
   }
@@ -350,7 +375,13 @@ export function verifyReload(evidenceDir, { secrets } = {}) {
   const diffs = [];
   if (raw.aborted) problems.push(`run 中止：${raw.aborted}`);
   problems.push(...identityProblems(raw.identity, raw.identityAfter, { product: false }));
-  if (!raw.identity?.productBefore || !productClean(raw.identity.productBefore)) problems.push('開始時的隔離 checkout 產品樹未核對或不等於 30dfdb2');
+  if (!raw.identity?.productBefore || !productClean(raw.identity.productBefore)) problems.push(`開始時的隔離 checkout 產品樹未核對或不等於 ${CANDIDATE03 ? '03 候選原始碼' : BASELINE_COMMIT}`);
+  if (CANDIDATE03 && JSON.stringify(raw.identity.candidateSources) !== JSON.stringify(raw.identity.mainSources)) {
+    problems.push('03 候選來源與主工作樹雜湊不一致');
+  }
+  if (CANDIDATE03 && JSON.stringify(raw.identity.candidateSources) !== JSON.stringify(raw.identityAfter.candidateSources)) {
+    problems.push('03 候選來源執行後未還原成原位元組');
+  }
   for (const svc of raw.services) {
     if (svc.ownedPid !== svc.listenerPid) problems.push(`${svc.name ?? svc.label} listener PID 非 owned`);
     if (!svc.stopped) problems.push(`${svc.name ?? svc.label} 未確認停止`);

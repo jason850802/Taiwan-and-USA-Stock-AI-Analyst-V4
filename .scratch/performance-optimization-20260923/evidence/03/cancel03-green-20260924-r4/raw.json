@@ -1,0 +1,121 @@
+{
+  "runId": "cancel03-green-20260924-r4",
+  "entry": "c",
+  "port": 4551,
+  "createdAt": "2026-09-24T05:46:39.343Z",
+  "source": {
+    "head": "bbf86107e7a1bc27570ce17c371ed9f00c350716",
+    "scriptSha256": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "streamSha256": "bd7cdf33915c7749c58993c843d14cbfbc774fda74c2173115bc3ff5cd0eb31a"
+  },
+  "response": {
+    "trace": "cancel03-green-20260924-r4-c-cancel",
+    "method": "POST",
+    "route": "/api/gemini-stream",
+    "totalMs": 2522.7,
+    "status": 200,
+    "headers": {
+      "cache-control": "no-store",
+      "server": "Vercel",
+      "x-vercel-id": "dev1::dev1::hrdi8-1790228805102-827c5abba4a0",
+      "x-vercel-cache": "MISS",
+      "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-max-age": "86400",
+      "connection": "close",
+      "content-type": "application/x-ndjson; charset=utf-8",
+      "date": "Thu, 24 Sep 2026 05:46:45 GMT",
+      "transfer-encoding": "chunked"
+    },
+    "ttfbMs": 2521.9,
+    "lines": [
+      {
+        "t": 2522.2,
+        "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+      }
+    ],
+    "aborted": true
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.spawn",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.stdin",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.writeHead",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.delta",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.writeHead",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.kill",
+      "layer": null,
+      "emitted": 1
+    }
+  ],
+  "service": {
+    "ownedPid": 17624,
+    "listenerPid": 17624,
+    "stopped": true
+  },
+  "errors": [],
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/gemini-stream.ts",
+        "pid": 6552,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T05:46:48.238Z"
+}

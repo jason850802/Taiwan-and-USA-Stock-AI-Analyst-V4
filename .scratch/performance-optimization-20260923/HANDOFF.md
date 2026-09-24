@@ -1,5 +1,7 @@
 # 第二輪效能優化交接
 
+> 2026-09-24 覆核後更新：下方 03 區塊是首輪快照，其 `resolved`、最終來源與下一票 04 的說法已撤回。現況以 [PLAN](PLAN.md)、[03 票面](issues/03-daily-dev-entry.md) 與 [03 覆核後增補](evidence/03/ADDENDUM-20260924.md) 為準；03 維持 OPEN。
+
 ## 01 — 固定目前基線並拆出主要等待（2026-09-23，Claude Code Opus 5.5）
 
 **實際瓶頸**：本機 `vercel dev` 每支 API 請求都 fork 一個新子程序，子程序先花約 1.7～2.1 秒載入 dev-server 模組圖、再載入 handler；而且因為程序每次都是新的，Yahoo cookie＋crumb 握手（約 1.5 秒）每支報價都重做。真上游單支報價 TTFB 中位 4045.7 ms，其中派送 2224.5 ms、握手 1511.9 ms、Yahoo chart 本身只有 292.3 ms。
@@ -50,3 +52,20 @@
 4. **冷成本**：可評估啟動後預熱各路由（例如對每條路由送一次空 OPTIONS），讓剛開機的第一批十檔不必等子程序啟動；握手只能在第一次真報價時做。
 5. **正式 App 量測**：十檔冷庫存、K 線冷載入、暖回訪以正式 App 可見口徑、B1／C 交錯配對量；02 的 API 層數字只作方向。
 6. **取消契約（採用前必修）**：spec 要求取消後不殘留本次工作，PLAN 列為硬門檻。兩入口目前都不會把斷線傳到 provider，真 CLI 會跑完才停；根因在 dev-server 轉給 handler 時沒帶 abort signal（02 REPORT §7 第 1 點）。原型只作用在父程序，修正要落在函式子程序那一側。
+
+## 03 — 候選接入日常入口（2026-09-24，Codex）
+
+**實際改變**：日常單一命令啟動 Vercel＋Vite，同 handler 長駐候選開始服務正式 App。函式子程序補上斷線橋接，正式假 AI 串流與 Yahoo chart 都能在用戶端取消後停掉本次工作；五條正式函式在回報 ready 前以 OPTIONS 預熱。沒有更動金融語意、三槽、package／lock、正式 Vercel 部署設定或真帳本。
+
+| 欄位 | 結果 |
+|---|---|
+| 本票／分支／狀態 | 03／採用候選／resolved；全案 OPEN，下一票 04。提交見本票 `perf(03)` commit；沒有 push、部署或發版 |
+| 固定資料 API | 最終來源 `daily03-cost-20260924-r5`，身分綁定的正式日常前端代理：暖 OPTIONS 20/20 為 204，中位 15.364 ms、最大 18.168；暖 GET 20/20 為 200，中位 61.766 ms、最大 81.295。與 02 直接 B1↔C 協定分開，不冒充 App 可見時間 |
+| 取消與共享狀態 | 假 AI 首段後斷線：代理／handler 皆中止，假 CLI 第 1 段後 kill、無 done；Yahoo chart A 中止後 `AbortError`、並行 B 200。單人 cookie 握手取消會中止上游；兩人共用時 A 取消，B 成功 200。Yahoo search、FinMind 假上游及非串流假 CLI 取消亦通過；Gemini API 以假 SDK 驗 `abortSignal`。延遲限流中斷線五條路由均未再啟動行情或 AI 上游，LF 最終來源 `guard03-20260924-r2` 5/5 PASS |
+| 正式 App 與環境 | 新來源下台股 `2330.TW`、美股 `AAPL`、K 線、隔離測試庫存及假 AI 五段報告均可見；外部偽造 Origin 403。測試使用固定上游與假 provider，沒有真行情／真 AI；庫存只存新測試來源，未碰真帳本 |
+| 重載與啟停 | 最終十一檔來源隔離 `C:/pfv7` 十步重載矩陣 `reload03-allroutes-20260924-r8` 全綠，包含語法錯誤不回舊碼、環境變更、刪路由、串流中改碼；元件／CSS HMR 各有 update。相同 `4431/4432` 兩次啟停，最終 `4561/4562` 五路由預熱 204 並 stop；埠衝突不接管其他服務，控制管道失聯而舊 listener 仍在時拒絕另起服務 |
+| gate 與覆核 | 最終隔離 gate `--require-env`：tsc 0 錯、Vitest 827/827、build 成功、金鑰掃描乾淨、package／lock 無差異；獨立 Standards／Spec 處置見 03 REVIEW |
+| 證據及命令 | [03 索引](evidence/03/README.md)、[03 REPORT](evidence/03/REPORT.md)；日常 `node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start`，`status`，`stop`。工具有版本鎖，失效時報錯並停候選，不自動服務舊碼 |
+| 仍 OPEN 與下一步 | 正式 App 十檔冷庫存／K 線／暖回訪 B1↔C，以及 fresh B0↔C 舊 05 雙 40% 尚未量；正式部署未驗。04 先在現日常入口重測單次真報價與 FX 的握手、chart 與冷／暖成本，再只處理仍可控制的重複工作，維持三槽 |
+
+03 的來源綁定：基準 `6a7b029`，最終十一個候選產品／測試實體檔在主工作樹與隔離 checkout 逐檔 SHA-256 相同，原始位元組與 Git index blob 亦逐檔一致；FinMind／Yahoo search 已依 `.gitattributes` 正規化為 LF。原始 run 各自記錄工具與來源雜湊。前端程序 env 改採必要系統變數及公開 `VITE_` 白名單，後端金鑰不進 Vite 程序。`C:/pfv7` 的 `node_modules` junction 保留，隔離測試建的 `.env`／`.vercel` 已刪。舊 02 取消 FAIL 是當時版本的有效歷史，03 新 run 才能判新入口已修復。

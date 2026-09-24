@@ -7,11 +7,15 @@ import {
   type YahooErrorCode,
 } from '../_lib/yahoo.js';
 import { marketPerMin } from '../_lib/ratelimit.js';
+import { connectClientAbort } from '../_lib/clientAbort.js';
 
 interface YahooReq {
   method?: string;
   headers: Record<string, string | string[] | undefined>;
   query: Record<string, string | string[] | undefined>;
+  aborted?: boolean;
+  on?(event: 'aborted', listener: () => void): void;
+  off?(event: 'aborted', listener: () => void): void;
 }
 
 interface YahooRes {
@@ -19,6 +23,10 @@ interface YahooRes {
   setHeader(name: string, value: string): void;
   end(): void;
   json(data: unknown): void;
+  writableFinished?: boolean;
+  destroyed?: boolean;
+  on?(event: 'close', listener: () => void): void;
+  off?(event: 'close', listener: () => void): void;
 }
 
 const statusByCode: Record<YahooErrorCode, number> = {
@@ -32,28 +40,33 @@ const statusByCode: Record<YahooErrorCode, number> = {
 export const maxDuration = 30;
 
 export default async function handler(req: YahooReq, res: YahooRes) {
-  if (!(await applyGuards(req, res, [marketPerMin]))) return;
-
-  if (req.method !== 'GET') {
-    res.status(405).json({
-      code: 'BAD_REQUEST',
-      message: '僅支援 GET 請求。',
-    });
-    return;
-  }
-
+  const client = connectClientAbort(req, res);
   try {
+    if (client.signal.aborted) return;
+    if (!(await applyGuards(req, res, [marketPerMin])) || client.signal.aborted) return;
+
+    if (req.method !== 'GET') {
+      res.status(405).json({
+        code: 'BAD_REQUEST',
+        message: '僅支援 GET 請求。',
+      });
+      return;
+    }
+
     const { q, limit } = validateSearchParams(req.query);
     const upstreamResponse = await fetchYahooWithHandshake(({ crumb }) => (
       'https://query1.finance.yahoo.com/v1/finance/search'
       + `?q=${encodeURIComponent(q)}&quotesCount=${limit}`
       + '&newsCount=0&lang=zh-Hant-TW&region=TW'
       + `&crumb=${encodeURIComponent(crumb)}`
-    ));
+    ), client.signal);
+    if (client.signal.aborted) return;
     const json = await upstreamResponse.json();
+    if (client.signal.aborted) return;
 
     res.status(200).json(json);
   } catch (error) {
+    if (client.signal.aborted) return;
     const classifiedError = error instanceof YahooClassifiedError
       ? error
       : classifyYahooError(error);
@@ -63,5 +76,7 @@ export default async function handler(req: YahooReq, res: YahooRes) {
       code: classifiedError.code,
       message: classifiedError.message,
     });
+  } finally {
+    client.dispose();
   }
 }
