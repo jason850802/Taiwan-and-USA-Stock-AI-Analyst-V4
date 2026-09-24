@@ -24,3 +24,29 @@
 3. **重用本票工具**：`b1-breakdown.mjs` 目前只會起 B1。02 需要加 C 模式（起原型服務、綁定來源），並沿用同一套 OPTIONS／固定 GET 協定與判定器，才能直接和本票 B1 的 1836.1 ms 比。探針的 parent／child 角色是針對 vercel dev 的程序結構設計的；長駐原型是單一程序，要新增角色，並確認 cookie／crumb 只在第一次出現。
 4. **固定 GET 量法沿用**：直連、探針下、扣固定等待（REPORT §2 第 4 點）；另報經 Vite 與探針開銷。
 5. 小工具欠帳：real 模式 `runner-result.json` 的 `meaning` 措辭（exit 0 在 real 模式只代表有效）。
+
+## 02 — 驗證同 handler 的長駐本機 API 原型（2026-09-24，Claude Code Opus 5.5）
+
+**實際瓶頸**：01 找到的兩個「每支請求都重做」的成本，原型都能移出暖請求的路徑——本機派送（每請求 fork＋載入模組圖）從約 1.9 秒降到約 0.02 秒，Yahoo 握手從每支報價一次變成每個子程序每 10 分鐘一次；59 個契約案例中 58 個與 B1 完全等價、1 個是長駐造成的已知差異（限流封鎖沿用）。**但日常入口還沒換，使用者現在的等待沒有改變**；剩下的冷成本是每條路由第一支請求約 2 秒啟動、報價路由第一次握手約 1.5 秒。另外取消契約兩個入口都 FAIL：`@vercel/node` dev-server 轉給 handler 時沒帶 abort signal，用戶端斷線傳不到 provider。
+**下一個行動**：執行 03——先讓日常入口的取消能傳到 provider（採用的前提），再把候選接成只作用在 vercel dev 程序的可維護日常入口（開／停／重載／錯誤可控、版本鎖退路、Vite 代理接通），最後用正式 App 量十檔與 K 線的使用者可見時間。
+
+| 欄位 | 內容 |
+|---|---|
+| 本票／狀態／來源與最終 commit | 02／resolved（分支結果＝長駐原型可行，作 03 候選；效能結果＝空 OPTIONS 與固定 GET 本機目標對候選 PASS，App 可見目標 OPEN）。本票工作在 `5b7a430` 之後的單一提交（訊息開頭 `perf(02)`）。產品＝`30dfdb2` 產品內容，未改 |
+| 這次真正改變的等待來源、採用與未採用分支 | 候選 C 在暖請求上移除了「每請求 fork＋載入模組圖」的派送與「每支報價重做握手」；日常入口未換，所以使用者等待尚未改變。採用：經 vercel dev 的 builder 接縫讓同一 handler 子程序長駐（契約等價來自沿用原碼）。未採用：自寫長駐 API server（vite-node／esbuild／Node 型別剝除）——要另寫 adapter 才能對等，沒有必要；「不實作分支」條件不成立（01 已證） |
+| 使用者可感知的 before→after（來源、樣本、成功／失敗、時間口徑） | 尚無使用者可感知的 after（日常入口沒換、未量 App）。API 層（本輪執行，同日同工具，真行情各 14 支 browser API、14/14 成功，client 單調時鐘）：單支報價 TTFB 中位 4240.4 → 309.5 ms（候選冷 1 支 3887.4）；十檔＋FX 三槽批次首價 4241.1 → 244.1、全價 16643.4 → 1243.5 ms（候選這批已暖，口徑為批次起點起算）。App 可見口徑留給 03 |
+| 各段時間與 browser／provider 請求數、重試、peak、快取 | 見 [02 REPORT](evidence/02/REPORT.md) 第 3 節。固定上游：空 OPTIONS warm 中位 1863.1／1870.5 → 17.5／17.3 ms；本機成本 1886.8 → 20.6 ms；派送 2311.9 → 16.2 ms。真行情：派送 2288.3 → 15.5 ms（暖）；cookie→crumb 1462.0 ms ×13 → 1469.4 ms ×1；chart 280.1／281.1 ms。browser API 14／14；outbound 40／16；上游錯誤與重試 0；peak 3／3；Node client 無 HTTP 快取；服務報價的子程序實例 13 → 1 |
+| 正確性、FX、沿用窗、取消／世代、P1／S1、本體五鍵 | 產品碼、金融語意、FX、三槽、快取沿用窗、package／lock 全未動。契約對等 58 案完全等價＋1 案已知差異（含 FX 代號 URL 編碼、併發不串台、401／429 重試上限、TTL、pending join、三支同時 401、遲到的 401）。取消契約：兩入口都 FAIL（用戶端斷線傳到 dev-server 代理層就停，handler 與 provider 照常跑完；既有缺陷，阻擋 03 採用）。P1／S1 未動；未操作 App，未碰真帳本、本體五鍵與真 AI；使用者的 3000／3001 服務未碰 |
+| 固定測試、真行情、正式 App、完整 gate、雙軸覆核各自結果 | 自測 01 46/46、02 95/95；固定上游候選 exit 0（達標）、B1 exit 1（判紅，預期）；真行情 B1／候選皆 exit 0（有效）；對等 exit 0；重載 exit 0；正式 App 未量（不在本票範圍）；完整 gate 在隔離 checkout 執行，結果記在本票提交訊息；雙軸覆核兩輪，處置見票面 Comments |
+| 證據入口、日常啟停／重跑命令、回復方式 | 證據：[evidence/02/README.md](evidence/02/README.md)。重跑命令見 REPORT 第 8 節；runtime／log 在 `%LOCALAPPDATA%\Temp\perf-opt-20260923\<run-id>\`（不提交）。日常入口沒有變更（仍是 `npx vercel dev --listen 3001` 加 `npm run dev`）；候選的日常啟停由 03 定義。回復：本票只新增／修改 `.scratch/performance-optimization-20260923/` 下的檔案，`git revert` 該提交即可 |
+| 仍 OPEN 的具體原因、不可控下限與已嘗試措施 | PLAN 第 3 節的十檔冷庫存、K 線冷載入、暖回訪仍 OPEN：候選尚未成為日常入口，無法量正式 App。取消契約 FAIL（兩入口相同）：`@vercel/node` 5.8.23 `dev-server.mjs` 以 `undiciRequest(url, { body, headers, method })` 轉給 handler、沒帶 abort signal，trace 顯示斷線停在 devProxy 層。冷成本：每路由約 2 秒啟動、首次握手約 1.5 秒。不可控下限（真上游單次，候選本批）：chart 中位 281.1、cookie 613.3、crumb 855.5 ms。已做：長駐原型、停用時等在途請求、只認內容變更的失效。E0 仍不可量；舊 v5 FAIL 與舊 01～03 OPEN 保留 |
+| 下一票名稱、前置是否滿足、下一個可直接執行動作 | 03 接入可維護的日常入口；前置（02 原型與 parity 通過）已滿足，但採用前必須先修好取消契約。下一個動作：在函式子程序補上「用戶端斷線 → 中止轉給 handler 的請求」，用對等比對的取消案例先轉紅再轉綠；接著寫只在 vercel dev 程序環境加 `--require` 的啟動器，並驗 Vite 代理 `http://localhost:3001` 能連到只綁 `127.0.0.1` 的服務。見下方「給 03 的具體起點」 |
+
+### 給 03 的具體起點
+
+1. **啟動器**：`NODE_OPTIONS` 只給 vercel dev 那一個程序（例如以小啟動器 spawn 全域 `vc.js dev` 並只在它的環境加 `--require <原型>`）；不要讓同一個 shell 的其他 node 程序都帶著它。啟停只作用於自己 spawn 的 PID（可沿用量測工具共用模組的 owned PID 核對）。
+2. **連線**：Vite 代理目前是 `http://localhost:3001`；候選只綁 `127.0.0.1`。先驗 localhost 解析（IPv6 優先時）與 handler 看到的 `x-forwarded-for` 形狀。
+3. **退路**：原型有版本鎖（vercel 55.0.0／@vercel/node 5.8.23），CLI 更新後會拒絕啟用；日常入口要能退回一般 vercel dev，並把原因顯示給使用者。
+4. **冷成本**：可評估啟動後預熱各路由（例如對每條路由送一次空 OPTIONS），讓剛開機的第一批十檔不必等子程序啟動；握手只能在第一次真報價時做。
+5. **正式 App 量測**：十檔冷庫存、K 線冷載入、暖回訪以正式 App 可見口徑、B1／C 交錯配對量；02 的 API 層數字只作方向。
+6. **取消契約（採用前必修）**：spec 要求取消後不殘留本次工作，PLAN 列為硬門檻。兩入口目前都不會把斷線傳到 provider，真 CLI 會跑完才停；根因在 dev-server 轉給 handler 時沒帶 abort signal（02 REPORT §7 第 1 點）。原型只作用在父程序，修正要落在函式子程序那一側。

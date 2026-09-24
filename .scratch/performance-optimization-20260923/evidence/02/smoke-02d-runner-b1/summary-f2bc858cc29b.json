@@ -1,0 +1,543 @@
+{
+  "runId": "smoke-02d-runner-b1",
+  "mode": "fixed",
+  "verifierSha": "f2bc858cc29b",
+  "sourceHead": "5b7a4307d7c15f8ec3fe5b588b42aa34bc0faf5c",
+  "entry": "b1",
+  "options": {
+    "groups": {
+      "plain|direct|yahoo-chart|cold": {
+        "n": 1,
+        "min": 2058.5,
+        "median": 2058.5,
+        "max": 2058.5
+      },
+      "plain|direct|finmind|cold": {
+        "n": 1,
+        "min": 1904.4,
+        "median": 1904.4,
+        "max": 1904.4
+      },
+      "plain|direct|yahoo-chart|warm": {
+        "n": 10,
+        "min": 1858.7,
+        "median": 1870.1,
+        "max": 1971.8
+      },
+      "plain|direct|finmind|warm": {
+        "n": 10,
+        "min": 1847.4,
+        "median": 1869.1,
+        "max": 1948.6
+      }
+    },
+    "verdict": {
+      "yahoo-chart": {
+        "warm": {
+          "n": 10,
+          "min": 1858.7,
+          "median": 1870.1,
+          "max": 1971.8
+        },
+        "cold": {
+          "n": 1,
+          "min": 2058.5,
+          "median": 2058.5,
+          "max": 2058.5
+        },
+        "medianPass": false,
+        "eachPass": false
+      },
+      "finmind": {
+        "warm": {
+          "n": 10,
+          "min": 1847.4,
+          "median": 1869.1,
+          "max": 1948.6
+        },
+        "cold": {
+          "n": 1,
+          "min": 1904.4,
+          "median": 1904.4,
+          "max": 1904.4
+        },
+        "medianPass": false,
+        "eachPass": false
+      }
+    },
+    "traceOverheadMs": {
+      "yahoo-chart": null,
+      "finmind": null
+    },
+    "tracedBreakdown": {
+      "parentTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "tracedSegments": []
+  },
+  "fixed": {
+    "verdict": {
+      "quoteLocalCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "medianPass": false
+    },
+    "singleQuote": {
+      "clientTtfb": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "localCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "fixtureWait": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentPreFork": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkCall": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentReadyToProxy": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentProxyRoundTrip": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childBootToPreload": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childServiceTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedClientVsParent": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "singleQuoteViaVite": {
+      "clientTtfb": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "localCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "fixtureWait": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentPreFork": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkCall": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentReadyToProxy": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentProxyRoundTrip": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childBootToPreload": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childServiceTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedClientVsParent": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "viteProxyHopMedianMs": null,
+    "singleFinMind": {
+      "clientTtfb": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "localCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "fixtureWait": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentPreFork": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkCall": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentReadyToProxy": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentProxyRoundTrip": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childBootToPreload": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childServiceTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedClientVsParent": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "batchItems": {
+      "clientTtfb": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "localCost": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "fixtureWait": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentPreFork": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkCall": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentForkToChildReady": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentReadyToProxy": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "parentProxyRoundTrip": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childBootToPreload": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childPreloadToDevServer": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "childServiceTotal": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedClientVsParent": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "unattributedForkToReadyVsChildStartup": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      }
+    },
+    "batches": {
+      "firstValidQuoteMs": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "allValidQuotesFxMs": {
+        "n": 0,
+        "min": null,
+        "median": null,
+        "max": null
+      },
+      "peakMax": null,
+      "list": []
+    },
+    "distinctChildPerRequest": true,
+    "childInstances": 0,
+    "requests": 0,
+    "startupOnPathCount": 0,
+    "handshakeLedger": {
+      "instances": [],
+      "totals": {
+        "quotes": 0,
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 0
+      }
+    },
+    "parentRecvToProxy": {
+      "n": 0,
+      "min": null,
+      "median": null,
+      "max": null
+    }
+  },
+  "thresholdPass": false,
+  "problems": [
+    "只跑部分 start（工具 smoke，不作成績）：A-plain"
+  ]
+}

@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":25.839,"pid":23176,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1759.404,"pid":23176,"seq":1}
+{"ev":"child.listening","t":1775.332,"pid":23176,"seq":1}
+{"ev":"child.listenCall","t":1829.956,"pid":23176,"seq":2}
+{"ev":"child.listening","t":1831.458,"pid":23176,"seq":2}
+{"ev":"child.ready","t":1831.783,"pid":23176}
+{"ev":"child.recv","t":1834.76,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":1843.435,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1843.888,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","names":["connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4621","x-forwarded-host":"127.0.0.1:4621","x-forwarded-proto":"http","x-forwarded-port":"4621","x-forwarded-for":"::ffff:127.0.0.1","x-real-ip":"::ffff:127.0.0.1","x-vercel-forwarded-for":"::ffff:127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4621","origin":"http://evil.example","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1845.588,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"handler","status":403}
+{"ev":"child.finish","t":1846.888,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"handler"}
+{"ev":"child.writeHead","t":1851.349,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"devProxy","status":403}
+{"ev":"child.finish","t":1851.941,"pid":23176,"trace":"parity-20260924-r1-default-b1-get-chart-evil-origin","layer":"devProxy"}

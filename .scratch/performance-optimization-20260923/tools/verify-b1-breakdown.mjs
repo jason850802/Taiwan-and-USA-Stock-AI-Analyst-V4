@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// 01 票判定器：只讀 evidence/01/<run-id>/ 的 raw 與 trace，重算分段、檢查完整性、對凍結目標判紅。
+// 01／02 票判定器：只讀 evidence/<票號>/<run-id>/ 的 raw 與 trace，重算分段、檢查完整性、對凍結目標判紅。
+// B1（01）與候選 C（02：vercel dev＋長駐原型）共用同一套量法；候選另與 raw 記錄的 B1 基準 run 比較。
 // exit 0＝有效且達標；1＝有效但未達標（判紅）；2＝run 無效或證據不完整。
 // 摘要檔名綁定本判定器內容雜湊（summary-<sha>.json／.md）：同版重播只比對不覆寫；
 // 判定器修正後另寫新版摘要，raw 與舊版摘要都保留。
@@ -11,7 +12,24 @@ import { fileURLToPath } from 'node:url';
 const TOOLS = path.dirname(fileURLToPath(import.meta.url));
 export const PLAN_DIR = path.resolve(TOOLS, '..');
 export const ROOT = path.resolve(PLAN_DIR, '..', '..');
-export const EVIDENCE_ROOT = path.join(PLAN_DIR, 'evidence', '01');
+export const EVIDENCE_BASE = path.join(PLAN_DIR, 'evidence');
+// 01 票的證據目錄（v5 重算等沿用）；各 run 實際放在 evidence/<票號>/<run-id>，run-id 全案唯一。
+export const EVIDENCE_ROOT = path.join(EVIDENCE_BASE, '01');
+
+export function assertRunId(runId) {
+  if (typeof runId !== 'string' || !/^[a-z0-9][a-z0-9-]{2,60}$/.test(runId)) throw new Error(`run-id 不合法：${runId}`);
+  return runId;
+}
+
+// 依 run-id 找唯一的證據目錄（跨票搜尋）；找不到或重複都拋錯。
+export function findRunDir(runId) {
+  assertRunId(runId);
+  const hits = fs.existsSync(EVIDENCE_BASE)
+    ? fs.readdirSync(EVIDENCE_BASE).map(ticket => path.join(EVIDENCE_BASE, ticket, runId)).filter(dir => fs.existsSync(path.join(dir, 'raw.json')))
+    : [];
+  if (hits.length !== 1) throw new Error(`run-id ${runId} 找到 ${hits.length} 個證據目錄（需恰好 1 個）`);
+  return hits[0];
+}
 export const VERIFIER_SHA = createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex').slice(0, 12);
 
 // 凍結目標（PLAN 第 3 節；01 票凍結，C 票判定沿用，不得在看候選成績後調低）。
@@ -73,13 +91,19 @@ export function readTraceDir(traceDir) {
   return events;
 }
 
+// 入口種類：01 的 raw 沒有欄位即為 B1；02 候選為 'c'（vercel dev＋長駐原型）。
+export const entryOf = raw => raw?.identity?.entry ?? 'b1';
+// 長駐入口（候選 C）：暖請求沒有 fork，握手每個子程序實例一次。
+const isPersistentRun = raw => entryOf(raw) === 'c';
+
 const findEv = (list, predicate) => list.find(predicate) ?? null;
 const span = (from, to) => (from && to ? to.t - from.t : null);
 // fork() 在負載下同步耗時可達上百 ms，子程序時鐘此時已起算；父程序區間一律從 fork 呼叫開始算。
 const forkStartOf = fork => (fork ? { ...fork, t: fork.t - (fork.forkCallMs ?? 0) } : null);
 
 // 單一 trace 的分段：父程序與子程序各用自己的時鐘，只輸出區間；跨程序只列未歸屬差額。
-export function segmentTrace(sample, events) {
+// persistent（02 候選）：只有啟動子程序的那支請求有 fork／childReady，其餘暖請求沒有，不算缺事件。
+export function segmentTrace(sample, events, { persistent = false } = {}) {
   const trace = sample.trace;
   const parentEvents = events.filter(ev => ev.role === 'parent' && ev.trace === trace);
   const recv = findEv(parentEvents, ev => ev.ev === 'parent.recv');
@@ -89,9 +113,11 @@ export function segmentTrace(sample, events) {
   const proxyRes = findEv(parentEvents, ev => ev.ev === 'parent.proxyRes');
   const parentHead = findEv(parentEvents, ev => ev.ev === 'parent.writeHead');
   const missing = [];
-  for (const [name, ev] of Object.entries({ recv, fork, childReady, proxyReq, proxyRes, parentHead })) {
+  const required = persistent ? { recv, proxyReq, proxyRes, parentHead } : { recv, fork, childReady, proxyReq, proxyRes, parentHead };
+  for (const [name, ev] of Object.entries(required)) {
     if (!ev) missing.push(`parent.${name}`);
   }
+  if (persistent && Boolean(fork) !== Boolean(childReady)) missing.push('parent.forkAndReadyPair');
   const childPid = fork?.childPid ?? null;
   const src = recv?.src ?? null;
   // 以「收到本 trace 的子程序實例」連結啟動事件，且該實例 PID 必須等於父程序 fork 出的 PID。
@@ -143,6 +169,9 @@ export function segmentTrace(sample, events) {
   const parentTotal = span(recv, parentHead);
   const childService = span(devRecv, devHead);
   const forkStart = forkStartOf(fork);
+  // 長駐模式的暖請求沒有付子程序啟動成本：實例啟動的區間不算進這支請求。
+  const startupCounted = !persistent || Boolean(fork);
+  const onPath = value => (startupCounted ? value : null);
   return {
     trace,
     src,
@@ -150,7 +179,11 @@ export function segmentTrace(sample, events) {
     childInstance: inst,
     missing,
     workerBootEvents: boots.filter(ev => ev.ipc === false).length,
+    // 這支請求是否付了子程序啟動成本（B1 每支都付；候選只有冷請求付）。
+    startupOnPath: Boolean(fork),
     parent: {
+      // 父程序收件到把請求轉進子程序：暖請求的全部父程序派送成本。
+      recvToProxyMs: span(recv, proxyReq),
       preForkMs: span(recv, forkStart),
       forkCallMs: fork?.forkCallMs ?? null,
       forkToChildReadyMs: span(forkStart, childReady),
@@ -160,11 +193,11 @@ export function segmentTrace(sample, events) {
       totalMs: parentTotal,
     },
     child: {
-      bootToPreloadMs: boot ? boot.t : null,
-      preloadToDevServerMs: span(boot, listen1),
-      devServerToHandlerLoadedMs: span(listen1, listen2),
-      handlerLoadedToReadyMs: span(listen2, ready),
-      startupSinceTimeOriginMs: ready ? ready.t : null,
+      bootToPreloadMs: onPath(boot ? boot.t : null),
+      preloadToDevServerMs: onPath(span(boot, listen1)),
+      devServerToHandlerLoadedMs: onPath(span(listen1, listen2)),
+      handlerLoadedToReadyMs: onPath(span(listen2, ready)),
+      startupSinceTimeOriginMs: onPath(ready ? ready.t : null),
       devProxyToHandlerMs: span(devRecv, handlerRecv),
       handlerBeforeFirstOutboundMs: fetchStarts.length ? span(handlerRecv, fetchStarts[0]) : null,
       handlerAfterLastOutboundMs: lastOut && handlerHead ? handlerHead.t - lastOut.endT : null,
@@ -222,7 +255,8 @@ export function scanSecrets(dir, secrets = secretValues()) {
       if (text.includes(value)) hits.push({ file: path.basename(file), key });
     }
     if (/[?&](crumb|token)=/i.test(text)) hits.push({ file: path.basename(file), key: 'query-credential' });
-    if (/"cookie"\s*:/i.test(text) || /set-cookie/i.test(text)) hits.push({ file: path.basename(file), key: 'cookie-field' });
+    // cookie 欄位只有「後面接字串值」才算外洩；握手對帳的次數（"cookie": 1）不是秘密。
+    if (/"cookie"\s*:\s*"/i.test(text) || /set-cookie/i.test(text)) hits.push({ file: path.basename(file), key: 'cookie-field' });
   }
   return hits;
 }
@@ -246,15 +280,31 @@ function checkIdentity(raw, problems) {
     }
   }
   if (new Set(ports).size !== ports.length) problems.push('服務埠重複使用');
-  // 服務前後核對身分：run 結束時重算的 HEAD、產品樹與工具雜湊必須和開始時相同。
-  const after = raw.identityAfter;
-  if (!after) {
-    problems.push('缺 identityAfter（結束時身分未核對）');
-  } else {
-    if (after.head !== id.git?.head) problems.push('run 期間 HEAD 改變');
-    if (after.productSha256 !== id.product?.aggregateSha256) problems.push('run 期間產品樹改變');
-    if (JSON.stringify(after.tools) !== JSON.stringify(id.tools)) problems.push('run 期間工具檔改變');
+  if (isPersistentRun(raw)) {
+    for (const start of raw.starts ?? []) problems.push(...persistentProblems(start.persistent, start.label));
   }
+  problems.push(...identityProblems(id, raw.identityAfter));
+}
+
+// 候選服務的原型報告（service-kit 的 persistentReport）：必須啟用且接手 startDevServer、
+// 沒有繞過原型的函式子程序、停止後沒有殘留的 dev-server 子程序。runner、對等比對、重載驗證共用。
+export function persistentProblems(report, label) {
+  const problems = [];
+  if (!report?.enabled || !report?.takenOver) problems.push(`${label} 長駐原型未啟用或未接手 startDevServer`);
+  if (report?.outsideForks) problems.push(`${label} 有函式子程序未經長駐原型啟動：${report.outsideForks}`);
+  if (report?.orphans?.length) problems.push(`${label} 停止後仍有 dev-server 子程序：${report.orphans.join(',')}`);
+  return problems;
+}
+
+// 服務前後核對身分：run 結束時重算的 HEAD、產品樹與工具雜湊必須和開始時相同。
+// 重載驗證在隔離 checkout 改產品檔（結束時另以位元組還原核對），所以不比產品樹。
+export function identityProblems(before, after, { product = true } = {}) {
+  if (!after) return ['缺 identityAfter（結束時身分未核對）'];
+  const problems = [];
+  if (after.head !== before?.git?.head) problems.push('run 期間 HEAD 改變');
+  if (product && after.productSha256 !== before?.product?.aggregateSha256) problems.push('run 期間產品樹改變');
+  if (JSON.stringify(after.tools) !== JSON.stringify(before?.tools)) problems.push('run 期間工具檔改變');
+  return problems;
 }
 
 function summarizeOptions(raw, events, problems) {
@@ -296,7 +346,8 @@ function summarizeOptions(raw, events, problems) {
     const traced = median(directTtfb(true, routeKey, 'warm'));
     overhead[routeKey] = round(traced !== null && plain !== null ? traced - plain : null);
   }
-  const tracedSegments = samples.filter(s => s.traced).map(s => segmentTrace(s, events));
+  const persistent = isPersistentRun(raw);
+  const tracedSegments = samples.filter(s => s.traced).map(s => segmentTrace(s, events, { persistent }));
   for (const seg of tracedSegments) {
     if (seg.missing.length) problems.push(`OPTIONS trace 缺事件 ${seg.trace}：${seg.missing.join(',')}`);
   }
@@ -309,20 +360,61 @@ function summarizeOptions(raw, events, problems) {
   return { groups: out, verdict, traceOverheadMs: overhead, tracedBreakdown, tracedSegments };
 }
 
+// 每支 Yahoo 報價自己的 outbound 形狀：B1 一律 cookie→crumb→chart；候選只有第一支（或握手失效後的第一支）
+// 自己握手，其餘只有 chart。
+function checkQuoteOutbound(kinds, persistent) {
+  if (!persistent) return JSON.stringify(kinds) === JSON.stringify(['yahoo-cookie', 'yahoo-crumb', 'yahoo-chart']);
+  return JSON.stringify(kinds) === JSON.stringify(['yahoo-chart'])
+    || JSON.stringify(kinds) === JSON.stringify(['yahoo-cookie', 'yahoo-crumb', 'yahoo-chart']);
+}
+
+// 候選握手對帳：同一子程序實例在一次 run 內只該握手一次（未跨 10 分鐘 TTL、未失效）。
+function handshakeLedger(segments) {
+  const perInstance = {};
+  for (const { seg } of segments) {
+    const bucket = (perInstance[seg.childInstance] ??= { quotes: 0, cookie: 0, crumb: 0, chart: 0 });
+    for (const o of seg.outbound) {
+      if (o.kind === 'yahoo-cookie') bucket.cookie += 1;
+      if (o.kind === 'yahoo-crumb') bucket.crumb += 1;
+      if (o.kind === 'yahoo-chart') {
+        bucket.chart += 1;
+        bucket.quotes += 1;
+      }
+    }
+  }
+  const instances = Object.entries(perInstance).filter(([, v]) => v.quotes > 0).map(([instance, v]) => ({ instance, ...v }));
+  return {
+    instances,
+    totals: instances.reduce((acc, v) => ({
+      quotes: acc.quotes + v.quotes, cookie: acc.cookie + v.cookie, crumb: acc.crumb + v.crumb, chart: acc.chart + v.chart,
+    }), { quotes: 0, cookie: 0, crumb: 0, chart: 0 }),
+  };
+}
+
 function summarizeFixed(raw, events, problems) {
+  const persistent = isPersistentRun(raw);
   const samples = raw.samples.filter(s => s.phase === 'fixed');
-  const segments = samples.map(s => ({ sample: s, seg: segmentTrace(s, events) }));
+  const segments = samples.map(s => ({ sample: s, seg: segmentTrace(s, events, { persistent }) }));
   const bodyHash = {};
   for (const { sample, seg } of segments) {
     if (sample.status !== 200) problems.push(`固定 GET 非 200：${sample.trace} status=${sample.status}`);
     if (sample.kind !== 'finmind' && !(sample.price > 0)) problems.push(`固定 GET 無有效價格：${sample.trace}`);
     if (seg.missing.length) problems.push(`固定 GET trace 缺事件 ${sample.trace}：${seg.missing.join(',')}`);
-    const expectKinds = sample.kind === 'finmind' ? ['finmind'] : ['yahoo-cookie', 'yahoo-crumb', 'yahoo-chart'];
     const kinds = seg.outbound.map(o => o.kind);
-    if (JSON.stringify(kinds) !== JSON.stringify(expectKinds)) problems.push(`固定 GET outbound 不符 ${sample.trace}：${kinds.join(',')}`);
+    const shapeOk = sample.kind === 'finmind'
+      ? JSON.stringify(kinds) === JSON.stringify(['finmind'])
+      : checkQuoteOutbound(kinds, persistent);
+    if (!shapeOk) problems.push(`固定 GET outbound 不符 ${sample.trace}：${kinds.join(',')}`);
     if (seg.outbound.some(o => o.fixture !== true || o.blocked)) problems.push(`固定 GET 出現非固定 outbound：${sample.trace}`);
     const key = `${sample.kind}|${sample.symbol}`;
     (bodyHash[key] ??= new Set()).add(sample.bodySha256);
+  }
+  const quoteSegments = segments.filter(x => x.sample.kind !== 'finmind');
+  const ledger = handshakeLedger(quoteSegments);
+  if (persistent) {
+    for (const v of ledger.instances) {
+      if (v.cookie !== 1 || v.crumb !== 1) problems.push(`候選握手次數不符 ${v.instance}：cookie ${v.cookie}、crumb ${v.crumb}（預期各 1）`);
+    }
   }
   for (const [key, hashes] of Object.entries(bodyHash)) {
     if (hashes.size !== 1) problems.push(`固定輸出不一致：${key} 有 ${hashes.size} 種 body`);
@@ -384,12 +476,18 @@ function summarizeFixed(raw, events, problems) {
     },
     // PID 會被 Windows 重用，身分以子程序實例（start＋檔案＋boot 序）判定。
     distinctChildPerRequest: new Set(segments.map(x => x.seg.childInstance)).size === segments.length,
+    childInstances: new Set(segments.map(x => x.seg.childInstance)).size,
+    requests: segments.length,
+    startupOnPathCount: segments.filter(x => x.seg.startupOnPath).length,
+    handshakeLedger: ledger,
+    parentRecvToProxy: pick(segments, x => x.seg.parent.recvToProxyMs),
   };
 }
 
 function summarizeReal(raw, events, problems) {
+  const persistent = isPersistentRun(raw);
   const samples = raw.samples.filter(s => s.phase === 'real');
-  const segments = samples.map(s => ({ sample: s, seg: segmentTrace(s, events) }));
+  const segments = samples.map(s => ({ sample: s, seg: segmentTrace(s, events, { persistent }) }));
   for (const { sample, seg } of segments) {
     if (seg.missing.length) problems.push(`真行情 trace 缺事件 ${sample.trace}：${seg.missing.join(',')}`);
     if (seg.outbound.some(o => o.fixture === true)) problems.push(`真行情混入固定回應：${sample.trace}`);
@@ -406,6 +504,18 @@ function summarizeReal(raw, events, problems) {
     problems.push(`真上游 outbound ${outboundTotal} 超過最壞預算 ${budget.outboundWorst}`);
   }
   const pick = (list, fn) => stats(list.map(fn));
+  const ledger = handshakeLedger(quotes);
+  if (persistent && upstreamErrors === 0) {
+    for (const v of ledger.instances) {
+      if (v.cookie !== 1 || v.crumb !== 1) problems.push(`候選真上游握手次數不符 ${v.instance}：cookie ${v.cookie}、crumb ${v.crumb}（無上游錯誤時預期各 1）`);
+    }
+  }
+  // 暖報價：沒有付子程序啟動、也沒有自己握手的請求——候選長駐後的穩態等待；其餘為冷報價。
+  const isWarm = x => !x.seg.startupOnPath && !x.seg.handshake.ownHandshake;
+  const warmQuotes = quotes.filter(isWarm);
+  const coldQuotes = quotes.filter(x => !isWarm(x));
+  // 使用者實際付出的握手時間總和（每支自己握手的 cookie→crumb 完成時間相加）。
+  const handshakeTotalMs = quotes.reduce((sum, x) => sum + (x.seg.handshake.cookieToCrumbEndMs ?? 0), 0);
   const batchItems = samples.filter(s => s.group === 'batch');
   const batchSize = (raw.protocol?.quoteSymbols?.length ?? 0) + 1;
   const validBatch = batchItems.length === batchSize && batchItems.every(s => s.status === 200 && s.price > 0);
@@ -435,11 +545,21 @@ function summarizeReal(raw, events, problems) {
       childServiceTotal: pick(quotes, x => x.seg.child.serviceTotalMs),
       unattributedClientVsParent: pick(quotes, x => x.seg.unattributed.clientTtfbMinusParentMs),
       clientBody: pick(quotes, x => x.sample.bodyMs - x.sample.headersMs),
-      realDispatch: pick(quotes, x => x.seg.parent.preForkMs + x.seg.parent.forkToChildReadyMs + x.seg.parent.readyToProxyMs),
+      // 派送＝父程序收件到把請求轉進子程序：B1 含 fork 與子程序啟動；候選的暖請求沒有 fork，只剩轉送本身。
+      realDispatch: pick(quotes, x => x.seg.parent.recvToProxyMs),
       ownHandshakeCount: quotes.filter(x => x.seg.handshake.ownHandshake).length,
       quoteCount: quotes.length,
       distinctChildInstances: new Set(quotes.map(x => x.seg.childInstance)).size,
+      startupOnPathCount: quotes.filter(x => x.seg.startupOnPath).length,
+      handshakeTotalMs: round(handshakeTotalMs),
+      coldCount: coldQuotes.length,
+      coldClientTtfb: pick(coldQuotes, x => ttfb(x.sample)),
+      warmCount: warmQuotes.length,
+      warmClientTtfb: pick(warmQuotes, x => ttfb(x.sample)),
+      warmParentRecvToProxy: pick(warmQuotes, x => x.seg.parent.recvToProxyMs),
+      warmChildServiceTotal: pick(warmQuotes, x => x.seg.child.serviceTotalMs),
     },
+    handshakeLedger: ledger,
     finmind: segments.filter(x => x.sample.kind === 'finmind').map(x => ({
       clientTtfb: round(ttfb(x.sample)),
       outboundMs: round(x.seg.outbound[0]?.bodyEndMs ?? null),
@@ -485,12 +605,18 @@ export function verifyRun(runDir, { secrets } = {}) {
   if (raw.aborted) problems.push(`run 中止：${raw.aborted}`);
   if (raw.protocol?.only) problems.push(`只跑部分 start（工具 smoke，不作成績）：${raw.protocol.only.join(',')}`);
   const summary = { runId: raw.runId, mode: raw.mode, verifierSha: VERIFIER_SHA, sourceHead: raw.identity?.git?.head ?? null };
+  summary.entry = entryOf(raw);
   if (raw.mode === 'fixed') {
     summary.options = summarizeOptions(raw, events, problems);
     summary.fixed = summarizeFixed(raw, events, problems);
     const opt = summary.options.verdict;
     summary.thresholdPass = Boolean(opt['yahoo-chart'].medianPass && opt['yahoo-chart'].eachPass
       && opt.finmind.medianPass && opt.finmind.eachPass && summary.fixed.verdict.medianPass);
+    // 候選另須相對同一量法的 B1 基準降低 ≥80%（PLAN 第 3 節）；基準 run 由 raw 記錄，重播不需額外參數。
+    if (summary.entry === 'c') {
+      summary.candidate = compareWithBaseline(raw.protocol?.baselineRun, summary, problems);
+      summary.thresholdPass = summary.thresholdPass && Boolean(summary.candidate?.reductionPass);
+    }
   } else if (raw.mode === 'real') {
     summary.real = summarizeReal(raw, events, problems);
     summary.thresholdPass = null;
@@ -501,6 +627,93 @@ export function verifyRun(runDir, { secrets } = {}) {
   if (leaks.length) problems.push(`證據疑似含秘密：${leaks.map(l => `${l.file}:${l.key}`).join(',')}`);
   summary.problems = problems;
   return summary;
+}
+
+export const RELATIVE_TARGET = Object.freeze({ fixedGetReduction: 0.8 });
+
+function compareWithBaseline(baselineRun, summary, problems) {
+  if (!baselineRun) {
+    problems.push('候選 run 未記錄 baselineRun，無法計算相對改善');
+    return null;
+  }
+  let base;
+  try {
+    base = verifyRun(findRunDir(baselineRun));
+  } catch (error) {
+    problems.push(`基準 run 無法讀取：${error.message}`);
+    return null;
+  }
+  if (base.problems.length) problems.push(`基準 run ${baselineRun} 無效：${base.problems.join('；')}`);
+  if (base.entry !== 'b1') problems.push(`基準 run ${baselineRun} 不是 B1`);
+  const baseLocal = base.fixed?.verdict?.quoteLocalCost?.median ?? null;
+  const candLocal = summary.fixed?.verdict?.quoteLocalCost?.median ?? null;
+  const reduction = baseLocal && candLocal !== null ? 1 - candLocal / baseLocal : null;
+  return {
+    baselineRun,
+    baselineLocalMedianMs: baseLocal,
+    candidateLocalMedianMs: candLocal,
+    reduction: reduction === null ? null : Math.round(reduction * 1000) / 1000,
+    reductionPass: reduction !== null && reduction >= RELATIVE_TARGET.fixedGetReduction,
+    baselineOptionsWarmMedianMs: {
+      'yahoo-chart': base.options?.verdict?.['yahoo-chart']?.warm?.median ?? null,
+      finmind: base.options?.verdict?.finmind?.warm?.median ?? null,
+    },
+  };
+}
+
+// 02：候選對 B1 的兩個收益分開報——派送（固定上游本機成本）與握手重用（真上游）。
+export function compareCandidate({ candFixed, candReal, baseFixed, baseReal }) {
+  const med = s => s?.median ?? null;
+  const diff = (a, b) => (a !== null && b !== null ? round(a - b) : null);
+  const baseLocal = med(baseFixed.fixed?.verdict?.quoteLocalCost);
+  const candLocal = med(candFixed.fixed?.verdict?.quoteLocalCost);
+  const baseQuote = baseReal.real?.quote ?? {};
+  const candQuote = candReal.real?.quote ?? {};
+  return {
+    dispatch: {
+      baselineLocalMedianMs: baseLocal,
+      candidateLocalMedianMs: candLocal,
+      gainMs: diff(baseLocal, candLocal),
+      optionsWarmMedianMs: {
+        baseline: { 'yahoo-chart': med(baseFixed.options?.verdict?.['yahoo-chart']?.warm), finmind: med(baseFixed.options?.verdict?.finmind?.warm) },
+        candidate: { 'yahoo-chart': med(candFixed.options?.verdict?.['yahoo-chart']?.warm), finmind: med(candFixed.options?.verdict?.finmind?.warm) },
+      },
+    },
+    handshake: {
+      baselineOwnHandshakes: `${baseQuote.ownHandshakeCount}/${baseQuote.quoteCount}`,
+      candidateOwnHandshakes: `${candQuote.ownHandshakeCount}/${candQuote.quoteCount}`,
+      baselineHandshakeMedianMs: med(baseQuote.yahooCookieToCrumbEnd),
+      candidateHandshakeMedianMs: med(candQuote.yahooCookieToCrumbEnd),
+      // 握手總等待：B1 每支都付；候選只付一次。兩者之差即握手重用在這一批省下的等待（跨請求加總，非牆鐘）。
+      baselineHandshakeTotalMs: baseQuote.handshakeTotalMs ?? null,
+      candidateHandshakeTotalMs: candQuote.handshakeTotalMs ?? null,
+      handshakeSavedTotalMs: diff(baseQuote.handshakeTotalMs ?? null, candQuote.handshakeTotalMs ?? null),
+      baselineOutbound: baseReal.real?.outboundCounts ?? null,
+      candidateOutbound: candReal.real?.outboundCounts ?? null,
+    },
+    realQuote: {
+      baselineTtfbMedianMs: med(baseQuote.clientTtfb),
+      candidateTtfbMedianMs: med(candQuote.clientTtfb),
+      // 冷＝付了子程序啟動或自己握手；暖＝兩者皆無（長駐後的穩態）。B1 每支都是冷的。
+      candidateColdTtfbMedianMs: med(candQuote.coldClientTtfb),
+      candidateColdCount: candQuote.coldCount ?? null,
+      candidateWarmTtfbMedianMs: med(candQuote.warmClientTtfb),
+      candidateWarmCount: candQuote.warmCount ?? null,
+      candidateStartupOnPathCount: candQuote.startupOnPathCount ?? null,
+      baselineChartMedianMs: med(baseQuote.yahooChart),
+      candidateChartMedianMs: med(candQuote.yahooChart),
+    },
+    realBatch: {
+      baselineFirstMs: baseReal.real?.batch?.firstValidQuoteMs ?? null,
+      candidateFirstMs: candReal.real?.batch?.firstValidQuoteMs ?? null,
+      baselineAllMs: baseReal.real?.batch?.allValidQuotesFxMs ?? null,
+      candidateAllMs: candReal.real?.batch?.allValidQuotesFxMs ?? null,
+    },
+    targets: {
+      candidateFixedThresholdPass: candFixed.thresholdPass,
+      reduction: candFixed.candidate?.reduction ?? null,
+    },
+  };
 }
 
 // 固定 run 與真行情 run 合併出選路決定。
@@ -521,7 +734,7 @@ export function decideFromRuns(fixedSummary, realSummary) {
 }
 
 function renderMarkdown(summary) {
-  const lines = [`# ${summary.runId}（${summary.mode}）判定摘要`, '', `由 verify-b1-breakdown.mjs（內容雜湊 ${summary.verifierSha}）自 raw 重算；請勿手改。`, ''];
+  const lines = [`# ${summary.runId}（${summary.mode}，entry ${summary.entry}）判定摘要`, '', `由 verify-b1-breakdown.mjs（內容雜湊 ${summary.verifierSha}）自 raw 重算；請勿手改。`, ''];
   lines.push(`- HEAD：\`${summary.sourceHead}\``);
   lines.push(`- problems：${summary.problems.length ? summary.problems.join('；') : '無'}`);
   lines.push(`- thresholdPass：${summary.thresholdPass}`);
@@ -545,7 +758,15 @@ function renderMarkdown(summary) {
     lines.push('', `- 本機成本（TTFB−固定等待）中位數≤200：${f.verdict.medianPass ? 'PASS' : 'FAIL'}（${fmt(f.verdict.quoteLocalCost)}）`);
     lines.push(`- Vite 代理一跳（經 Vite 與直連的未歸屬差額中位數差）：${f.viteProxyHopMedianMs ?? '—'} ms`);
     lines.push(`- 十檔＋FX 三槽批次：首價 ${fmt(f.batches.firstValidQuoteMs)}；全價＋FX ${fmt(f.batches.allValidQuotesFxMs)}；peak ${f.batches.peakMax}`);
-    lines.push(`- 每請求獨立子程序：${f.distinctChildPerRequest}`);
+    lines.push(`- 每請求獨立子程序：${f.distinctChildPerRequest}；子程序實例 ${f.childInstances}／請求 ${f.requests}；付啟動成本的請求 ${f.startupOnPathCount}`);
+    lines.push(`- 父程序收件→轉進子程序：${fmt(f.parentRecvToProxy)}`);
+    lines.push(`- 握手對帳（每個服務報價的子程序實例）：${JSON.stringify(f.handshakeLedger.totals)}；實例 ${f.handshakeLedger.instances.length}`);
+  }
+  if (summary.candidate) {
+    const c = summary.candidate;
+    lines.push('', '## 候選對 B1 基準', '');
+    lines.push(`- 基準 run：${c.baselineRun}；B1 本機成本中位 ${c.baselineLocalMedianMs} → 候選 ${c.candidateLocalMedianMs}；降低 ${c.reduction}（≥${RELATIVE_TARGET.fixedGetReduction}：${c.reductionPass ? 'PASS' : 'FAIL'}）`);
+    lines.push(`- B1 空 OPTIONS warm 中位：${JSON.stringify(c.baselineOptionsWarmMedianMs)}`);
   }
   if (summary.real) {
     const r = summary.real;
@@ -553,7 +774,8 @@ function renderMarkdown(summary) {
     for (const [key, value] of Object.entries(r.quote)) {
       if (value && typeof value === 'object') lines.push(`| ${key} | ${fmt(value)} |`);
     }
-    lines.push('', `- 自行握手的報價：${r.quote.ownHandshakeCount}/${r.quote.quoteCount}；獨立子程序實例數：${r.quote.distinctChildInstances}`);
+    lines.push('', `- 自行握手的報價：${r.quote.ownHandshakeCount}/${r.quote.quoteCount}（握手總等待 ${r.quote.handshakeTotalMs} ms）；獨立子程序實例數：${r.quote.distinctChildInstances}；付啟動成本的報價 ${r.quote.startupOnPathCount}；冷報價 ${r.quote.coldCount}；暖報價 ${r.quote.warmCount}`);
+    lines.push(`- 握手對帳：${JSON.stringify(r.handshakeLedger.totals)}；實例 ${r.handshakeLedger.instances.length}`);
     lines.push(`- outbound 計數：${JSON.stringify(r.outboundCounts)}，合計 ${r.outboundTotal}；預算 ${JSON.stringify(r.budget)}`);
     lines.push(`- 上游 429／5xx／連線錯誤（trace 計數，含被 handler 重試隱藏者）：${r.upstreamErrors}`);
     lines.push(`- halted：${r.halted ?? '無'}`);
@@ -583,32 +805,52 @@ export function parseArgs(argv) {
   return args;
 }
 
-function runIdDir(runId) {
-  if (typeof runId !== 'string' || !/^[a-z0-9][a-z0-9-]{2,60}$/.test(runId)) throw new Error(`run-id 不合法：${runId}`);
-  return path.join(EVIDENCE_ROOT, runId);
-}
-
 export function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
+  if (args['candidate-fixed'] && args['candidate-real']) {
+    // 02：候選對 B1（預設 01 的正式 run）的收益比較，寫在候選 fixed run 所在票的目錄。
+    const baseFixedId = args['baseline-fixed'] ?? 'b1-fixed-20260923-r3';
+    const baseRealId = args['baseline-real'] ?? 'b1-real-20260923-r2';
+    const runs = {
+      candFixed: verifyRun(findRunDir(args['candidate-fixed'])),
+      candReal: verifyRun(findRunDir(args['candidate-real'])),
+      baseFixed: verifyRun(findRunDir(baseFixedId)),
+      baseReal: verifyRun(findRunDir(baseRealId)),
+    };
+    const problems = Object.entries(runs).flatMap(([name, run]) => run.problems.map(problem => `${name}:${problem}`));
+    if (runs.candFixed.entry !== 'c' || runs.candReal.entry !== 'c') problems.push('候選 run 不是 entry c');
+    if (runs.baseFixed.entry !== 'b1' || runs.baseReal.entry !== 'b1') problems.push('基準 run 不是 B1');
+    const comparison = compareCandidate(runs);
+    const content = `${JSON.stringify({
+      candidateFixed: args['candidate-fixed'], candidateReal: args['candidate-real'],
+      baselineFixed: baseFixedId, baselineReal: baseRealId, verifierSha: VERIFIER_SHA, comparison, problems,
+    }, null, 2)}\n`;
+    const dir = path.dirname(findRunDir(args['candidate-fixed']));
+    // 檔名同時帶候選與基準 run：同一組候選可以分別對新鮮基準與 01 基準各留一份，不會互相擋寫。
+    const file = path.join(dir, `candidate-${args['candidate-fixed']}--${args['candidate-real']}--vs--${baseFixedId}--${baseRealId}-${VERIFIER_SHA}.json`);
+    const status = writeOnceOrCompare(file, content, problems);
+    console.log(JSON.stringify({ comparison, problems, file: path.relative(ROOT, file), status }, null, 2));
+    return problems.length ? 2 : 0;
+  }
   if (args['fixed-run'] && args['real-run']) {
-    const fixed = verifyRun(runIdDir(args['fixed-run']));
-    const real = verifyRun(runIdDir(args['real-run']));
+    const fixed = verifyRun(findRunDir(args['fixed-run']));
+    const real = verifyRun(findRunDir(args['real-run']));
     const problems = [...fixed.problems.map(p => `fixed:${p}`), ...real.problems.map(p => `real:${p}`)];
     const decision = decideFromRuns(fixed, real);
     const content = `${JSON.stringify({ fixedRun: args['fixed-run'], realRun: args['real-run'], verifierSha: VERIFIER_SHA, decision, problems }, null, 2)}\n`;
-    const file = path.join(EVIDENCE_ROOT, `decision-${args['fixed-run']}--${args['real-run']}-${VERIFIER_SHA}.json`);
+    const file = path.join(path.dirname(findRunDir(args['fixed-run'])), `decision-${args['fixed-run']}--${args['real-run']}-${VERIFIER_SHA}.json`);
     const status = writeOnceOrCompare(file, content, problems);
     console.log(JSON.stringify({ decision, problems, file: path.relative(ROOT, file), status }, null, 2));
     return problems.length ? 2 : 0;
   }
-  const runDir = runIdDir(args['run-id']);
+  const runDir = findRunDir(args['run-id']);
   const summary = verifyRun(runDir);
   const json = `${JSON.stringify(summary, null, 2)}\n`;
   const status = [
     writeOnceOrCompare(path.join(runDir, `summary-${VERIFIER_SHA}.json`), json, summary.problems),
     writeOnceOrCompare(path.join(runDir, `summary-${VERIFIER_SHA}.md`), renderMarkdown(summary), summary.problems),
   ];
-  console.log(JSON.stringify({ runId: summary.runId, mode: summary.mode, problems: summary.problems, thresholdPass: summary.thresholdPass, summaryFiles: status }, null, 2));
+  console.log(JSON.stringify({ runId: summary.runId, mode: summary.mode, entry: summary.entry, problems: summary.problems, thresholdPass: summary.thresholdPass, summaryFiles: status }, null, 2));
   if (summary.problems.length) return 2;
   if (summary.thresholdPass === false) return 1;
   return 0;

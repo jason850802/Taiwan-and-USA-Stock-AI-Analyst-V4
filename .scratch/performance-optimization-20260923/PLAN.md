@@ -1,6 +1,6 @@
 # 第二輪：降低實際等待時間的效能優化 PLAN
 
-建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支；下一票 02。全案效能目標全數 OPEN。** 最新交接見 [HANDOFF](HANDOFF.md)。
+建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支。02 resolved（2026-09-24）：同 handler 長駐原型 59 個契約案例中 58 個與目前入口完全等價、1 個已知差異；空 OPTIONS 與固定 GET 本機目標對候選 PASS；取消契約兩入口都 FAIL（03 採用前必修）；日常入口未換，下一票 03。正式 App 可見的十檔／K 線／暖回訪目標仍 OPEN，全案 OPEN。** 最新交接見 [HANDOFF](HANDOFF.md)。
 
 起點：`E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`，分支 `codex/reacceptance-fixes-p1-s1`，核對 HEAD `30dfdb2`。產品基線含 `e9fa1a2`、`2bd91f4`、`6eee87e`，全部保留。
 

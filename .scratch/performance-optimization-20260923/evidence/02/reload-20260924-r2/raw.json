@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 1,
+  "runId": "reload-20260924-r2",
+  "kind": "reload",
+  "createdAt": "2026-09-23T18:46:39.323Z",
+  "identity": {
+    "workdirHead": "5b7a4307d7c15f8ec3fe5b588b42aa34bc0faf5c",
+    "reloadTool": "7163534d846806d8666a271fd4b42adec43d96cb4fe49b6badec339dc3a38d4e",
+    "persistentSha256": "013fe7e4d8d3e14ad6274046d0d2214cee069980705c43069b55b4c7e5188168",
+    "preloadSha256": "b0730d4ea1673ed8362b2e2e8650751eeeb943ab251a39a06915ad47866134cf"
+  },
+  "steps": [
+    {
+      "step": "baseline",
+      "invalidated": null,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 2157.8,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 2041.6,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "b1Instance": "b1",
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 1874.3,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 24.6,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}"
+          },
+          "b1Instance": "b1",
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 200,
+            "ttfbMs": 1915.3,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}"
+          },
+          "c": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 200,
+            "ttfbMs": 1916.3,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}"
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "expect": null
+    },
+    {
+      "step": "edit-lib-message",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 1858.1,
+            "bodySha256": "8cac0f057e624d76456ef139ff3b404a6589448f01704883ad41bea4823e5ca4",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。（重載測試）\"}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 1868.9,
+            "bodySha256": "8cac0f057e624d76456ef139ff3b404a6589448f01704883ad41bea4823e5ca4",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。（重載測試）\"}"
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "newMessageInB1": true,
+        "newMessageInC": true
+      }
+    },
+    {
+      "step": "syntax-error",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 500,
+            "ttfbMs": 1824.9,
+            "bodySha256": "4b74840efef56a2c27780c7ad4b19c350eee08a3eaf4f7c93898cc66cc21180b",
+            "bodyText": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 500,
+            "ttfbMs": 1880.7,
+            "bodySha256": "4b74840efef56a2c27780c7ad4b19c350eee08a3eaf4f7c93898cc66cc21180b",
+            "bodyText": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n"
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Failed": true,
+        "cFailed": true
+      }
+    },
+    {
+      "step": "restore-syntax",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 2083.4,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 1969.7,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Ok": true,
+        "cOk": true
+      }
+    },
+    {
+      "step": "env-add-secret",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 403,
+            "ttfbMs": 1948.5,
+            "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 403,
+            "ttfbMs": 1874.6,
+            "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Status": 403,
+        "cStatus": 403
+      }
+    },
+    {
+      "step": "env-restore",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 1911.3,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+            "status": 200,
+            "ttfbMs": 1907.7,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Status": 200,
+        "cStatus": 200
+      }
+    },
+    {
+      "step": "delete-route",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 404,
+            "ttfbMs": 12,
+            "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+            "bodyText": "The page could not be found.\n\nNOT_FOUND\n"
+          },
+          "c": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 404,
+            "ttfbMs": 12.8,
+            "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+            "bodyText": "The page could not be found.\n\nNOT_FOUND\n"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Status": 404,
+        "cStatus": 404
+      }
+    },
+    {
+      "step": "restore-route",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 200,
+            "ttfbMs": 1897.5,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}"
+          },
+          "c": {
+            "route": "/api/yahoo/search?q=2330",
+            "status": 200,
+            "ttfbMs": 1887.6,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "b1Ok": true,
+        "cOk": true
+      }
+    },
+    {
+      "step": "restore-lib",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 1857.1,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}"
+          },
+          "c": {
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+            "status": 400,
+            "ttfbMs": 1854.9,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}"
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "expect": {
+        "markerGoneB1": true,
+        "markerGoneC": true
+      }
+    }
+  ],
+  "services": [
+    {
+      "label": "b1",
+      "name": "b1",
+      "port": 4671,
+      "ownedPid": 11388,
+      "listenerPid": 11388,
+      "stopped": true,
+      "exit": {
+        "code": 1,
+        "signal": null
+      }
+    },
+    {
+      "label": "c",
+      "name": "c",
+      "port": 4672,
+      "ownedPid": 26372,
+      "listenerPid": 26372,
+      "stopped": true,
+      "exit": null
+    },
+    {
+      "label": "b1",
+      "name": "b1-1",
+      "port": 4673,
+      "ownedPid": 1568,
+      "listenerPid": 1568,
+      "stopped": true,
+      "exit": null
+    }
+  ],
+  "b1Crashes": [
+    {
+      "beforeStep": "restore-syntax",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4671,
+      "logErrors": [
+        "Error: Transform failed with 1 error:",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 23316 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    }
+  ],
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 15008,
+        "generation": 0
+      },
+      {
+        "entrypoint": "api/yahoo/search.ts",
+        "pid": 28292,
+        "generation": 0
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 11932,
+        "generation": 1
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 15052,
+        "generation": 2
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 7000,
+        "generation": 3
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 20572,
+        "generation": 4
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 15296,
+        "generation": 5
+      },
+      {
+        "entrypoint": "api/yahoo/search.ts",
+        "pid": 19400,
+        "generation": 7
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 25264,
+        "generation": 8
+      }
+    ],
+    "invalidations": 8,
+    "orphans": []
+  },
+  "cleanup": {
+    "restored": true,
+    "apiStatusClean": true,
+    "envRemoved": true,
+    "vercelLinkRemoved": true
+  },
+  "aborted": null,
+  "finishedAt": "2026-09-23T18:47:49.684Z"
+}

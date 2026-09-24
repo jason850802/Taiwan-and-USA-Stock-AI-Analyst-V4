@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":28.926,"pid":1868,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":2014.071,"pid":1868,"seq":1}
+{"ev":"child.listening","t":2030.567,"pid":1868,"seq":1}
+{"ev":"child.listenCall","t":2090.17,"pid":1868,"seq":2}
+{"ev":"child.listening","t":2091.755,"pid":1868,"seq":2}
+{"ev":"child.ready","t":2092.086,"pid":1868}
+{"ev":"child.recv","t":2100.07,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":2108.152,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":2108.534,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4751","x-forwarded-host":"127.0.0.1:4751","x-forwarded-proto":"http","x-forwarded-port":"4751","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4751","origin":"http://localhost:3000","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2109.421,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"handler","status":204}
+{"ev":"child.finish","t":2110.801,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"handler"}
+{"ev":"child.writeHead","t":2116.145,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"devProxy","status":204}
+{"ev":"child.finish","t":2116.801,"pid":1868,"trace":"parity-20260924-r3-default-b1-options-chart-allowed","layer":"devProxy"}

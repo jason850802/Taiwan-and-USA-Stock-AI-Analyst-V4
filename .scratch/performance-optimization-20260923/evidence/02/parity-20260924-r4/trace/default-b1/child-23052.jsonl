@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":26.576,"pid":23052,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1992.045,"pid":23052,"seq":1}
+{"ev":"child.listening","t":2008.366,"pid":23052,"seq":1}
+{"ev":"child.listenCall","t":2066.078,"pid":23052,"seq":2}
+{"ev":"child.listening","t":2067.617,"pid":23052,"seq":2}
+{"ev":"child.ready","t":2067.959,"pid":23052}
+{"ev":"child.recv","t":2074.548,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":2082.293,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":2082.637,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4811","x-forwarded-host":"127.0.0.1:4811","x-forwarded-proto":"http","x-forwarded-port":"4811","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4811","origin":"http://localhost:3000","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2083.456,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"handler","status":204}
+{"ev":"child.finish","t":2084.834,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"handler"}
+{"ev":"child.writeHead","t":2089.834,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"devProxy","status":204}
+{"ev":"child.finish","t":2090.367,"pid":23052,"trace":"parity-20260924-r4-default-b1-options-chart-allowed","layer":"devProxy"}

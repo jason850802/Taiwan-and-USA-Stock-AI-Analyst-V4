@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":25.502,"pid":18108,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1733.972,"pid":18108,"seq":1}
+{"ev":"child.listening","t":1749.475,"pid":18108,"seq":1}
+{"ev":"child.listenCall","t":1805.863,"pid":18108,"seq":2}
+{"ev":"child.listening","t":1807.406,"pid":18108,"seq":2}
+{"ev":"child.ready","t":1807.741,"pid":18108}
+{"ev":"child.recv","t":1811.099,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"devProxy","method":"GET","route":"/api/finmind.ts?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1817.945,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"handler","method":"GET","route":"/api/finmind.ts?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1818.308,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4681","x-forwarded-host":"127.0.0.1:4681","x-forwarded-proto":"http","x-forwarded-port":"4681","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4681","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1819.57,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":1855.237,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":200,"fixture":true,"fixtureWaitMs":34.155,"scripted":false}
+{"ev":"child.fetchBody","t":1856.064,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":1867.691,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"handler","status":200}
+{"ev":"child.finish","t":1869.174,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"handler"}
+{"ev":"child.writeHead","t":1874.384,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"devProxy","status":200}
+{"ev":"child.finish","t":1875.051,"pid":18108,"trace":"smoke-02b-parity-default-b1-ts-extension-route","layer":"devProxy"}

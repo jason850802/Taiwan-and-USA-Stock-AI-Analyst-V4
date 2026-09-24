@@ -1,0 +1,65 @@
+{
+  "candidateFixed": "c-fixed-20260924-r1",
+  "candidateReal": "c-real-20260924-r1",
+  "baselineFixed": "b1-fixed-20260923-r3",
+  "baselineReal": "b1-real-20260923-r2",
+  "verifierSha": "1c7255fbbfa7",
+  "comparison": {
+    "dispatch": {
+      "baselineLocalMedianMs": 1836.1,
+      "candidateLocalMedianMs": 21.2,
+      "gainMs": 1814.9,
+      "optionsWarmMedianMs": {
+        "baseline": {
+          "yahoo-chart": 1833.3,
+          "finmind": 1839.9
+        },
+        "candidate": {
+          "yahoo-chart": 18,
+          "finmind": 17.7
+        }
+      }
+    },
+    "handshake": {
+      "baselineOwnHandshakes": "13/13",
+      "candidateOwnHandshakes": "1/13",
+      "baselineHandshakeMedianMs": 1511.9,
+      "candidateHandshakeMedianMs": 1694.6,
+      "baselineOutbound": {
+        "yahoo-cookie": 13,
+        "yahoo-crumb": 13,
+        "yahoo-chart": 13,
+        "finmind": 1
+      },
+      "candidateOutbound": {
+        "yahoo-cookie": 1,
+        "yahoo-crumb": 1,
+        "yahoo-chart": 13,
+        "finmind": 1
+      }
+    },
+    "realQuote": {
+      "baselineTtfbMedianMs": 4045.7,
+      "candidateTtfbMedianMs": 297.6,
+      "candidateWarmTtfbMedianMs": 296.7,
+      "candidateWarmCount": 12,
+      "candidateStartupOnPathCount": 1,
+      "baselineChartMedianMs": 292.3,
+      "candidateChartMedianMs": 275.7
+    },
+    "realBatch": {
+      "baselineFirstMs": 4096.6,
+      "candidateFirstMs": 238.3,
+      "baselineAllMs": 16221.1,
+      "candidateAllMs": 1178.6
+    },
+    "targets": {
+      "candidateFixedThresholdPass": true,
+      "reduction": 0.988
+    }
+  },
+  "problems": [
+    "candFixed:證據疑似含秘密：summary-1c7255fbbfa7.json:cookie-field,summary-1c7255fbbfa7.md:cookie-field",
+    "candReal:證據疑似含秘密：summary-1c7255fbbfa7.json:cookie-field,summary-1c7255fbbfa7.md:cookie-field"
+  ]
+}

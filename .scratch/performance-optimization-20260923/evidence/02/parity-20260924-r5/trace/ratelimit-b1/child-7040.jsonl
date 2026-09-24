@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":26.713,"pid":7040,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1779.934,"pid":7040,"seq":1}
+{"ev":"child.listening","t":1796.406,"pid":7040,"seq":1}
+{"ev":"child.listenCall","t":1855.282,"pid":7040,"seq":2}
+{"ev":"child.listening","t":1856.916,"pid":7040,"seq":2}
+{"ev":"child.ready","t":1857.279,"pid":7040}
+{"ev":"child.recv","t":1860.351,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":1867.155,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1867.445,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4925","x-forwarded-host":"127.0.0.1:4925","x-forwarded-proto":"http","x-forwarded-port":"4925","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4925","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1869.205,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","seq":1,"kind":"ratelimit","pipeline":true}
+{"ev":"child.fetchHeaders","t":1902.432,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","seq":1,"kind":"ratelimit","pipeline":true,"status":200,"fixture":true,"fixtureWaitMs":31.711,"scripted":true}
+{"ev":"child.fetchBody","t":1903.738,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","seq":1,"kind":"ratelimit","pipeline":true}
+{"ev":"child.writeHead","t":1905.102,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"handler","status":429}
+{"ev":"child.finish","t":1906.418,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"handler"}
+{"ev":"child.writeHead","t":1911.405,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"devProxy","status":429}
+{"ev":"child.finish","t":1912.084,"pid":7040,"trace":"parity-20260924-r5-ratelimit-b1-rl-over","layer":"devProxy"}

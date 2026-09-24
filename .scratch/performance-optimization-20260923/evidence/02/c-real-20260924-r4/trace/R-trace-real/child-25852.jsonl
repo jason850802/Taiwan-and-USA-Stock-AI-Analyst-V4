@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":25.504,"pid":25852,"entry":"api/finmind.ts","fixture":false,"fixtureDelayMs":null,"control":false,"ipc":true}
+{"ev":"child.listenCall","t":1903.539,"pid":25852,"seq":1}
+{"ev":"child.listening","t":1921.483,"pid":25852,"seq":1}
+{"ev":"child.listenCall","t":1978.121,"pid":25852,"seq":2}
+{"ev":"child.listening","t":1979.757,"pid":25852,"seq":2}
+{"ev":"child.ready","t":1980.145,"pid":25852}
+{"ev":"child.recv","t":1984.035,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1992.431,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"handler","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1992.855,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4912","x-forwarded-host":"127.0.0.1:4912","x-forwarded-proto":"http","x-forwarded-port":"4912","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4912","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1994.21,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":2204.755,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":200,"fixture":false}
+{"ev":"child.fetchBody","t":2207.059,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":2219.716,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"handler","status":200}
+{"ev":"child.finish","t":2221.277,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"handler"}
+{"ev":"child.writeHead","t":2226.496,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"devProxy","status":200}
+{"ev":"child.finish","t":2227.221,"pid":25852,"trace":"c-real-20260924-r4-R-trace-real-d2","layer":"devProxy"}

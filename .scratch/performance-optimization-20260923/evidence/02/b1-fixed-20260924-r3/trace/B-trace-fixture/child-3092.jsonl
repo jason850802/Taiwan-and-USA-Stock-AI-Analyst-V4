@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":25.918,"pid":3092,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":50,"control":false,"ipc":true}
+{"ev":"child.listenCall","t":1784.947,"pid":3092,"seq":1}
+{"ev":"child.listening","t":1800.724,"pid":3092,"seq":1}
+{"ev":"child.listenCall","t":1859.982,"pid":3092,"seq":2}
+{"ev":"child.listening","t":1861.513,"pid":3092,"seq":2}
+{"ev":"child.ready","t":1861.868,"pid":3092}
+{"ev":"child.recv","t":1864.808,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1872.962,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"handler","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1873.32,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4892","x-forwarded-host":"127.0.0.1:4892","x-forwarded-proto":"http","x-forwarded-port":"4892","x-forwarded-for":"::ffff:127.0.0.1","x-real-ip":"::ffff:127.0.0.1","x-vercel-forwarded-for":"::ffff:127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4892","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1874.782,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":1932.794,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":200,"fixture":true,"fixtureWaitMs":56.362,"scripted":false}
+{"ev":"child.fetchBody","t":1933.647,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":1945.554,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"handler","status":200}
+{"ev":"child.finish","t":1946.998,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"handler"}
+{"ev":"child.writeHead","t":1952.063,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"devProxy","status":200}
+{"ev":"child.finish","t":1952.744,"pid":3092,"trace":"b1-fixed-20260924-r3-B-trace-fixture-r2-f","layer":"devProxy"}

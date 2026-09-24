@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":28.469,"pid":6332,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1727.325,"pid":6332,"seq":1}
+{"ev":"child.listening","t":1742.257,"pid":6332,"seq":1}
+{"ev":"child.listenCall","t":1797.226,"pid":6332,"seq":2}
+{"ev":"child.listening","t":1798.996,"pid":6332,"seq":2}
+{"ev":"child.ready","t":1799.342,"pid":6332}
+{"ev":"child.recv","t":1802.414,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1811.214,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"handler","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1811.511,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4631","x-forwarded-host":"127.0.0.1:4631","x-forwarded-proto":"http","x-forwarded-port":"4631","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4631","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1812.841,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":1838.846,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":402,"fixture":true,"fixtureWaitMs":24.437,"scripted":true}
+{"ev":"child.fetchBody","t":1839.645,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":1840.944,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"handler","status":429}
+{"ev":"child.finish","t":1842.335,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"handler"}
+{"ev":"child.writeHead","t":1846.804,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"devProxy","status":429}
+{"ev":"child.finish","t":1847.557,"pid":6332,"trace":"parity-20260924-r2-default-b1-get-finmind-limit","layer":"devProxy"}

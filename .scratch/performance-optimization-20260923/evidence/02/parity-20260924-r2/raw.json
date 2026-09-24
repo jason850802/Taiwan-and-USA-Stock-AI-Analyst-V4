@@ -1,0 +1,3490 @@
+{
+  "schemaVersion": 1,
+  "runId": "parity-20260924-r2",
+  "kind": "parity",
+  "createdAt": "2026-09-23T18:33:28.046Z",
+  "identity": {
+    "git": {
+      "head": "5b7a4307d7c15f8ec3fe5b588b42aa34bc0faf5c",
+      "branch": "codex/reacceptance-fixes-p1-s1",
+      "baselineCommit": "30dfdb23cc375ad8a65897e4fca88903dcecca9d"
+    },
+    "product": {
+      "fileCount": 174,
+      "aggregateSha256": "9ce04fc05765036bc874e16fb81391ecdb4cdb1c541d4c7927039140bc530b4a",
+      "missing": [],
+      "differsFromHead": [],
+      "differsFromBaseline": [],
+      "equalsHead": true,
+      "equalsBaselineCommit": true,
+      "untracked": []
+    },
+    "worktree": {
+      "skipWorktree": 1841,
+      "skipWorktreeMissing": 805,
+      "hiddenModified": [
+        ".scratch/performance-fix-20260922/tools/verify-holdings-name-blocking.mjs"
+      ],
+      "trackedModified": [
+        ".scratch/performance-optimization-20260923/issues/02-persistent-api-prototype.md",
+        ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+        ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+        ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+        ".scratch/reacceptance-fixes/HANDOFF.md"
+      ]
+    },
+    "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+    "entry": "c",
+    "command": "NODE_OPTIONS=--require <runtime>/persistent-functions.cjs node <APPDATA>/npm/node_modules/vercel/dist/vc.js dev --listen 127.0.0.1:<port>",
+    "dailyEquivalent": "日常為 npx vercel dev --listen 3001；npx 解析到同一全域 vc.js，本 run 省去 npx 包裝層以讓 owned PID＝listener PID",
+    "versions": {
+      "node": "v26.4.0",
+      "vercel": "55.0.0",
+      "vercelNode": "5.8.23",
+      "tsx": "4.21.0",
+      "vite": "6.4.1"
+    },
+    "tools": {
+      "trace-preload.cjs": "b0730d4ea1673ed8362b2e2e8650751eeeb943ab251a39a06915ad47866134cf",
+      "persistent-functions.cjs": "f11e1305c9f4fff0bf982b32101790f586f8f500d95e2e9f340a21696f3511a0",
+      "b1-breakdown.mjs": "fa509e41fd3eaa40709adae4095e6e5d6f5182df02e752ea40c38fcb6954d423",
+      "verify-b1-breakdown.mjs": "1c7255fbbfa76c1527ee72dada6c2c4a0313c5632c8c09adc1daf876b6ec0959",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da"
+    },
+    "plan": {
+      "PLAN.md": "3044e5fcca70c5b51300aef0ccd20858ab9376e05233e298058db5ed5b95110b",
+      "spec.md": "959d3754e434758a6e3e6b94255c1f503ec2cfaa64765d9abe40c7617bdce3aa",
+      "acceptance.md": "a9933e77efc7e4099d800364bd8f939f4843baf83ed074a371c431ce12756e12",
+      "issues/01-baseline-and-critical-path.md": "91f84fee2eac8ed8e162892fbef379d53ea34559f8bce59733ec5a642a53c4af"
+    },
+    "envFile": {
+      "present": true,
+      "relevantKeysPresent": {
+        "ALLOWED_ORIGIN": true,
+        "PROXY_SHARED_SECRET": false,
+        "FINMIND_TOKEN": true,
+        "UPSTASH_REDIS_REST_URL": false,
+        "UPSTASH_REDIS_REST_TOKEN": false
+      },
+      "copies": 0
+    },
+    "parityTool": "1276d94af1c79aeb5a27a10877913f33abd0b00cf14fadfa91243536fab3de86"
+  },
+  "protocol": {
+    "bind": "127.0.0.1",
+    "fixtureDelayMs": 20,
+    "ttlJumpMs": 600001,
+    "ai": {
+      "deltas": 5,
+      "intervalMs": 300
+    },
+    "verifierSha": "1c7255fbbfa7"
+  },
+  "configs": [
+    {
+      "config": "default",
+      "services": [
+        {
+          "label": "b1",
+          "name": "vercel-dev-b1",
+          "port": 4631,
+          "ownedPid": 15196,
+          "listenerPid": 15196,
+          "listenerPids": [
+            15196
+          ],
+          "ready": true,
+          "readyMs": 15185.407,
+          "stopped": true,
+          "exit": null
+        },
+        {
+          "label": "c",
+          "name": "vercel-dev-c",
+          "port": 4632,
+          "ownedPid": 2936,
+          "listenerPid": 2936,
+          "listenerPids": [
+            2936
+          ],
+          "ready": true,
+          "readyMs": 2905.61,
+          "stopped": true,
+          "exit": null
+        }
+      ],
+      "cases": [
+        {
+          "id": "options-chart-allowed",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-options-chart-allowed",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 4853.9,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188431582-e7dc99e01883",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:51 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 4853.1,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-options-chart-allowed"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-options-chart-allowed",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1939.4,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188433523-c71b1a58041a",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:53 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 1939.3,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-options-chart-allowed"
+            ]
+          }
+        },
+        {
+          "id": "options-chart-evil-origin",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-options-chart-evil-origin",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1845,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188435369-6374e8028629",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:55 GMT"
+              },
+              "ttfbMs": 1844.9,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-options-chart-evil-origin"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-options-chart-evil-origin",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 22.7,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188435406-6b30dcbc9351",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:55 GMT"
+              },
+              "ttfbMs": 22.6,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-options-chart-evil-origin"
+            ]
+          }
+        },
+        {
+          "id": "options-finmind",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-options-finmind",
+              "method": "OPTIONS",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1850.3,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188437244-9b0ac1ff5cbb",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:57 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 1850.1,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-options-finmind"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-options-finmind",
+              "method": "OPTIONS",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1853.1,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188439097-596ae70a3640",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:33:59 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 1853,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-options-finmind"
+            ]
+          }
+        },
+        {
+          "id": "options-gemini-stream",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-options-gemini-stream",
+              "method": "OPTIONS",
+              "route": "/api/gemini-stream",
+              "totalMs": 3432.1,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188442530-ed86558d8182",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:34:02 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 3432,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-options-gemini-stream"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-options-gemini-stream",
+              "method": "OPTIONS",
+              "route": "/api/gemini-stream",
+              "totalMs": 2047.7,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188444578-c52095410f81",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:34:04 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 2047.6,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-options-gemini-stream"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-referer-allowed",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-referer-allowed",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 2037.7,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188446519-b90efd3d51f7",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:06 GMT",
+                "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+              },
+              "ttfbMs": 2037,
+              "bytes": 530,
+              "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-referer-allowed"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-referer-allowed",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 120.1,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188446656-5630ce809ca6",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:06 GMT",
+                "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+              },
+              "ttfbMs": 119.9,
+              "bytes": 530,
+              "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-referer-allowed"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-no-origin",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-no-origin",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+              "totalMs": 1966.3,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188448614-1c9420bc9133",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:08 GMT",
+                "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+              },
+              "ttfbMs": 1966.2,
+              "bytes": 526,
+              "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-no-origin"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-no-origin",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+              "totalMs": 54.1,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188448743-86ce5a765cac",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:08 GMT",
+                "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+              },
+              "ttfbMs": 53.9,
+              "bytes": 526,
+              "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-no-origin"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-evil-origin",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-evil-origin",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1859,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188450619-0a56387a7bcd",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "62",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:10 GMT",
+                "etag": "W/\"3e-DSGWFGHvRPDmLf1pyb1DamEnmBQ\""
+              },
+              "ttfbMs": 1858.8,
+              "bytes": 62,
+              "bodySha256": "cd43d8af17481111103743398cf2ed1cf02a8e64edfb9c6b02b844e5c469f421",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求來源不被允許。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-evil-origin"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-evil-origin",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 22,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188450656-77be89363d2a",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "62",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:10 GMT",
+                "etag": "W/\"3e-DSGWFGHvRPDmLf1pyb1DamEnmBQ\""
+              },
+              "ttfbMs": 21.9,
+              "bytes": 62,
+              "bodySha256": "cd43d8af17481111103743398cf2ed1cf02a8e64edfb9c6b02b844e5c469f421",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求來源不被允許。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-evil-origin"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-evil-referer",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-evil-referer",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1859,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188452500-7a81915e9d9b",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "62",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:12 GMT",
+                "etag": "W/\"3e-DSGWFGHvRPDmLf1pyb1DamEnmBQ\""
+              },
+              "ttfbMs": 1858.6,
+              "bytes": 62,
+              "bodySha256": "cd43d8af17481111103743398cf2ed1cf02a8e64edfb9c6b02b844e5c469f421",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求來源不被允許。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-evil-referer"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-evil-referer",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 23,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188452539-1199f24aff5f",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "62",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:12 GMT",
+                "etag": "W/\"3e-DSGWFGHvRPDmLf1pyb1DamEnmBQ\""
+              },
+              "ttfbMs": 22.9,
+              "bytes": 62,
+              "bodySha256": "cd43d8af17481111103743398cf2ed1cf02a8e64edfb9c6b02b844e5c469f421",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求來源不被允許。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-evil-referer"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-bad-range",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-bad-range",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+              "totalMs": 1854.7,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188454379-bd1e90cae36f",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:14 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 1854.5,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-bad-range"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-bad-range",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+              "totalMs": 21.9,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188454416-dd393ddec377",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:14 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 21.8,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-bad-range"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-missing-symbol",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-missing-symbol",
+              "method": "GET",
+              "route": "/api/yahoo/chart?interval=1d&range=5d",
+              "totalMs": 1870.4,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188456273-a7aa2a461473",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:16 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 1870.2,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-missing-symbol"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-missing-symbol",
+              "method": "GET",
+              "route": "/api/yahoo/chart?interval=1d&range=5d",
+              "totalMs": 29.4,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188456317-1eacca57191b",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:16 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 29.2,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-missing-symbol"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-repeated-symbol",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-repeated-symbol",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&symbol=AAPL&interval=1d&range=5d",
+              "totalMs": 1867.5,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188458170-d4bddf8dbf4c",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:18 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 1867.3,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-repeated-symbol"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-repeated-symbol",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&symbol=AAPL&interval=1d&range=5d",
+              "totalMs": 24.6,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188458211-ff278984c68a",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "104",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:18 GMT",
+                "etag": "W/\"68-zolFLrZV+YDzwEtNGqDUjJ2OQL4\""
+              },
+              "ttfbMs": 24.4,
+              "bytes": 104,
+              "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-repeated-symbol"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-encoded-fx",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-encoded-fx",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=USDTWD%3DX&interval=1d&range=5d",
+              "totalMs": 1965.4,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188460066-14938f249be8",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "538",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:20 GMT",
+                "etag": "W/\"21a-OfEiAkwJhNtjpbbqLAXTIzlF02w\""
+              },
+              "ttfbMs": 1965.3,
+              "bytes": 538,
+              "bodySha256": "e3547d9bf13d9a44ba425f2c619bf87255f784545d9e1f10a27633711fb82d5d",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"USDTWD=X\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":945,\"longName\":\"FIXTURE USDTWD=X\",\"shortName\":\"FIXTURE USDTWD=X\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[942.75,943.25,943.75,944.25,944.75],\"high\":[944,944.5,945,945.5,946],\"low\":[942,942.5,943,943.5,944],\"close\":[943,943.5,944,944.5,945],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[943,943.5,944,944.5,945]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-encoded-fx"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-encoded-fx",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=USDTWD%3DX&interval=1d&range=5d",
+              "totalMs": 54.4,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188460203-603bb9300ad7",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "538",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:20 GMT",
+                "etag": "W/\"21a-OfEiAkwJhNtjpbbqLAXTIzlF02w\""
+              },
+              "ttfbMs": 54.2,
+              "bytes": 538,
+              "bodySha256": "e3547d9bf13d9a44ba425f2c619bf87255f784545d9e1f10a27633711fb82d5d",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"USDTWD=X\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":945,\"longName\":\"FIXTURE USDTWD=X\",\"shortName\":\"FIXTURE USDTWD=X\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[942.75,943.25,943.75,944.25,944.75],\"high\":[944,944.5,945,945.5,946],\"low\":[942,942.5,943,943.5,944],\"close\":[943,943.5,944,944.5,945],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[943,943.5,944,944.5,945]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-encoded-fx"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-lowercase",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-lowercase",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=aapl&interval=1d&range=5d",
+              "totalMs": 1989.2,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188462108-15a641f38571",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:22 GMT",
+                "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+              },
+              "ttfbMs": 1989,
+              "bytes": 526,
+              "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-lowercase"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-lowercase",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=aapl&interval=1d&range=5d",
+              "totalMs": 54.4,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188462244-181ed91c221f",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:22 GMT",
+                "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+              },
+              "ttfbMs": 54.2,
+              "bytes": 526,
+              "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-lowercase"
+            ]
+          }
+        },
+        {
+          "id": "post-chart",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-chart",
+              "method": "POST",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1875.9,
+              "status": 405,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188464137-976a7696607c",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "58",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:24 GMT",
+                "etag": "W/\"3a-buY3FDqhnyFZL/FzUGFpyEXbQTU\""
+              },
+              "ttfbMs": 1875.8,
+              "bytes": 58,
+              "bodySha256": "1d8e5cf271f703d7a127e3ca99b2017b3f78db890f523d870bbdc88f30b747dd",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"僅支援 GET 請求。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-chart"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-chart",
+              "method": "POST",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 23.7,
+              "status": 405,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188464176-863c8a80f300",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "58",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:24 GMT",
+                "etag": "W/\"3a-buY3FDqhnyFZL/FzUGFpyEXbQTU\""
+              },
+              "ttfbMs": 23.6,
+              "bytes": 58,
+              "bodySha256": "1d8e5cf271f703d7a127e3ca99b2017b3f78db890f523d870bbdc88f30b747dd",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"僅支援 GET 請求。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-chart"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-upstream-401-once",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-upstream-401-once",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 2606.5,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188466068-8a6ed3a28b98",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:26 GMT",
+                "etag": "W/\"20e-ZWs1+e34W6AjevTfEs1JFYUydo4\""
+              },
+              "ttfbMs": 2606.4,
+              "bytes": 526,
+              "bodySha256": "9e6978a1ea0bf89c4738933f90f6717e3d935d3da77c143b9c1b174491386de2",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"MSFT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":602,\"longName\":\"FIXTURE MSFT\",\"shortName\":\"FIXTURE MSFT\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[599.75,600.25,600.75,601.25,601.75],\"high\":[601,601.5,602,602.5,603],\"low\":[599,599.5,600,600.5,601],\"close\":[600,600.5,601,601.5,602],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[600,600.5,601,601.5,602]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-upstream-401-once"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-upstream-401-once",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 661.9,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188466811-d57e02bbaa36",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:27 GMT",
+                "etag": "W/\"20e-ZWs1+e34W6AjevTfEs1JFYUydo4\""
+              },
+              "ttfbMs": 661.8,
+              "bytes": 526,
+              "bodySha256": "9e6978a1ea0bf89c4738933f90f6717e3d935d3da77c143b9c1b174491386de2",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"MSFT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":602,\"longName\":\"FIXTURE MSFT\",\"shortName\":\"FIXTURE MSFT\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[599.75,600.25,600.75,601.25,601.75],\"high\":[601,601.5,602,602.5,603],\"low\":[599,599.5,600,600.5,601],\"close\":[600,600.5,601,601.5,602],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[600,600.5,601,601.5,602]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-upstream-401-once"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-upstream-429-twice",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-upstream-429-twice",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 2611.9,
+              "status": 429,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188469339-dce32d29d2d6",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "105",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:30 GMT",
+                "etag": "W/\"69-Q+lFf6bqoCK+btLvYshrOaETgLw\""
+              },
+              "ttfbMs": 2611.8,
+              "bytes": 105,
+              "bodySha256": "4b96feeb888272bfbf6e1cffd1b48632d10b9be7540037f70447a263498317a1",
+              "bodyText": "{\"code\":\"RATE_LIMITED\",\"message\":\"Yahoo 行情服務目前請求過於頻繁，請稍後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-upstream-429-twice"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-upstream-429-twice",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 664.8,
+              "status": 429,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188470084-120731dcda78",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "105",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:30 GMT",
+                "etag": "W/\"69-Q+lFf6bqoCK+btLvYshrOaETgLw\""
+              },
+              "ttfbMs": 664.7,
+              "bytes": 105,
+              "bodySha256": "4b96feeb888272bfbf6e1cffd1b48632d10b9be7540037f70447a263498317a1",
+              "bodyText": "{\"code\":\"RATE_LIMITED\",\"message\":\"Yahoo 行情服務目前請求過於頻繁，請稍後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-upstream-429-twice"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-upstream-500",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-upstream-500",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 1985,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188472603-1338afd1f4d8",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "95",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:32 GMT",
+                "etag": "W/\"5f-eubH2PnnD5NxSDALp4VRhgmYQkc\""
+              },
+              "ttfbMs": 1984.7,
+              "bytes": 95,
+              "bodySha256": "b310493785b65c195c63b6b82b149e712970c94bbae1147ac3b9e9ae311ef031",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"Yahoo 行情服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-upstream-500"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-upstream-500",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 54,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188472736-124f63e84c9c",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "95",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:32 GMT",
+                "etag": "W/\"5f-eubH2PnnD5NxSDALp4VRhgmYQkc\""
+              },
+              "ttfbMs": 53.9,
+              "bytes": 95,
+              "bodySha256": "b310493785b65c195c63b6b82b149e712970c94bbae1147ac3b9e9ae311ef031",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"Yahoo 行情服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-upstream-500"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-not-found",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-not-found",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=ZZZZ&interval=1d&range=5d",
+              "totalMs": 1986.1,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188474648-eb7603f2aef3",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "60",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:34 GMT",
+                "etag": "W/\"3c-XPuTqxrlfbV2KS+QH7joam/FDls\""
+              },
+              "ttfbMs": 1985.9,
+              "bytes": 60,
+              "bodySha256": "04c212075baf9f89d66f8584176f9fcfe7128aadac075e1ad131c4b2af6e20d2",
+              "bodyText": "{\"code\":\"NOT_FOUND\",\"message\":\"找不到該股票代號。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-not-found"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-not-found",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=ZZZZ&interval=1d&range=5d",
+              "totalMs": 54.4,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188474777-58b9139cfde6",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "60",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:34 GMT",
+                "etag": "W/\"3c-XPuTqxrlfbV2KS+QH7joam/FDls\""
+              },
+              "ttfbMs": 54.3,
+              "bytes": 60,
+              "bodySha256": "04c212075baf9f89d66f8584176f9fcfe7128aadac075e1ad131c4b2af6e20d2",
+              "bodyText": "{\"code\":\"NOT_FOUND\",\"message\":\"找不到該股票代號。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-not-found"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-cookie-missing",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-cookie-missing",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 2459.9,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188476681-c05a118dcf53",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "102",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:37 GMT",
+                "etag": "W/\"66-hVPFqC/Dhzfrzr7JeUhBiV00gkU\""
+              },
+              "ttfbMs": 2459.7,
+              "bytes": 102,
+              "bodySha256": "3c9d80e2523c32ce518ee1ccc102c2b11cc4ea911e2333e7a91626c55837ead4",
+              "bodyText": "{\"code\":\"UPSTREAM_UNAUTHORIZED\",\"message\":\"Yahoo 行情服務暫時無法驗證，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-cookie-missing"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-cookie-missing",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d",
+              "totalMs": 602.2,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188477295-636713366214",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "102",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:37 GMT",
+                "etag": "W/\"66-hVPFqC/Dhzfrzr7JeUhBiV00gkU\""
+              },
+              "ttfbMs": 602.1,
+              "bytes": 102,
+              "bodySha256": "3c9d80e2523c32ce518ee1ccc102c2b11cc4ea911e2333e7a91626c55837ead4",
+              "bodyText": "{\"code\":\"UPSTREAM_UNAUTHORIZED\",\"message\":\"Yahoo 行情服務暫時無法驗證，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-cookie-missing"
+            ]
+          }
+        },
+        {
+          "id": "get-chart-timeout",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-chart-timeout",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+              "totalMs": 9973.4,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188479757-9d6a86908631",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "95",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:47 GMT",
+                "etag": "W/\"5f-eubH2PnnD5NxSDALp4VRhgmYQkc\""
+              },
+              "ttfbMs": 9973.3,
+              "bytes": 95,
+              "bodySha256": "b310493785b65c195c63b6b82b149e712970c94bbae1147ac3b9e9ae311ef031",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"Yahoo 行情服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-chart-timeout"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-chart-timeout",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+              "totalMs": 8099.8,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188487870-3b2f209f7c0d",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "95",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:55 GMT",
+                "etag": "W/\"5f-eubH2PnnD5NxSDALp4VRhgmYQkc\""
+              },
+              "ttfbMs": 8099.6,
+              "bytes": 95,
+              "bodySha256": "b310493785b65c195c63b6b82b149e712970c94bbae1147ac3b9e9ae311ef031",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"Yahoo 行情服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-chart-timeout"
+            ]
+          }
+        },
+        {
+          "id": "get-finmind-ok",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-finmind-ok",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1902.7,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77103, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188497795-5c99a76ef108",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:57 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 1902.6,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-finmind-ok"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-finmind-ok",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 74.3,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77103, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188497872-324c147d1f2e",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:57 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 74.2,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-finmind-ok"
+            ]
+          }
+        },
+        {
+          "id": "get-finmind-bad-dataset",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-finmind-bad-dataset",
+              "method": "GET",
+              "route": "/api/finmind?dataset=NotADataset",
+              "totalMs": 1858.4,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188499768-7a30c6aac49e",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "109",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:59 GMT",
+                "etag": "W/\"6d-BRRtx79qdxiGQk5kyWYPj3+Douc\""
+              },
+              "ttfbMs": 1858.3,
+              "bytes": 109,
+              "bodySha256": "018a01ec1c4b3ee5d50cc86ae7e183ce9adca8c0481823c402e90461a0d067d1",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"FinMind 請求參數不正確，請確認資料集與股票代號設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-finmind-bad-dataset"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-finmind-bad-dataset",
+              "method": "GET",
+              "route": "/api/finmind?dataset=NotADataset",
+              "totalMs": 23.4,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188499806-b086be5c7e4a",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "109",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:34:59 GMT",
+                "etag": "W/\"6d-BRRtx79qdxiGQk5kyWYPj3+Douc\""
+              },
+              "ttfbMs": 23.3,
+              "bytes": 109,
+              "bodySha256": "018a01ec1c4b3ee5d50cc86ae7e183ce9adca8c0481823c402e90461a0d067d1",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"FinMind 請求參數不正確，請確認資料集與股票代號設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-finmind-bad-dataset"
+            ]
+          }
+        },
+        {
+          "id": "get-finmind-bad-date",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-finmind-bad-date",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330&start_date=2026-02-30",
+              "totalMs": 1846.4,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188501640-281b70f904bc",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "109",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:01 GMT",
+                "etag": "W/\"6d-BRRtx79qdxiGQk5kyWYPj3+Douc\""
+              },
+              "ttfbMs": 1846.3,
+              "bytes": 109,
+              "bodySha256": "018a01ec1c4b3ee5d50cc86ae7e183ce9adca8c0481823c402e90461a0d067d1",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"FinMind 請求參數不正確，請確認資料集與股票代號設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-finmind-bad-date"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-finmind-bad-date",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330&start_date=2026-02-30",
+              "totalMs": 23.7,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188501678-e8e701680af7",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "109",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:01 GMT",
+                "etag": "W/\"6d-BRRtx79qdxiGQk5kyWYPj3+Douc\""
+              },
+              "ttfbMs": 23.6,
+              "bytes": 109,
+              "bodySha256": "018a01ec1c4b3ee5d50cc86ae7e183ce9adca8c0481823c402e90461a0d067d1",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"FinMind 請求參數不正確，請確認資料集與股票代號設定。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-finmind-bad-date"
+            ]
+          }
+        },
+        {
+          "id": "get-finmind-limit",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-finmind-limit",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1880.7,
+              "status": 429,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188503518-6dd4c72a09f5",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "107",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:03 GMT",
+                "etag": "W/\"6b-yofDlDywzmrnUpSdMRol4fWmYH8\""
+              },
+              "ttfbMs": 1880.6,
+              "bytes": 107,
+              "bodySha256": "69400c15ca4306c66f77439612a0ce053e9d4a50ec7154f8c745f10e51818435",
+              "bodyText": "{\"code\":\"RATE_LIMITED\",\"message\":\"FinMind 資料服務目前請求過於頻繁，請稍後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-finmind-limit"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-finmind-limit",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 53.7,
+              "status": 429,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188503583-0493e41a4ed2",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "107",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:03 GMT",
+                "etag": "W/\"6b-yofDlDywzmrnUpSdMRol4fWmYH8\""
+              },
+              "ttfbMs": 53.5,
+              "bytes": 107,
+              "bodySha256": "69400c15ca4306c66f77439612a0ce053e9d4a50ec7154f8c745f10e51818435",
+              "bodyText": "{\"code\":\"RATE_LIMITED\",\"message\":\"FinMind 資料服務目前請求過於頻繁，請稍後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-finmind-limit"
+            ]
+          }
+        },
+        {
+          "id": "get-finmind-500",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-finmind-500",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1877.2,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188505456-dd9d0972ab58",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "97",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:05 GMT",
+                "etag": "W/\"61-eYx89obosH1zGYjIhUIDk6VwqQM\""
+              },
+              "ttfbMs": 1877.1,
+              "bytes": 97,
+              "bodySha256": "d3021c57355f002a9dde318a7952327be2f6bd751c97355bdb2a7395f51ebf74",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"FinMind 資料服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-finmind-500"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-finmind-500",
+              "method": "GET",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 53.9,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188505516-71471cd17ef3",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "97",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:05 GMT",
+                "etag": "W/\"61-eYx89obosH1zGYjIhUIDk6VwqQM\""
+              },
+              "ttfbMs": 53.8,
+              "bytes": 97,
+              "bodySha256": "d3021c57355f002a9dde318a7952327be2f6bd751c97355bdb2a7395f51ebf74",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"FinMind 資料服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-finmind-500"
+            ]
+          }
+        },
+        {
+          "id": "get-search-ok",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-search-ok",
+              "method": "GET",
+              "route": "/api/yahoo/search?q=2330",
+              "totalMs": 1936.7,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188507383-3e2b9688f892",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "108",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:07 GMT",
+                "etag": "W/\"6c-5XzmZPu1lp4LxGhkO1+SEvbbReY\""
+              },
+              "ttfbMs": 1936.6,
+              "bytes": 108,
+              "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+              "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-search-ok"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-search-ok",
+              "method": "GET",
+              "route": "/api/yahoo/search?q=2330",
+              "totalMs": 2045.6,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188509431-1589d49ada53",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "108",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:09 GMT",
+                "etag": "W/\"6c-5XzmZPu1lp4LxGhkO1+SEvbbReY\""
+              },
+              "ttfbMs": 2045.5,
+              "bytes": 108,
+              "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+              "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-search-ok"
+            ]
+          }
+        },
+        {
+          "id": "unknown-route",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-unknown-route",
+              "method": "GET",
+              "route": "/api/nope",
+              "totalMs": 18.1,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::jvju8-1790188509538-dc36e96a87ad",
+                "x-vercel-cache": "MISS",
+                "content-type": "text/plain; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:09 GMT",
+                "connection": "close",
+                "content-length": "40"
+              },
+              "ttfbMs": 17.9,
+              "bytes": 40,
+              "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+              "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-unknown-route"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-unknown-route",
+              "method": "GET",
+              "route": "/api/nope",
+              "totalMs": 16.5,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::iulio-1790188509557-f6bf1c7794e0",
+                "x-vercel-cache": "MISS",
+                "content-type": "text/plain; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:09 GMT",
+                "connection": "close",
+                "content-length": "40"
+              },
+              "ttfbMs": 16.4,
+              "bytes": 40,
+              "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+              "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-unknown-route"
+            ]
+          }
+        },
+        {
+          "id": "private-lib-route",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-private-lib-route",
+              "method": "GET",
+              "route": "/api/_lib/guard",
+              "totalMs": 15.2,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::jvju8-1790188509575-9bf8c09fcfe9",
+                "x-vercel-cache": "MISS",
+                "content-type": "text/plain; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:09 GMT",
+                "connection": "close",
+                "content-length": "40"
+              },
+              "ttfbMs": 15.1,
+              "bytes": 40,
+              "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+              "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-private-lib-route"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-private-lib-route",
+              "method": "GET",
+              "route": "/api/_lib/guard",
+              "totalMs": 15.4,
+              "status": 404,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::iulio-1790188509590-d1d08ad84657",
+                "x-vercel-cache": "MISS",
+                "content-type": "text/plain; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:09 GMT",
+                "connection": "close",
+                "content-length": "40"
+              },
+              "ttfbMs": 15.2,
+              "bytes": 40,
+              "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+              "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-private-lib-route"
+            ]
+          }
+        },
+        {
+          "id": "ts-extension-route",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-ts-extension-route",
+              "method": "GET",
+              "route": "/api/finmind.ts?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1907.5,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77089, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188511448-033cbfad34fb",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:11 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 1907.4,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-ts-extension-route"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-ts-extension-route",
+              "method": "GET",
+              "route": "/api/finmind.ts?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 59,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77089, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188511531-cc2c6a234ba5",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:11 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 58.9,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-ts-extension-route"
+            ]
+          }
+        },
+        {
+          "id": "trailing-slash-route",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-trailing-slash-route",
+              "method": "GET",
+              "route": "/api/finmind/?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 1902.4,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77087, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188513416-37e79cab748c",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:13 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 1902.3,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-trailing-slash-route"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-trailing-slash-route",
+              "method": "GET",
+              "route": "/api/finmind/?dataset=TaiwanStockInfo&data_id=2330",
+              "totalMs": 57.8,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, s-maxage=77087, stale-while-revalidate=60",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188513494-f29076ac0ab8",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "179",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:13 GMT",
+                "etag": "W/\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\""
+              },
+              "ttfbMs": 57.7,
+              "bytes": 179,
+              "bodySha256": "f2721e19cab5b5c9b58db511187cb6f4497b30d64c27dad02a67d809d3e04d55",
+              "bodyText": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"dataset\":\"TaiwanStockInfo\",\"stock_id\":\"2330\",\"stock_name\":\"FIXTURE 2330\",\"industry_category\":\"FIXTURE\",\"type\":\"twse\",\"date\":\"2026-09-19\"}]}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-trailing-slash-route"
+            ]
+          }
+        },
+        {
+          "id": "get-gemini",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-get-gemini",
+              "method": "GET",
+              "route": "/api/gemini",
+              "totalMs": 2011.7,
+              "status": 405,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188515527-e90d3a69ecea",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:15 GMT",
+                "etag": "W/\"3b-xM0LaQueUW3+FXdymnM8y87U4Es\""
+              },
+              "ttfbMs": 2011.6,
+              "bytes": 59,
+              "bodySha256": "06d682ab1fb5340b11a73445a4675b98b42b09e2fdfa2712d9c9dd2d1718dc39",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"僅支援 POST 請求。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-get-gemini"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-get-gemini",
+              "method": "GET",
+              "route": "/api/gemini",
+              "totalMs": 2046.3,
+              "status": 405,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188517567-787852beed8f",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:17 GMT",
+                "etag": "W/\"3b-xM0LaQueUW3+FXdymnM8y87U4Es\""
+              },
+              "ttfbMs": 2046.2,
+              "bytes": 59,
+              "bodySha256": "06d682ab1fb5340b11a73445a4675b98b42b09e2fdfa2712d9c9dd2d1718dc39",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"僅支援 POST 請求。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-get-gemini"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-bad-body",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-bad-body",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 2013.1,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188519581-c0fe1ecf6d3d",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "98",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:19 GMT",
+                "etag": "W/\"62-TblGQuIT8dV/bdL1ZpIjNZXiric\""
+              },
+              "ttfbMs": 2013,
+              "bytes": 98,
+              "bodySha256": "ff9ada1a21707ad796dc298cd34e7c5abe36df047f376af5e338611748e01022",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求格式不正確，請重新整理頁面後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-bad-body"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-bad-body",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 23.6,
+              "status": 400,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188519623-1ab56475a995",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "98",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:19 GMT",
+                "etag": "W/\"62-TblGQuIT8dV/bdL1ZpIjNZXiric\""
+              },
+              "ttfbMs": 23.5,
+              "bytes": 98,
+              "bodySha256": "ff9ada1a21707ad796dc298cd34e7c5abe36df047f376af5e338611748e01022",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求格式不正確，請重新整理頁面後再試一次。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-bad-body"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-bad-json",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-bad-json",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 2021.4,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188521632-183113e9adeb",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "86",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:21 GMT",
+                "etag": "W/\"56-4GbH4JOC/ZrFo0mKTRmbDEiI70g\""
+              },
+              "ttfbMs": 2021.3,
+              "bytes": 86,
+              "bodySha256": "090411102657d4d355274ee9538bbdf53e3dbb37af55c60cb59034cd4f9f6554",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"AI 服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-bad-json"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-bad-json",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 24.2,
+              "status": 502,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188521671-4e23c7d844c3",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "86",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:21 GMT",
+                "etag": "W/\"56-4GbH4JOC/ZrFo0mKTRmbDEiI70g\""
+              },
+              "ttfbMs": 24.1,
+              "bytes": 86,
+              "bodySha256": "090411102657d4d355274ee9538bbdf53e3dbb37af55c60cb59034cd4f9f6554",
+              "bodyText": "{\"code\":\"UPSTREAM_ERROR\",\"message\":\"AI 服務暫時無法回應，請稍後再試。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-bad-json"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-fake-cli",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-fake-cli",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 3512.9,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188523663-b1f2fa537dc8",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "61",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:25 GMT",
+                "etag": "W/\"3d-UPu2ECbmT9QH3uK425YJaePWq1E\""
+              },
+              "ttfbMs": 3512.8,
+              "bytes": 61,
+              "bodySha256": "3e366d1dea181638c6ac15e1096f40d6351186b0bbeeba601a7be9a4febb6bf9",
+              "bodyText": "{\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-fake-cli"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-fake-cli",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 1538.1,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188525211-2094319363cc",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "61",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:26 GMT",
+                "etag": "W/\"3d-UPu2ECbmT9QH3uK425YJaePWq1E\""
+              },
+              "ttfbMs": 1538,
+              "bytes": 61,
+              "bodySha256": "3e366d1dea181638c6ac15e1096f40d6351186b0bbeeba601a7be9a4febb6bf9",
+              "bodyText": "{\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-fake-cli"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-stream-fake-cli",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-stream-fake-cli",
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "totalMs": 3880.4,
+              "status": 200,
+              "headers": {
+                "cache-control": "no-store",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188528732-353b26e351e2",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-type": "application/x-ndjson; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:29 GMT",
+                "transfer-encoding": "chunked"
+              },
+              "ttfbMs": 2332.7,
+              "bytes": 243,
+              "bodySha256": "2b1fb8dd1e06e55cdd7976f2217e6d4e4c9a788ab22631f1f22f302623d966ff",
+              "bodyText": "{\"t\":\"delta\",\"text\":\"假片段1\"}\n{\"t\":\"delta\",\"text\":\"假片段2\"}\n{\"t\":\"delta\",\"text\":\"假片段3\"}\n{\"t\":\"delta\",\"text\":\"假片段4\"}\n{\"t\":\"delta\",\"text\":\"假片段5\"}\n{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}\n",
+              "lines": [
+                {
+                  "t": 2332.8,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+                },
+                {
+                  "t": 2637.7,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段2\"}"
+                },
+                {
+                  "t": 2948.5,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段3\"}"
+                },
+                {
+                  "t": 3258.4,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段4\"}"
+                },
+                {
+                  "t": 3570.5,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段5\"}"
+                },
+                {
+                  "t": 3880.3,
+                  "text": "{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}"
+                }
+              ]
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-stream-fake-cli"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-stream-fake-cli",
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "totalMs": 1900.5,
+              "status": 200,
+              "headers": {
+                "cache-control": "no-store",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188530628-99e7c235110e",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-type": "application/x-ndjson; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:30 GMT",
+                "transfer-encoding": "chunked"
+              },
+              "ttfbMs": 343.9,
+              "bytes": 243,
+              "bodySha256": "2b1fb8dd1e06e55cdd7976f2217e6d4e4c9a788ab22631f1f22f302623d966ff",
+              "bodyText": "{\"t\":\"delta\",\"text\":\"假片段1\"}\n{\"t\":\"delta\",\"text\":\"假片段2\"}\n{\"t\":\"delta\",\"text\":\"假片段3\"}\n{\"t\":\"delta\",\"text\":\"假片段4\"}\n{\"t\":\"delta\",\"text\":\"假片段5\"}\n{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}\n",
+              "lines": [
+                {
+                  "t": 343.9,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+                },
+                {
+                  "t": 649.9,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段2\"}"
+                },
+                {
+                  "t": 963.4,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段3\"}"
+                },
+                {
+                  "t": 1275.1,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段4\"}"
+                },
+                {
+                  "t": 1586.6,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段5\"}"
+                },
+                {
+                  "t": 1900.4,
+                  "text": "{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}"
+                }
+              ]
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-stream-fake-cli"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-stream-cancel",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-stream-cancel",
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "totalMs": 2349.9,
+              "status": 200,
+              "headers": {
+                "cache-control": "no-store",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188534521-878366f7aa98",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-type": "application/x-ndjson; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:34 GMT",
+                "transfer-encoding": "chunked"
+              },
+              "ttfbMs": 2349.7,
+              "lines": [
+                {
+                  "t": 2349.7,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+                }
+              ],
+              "aborted": true
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-stream-cancel"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-stream-cancel",
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "totalMs": 329,
+              "status": 200,
+              "headers": {
+                "cache-control": "no-store",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188537895-7b36cbc87b74",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-type": "application/x-ndjson; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:38 GMT",
+                "transfer-encoding": "chunked"
+              },
+              "ttfbMs": 328.8,
+              "lines": [
+                {
+                  "t": 328.9,
+                  "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+                }
+              ],
+              "aborted": true
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-stream-cancel"
+            ]
+          }
+        },
+        {
+          "id": "post-gemini-large-body",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-post-gemini-large-body",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 3578.6,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188543238-f183efb074b0",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "61",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:44 GMT",
+                "etag": "W/\"3d-UPu2ECbmT9QH3uK425YJaePWq1E\""
+              },
+              "ttfbMs": 3578.5,
+              "bytes": 61,
+              "bodySha256": "3e366d1dea181638c6ac15e1096f40d6351186b0bbeeba601a7be9a4febb6bf9",
+              "bodyText": "{\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-post-gemini-large-body"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-post-gemini-large-body",
+              "method": "POST",
+              "route": "/api/gemini",
+              "totalMs": 1561.3,
+              "status": 200,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188544822-166a4ace1f47",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "61",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:46 GMT",
+                "etag": "W/\"3d-UPu2ECbmT9QH3uK425YJaePWq1E\""
+              },
+              "ttfbMs": 1561.2,
+              "bytes": 61,
+              "bodySha256": "3e366d1dea181638c6ac15e1096f40d6351186b0bbeeba601a7be9a4febb6bf9",
+              "bodyText": "{\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-post-gemini-large-body"
+            ]
+          }
+        },
+        {
+          "id": "concurrent-isolation",
+          "b1": {
+            "responses": [
+              {
+                "trace": "parity-20260924-r2-default-b1-concurrent-isolation-0",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+                "totalMs": 2462.4,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188548704-24da65e42d42",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+                },
+                "ttfbMs": 2462.2,
+                "bytes": 530,
+                "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2330.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-b1-concurrent-isolation-1",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+                "totalMs": 2463.2,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188548705-cb66e9b93dc3",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "526",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+                },
+                "ttfbMs": 2463.2,
+                "bytes": 526,
+                "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "AAPL"
+              },
+              {
+                "trace": "parity-20260924-r2-default-b1-concurrent-isolation-2",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=USDTWD%3DX&interval=1d&range=5d",
+                "totalMs": 2464.5,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188548703-f6f65d99eba8",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "538",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"21a-OfEiAkwJhNtjpbbqLAXTIzlF02w\""
+                },
+                "ttfbMs": 2464.3,
+                "bytes": 538,
+                "bodySha256": "e3547d9bf13d9a44ba425f2c619bf87255f784545d9e1f10a27633711fb82d5d",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"USDTWD=X\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":945,\"longName\":\"FIXTURE USDTWD=X\",\"shortName\":\"FIXTURE USDTWD=X\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[942.75,943.25,943.75,944.25,944.75],\"high\":[944,944.5,945,945.5,946],\"low\":[942,942.5,943,943.5,944],\"close\":[943,943.5,944,944.5,945],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[943,943.5,944,944.5,945]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "USDTWD=X"
+              }
+            ],
+            "traces": [
+              "parity-20260924-r2-default-b1-concurrent-isolation-0",
+              "parity-20260924-r2-default-b1-concurrent-isolation-1",
+              "parity-20260924-r2-default-b1-concurrent-isolation-2"
+            ]
+          },
+          "c": {
+            "responses": [
+              {
+                "trace": "parity-20260924-r2-default-c-concurrent-isolation-0",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+                "totalMs": 68.3,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188548843-5a2f30f874aa",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+                },
+                "ttfbMs": 68.2,
+                "bytes": 530,
+                "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2330.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-c-concurrent-isolation-1",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+                "totalMs": 69,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188548846-6900510d4fe8",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "526",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"20e-qYjoH11EypsQ2eIleBK1FNqNZuM\""
+                },
+                "ttfbMs": 68.9,
+                "bytes": 526,
+                "bodySha256": "63685b069012815a561a8bb1471d4b80893a8d7d82252af14b412bc0f7370b12",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "AAPL"
+              },
+              {
+                "trace": "parity-20260924-r2-default-c-concurrent-isolation-2",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=USDTWD%3DX&interval=1d&range=5d",
+                "totalMs": 70.1,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188548849-1e355c79760b",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "538",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:48 GMT",
+                  "etag": "W/\"21a-OfEiAkwJhNtjpbbqLAXTIzlF02w\""
+                },
+                "ttfbMs": 70,
+                "bytes": 538,
+                "bodySha256": "e3547d9bf13d9a44ba425f2c619bf87255f784545d9e1f10a27633711fb82d5d",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"USDTWD=X\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":945,\"longName\":\"FIXTURE USDTWD=X\",\"shortName\":\"FIXTURE USDTWD=X\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[942.75,943.25,943.75,944.25,944.75],\"high\":[944,944.5,945,945.5,946],\"low\":[942,942.5,943,943.5,944],\"close\":[943,943.5,944,944.5,945],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[943,943.5,944,944.5,945]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "USDTWD=X"
+              }
+            ],
+            "traces": [
+              "parity-20260924-r2-default-c-concurrent-isolation-0",
+              "parity-20260924-r2-default-c-concurrent-isolation-1",
+              "parity-20260924-r2-default-c-concurrent-isolation-2"
+            ]
+          }
+        },
+        {
+          "id": "hs-pending-join",
+          "b1": {
+            "responses": [
+              {
+                "trace": "parity-20260924-r2-default-b1-hs-pending-join-0",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2317.TW&interval=1d&range=5d",
+                "totalMs": 2416.2,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188551197-eda182819fec",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"212-ZYIboI4BWXpdGty6Uo30ZjjNYVo\""
+                },
+                "ttfbMs": 2416,
+                "bytes": 530,
+                "bodySha256": "b498b3bbb0aee242b8839c1dbdae42e3322c8cf9b0021acb92c091aa0e62254c",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2317.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":668,\"longName\":\"FIXTURE 2317.TW\",\"shortName\":\"FIXTURE 2317.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[665.75,666.25,666.75,667.25,667.75],\"high\":[667,667.5,668,668.5,669],\"low\":[665,665.5,666,666.5,667],\"close\":[666,666.5,667,667.5,668],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[666,666.5,667,667.5,668]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2317.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-b1-hs-pending-join-1",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2454.TW&interval=1d&range=5d",
+                "totalMs": 2417.2,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188551194-17c8714badac",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"212-oyNgNKvfacE1XKbyOt1lZXDgF3w\""
+                },
+                "ttfbMs": 2417.1,
+                "bytes": 530,
+                "bodySha256": "4ba46ecceb46903bedd2d0a12abb33dfab5ef192ed053ec431349e17249acb2c",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2454.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":894,\"longName\":\"FIXTURE 2454.TW\",\"shortName\":\"FIXTURE 2454.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[891.75,892.25,892.75,893.25,893.75],\"high\":[893,893.5,894,894.5,895],\"low\":[891,891.5,892,892.5,893],\"close\":[892,892.5,893,893.5,894],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[892,892.5,893,893.5,894]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2454.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-b1-hs-pending-join-2",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=TSLA&interval=1d&range=5d",
+                "totalMs": 2414.8,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::jvju8-1790188551198-6e9fb1e9bbec",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "526",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"20e-7sM88qmG5kH2XCtONWEwYdvKUUs\""
+                },
+                "ttfbMs": 2414.6,
+                "bytes": 526,
+                "bodySha256": "39fca91ddae464f5294aa3e7b6bfa7f518a82dbb97fed24656c0f7eb2640c1a8",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"TSLA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":773,\"longName\":\"FIXTURE TSLA\",\"shortName\":\"FIXTURE TSLA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[770.75,771.25,771.75,772.25,772.75],\"high\":[772,772.5,773,773.5,774],\"low\":[770,770.5,771,771.5,772],\"close\":[771,771.5,772,772.5,773],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[771,771.5,772,772.5,773]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "TSLA"
+              }
+            ],
+            "traces": [
+              "parity-20260924-r2-default-b1-hs-pending-join-0",
+              "parity-20260924-r2-default-b1-hs-pending-join-1",
+              "parity-20260924-r2-default-b1-hs-pending-join-2"
+            ]
+          },
+          "c": {
+            "responses": [
+              {
+                "trace": "parity-20260924-r2-default-c-hs-pending-join-0",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2317.TW&interval=1d&range=5d",
+                "totalMs": 115.8,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188551333-8a5967a5b1a0",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"212-ZYIboI4BWXpdGty6Uo30ZjjNYVo\""
+                },
+                "ttfbMs": 115.7,
+                "bytes": 530,
+                "bodySha256": "b498b3bbb0aee242b8839c1dbdae42e3322c8cf9b0021acb92c091aa0e62254c",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2317.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":668,\"longName\":\"FIXTURE 2317.TW\",\"shortName\":\"FIXTURE 2317.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[665.75,666.25,666.75,667.25,667.75],\"high\":[667,667.5,668,668.5,669],\"low\":[665,665.5,666,666.5,667],\"close\":[666,666.5,667,667.5,668],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[666,666.5,667,667.5,668]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2317.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-c-hs-pending-join-1",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=2454.TW&interval=1d&range=5d",
+                "totalMs": 117.1,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188551336-aa642768e947",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "530",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"212-oyNgNKvfacE1XKbyOt1lZXDgF3w\""
+                },
+                "ttfbMs": 117,
+                "bytes": 530,
+                "bodySha256": "4ba46ecceb46903bedd2d0a12abb33dfab5ef192ed053ec431349e17249acb2c",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2454.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":894,\"longName\":\"FIXTURE 2454.TW\",\"shortName\":\"FIXTURE 2454.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[891.75,892.25,892.75,893.25,893.75],\"high\":[893,893.5,894,894.5,895],\"low\":[891,891.5,892,892.5,893],\"close\":[892,892.5,893,893.5,894],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[892,892.5,893,893.5,894]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "2454.TW"
+              },
+              {
+                "trace": "parity-20260924-r2-default-c-hs-pending-join-2",
+                "method": "GET",
+                "route": "/api/yahoo/chart?symbol=TSLA&interval=1d&range=5d",
+                "totalMs": 117.7,
+                "status": 200,
+                "headers": {
+                  "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                  "server": "Vercel",
+                  "x-vercel-id": "dev1::dev1::iulio-1790188551339-bf8cf356de99",
+                  "x-vercel-cache": "MISS",
+                  "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                  "access-control-allow-methods": "GET, POST, OPTIONS",
+                  "access-control-max-age": "86400",
+                  "connection": "close",
+                  "content-length": "526",
+                  "content-type": "application/json; charset=utf-8",
+                  "date": "Wed, 23 Sep 2026 18:35:51 GMT",
+                  "etag": "W/\"20e-7sM88qmG5kH2XCtONWEwYdvKUUs\""
+                },
+                "ttfbMs": 117.6,
+                "bytes": 526,
+                "bodySha256": "39fca91ddae464f5294aa3e7b6bfa7f518a82dbb97fed24656c0f7eb2640c1a8",
+                "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"TSLA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":773,\"longName\":\"FIXTURE TSLA\",\"shortName\":\"FIXTURE TSLA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[770.75,771.25,771.75,772.25,772.75],\"high\":[772,772.5,773,773.5,774],\"low\":[770,770.5,771,771.5,772],\"close\":[771,771.5,772,772.5,773],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[771,771.5,772,772.5,773]}]}}],\"error\":null}}",
+                "lines": [],
+                "metaSymbol": "TSLA"
+              }
+            ],
+            "traces": [
+              "parity-20260924-r2-default-c-hs-pending-join-0",
+              "parity-20260924-r2-default-c-hs-pending-join-1",
+              "parity-20260924-r2-default-c-hs-pending-join-2"
+            ]
+          }
+        },
+        {
+          "id": "hs-hot-hit",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-hs-hot-hit",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2308.TW&interval=1d&range=5d",
+              "totalMs": 1953.2,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188553268-0dd36ca8c8ec",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:53 GMT",
+                "etag": "W/\"212-/dhO85oyTukXs/ej+byqfDGWnXM\""
+              },
+              "ttfbMs": 1953.1,
+              "bytes": 530,
+              "bodySha256": "934687123418e45273340c2ce5f9a9285293bcdf83b00ef5124ea8a7dced5852",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2308.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":908,\"longName\":\"FIXTURE 2308.TW\",\"shortName\":\"FIXTURE 2308.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[905.75,906.25,906.75,907.25,907.75],\"high\":[907,907.5,908,908.5,909],\"low\":[905,905.5,906,906.5,907],\"close\":[906,906.5,907,907.5,908],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[906,906.5,907,907.5,908]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-hs-hot-hit"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-hs-hot-hit",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2308.TW&interval=1d&range=5d",
+              "totalMs": 54.7,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188553402-323c4e6b9aff",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:53 GMT",
+                "etag": "W/\"212-/dhO85oyTukXs/ej+byqfDGWnXM\""
+              },
+              "ttfbMs": 54.6,
+              "bytes": 530,
+              "bodySha256": "934687123418e45273340c2ce5f9a9285293bcdf83b00ef5124ea8a7dced5852",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2308.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":908,\"longName\":\"FIXTURE 2308.TW\",\"shortName\":\"FIXTURE 2308.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[905.75,906.25,906.75,907.25,907.75],\"high\":[907,907.5,908,908.5,909],\"low\":[905,905.5,906,906.5,907],\"close\":[906,906.5,907,907.5,908],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[906,906.5,907,907.5,908]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-hs-hot-hit"
+            ]
+          }
+        },
+        {
+          "id": "hs-ttl-expiry",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-hs-ttl-expiry",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=0050.TW&interval=1d&range=5d",
+              "totalMs": 1942.1,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188555270-f2ba6fcde577",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:55 GMT",
+                "etag": "W/\"212-ybSfexJoIBZ/Q3x5TUYSXeb8HQI\""
+              },
+              "ttfbMs": 1942,
+              "bytes": 530,
+              "bodySha256": "d887a23ac51a0254ea6affa21145d39a05f6f27f57a116e853574b5d91360907",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"0050.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":112,\"longName\":\"FIXTURE 0050.TW\",\"shortName\":\"FIXTURE 0050.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[109.75,110.25,110.75,111.25,111.75],\"high\":[111,111.5,112,112.5,113],\"low\":[109,109.5,110,110.5,111],\"close\":[110,110.5,111,111.5,112],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[110,110.5,111,111.5,112]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-b1-hs-ttl-expiry"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-hs-ttl-expiry",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=0050.TW&interval=1d&range=5d",
+              "totalMs": 116.1,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188555400-cf57343b78ee",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:35:55 GMT",
+                "etag": "W/\"212-ybSfexJoIBZ/Q3x5TUYSXeb8HQI\""
+              },
+              "ttfbMs": 116,
+              "bytes": 530,
+              "bodySha256": "d887a23ac51a0254ea6affa21145d39a05f6f27f57a116e853574b5d91360907",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"0050.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":112,\"longName\":\"FIXTURE 0050.TW\",\"shortName\":\"FIXTURE 0050.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[109.75,110.25,110.75,111.25,111.75],\"high\":[111,111.5,112,112.5,113],\"low\":[109,109.5,110,110.5,111],\"close\":[110,110.5,111,111.5,112],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[110,110.5,111,111.5,112]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-default-c-hs-ttl-expiry"
+            ]
+          }
+        },
+        {
+          "id": "hs-cancel-isolation",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-default-b1-hs-cancel-isolation-b",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+              "totalMs": 4918.6,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::jvju8-1790188559256-a9f71d6d9051",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:02 GMT",
+                "etag": "W/\"20e-0DCFLnMNQcWfhlKriUkjGQaxX+Y\""
+              },
+              "ttfbMs": 4918.5,
+              "bytes": 526,
+              "bodySha256": "d89a1b4055a095710a5b5744b18547c7cec0a9e7866116530bdf0e09acc12618",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"NVDA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":576,\"longName\":\"FIXTURE NVDA\",\"shortName\":\"FIXTURE NVDA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[573.75,574.25,574.75,575.25,575.75],\"high\":[575,575.5,576,576.5,577],\"low\":[573,573.5,574,574.5,575],\"close\":[574,574.5,575,575.5,576],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[574,574.5,575,575.5,576]}]}}],\"error\":null}}",
+              "lines": [],
+              "metaSymbol": "NVDA"
+            },
+            "first": {
+              "trace": "parity-20260924-r2-default-b1-hs-cancel-isolation-a",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+              "totalMs": 2133.5,
+              "status": 0,
+              "aborted": true,
+              "lines": []
+            },
+            "reachedHandler": true,
+            "traces": [
+              "parity-20260924-r2-default-b1-hs-cancel-isolation-b"
+            ],
+            "extraTraces": [
+              "parity-20260924-r2-default-b1-hs-cancel-isolation-a"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-default-c-hs-cancel-isolation-b",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+              "totalMs": 3070.3,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::iulio-1790188566401-b2e0fae27542",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "526",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:09 GMT",
+                "etag": "W/\"20e-0DCFLnMNQcWfhlKriUkjGQaxX+Y\""
+              },
+              "ttfbMs": 3070.1,
+              "bytes": 526,
+              "bodySha256": "d89a1b4055a095710a5b5744b18547c7cec0a9e7866116530bdf0e09acc12618",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"NVDA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":576,\"longName\":\"FIXTURE NVDA\",\"shortName\":\"FIXTURE NVDA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[573.75,574.25,574.75,575.25,575.75],\"high\":[575,575.5,576,576.5,577],\"low\":[573,573.5,574,574.5,575],\"close\":[574,574.5,575,575.5,576],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[574,574.5,575,575.5,576]}]}}],\"error\":null}}",
+              "lines": [],
+              "metaSymbol": "NVDA"
+            },
+            "first": {
+              "trace": "parity-20260924-r2-default-c-hs-cancel-isolation-a",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+              "totalMs": 232.2,
+              "status": 0,
+              "aborted": true,
+              "lines": []
+            },
+            "reachedHandler": true,
+            "traces": [
+              "parity-20260924-r2-default-c-hs-cancel-isolation-b"
+            ],
+            "extraTraces": [
+              "parity-20260924-r2-default-c-hs-cancel-isolation-a"
+            ]
+          }
+        }
+      ],
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/yahoo/chart.ts",
+            "pid": 28656,
+            "generation": 0
+          },
+          {
+            "entrypoint": "api/finmind.ts",
+            "pid": 17428,
+            "generation": 0
+          },
+          {
+            "entrypoint": "api/gemini-stream.ts",
+            "pid": 14080,
+            "generation": 0
+          },
+          {
+            "entrypoint": "api/yahoo/search.ts",
+            "pid": 13284,
+            "generation": 0
+          },
+          {
+            "entrypoint": "api/gemini.ts",
+            "pid": 24136,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "orphans": []
+      }
+    },
+    {
+      "config": "secret",
+      "services": [
+        {
+          "label": "b1",
+          "name": "vercel-dev-b1",
+          "port": 4633,
+          "ownedPid": 2008,
+          "listenerPid": 2008,
+          "listenerPids": [
+            2008
+          ],
+          "ready": true,
+          "readyMs": 2904.453,
+          "stopped": true,
+          "exit": null
+        },
+        {
+          "label": "c",
+          "name": "vercel-dev-c",
+          "port": 4634,
+          "ownedPid": 21392,
+          "listenerPid": 21392,
+          "listenerPids": [
+            21392
+          ],
+          "ready": true,
+          "readyMs": 2866.665,
+          "stopped": true,
+          "exit": null
+        }
+      ],
+      "cases": [
+        {
+          "id": "secret-missing",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-b1-secret-missing",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 2016.8,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::om1vc-1790188587960-5e7ccb54ac2e",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:27 GMT",
+                "etag": "W/\"3b-5503wx7rGi4xwE7X6YRcrWk7fpY\""
+              },
+              "ttfbMs": 2016.7,
+              "bytes": 59,
+              "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-b1-secret-missing"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-c-secret-missing",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1920.6,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::m004k-1790188589882-785008a4bf3b",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:29 GMT",
+                "etag": "W/\"3b-5503wx7rGi4xwE7X6YRcrWk7fpY\""
+              },
+              "ttfbMs": 1920.5,
+              "bytes": 59,
+              "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-c-secret-missing"
+            ]
+          }
+        },
+        {
+          "id": "secret-wrong",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-b1-secret-wrong",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1859.1,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::om1vc-1790188591745-e033d2f82807",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:31 GMT",
+                "etag": "W/\"3b-5503wx7rGi4xwE7X6YRcrWk7fpY\""
+              },
+              "ttfbMs": 1859,
+              "bytes": 59,
+              "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-b1-secret-wrong"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-c-secret-wrong",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 33.3,
+              "status": 403,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::m004k-1790188591788-3fda5ca888fc",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "59",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:31 GMT",
+                "etag": "W/\"3b-5503wx7rGi4xwE7X6YRcrWk7fpY\""
+              },
+              "ttfbMs": 33.2,
+              "bytes": 59,
+              "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+              "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-c-secret-wrong"
+            ]
+          }
+        },
+        {
+          "id": "secret-correct",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-b1-secret-correct",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1944.9,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::om1vc-1790188593626-c7f609eba3b4",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:33 GMT",
+                "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+              },
+              "ttfbMs": 1944.8,
+              "bytes": 530,
+              "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-b1-secret-correct"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-c-secret-correct",
+              "method": "GET",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 115.8,
+              "status": 200,
+              "headers": {
+                "cache-control": "s-maxage=60, stale-while-revalidate=300",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::m004k-1790188593764-8ece2e8066c2",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "content-length": "530",
+                "content-type": "application/json; charset=utf-8",
+                "date": "Wed, 23 Sep 2026 18:36:33 GMT",
+                "etag": "W/\"212-NsfRbx9uPnIXIZ+5m9vgZakgWiE\""
+              },
+              "ttfbMs": 115.7,
+              "bytes": 530,
+              "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+              "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-c-secret-correct"
+            ]
+          }
+        },
+        {
+          "id": "secret-options-short-circuit",
+          "b1": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-b1-secret-options-short-circuit",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 1854.8,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::om1vc-1790188595698-45d9fa138ce9",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:36:35 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 1854.8,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-b1-secret-options-short-circuit"
+            ]
+          },
+          "c": {
+            "response": {
+              "trace": "parity-20260924-r2-secret-c-secret-options-short-circuit",
+              "method": "OPTIONS",
+              "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+              "totalMs": 23.4,
+              "status": 204,
+              "headers": {
+                "cache-control": "public, max-age=0, must-revalidate",
+                "server": "Vercel",
+                "x-vercel-id": "dev1::dev1::m004k-1790188595734-31c10d7c3904",
+                "x-vercel-cache": "MISS",
+                "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+                "access-control-allow-methods": "GET, POST, OPTIONS",
+                "access-control-allow-origin": "http://localhost:3000",
+                "access-control-max-age": "86400",
+                "connection": "close",
+                "date": "Wed, 23 Sep 2026 18:36:35 GMT",
+                "vary": "Origin"
+              },
+              "ttfbMs": 23.4,
+              "bytes": 0,
+              "bodySha256": null,
+              "bodyText": "",
+              "lines": []
+            },
+            "traces": [
+              "parity-20260924-r2-secret-c-secret-options-short-circuit"
+            ]
+          }
+        }
+      ],
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/yahoo/chart.ts",
+            "pid": 32460,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "orphans": []
+      }
+    }
+  ],
+  "aborted": null,
+  "identityAfter": {
+    "head": "5b7a4307d7c15f8ec3fe5b588b42aa34bc0faf5c",
+    "productSha256": "9ce04fc05765036bc874e16fb81391ecdb4cdb1c541d4c7927039140bc530b4a",
+    "tools": {
+      "trace-preload.cjs": "b0730d4ea1673ed8362b2e2e8650751eeeb943ab251a39a06915ad47866134cf",
+      "persistent-functions.cjs": "f11e1305c9f4fff0bf982b32101790f586f8f500d95e2e9f340a21696f3511a0",
+      "b1-breakdown.mjs": "fa509e41fd3eaa40709adae4095e6e5d6f5182df02e752ea40c38fcb6954d423",
+      "verify-b1-breakdown.mjs": "1c7255fbbfa76c1527ee72dada6c2c4a0313c5632c8c09adc1daf876b6ec0959",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da"
+    }
+  },
+  "finishedAt": "2026-09-23T18:36:37.340Z"
+}

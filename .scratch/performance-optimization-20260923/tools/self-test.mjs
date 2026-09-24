@@ -274,5 +274,11 @@ check('瀏覽器路由去除未列參數', routeOf('/api/finmind?dataset=X&token
 
 const failed = results.filter(r => !r.pass);
 for (const r of results) console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}`);
-console.log(`\n${results.length - failed.length}/${results.length} 通過；暫存 ${tmpRoot}`);
+// 全部通過就清掉暫存；有失敗時保留，方便檢查。
+if (failed.length) {
+  console.log(`\n${results.length - failed.length}/${results.length} 通過；暫存保留在 ${tmpRoot}`);
+} else {
+  fs.rmSync(tmpRoot, { recursive: true, force: true });
+  console.log(`\n${results.length}/${results.length} 通過`);
+}
 process.exitCode = failed.length ? 1 : 0;

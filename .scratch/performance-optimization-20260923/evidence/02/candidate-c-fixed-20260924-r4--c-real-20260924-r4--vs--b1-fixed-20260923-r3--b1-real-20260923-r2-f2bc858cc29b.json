@@ -1,0 +1,67 @@
+{
+  "candidateFixed": "c-fixed-20260924-r4",
+  "candidateReal": "c-real-20260924-r4",
+  "baselineFixed": "b1-fixed-20260923-r3",
+  "baselineReal": "b1-real-20260923-r2",
+  "verifierSha": "f2bc858cc29b",
+  "comparison": {
+    "dispatch": {
+      "baselineLocalMedianMs": 1836.1,
+      "candidateLocalMedianMs": 20.6,
+      "gainMs": 1815.5,
+      "optionsWarmMedianMs": {
+        "baseline": {
+          "yahoo-chart": 1833.3,
+          "finmind": 1839.9
+        },
+        "candidate": {
+          "yahoo-chart": 17.5,
+          "finmind": 17.3
+        }
+      }
+    },
+    "handshake": {
+      "baselineOwnHandshakes": "13/13",
+      "candidateOwnHandshakes": "1/13",
+      "baselineHandshakeMedianMs": 1511.9,
+      "candidateHandshakeMedianMs": 1469.4,
+      "baselineHandshakeTotalMs": 20449.3,
+      "candidateHandshakeTotalMs": 1469.4,
+      "handshakeSavedTotalMs": 18979.9,
+      "baselineOutbound": {
+        "yahoo-cookie": 13,
+        "yahoo-crumb": 13,
+        "yahoo-chart": 13,
+        "finmind": 1
+      },
+      "candidateOutbound": {
+        "yahoo-cookie": 1,
+        "yahoo-crumb": 1,
+        "yahoo-chart": 13,
+        "finmind": 1
+      }
+    },
+    "realQuote": {
+      "baselineTtfbMedianMs": 4045.7,
+      "candidateTtfbMedianMs": 309.5,
+      "candidateColdTtfbMedianMs": 3887.4,
+      "candidateColdCount": 1,
+      "candidateWarmTtfbMedianMs": 309.2,
+      "candidateWarmCount": 12,
+      "candidateStartupOnPathCount": 1,
+      "baselineChartMedianMs": 292.3,
+      "candidateChartMedianMs": 281.1
+    },
+    "realBatch": {
+      "baselineFirstMs": 4096.6,
+      "candidateFirstMs": 244.1,
+      "baselineAllMs": 16221.1,
+      "candidateAllMs": 1243.5
+    },
+    "targets": {
+      "candidateFixedThresholdPass": true,
+      "reduction": 0.989
+    }
+  },
+  "problems": []
+}

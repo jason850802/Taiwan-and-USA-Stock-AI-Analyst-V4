@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":26.52,"pid":13728,"entry":"api/gemini.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1803.962,"pid":13728,"seq":1}
+{"ev":"child.listening","t":1820.037,"pid":13728,"seq":1}
+{"ev":"child.listenCall","t":2024.945,"pid":13728,"seq":2}
+{"ev":"child.listening","t":2026.314,"pid":13728,"seq":2}
+{"ev":"child.ready","t":2026.605,"pid":13728}
+{"ev":"child.recv","t":2029.637,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"devProxy","method":"POST","route":"/api/gemini"}
+{"ev":"child.recv","t":2036.286,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"handler","method":"POST","route":"/api/gemini"}
+{"ev":"child.reqHeaders","t":2038.521,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4861","x-forwarded-host":"127.0.0.1:4861","x-forwarded-proto":"http","x-forwarded-port":"4861","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4861","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fakeCli.spawn","t":2043.006,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","streaming":false,"deltas":5,"intervalMs":300,"mode":"success"}
+{"ev":"child.fakeCli.stdin","t":2043.607,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","promptBytes":21}
+{"ev":"child.fakeCli.done","t":3553.032,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","emitted":0,"mode":"success"}
+{"ev":"child.writeHead","t":3554.418,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"handler","status":200}
+{"ev":"child.finish","t":3555.533,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"handler"}
+{"ev":"child.writeHead","t":3560.811,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"devProxy","status":200}
+{"ev":"child.finish","t":3561.527,"pid":13728,"trace":"smoke-02d-parity-default-b1-post-gemini-fake-cli","layer":"devProxy"}

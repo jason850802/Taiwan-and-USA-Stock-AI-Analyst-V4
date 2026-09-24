@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":27.433,"pid":32652,"entry":"api/gemini-stream.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1748.383,"pid":32652,"seq":1}
+{"ev":"child.listening","t":1764.576,"pid":32652,"seq":1}
+{"ev":"child.listenCall","t":1974.801,"pid":32652,"seq":2}
+{"ev":"child.listening","t":1976.536,"pid":32652,"seq":2}
+{"ev":"child.ready","t":1976.888,"pid":32652}
+{"ev":"child.recv","t":1980.504,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"devProxy","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.recv","t":1992.805,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"handler","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.reqHeaders","t":1993.135,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4681","x-forwarded-host":"127.0.0.1:4681","x-forwarded-proto":"http","x-forwarded-port":"4681","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4681","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fakeCli.spawn","t":1998.107,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","streaming":true,"deltas":0,"intervalMs":100,"mode":"spawnError"}
+{"ev":"child.fakeCli.stdin","t":1998.517,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","promptBytes":21}
+{"ev":"child.fakeCli.error","t":1998.923,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","code":"ENOENT"}
+{"ev":"child.writeHead","t":2000.252,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"handler","status":502}
+{"ev":"child.finish","t":2001.298,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"handler"}
+{"ev":"child.writeHead","t":2005.68,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"devProxy","status":502}
+{"ev":"child.finish","t":2006.333,"pid":32652,"trace":"smoke-02b-parity-default-b1-post-gemini-stream-spawn-error","layer":"devProxy"}

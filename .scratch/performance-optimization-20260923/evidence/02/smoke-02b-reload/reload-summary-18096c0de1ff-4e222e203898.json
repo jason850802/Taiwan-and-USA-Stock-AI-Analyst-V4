@@ -1,0 +1,265 @@
+{
+  "runId": "smoke-02b-reload",
+  "prototypeOverride": false,
+  "steps": [
+    {
+      "step": "baseline",
+      "invalidated": null,
+      "expect": null,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "edit-lib-message",
+      "invalidated": true,
+      "expect": {
+        "newMessageInB1": true,
+        "newMessageInC": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "syntax-error",
+      "invalidated": true,
+      "expect": {
+        "b1Failed": true,
+        "cFailed": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 500,
+          "c": 500,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-syntax",
+      "invalidated": true,
+      "expect": {
+        "b1Ok": true,
+        "cOk": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "env-add-secret",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 403,
+        "cStatus": 403
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 403,
+          "c": 403,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "env-restore",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 200,
+        "cStatus": 200
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "delete-route",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 404,
+        "cStatus": 404
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 404,
+          "c": 404,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-route",
+      "invalidated": true,
+      "expect": {
+        "b1Ok": true,
+        "cOk": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-lib",
+      "invalidated": true,
+      "expect": {
+        "markerGoneB1": true,
+        "markerGoneC": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "edit-during-stream",
+      "invalidated": true,
+      "expect": {
+        "editedAfterSecondDelta": true,
+        "b1Completed": true,
+        "cCompleted": false,
+        "cLines": 17,
+        "cTotalMs": 127197.9
+      },
+      "probes": [
+        {
+          "route": "/api/gemini-stream",
+          "b1": 200,
+          "c": 0,
+          "same": false
+        }
+      ]
+    }
+  ],
+  "b1Crashes": [
+    {
+      "beforeStep": "restore-syntax",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4691,
+      "logErrors": [
+        "Error: Transform failed with 1 error:",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 22628 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 14076,
+      "generation": 0
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 25532,
+      "generation": 0
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 14240,
+      "generation": 1
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 8992,
+      "generation": 2
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 12340,
+      "generation": 3
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 31136,
+      "generation": 4
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 28764,
+      "generation": 5
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 12388,
+      "generation": 7
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 468,
+      "generation": 8
+    },
+    {
+      "entrypoint": "api/gemini-stream.ts",
+      "pid": 13380,
+      "generation": 8
+    }
+  ],
+  "invalidations": 13,
+  "retirements": 9,
+  "cleanup": {
+    "restored": true,
+    "deleted": [
+      ".env",
+      ".vercel/README.txt",
+      ".vercel/project.json",
+      ".vercel"
+    ],
+    "apiStatusClean": true,
+    "envRemoved": true,
+    "vercelLinkRemoved": true
+  },
+  "diffs": [
+    "edit-during-stream /api/gemini-stream：B1 200 ≠ 候選 0",
+    "edit-during-stream：候選串流沒有被停用流程切斷 不成立"
+  ],
+  "problems": []
+}

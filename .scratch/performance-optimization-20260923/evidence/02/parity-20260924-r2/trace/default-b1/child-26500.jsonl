@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":26.935,"pid":26500,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1722.217,"pid":26500,"seq":1}
+{"ev":"child.listening","t":1738.718,"pid":26500,"seq":1}
+{"ev":"child.listenCall","t":1799.04,"pid":26500,"seq":2}
+{"ev":"child.listening","t":1800.64,"pid":26500,"seq":2}
+{"ev":"child.ready","t":1800.968,"pid":26500}
+{"ev":"child.recv","t":1804.446,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":1813.324,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1813.663,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","names":["connection","host","referer","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4631","x-forwarded-host":"127.0.0.1:4631","x-forwarded-proto":"http","x-forwarded-port":"4631","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4631","referer":"http://evil.example/page","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1815.312,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"handler","status":403}
+{"ev":"child.finish","t":1816.698,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"handler"}
+{"ev":"child.writeHead","t":1821.398,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"devProxy","status":403}
+{"ev":"child.finish","t":1821.997,"pid":26500,"trace":"parity-20260924-r2-default-b1-get-chart-evil-referer","layer":"devProxy"}

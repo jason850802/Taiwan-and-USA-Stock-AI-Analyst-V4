@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":26.597,"pid":17284,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1926.888,"pid":17284,"seq":1}
+{"ev":"child.listening","t":1945.558,"pid":17284,"seq":1}
+{"ev":"child.listenCall","t":2007.186,"pid":17284,"seq":2}
+{"ev":"child.listening","t":2008.762,"pid":17284,"seq":2}
+{"ev":"child.ready","t":2009.091,"pid":17284}
+{"ev":"child.recv","t":2012.785,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":2021.909,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":2022.246,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","names":["connection","host","referer","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4811","x-forwarded-host":"127.0.0.1:4811","x-forwarded-proto":"http","x-forwarded-port":"4811","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4811","referer":"http://evil.example/page","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2024.026,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"handler","status":403}
+{"ev":"child.finish","t":2025.651,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"handler"}
+{"ev":"child.writeHead","t":2031.337,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"devProxy","status":403}
+{"ev":"child.finish","t":2032.054,"pid":17284,"trace":"parity-20260924-r4-default-b1-get-chart-evil-referer","layer":"devProxy"}

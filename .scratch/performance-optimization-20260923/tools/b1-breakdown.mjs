@@ -1,9 +1,12 @@
 #!/usr/bin/env node
-// 01 票：B1 日常入口（主工作區 `vercel dev --listen <port>`）等待分解 runner。
+// 01 票：B1 日常入口（主工作區 `vercel dev --listen <port>`）等待分解 runner；02 票起也量候選 C。
 //
 // 用法（repo 根目錄執行）：
 //   node .scratch/performance-optimization-20260923/tools/b1-breakdown.mjs --run-id <新代號> --mode fixed --port-base <未占用埠>
 //   node .scratch/performance-optimization-20260923/tools/b1-breakdown.mjs --run-id <新代號> --mode real --port-base <未占用埠>
+// 加 --entry c 改量 02 票候選（同一 vercel dev＋tools/persistent-functions.cjs 長駐原型，只綁 127.0.0.1）；
+// 候選 fixed run 以 --baseline-run（預設 b1-fixed-20260923-r3）計算相對改善。
+// --ticket 指定證據放哪一票（預設 B1＝01、候選＝02）；02 重量 B1 基準時用 --ticket 02。
 //
 // fixed：四次獨立啟動，不打真上游。
 //   A／C（plain，未注入探針）：空 OPTIONS 正式樣本（直連 vercel dev）。
@@ -11,31 +14,28 @@
 //   單支 FinMind、十檔＋FX 三槽批次，共 --rounds 輪。
 // real：一次啟動（探針、真上游）：台股／美股報價與 FinMind 名稱各一支方向確認，再跑十檔＋FX 三槽批次；
 //   429、5xx、連線失敗或逾時即停止後續起跑。
-// 結束後停止本 run 自己 spawn 的程序樹並呼叫判定器；exit code 同判定器（0 達標／1 判紅／2 無效），
-// 並寫入 evidence 的 runner-result.json。
+// 結束後停止本 run 自己 spawn 的程序樹並呼叫判定器；exit code 同判定器（fixed：0 達標／1 判紅；
+// real 沒有效能門檻：0 有效；兩種模式 2＝無效），並寫入 evidence 的 runner-result.json。
 // 快速失敗：產品樹不等於 30dfdb2、listener PID 不是本 run spawn 的程序、上游出現 429／5xx／連線錯誤，
 // 都立即停止後續起跑。
 // 不修改全域 CLI、不複製 .env（vercel dev 直接讀主工作區 .env）；主工作區只寫本票 evidence 目錄；
-// runtime 與 log 放 %LOCALAPPDATA%\Temp。
-import { execFileSync, spawn, spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
+// runtime 與 log 放 %LOCALAPPDATA%\Temp。服務起停、身分與 run-id 認領見 service-kit.mjs。
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
-import { EVIDENCE_ROOT, PLAN_DIR, ROOT, parseArgs, main as verifyMain } from './verify-b1-breakdown.mjs';
+import {
+  BASELINE_COMMIT, ENTRIES, PERSISTENT, PRELOAD, READY_TIMEOUT_MS,
+  assertOwnedListener, claimRun, copyTrace, fileSha, identity, identityAfter, persistentReport,
+  probeEnv, serviceEnv, sha256, startService, startVercelDev, stopService,
+} from './service-kit.mjs';
+import { ROOT, parseArgs, main as verifyMain } from './verify-b1-breakdown.mjs';
 
 const TOOLS = path.dirname(fileURLToPath(import.meta.url));
-const RUNTIME_ROOT = path.join(process.env.LOCALAPPDATA, 'Temp', 'perf-opt-20260923');
-const VERCEL_PKG = path.join(process.env.APPDATA, 'npm', 'node_modules', 'vercel');
-const VERCEL_VC = path.join(VERCEL_PKG, 'dist', 'vc.js');
 const VITE_BIN = path.join(ROOT, 'node_modules', 'vite', 'bin', 'vite.js');
-const PRELOAD = path.join(TOOLS, 'trace-preload.cjs');
+const DEFAULT_BASELINE_RUN = 'b1-fixed-20260923-r3';
 const VITE_CONFIG = path.join(TOOLS, 'b1-vite-proxy.config.mjs');
-const BASELINE_COMMIT = '30dfdb2';
-// 產品清單排除文件／代理目錄；prompts/ 只有一份提示詞文件（程式不 import，現為 skip-worktree 實體缺檔）。
-const EXCLUDED_PREFIXES = ['.scratch/', '.planning/', '.agents/', '.claude/', '.codex/', 'docs/', 'prompts/'];
 const QUOTE_SYMBOLS = ['2317.TW', '2330.TW', '2454.TW', '2308.TW', '0050.TW', 'AAPL', 'NVDA', 'MSFT', 'AMZN', 'TSLA'];
 const FX_SYMBOL = 'USDTWD=X';
 const FINMIND_NAME_ROUTE = '/api/finmind?dataset=TaiwanStockInfo&data_id=2330';
@@ -49,209 +49,10 @@ const SLOTS = 3;
 const REAL_DIRECTION_QUOTES = ['2330.TW', 'AAPL'];
 const YAHOO_OUTBOUND_NORMAL = 3;
 const YAHOO_OUTBOUND_WORST = 6;
-// handler 需要讀的後端變數：只記是否存在，不記值。
-const RELEVANT_ENV_KEYS = ['ALLOWED_ORIGIN', 'PROXY_SHARED_SECRET', 'FINMIND_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN'];
-const READY_TIMEOUT_MS = 90_000;
 const CLIENT_TIMEOUT_MS = 45_000;
 const quoteRoute = symbol => `/api/yahoo/chart?${new URLSearchParams({ symbol, interval: '1d', range: '5d' })}`;
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-const sha256 = data => createHash('sha256').update(data).digest('hex');
-const rel = value => Math.round(value * 1000) / 1000;
-
-function gitEnv() {
-  const env = { ...process.env };
-  for (const key of Object.keys(env)) if (key.startsWith('GIT_CONFIG')) delete env[key];
-  return env;
-}
-
-const git = (args, input) => execFileSync('git', args, {
-  cwd: ROOT,
-  encoding: 'utf8',
-  env: gitEnv(),
-  input,
-  maxBuffer: 64 * 1024 * 1024,
-});
-
-function lsTree(ref) {
-  const map = new Map();
-  for (const entry of git(['ls-tree', '-r', '-z', ref]).split('\0').filter(Boolean)) {
-    const match = entry.match(/^\d+ (\w+) ([0-9a-f]+)\t(.+)$/s);
-    if (match && match[1] === 'blob') map.set(match[3], match[2]);
-  }
-  return map;
-}
-
-const isProductPath = p => !EXCLUDED_PREFIXES.some(prefix => p.startsWith(prefix));
-
-// 產品樹身分：主工作區實體內容對 HEAD 與 30dfdb2 逐檔比對（含 skip-worktree 檔），不信 git status。
-function productManifest() {
-  const head = lsTree('HEAD');
-  const baseline = lsTree(BASELINE_COMMIT);
-  const paths = [...new Set([...head.keys(), ...baseline.keys()])].filter(isProductPath).sort();
-  const existing = paths.filter(p => fs.existsSync(path.join(ROOT, p)));
-  const hashes = git(['hash-object', '--stdin-paths'], `${existing.join('\n')}\n`).trim().split('\n');
-  const worktree = new Map(existing.map((p, i) => [p, hashes[i]]));
-  const differsFromHead = paths.filter(p => worktree.get(p) !== head.get(p));
-  const differsFromBaseline = paths.filter(p => worktree.get(p) !== baseline.get(p));
-  // 排除目錄以 pathspec 剪枝，避免鑽進舊 runtime 的深層未追蹤副本。
-  const excludeSpecs = EXCLUDED_PREFIXES.map(prefix => `:(exclude)${prefix.slice(0, -1)}`);
-  const untracked = git(['ls-files', '--others', '--exclude-standard', '-z', '--', '.', ...excludeSpecs])
-    .split('\0').filter(Boolean).filter(isProductPath);
-  return {
-    fileCount: paths.length,
-    aggregateSha256: sha256(paths.map(p => `${worktree.get(p) ?? 'MISSING'} ${p}`).join('\n')),
-    missing: paths.filter(p => !worktree.has(p)),
-    differsFromHead,
-    differsFromBaseline,
-    equalsHead: differsFromHead.length === 0,
-    equalsBaselineCommit: differsFromBaseline.length === 0,
-    untracked: [...new Set(untracked)],
-  };
-}
-
-// 全樹隱藏狀態：git status 看不到 skip-worktree 檔的缺檔與內容差異，逐檔以實體內容對 index 比對。
-function worktreeState() {
-  const flagged = git(['ls-files', '-v', '-z']).split('\0').filter(entry => entry.startsWith('S '))
-    .map(entry => entry.slice(2));
-  const index = new Map();
-  for (const entry of git(['ls-files', '-s', '-z']).split('\0').filter(Boolean)) {
-    const match = entry.match(/^\d+ ([0-9a-f]+) \d\t(.+)$/s);
-    if (match) index.set(match[2], match[1]);
-  }
-  const existing = flagged.filter(p => fs.existsSync(path.join(ROOT, p)));
-  const hashes = existing.length
-    ? git(['hash-object', '--stdin-paths'], `${existing.join('\n')}\n`).trim().split('\n')
-    : [];
-  const hiddenModified = existing.filter((p, i) => hashes[i] !== index.get(p));
-  return {
-    skipWorktree: flagged.length,
-    skipWorktreeMissing: flagged.length - existing.length,
-    hiddenModified,
-    trackedModified: git(['diff', '--name-only', '-z']).split('\0').filter(Boolean),
-  };
-}
-
-const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
-const fileSha = file => sha256(fs.readFileSync(file));
-
-const toolHashes = () => Object.fromEntries(['trace-preload.cjs', 'b1-breakdown.mjs', 'verify-b1-breakdown.mjs', 'b1-vite-proxy.config.mjs']
-  .map(name => [name, fileSha(path.join(TOOLS, name))]));
-
-function firstExisting(candidates) {
-  return candidates.find(file => fs.existsSync(file)) ?? null;
-}
-
-function identity() {
-  const tsxPkg = firstExisting([
-    path.join(VERCEL_PKG, 'node_modules', '@vercel', 'node', 'node_modules', 'tsx', 'package.json'),
-    path.join(VERCEL_PKG, 'node_modules', 'tsx', 'package.json'),
-  ]);
-  const envFile = path.join(ROOT, '.env');
-  const envKeyNames = fs.existsSync(envFile)
-    ? fs.readFileSync(envFile, 'utf8').split(/\r?\n/).map(line => line.match(/^([A-Z_][A-Z0-9_]*)=/)?.[1]).filter(Boolean)
-    : [];
-  return {
-    git: {
-      head: git(['rev-parse', 'HEAD']).trim(),
-      branch: git(['rev-parse', '--abbrev-ref', 'HEAD']).trim(),
-      baselineCommit: git(['rev-parse', BASELINE_COMMIT]).trim(),
-    },
-    product: productManifest(),
-    worktree: worktreeState(),
-    cwd: ROOT,
-    command: 'node <APPDATA>/npm/node_modules/vercel/dist/vc.js dev --listen <port>',
-    dailyEquivalent: '日常為 npx vercel dev --listen 3001；npx 解析到同一全域 vc.js，本 run 省去 npx 包裝層以讓 owned PID＝listener PID',
-    versions: {
-      node: process.version,
-      vercel: readJson(path.join(VERCEL_PKG, 'package.json')).version,
-      vercelNode: readJson(path.join(VERCEL_PKG, 'node_modules', '@vercel', 'node', 'package.json')).version,
-      tsx: tsxPkg ? readJson(tsxPkg).version : null,
-      vite: readJson(path.join(ROOT, 'node_modules', 'vite', 'package.json')).version,
-    },
-    tools: toolHashes(),
-    plan: Object.fromEntries(['PLAN.md', 'spec.md', 'acceptance.md', 'issues/01-baseline-and-critical-path.md']
-      .map(name => [name, fileSha(path.join(PLAN_DIR, name))])),
-    envFile: {
-      present: fs.existsSync(envFile),
-      relevantKeysPresent: Object.fromEntries(RELEVANT_ENV_KEYS.map(key => [key, envKeyNames.includes(key)])),
-      copies: 0,
-    },
-  };
-}
-
-// run 結束時的身分重核：HEAD、產品樹與工具雜湊，由判定器與開始時比對。
-function identityAfter() {
-  return {
-    head: git(['rev-parse', 'HEAD']).trim(),
-    productSha256: productManifest().aggregateSha256,
-    tools: toolHashes(),
-  };
-}
-
-function listenerPids(port) {
-  const output = execFileSync('netstat', ['-ano', '-p', 'TCP'], { encoding: 'utf8', windowsHide: true });
-  const pids = new Set();
-  for (const line of output.split(/\r?\n/)) {
-    const match = line.match(/^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)\s*$/);
-    if (match && Number(match[1]) === port) pids.add(Number(match[2]));
-  }
-  // IPv6 行格式同為 [::]:port，已由上式涵蓋。
-  return [...pids];
-}
-
-function serviceEnv(extra) {
-  const env = { ...process.env };
-  for (const key of Object.keys(env)) {
-    if (key.toUpperCase() === 'NODE_OPTIONS' || key.startsWith('PERF01_')) delete env[key];
-  }
-  return { ...env, ...extra };
-}
-
-async function startService({ name, argv, env, port, readyPattern, logFile }) {
-  if (listenerPids(port).length) throw new Error(`埠 ${port} 已被占用，拒絕啟動`);
-  const fd = fs.openSync(logFile, 'a');
-  const child = spawn(process.execPath, argv, { cwd: ROOT, env, stdio: ['ignore', fd, fd], windowsHide: true });
-  fs.closeSync(fd);
-  const svc = { name, port, ownedPid: child.pid, listenerPid: null, listenerPids: [], ready: false, readyMs: null, stopped: false, exit: null };
-  child.once('exit', (code, signal) => { svc.exit = { code, signal }; });
-  const t0 = performance.now();
-  while (performance.now() - t0 < READY_TIMEOUT_MS && !svc.exit) {
-    const log = fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8') : '';
-    if (readyPattern.test(log)) {
-      const pids = listenerPids(port);
-      if (pids.length) {
-        svc.listenerPids = pids;
-        svc.listenerPid = pids.length === 1 ? pids[0] : null;
-        svc.ready = true;
-        svc.readyMs = rel(performance.now() - t0);
-        break;
-      }
-    }
-    await sleep(250);
-  }
-  return svc;
-}
-
-// 驗收協定 §1：listener 必須恰好是本 run spawn 的程序，否則在發任何請求前中止。
-function assertOwnedListener(label, svc) {
-  if (!(svc.listenerPids.length === 1 && svc.listenerPids[0] === svc.ownedPid)) {
-    throw new Error(`${label}/${svc.name} listener PID ${svc.listenerPids.join(',')} 不是 owned PID ${svc.ownedPid}`);
-  }
-}
-
-async function stopService(svc) {
-  if (svc.ownedPid) {
-    spawnSync('taskkill', ['/PID', String(svc.ownedPid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
-  }
-  const t0 = performance.now();
-  while (performance.now() - t0 < 15_000) {
-    if (!listenerPids(svc.port).length) {
-      svc.stopped = true;
-      return;
-    }
-    await sleep(250);
-  }
-}
+// client 端時間一律取到 0.001 ms。
+const round3 = value => Math.round(value * 1000) / 1000;
 
 // 單一請求：client 自己的單調時鐘；只存狀態、大小、body 雜湊與解析出的有效值，不存 body 與 headers 值。
 function call({ port, method, route, trace, origin = null }) {
@@ -276,9 +77,9 @@ function call({ port, method, route, trace, origin = null }) {
           route,
           status: res.statusCode,
           cacheControl: res.headers['cache-control'] ?? null,
-          startMs: rel(startMs),
-          headersMs: rel(headersMs),
-          bodyMs: rel(bodyMs),
+          startMs: round3(startMs),
+          headersMs: round3(headersMs),
+          bodyMs: round3(bodyMs),
           bytes: body.length,
           bodySha256: body.length ? sha256(body) : null,
           ...parseBody(route, res.statusCode, body),
@@ -292,9 +93,9 @@ function call({ port, method, route, trace, origin = null }) {
       route,
       status: 0,
       error: error.message === 'client-timeout' ? 'client-timeout' : (error.code ?? 'error'),
-      startMs: rel(startMs),
+      startMs: round3(startMs),
       headersMs: null,
-      bodyMs: rel(performance.now() - t0),
+      bodyMs: round3(performance.now() - t0),
     }));
     req.end();
   });
@@ -424,27 +225,17 @@ async function realProtocol({ start, port, samples, runId, raw, traceDir }) {
 }
 
 // 真上游預算由請求組成推導：方向確認報價＋FX＋十檔，各自 Yahoo outbound 正常／最壞；另加 1 支 FinMind。
-export function realBudget() {
+// 長駐入口的正常值只含一次共用握手（cookie＋crumb）；最壞值沿用 B1 的逐請求重做上界。
+export function realBudget(entry = 'b1') {
   const yahooRequests = REAL_DIRECTION_QUOTES.length + 1 + QUOTE_SYMBOLS.length;
   const finmindOutbound = 1;
   return {
     browserApi: yahooRequests + finmindOutbound,
-    yahooOutboundNormal: yahooRequests * YAHOO_OUTBOUND_NORMAL,
+    yahooOutboundNormal: ENTRIES[entry].persistent ? 2 + yahooRequests : yahooRequests * YAHOO_OUTBOUND_NORMAL,
     yahooOutboundWorst: yahooRequests * YAHOO_OUTBOUND_WORST,
     finmindOutbound,
     outboundWorst: yahooRequests * YAHOO_OUTBOUND_WORST + finmindOutbound,
   };
-}
-
-function copyTrace(fromDir, toDir) {
-  if (!fs.existsSync(fromDir)) return 0;
-  fs.mkdirSync(toDir, { recursive: true });
-  let count = 0;
-  for (const name of fs.readdirSync(fromDir)) {
-    fs.copyFileSync(path.join(fromDir, name), path.join(toDir, name));
-    count += 1;
-  }
-  return count;
 }
 
 async function main() {
@@ -454,23 +245,26 @@ async function main() {
   const portBase = Number(args['port-base']);
   const rounds = Number(args.rounds ?? 5);
   const fixtureDelayMs = Number(args['fixture-delay-ms'] ?? 50);
-  if (!/^[a-z0-9][a-z0-9-]{2,60}$/.test(runId ?? '')) throw new Error('需要合法 --run-id（小寫英數與連字號）');
+  const entry = args.entry ?? 'b1';
+  const profile = ENTRIES[entry];
+  if (!profile) throw new Error(`--entry 只能是 ${Object.keys(ENTRIES).join(' 或 ')}`);
   if (!['fixed', 'real'].includes(mode)) throw new Error('--mode 只能是 fixed 或 real');
   if (!Number.isInteger(portBase) || portBase < 1024 || portBase > 65000) throw new Error('需要 --port-base');
-  const evidenceDir = path.join(EVIDENCE_ROOT, runId);
-  const runtimeDir = path.join(RUNTIME_ROOT, runId);
-  if (fs.existsSync(evidenceDir) || fs.existsSync(runtimeDir)) throw new Error(`run-id 已使用過，拒絕覆寫：${runId}`);
-  fs.mkdirSync(evidenceDir, { recursive: true });
-  fs.mkdirSync(runtimeDir, { recursive: true });
+  const baselineRun = profile.persistent && mode === 'fixed' ? (args['baseline-run'] ?? DEFAULT_BASELINE_RUN) : null;
+  // 證據放 evidence/<票號>/<run-id>（預設依入口：B1＝01、候選＝02）；run-id 全案唯一，任何票用過都拒絕。
+  const { evidenceDir, runtimeDir } = claimRun({ ticket: args.ticket ?? profile.ticket, runId });
 
+  // 注入檔先複製到 runtime：服務載入的與證據記錄雜湊的是同一份複本。
   const preloadCopy = path.join(runtimeDir, 'trace-preload.cjs');
   fs.copyFileSync(PRELOAD, preloadCopy);
+  const persistentCopy = profile.persistent ? path.join(runtimeDir, 'persistent-functions.cjs') : null;
+  if (persistentCopy) fs.copyFileSync(PERSISTENT, persistentCopy);
   const raw = {
     schemaVersion: 1,
     runId,
     mode,
     createdAt: new Date().toISOString(),
-    identity: identity(),
+    identity: identity(entry),
     protocol: {
       optionsRoutes: OPTIONS_ROUTES,
       quoteSymbols: QUOTE_SYMBOLS,
@@ -482,8 +276,10 @@ async function main() {
       clientTimeoutMs: CLIENT_TIMEOUT_MS,
       clock: '各程序 performance.now()；client 樣本以各自請求（或批次）起點為 0',
       preloadCopySha256: fileSha(preloadCopy),
+      persistentCopySha256: persistentCopy ? fileSha(persistentCopy) : null,
+      baselineRun,
     },
-    budget: mode === 'real' ? realBudget() : { browserApi: 0, outboundWorst: 0 },
+    budget: mode === 'real' ? realBudget(entry) : { browserApi: 0, outboundWorst: 0 },
     starts: [],
     samples: [],
     halted: null,
@@ -519,30 +315,30 @@ async function main() {
     for (const step of plan) {
       if (raw.aborted) break;
       const traceDir = path.join(runtimeDir, `${step.label}-trace`);
-      const extra = {};
+      // 候選：每個 start（含未注入探針的 plain）都載入長駐原型；探針排在原型之後。
+      const requires = persistentCopy ? [persistentCopy] : [];
       if (step.traced) {
         fs.mkdirSync(traceDir);
-        extra.NODE_OPTIONS = `--require "${preloadCopy.replaceAll('\\', '/')}"`;
-        extra.PERF01_TRACE_DIR = traceDir;
-        if (step.fixture) {
-          extra.PERF01_FIXTURE = '1';
-          extra.PERF01_FIXTURE_DELAY_MS = String(fixtureDelayMs);
-        }
+        requires.push(preloadCopy);
       }
+      const env = step.traced ? probeEnv({ traceDir, fixture: step.fixture ? { delayMs: fixtureDelayMs } : null }) : {};
       const start = { label: step.label, traced: step.traced, fixture: step.fixture, startedAt: new Date().toISOString(), services: [] };
       raw.starts.push(start);
-      const vercel = await startService({
-        name: 'vercel-dev',
-        argv: [VERCEL_VC, 'dev', '--listen', String(step.vercelPort)],
-        env: serviceEnv(extra),
+      const vercelLog = path.join(runtimeDir, `${step.label}-vercel.log`);
+      await startVercelDev({
+        label: step.label,
         port: step.vercelPort,
-        readyPattern: /Available at/,
-        logFile: path.join(runtimeDir, `${step.label}-vercel.log`),
+        // B1 沿用日常形狀（--listen <port>）；候選只綁 127.0.0.1。
+        listen: profile.listen(step.vercelPort),
+        runtimeDir,
+        logFile: vercelLog,
+        requires,
+        env,
+        onStarted: svc => {
+          running.push(svc);
+          start.services.push(svc);
+        },
       });
-      running.push(vercel);
-      start.services.push(vercel);
-      if (!vercel.ready) throw new Error(`${step.label} vercel dev 未在 ${READY_TIMEOUT_MS} ms 內就緒`);
-      assertOwnedListener(step.label, vercel);
       const ports = { direct: step.vercelPort, proxy: null };
       if (step.proxy) {
         const vite = await startService({
@@ -567,6 +363,7 @@ async function main() {
       }
       start.finishedAt = new Date().toISOString();
       await stopAll();
+      if (profile.persistent) start.persistent = persistentReport(vercelLog);
       if (step.traced) start.traceFiles = copyTrace(traceDir, path.join(evidenceDir, 'trace', step.label));
     }
   } catch (error) {
@@ -589,7 +386,9 @@ async function main() {
     runId,
     mode,
     exitCode,
-    meaning: { 0: '有效且達標', 1: '有效但未達標（判紅）', 2: 'run 無效' }[exitCode],
+    meaning: mode === 'real'
+      ? { 0: '有效（真上游模式不設效能門檻）', 2: 'run 無效' }[exitCode]
+      : { 0: '有效且達標', 1: '有效但未達標（判紅）', 2: 'run 無效' }[exitCode],
     finishedAt: new Date().toISOString(),
   }, null, 2)}\n`);
   return exitCode;
