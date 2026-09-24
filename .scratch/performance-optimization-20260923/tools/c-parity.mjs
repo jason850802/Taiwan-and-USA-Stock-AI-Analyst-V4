@@ -154,6 +154,23 @@ export function normalizeResponseHeaders(headers = {}, port) {
   return out;
 }
 
+// FinMind 成功回應的 s-maxage 會隨兩次循序請求的秒數遞減；只在兩邊指向同一到期秒時正規化。
+function comparableFinMindHeaders(b1Headers, cHeaders) {
+  const b1 = { ...b1Headers };
+  const c = { ...cHeaders };
+  const cachePattern = /^public, s-maxage=(\d+), stale-while-revalidate=60$/;
+  const b1Ttl = b1['cache-control']?.match(cachePattern);
+  const cTtl = c['cache-control']?.match(cachePattern);
+  const b1Date = Date.parse(b1.date ?? '');
+  const cDate = Date.parse(c.date ?? '');
+  if (b1Ttl && cTtl && Number.isFinite(b1Date) && Number.isFinite(cDate)
+    && Math.abs((b1Date / 1000 + Number(b1Ttl[1])) - (cDate / 1000 + Number(cTtl[1]))) <= 1) {
+    b1['cache-control'] = b1['cache-control'].replace(/s-maxage=\d+/, 's-maxage=<同到期秒>');
+    c['cache-control'] = c['cache-control'].replace(/s-maxage=\d+/, 's-maxage=<同到期秒>');
+  }
+  return [b1, c];
+}
+
 // handler 端 header 快照正規化：值裡的服務埠換成 <port>，trace 值不比。
 export function normalizeHandlerSnapshot(snapshot, port) {
   if (!snapshot) return null;
@@ -227,8 +244,17 @@ export function compareCase(spec, b1, c) {
   const pairs = multi ? b1.responses.map((response, i) => [response, c.responses[i]]) : [[b1.response, c.response]];
   for (const [rb, rc] of pairs) {
     if (rb.status !== rc.status) diffs.push(`status ${rb.status}≠${rc.status}`);
-    const hb = JSON.stringify(normalizeResponseHeaders(rb.headers, b1.port));
-    const hc = JSON.stringify(normalizeResponseHeaders(rc.headers, c.port));
+    let hbHeaders = normalizeResponseHeaders(rb.headers, b1.port);
+    let hcHeaders = normalizeResponseHeaders(rc.headers, c.port);
+    if (spec.id === 'get-finmind-ok') {
+      [hbHeaders, hcHeaders] = comparableFinMindHeaders(
+        { ...hbHeaders, date: rb.headers.date }, { ...hcHeaders, date: rc.headers.date },
+      );
+      delete hbHeaders.date;
+      delete hcHeaders.date;
+    }
+    const hb = JSON.stringify(hbHeaders);
+    const hc = JSON.stringify(hcHeaders);
     if (!spec.abortAfterLines && hb !== hc) diffs.push(`response headers ${hb} ≠ ${hc}`);
     if (spec.stream) {
       const lb = JSON.stringify(rb.lines.map(line => line.text));
@@ -355,7 +381,7 @@ async function runCase(spec, side, ctx) {
   return { response, traces: [trace()] };
 }
 
-async function startPair({ config, ports, runtimeDir, controlPath, env, running }) {
+async function startPair({ config, ports, runtimeDir, controlPath, env, running, ticket }) {
   const services = {};
   for (const [label, port, requires] of [
     ['b1', ports.b1, [PRELOAD]],
@@ -374,7 +400,8 @@ async function startPair({ config, ports, runtimeDir, controlPath, env, running 
       runtimeDir,
       logFile,
       requires,
-      env: { ...env, ...probeEnv({ traceDir, fixture: { delayMs: FIXTURE_DELAY_MS, controlPath } }) },
+      env: { ...env, ...probeEnv({ traceDir, fixture: { delayMs: FIXTURE_DELAY_MS, controlPath } }),
+        PERF03_TEST_CLI: ticket === '03' ? '1' : '0' },
       onStarted: svc => {
         record.svc = svc;
         running.push(svc);
@@ -427,7 +454,7 @@ export async function main(argv = process.argv.slice(2)) {
     for (const step of plan) {
       const configRecord = { config: step.config, services: [], cases: [] };
       raw.configs.push(configRecord);
-      const services = await startPair({ config: step.config, ports: step.ports, runtimeDir, controlPath, env: step.env, running });
+      const services = await startPair({ config: step.config, ports: step.ports, runtimeDir, controlPath, env: step.env, running, ticket });
       for (const spec of step.cases) {
         if (spec.jumpClock) clockOffsetMs += TTL_JUMP_MS;
         if (spec.alignWindowMs) {

@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":28.655,"pid":17220,"entry":"api/gemini-stream.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1661.259,"pid":17220,"seq":1}
+{"ev":"child.listening","t":1677.908,"pid":17220,"seq":1}
+{"ev":"child.listenCall","t":1890.406,"pid":17220,"seq":2}
+{"ev":"child.listening","t":1891.938,"pid":17220,"seq":2}
+{"ev":"child.ready","t":1892.324,"pid":17220}
+{"ev":"child.recv","t":1895.519,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"devProxy","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.recv","t":1903.961,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"handler","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.reqHeaders","t":1904.249,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4315","x-forwarded-host":"127.0.0.1:4315","x-forwarded-proto":"http","x-forwarded-port":"4315","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4315","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fakeCli.spawn","t":1906.799,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","streaming":true,"deltas":0,"intervalMs":100,"mode":"isError"}
+{"ev":"child.fakeCli.stdin","t":1907.208,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","promptBytes":21}
+{"ev":"child.fakeCli.done","t":2015.262,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","emitted":0,"mode":"isError"}
+{"ev":"child.writeHead","t":2016.879,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"handler","status":502}
+{"ev":"child.finish","t":2018.138,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"handler"}
+{"ev":"child.writeHead","t":2023.029,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"devProxy","status":502}
+{"ev":"child.finish","t":2023.712,"pid":17220,"trace":"parity03-20260925-r5-default-b1-post-gemini-stream-is-error-first","layer":"devProxy"}

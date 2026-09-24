@@ -38,3 +38,7 @@ Type: task
 獨立 Standards／Spec 覆核判定首輪均 FAIL，本票改回 OPEN。已修正日常網址為 `http://localhost:3000` 的同一來源主機名、隔離 Vite 的 envDir、抽出五路由共用的斷線監聽與解除、補共享握手取消測試、加入失聯狀態的身分核對復原命令。新證據見 [覆核後增補](../evidence/03/ADDENDUM-20260924.md)。
 
 隔離 gate 已掃到本票新檔且通過，但 59 案對等工具連續兩次在 B1 啟動時遇到 Vercel `Retrieving project…` 後的 `fetch failed`，實際執行 0 案；不得把先前 02 的 59 案當作本票 PASS。原 `localhost:3000` 的隔離 App 實測、正式部署取消／API 行為、依賴刪除重載及生命週期 raw 仍待完成。21 檔來源清單已建立；獨立 Standards／Spec 覆核均判 FAIL，見 [覆核增補](../evidence/03/REVIEW-ADDENDUM-20260924.md)。此票維持 OPEN，04 不因本輪機械 gate 通過而自動解鎖。
+
+## 2026-09-25 重驗
+
+使用者啟動的 3000／3001 原入口可用；本輪在獨立埠重新啟動 B1 與候選，[正式重驗](../evidence/03/RETEST-20260925.md)取得來源穩定的 **59/59 API 對等、0 非預期差異**。候選日常入口在固定上游下取得 OPTIONS、GET 各 20/20 及隔離 App 的台股、美股、K 線、合成庫存、假 AI 冒煙結果。原 `localhost:3000` 的候選 App、逐操作五鍵 raw、依賴刪除重載、完整生命週期 raw 與正式部署行為仍未驗；本票維持 **OPEN**。

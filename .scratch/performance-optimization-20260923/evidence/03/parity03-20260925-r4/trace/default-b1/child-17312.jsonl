@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":24.454,"pid":17312,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1750.223,"pid":17312,"seq":1}
+{"ev":"child.listening","t":1765.629,"pid":17312,"seq":1}
+{"ev":"child.listenCall","t":1829.919,"pid":17312,"seq":2}
+{"ev":"child.listening","t":1831.586,"pid":17312,"seq":2}
+{"ev":"child.ready","t":1831.955,"pid":17312}
+{"ev":"child.recv","t":1835.851,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"devProxy","method":"GET","route":"/api/finmind/?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1843.876,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"handler","method":"GET","route":"/api/finmind/?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1844.206,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4315","x-forwarded-host":"127.0.0.1:4315","x-forwarded-proto":"http","x-forwarded-port":"4315","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4315","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1845.695,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":1881.599,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":200,"fixture":true,"fixtureWaitMs":34.035,"scripted":false}
+{"ev":"child.fetchBody","t":1882.456,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":1893.113,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"handler","status":200}
+{"ev":"child.finish","t":1894.83,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"handler"}
+{"ev":"child.writeHead","t":1899.606,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"devProxy","status":200}
+{"ev":"child.finish","t":1900.188,"pid":17312,"trace":"parity03-20260925-r4-default-b1-trailing-slash-route","layer":"devProxy"}

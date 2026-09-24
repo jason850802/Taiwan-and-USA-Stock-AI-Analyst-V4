@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":27.643,"pid":35052,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1872.981,"pid":35052,"seq":1}
+{"ev":"child.listening","t":1890.293,"pid":35052,"seq":1}
+{"ev":"child.listenCall","t":1955.051,"pid":35052,"seq":2}
+{"ev":"child.listening","t":1956.592,"pid":35052,"seq":2}
+{"ev":"child.ready","t":1956.905,"pid":35052}
+{"ev":"child.recv","t":1960.058,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1969.494,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"handler","method":"GET","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1969.836,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4315","x-forwarded-host":"127.0.0.1:4315","x-forwarded-proto":"http","x-forwarded-port":"4315","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4315","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1971.22,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":1992.974,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330","status":500,"fixture":true,"fixtureWaitMs":20.083,"scripted":true}
+{"ev":"child.fetchBody","t":1994.052,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","seq":1,"kind":"finmind","dataset":"TaiwanStockInfo","dataId":"2330"}
+{"ev":"child.writeHead","t":1995.49,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"handler","status":502}
+{"ev":"child.finish","t":1996.981,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"handler"}
+{"ev":"child.writeHead","t":2002.487,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"devProxy","status":502}
+{"ev":"child.finish","t":2003.29,"pid":35052,"trace":"parity03-20260925-r2-default-b1-get-finmind-500","layer":"devProxy"}

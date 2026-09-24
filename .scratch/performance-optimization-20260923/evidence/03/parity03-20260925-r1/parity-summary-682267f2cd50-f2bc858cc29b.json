@@ -1,0 +1,16 @@
+{
+  "runId": "parity03-20260925-r1",
+  "toolSha": "682267f2cd505899e02c9bb186163637eb5ae1d7798dec2b714dd4380733af17",
+  "cases": 0,
+  "equal": 0,
+  "mismatches": [],
+  "knownDifferences": [],
+  "cancel": [],
+  "streamTiming": [],
+  "handshake": [],
+  "results": [],
+  "problems": [
+    "run 中止：default/b1 vercel dev 未在 90000 ms 內就緒",
+    "default 長駐原型未啟用或未接手 startDevServer"
+  ]
+}

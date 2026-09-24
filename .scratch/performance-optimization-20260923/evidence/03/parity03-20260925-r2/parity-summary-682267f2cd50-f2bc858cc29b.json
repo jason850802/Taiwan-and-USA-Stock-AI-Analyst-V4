@@ -1,0 +1,1403 @@
+{
+  "runId": "parity03-20260925-r2",
+  "toolSha": "682267f2cd505899e02c9bb186163637eb5ae1d7798dec2b714dd4380733af17",
+  "cases": 59,
+  "equal": 47,
+  "mismatches": [
+    {
+      "config": "default",
+      "id": "get-finmind-ok",
+      "diffs": [
+        "response headers {\"cache-control\":\"public, s-maxage=80749, stale-while-revalidate=60\",\"server\":\"Vercel\",\"x-vercel-id\":\"<dev1-id>\",\"x-vercel-cache\":\"MISS\",\"access-control-allow-headers\":\"Content-Type, X-Proxy-Secret\",\"access-control-allow-methods\":\"GET, POST, OPTIONS\",\"access-control-max-age\":\"86400\",\"connection\":\"close\",\"content-length\":\"179\",\"content-type\":\"application/json; charset=utf-8\",\"etag\":\"W/\\\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\\\"\"} ≠ {\"cache-control\":\"public, s-maxage=80748, stale-while-revalidate=60\",\"server\":\"Vercel\",\"x-vercel-id\":\"<dev1-id>\",\"x-vercel-cache\":\"MISS\",\"access-control-allow-headers\":\"Content-Type, X-Proxy-Secret\",\"access-control-allow-methods\":\"GET, POST, OPTIONS\",\"access-control-max-age\":\"86400\",\"connection\":\"close\",\"content-length\":\"179\",\"content-type\":\"application/json; charset=utf-8\",\"etag\":\"W/\\\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\\\"\"}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-fake-cli",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-is-error",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0",
+        "B1 串流沒有逐段送達（首行 null、末行 null）",
+        "C 串流沒有逐段送達（首行 null、末行 null）"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-mid",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-first",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-auth-error",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-no-result",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-spawn-error",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-large-body",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-ai-under",
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ]
+    }
+  ],
+  "knownDifferences": [
+    {
+      "config": "ratelimit",
+      "id": "rl-after-block",
+      "kind": "ephemeral-block",
+      "b1": {
+        "status": 200,
+        "ratelimitCalls": 1,
+        "outbound": 4
+      },
+      "c": {
+        "status": 429,
+        "ratelimitCalls": 0,
+        "outbound": 0
+      },
+      "observed": "blocked-locally"
+    }
+  ],
+  "cancel": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "b1": "process-ended-after-0",
+      "c": "process-ended-after-0",
+      "residual": null
+    }
+  ],
+  "streamTiming": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "b1": {
+        "firstLineMs": null,
+        "lastLineMs": null
+      },
+      "c": {
+        "firstLineMs": null,
+        "lastLineMs": null
+      }
+    }
+  ],
+  "handshake": [
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "b1": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "b1": {
+        "cookie": 3,
+        "crumb": 3,
+        "chart": 3
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 3
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-concurrent-401",
+      "b1": {
+        "cookie": 6,
+        "crumb": 6,
+        "chart": 6
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 6
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-stale-generation-401",
+      "b1": {
+        "cookie": 5,
+        "crumb": 5,
+        "chart": 5
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 5
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    }
+  ],
+  "results": [
+    {
+      "config": "default",
+      "id": "options-chart-allowed",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-chart-evil-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-finmind",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-gemini-stream",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-referer-allowed",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-no-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-referer",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-bad-range",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-missing-symbol",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-repeated-symbol",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-encoded-fx",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-lowercase",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-chart",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-not-found",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-ok",
+      "equal": false,
+      "diffs": [
+        "response headers {\"cache-control\":\"public, s-maxage=80749, stale-while-revalidate=60\",\"server\":\"Vercel\",\"x-vercel-id\":\"<dev1-id>\",\"x-vercel-cache\":\"MISS\",\"access-control-allow-headers\":\"Content-Type, X-Proxy-Secret\",\"access-control-allow-methods\":\"GET, POST, OPTIONS\",\"access-control-max-age\":\"86400\",\"connection\":\"close\",\"content-length\":\"179\",\"content-type\":\"application/json; charset=utf-8\",\"etag\":\"W/\\\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\\\"\"} ≠ {\"cache-control\":\"public, s-maxage=80748, stale-while-revalidate=60\",\"server\":\"Vercel\",\"x-vercel-id\":\"<dev1-id>\",\"x-vercel-cache\":\"MISS\",\"access-control-allow-headers\":\"Content-Type, X-Proxy-Secret\",\"access-control-allow-methods\":\"GET, POST, OPTIONS\",\"access-control-max-age\":\"86400\",\"connection\":\"close\",\"content-length\":\"179\",\"content-type\":\"application/json; charset=utf-8\",\"etag\":\"W/\\\"b3-Ld97YBkXyfYEy+TSR16nKFLMYG4\\\"\"}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-dataset",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-date",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-limit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-500",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-search-ok",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "unknown-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "private-lib-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "ts-extension-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "trailing-slash-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-gemini",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-body",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-json",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-fake-cli",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-is-error",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0",
+        "B1 串流沒有逐段送達（首行 null、末行 null）",
+        "C 串流沒有逐段送達（首行 null、末行 null）"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "streamTiming": {
+        "b1": {
+          "firstLineMs": null,
+          "lastLineMs": null
+        },
+        "c": {
+          "firstLineMs": null,
+          "lastLineMs": null
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-mid",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-first",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-auth-error",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-no-result",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-spawn-error",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "cancel": {
+        "b1": "process-ended-after-0",
+        "c": "process-ended-after-0"
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-large-body",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "concurrent-isolation",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-concurrent-401",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 6,
+          "crumb": 6,
+          "chart": 6
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 6
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-stale-generation-401",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 5,
+          "crumb": 5,
+          "chart": 5
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 5
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      },
+      "residual": {
+        "b1": 1,
+        "c": 0
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-missing",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-wrong",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-correct",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-options-short-circuit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-under",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-ai-under",
+      "equal": false,
+      "diffs": [
+        "假 CLI 啟動次數 B1=0 C=0"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-unavailable",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-over",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-after-block",
+      "equal": true,
+      "diffs": [],
+      "handshake": null,
+      "knownDifference": {
+        "kind": "ephemeral-block",
+        "b1": {
+          "status": 200,
+          "ratelimitCalls": 1,
+          "outbound": 4
+        },
+        "c": {
+          "status": 429,
+          "ratelimitCalls": 0,
+          "outbound": 0
+        },
+        "observed": "blocked-locally"
+      }
+    }
+  ],
+  "problems": []
+}
