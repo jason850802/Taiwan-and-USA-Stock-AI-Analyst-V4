@@ -162,12 +162,12 @@
 | 無 orphan child、無舊碼服務、無秘密洩漏，其他服務未被關閉 | **PASS**（修正後；修正前 r2 與紅燈 run 為 FAIL，原樣保留） | 生命週期 r3 每個情境停止或崩潰後整棵程序樹 0 殘留，工具結尾清理找到 0 個；App r3 停止後 12 個程序 0 殘留；紅燈 `life03-red-…-r2` 證明修正前三個崩潰情境會留孤兒。無舊碼：重載 r1 語法錯誤／刪依賴不回舊碼。秘密：各工具 `.env` 值掃描 0 命中、gate 金鑰掃描乾淨。其他服務：只終止身分核對過的本案 PID，占用測試服務照常回應 |
 | 採用候選：正式 App 端到端打到候選，固定 GET 與 OPTIONS 低成本仍成立 | **PASS** | App r3（修正後啟動器，原 3000、28/28）與 r2；低成本 [`daily03-cost-20260925-r2`](daily03-cost-20260925-r2/raw.json)（修正後啟動器，OPTIONS 中位 15.48 ms、GET 中位 77.89 ms，各 20/20；量於備用埠 4791） |
 | 原 Vercel 部署配置及 API 行為保留；有一個可驗證的回復命令 | **部分 PASS／正式平台 OPEN** | 部署設定、路由、正式前端產物：deploy r1 PASS；本機標準 runtime API：parity r5 59/59；正式平台 API／取消：**未實測，OPEN**。回復：日常入口改回原入口（`scripts/start-dev.ps1`，或 `npx vercel dev --listen 3001` 加 `npm run dev`）於 09-25 由使用者啟動並經重驗核對 200／204；產品碼回復為 `git revert` 03 的產品提交，本輪未演練 |
-| 隔離完整 gate、獨立 Standards／Spec 覆核、精確提交與日常命令文件 | **部分完成／覆核 OPEN** | gate 見第 6 節；精確提交見本輪 commit；日常命令見 [REPORT](REPORT.md) §6 與本檔第 7 節（看門程序與 `recover` 行為）；**本輪增量（含啟動器修正）尚未做獨立雙軸覆核** |
+| 隔離完整 gate、獨立 Standards／Spec 覆核、精確提交與日常命令文件 | **部分完成／覆核發現待處置** | gate 見第 6 節；精確提交見本輪 commit；日常命令見 [REPORT](REPORT.md) §6 與本檔第 7 節（看門程序與 `recover` 行為），覆核指出 REPORT §6 已過時（P4）；**獨立雙軸覆核已於 2026-09-25 完成：Standards PASS、Spec 本輪增量 PASS／整張票 FAIL，發現待處置，見[覆核紀錄](REVIEW-20260925.md)** |
 
 ## 9. 剩餘缺口
 
 1. 正式 Vercel 部署的 API 與取消行為未實測（需部署或平台日誌，依指示未做）。
-2. 本輪增量尚未由未參與者做獨立 Standards／Spec 覆核：`daily-dev.mjs` 的孤兒修正（程序樹、看門程序、後備清理，屬實作變更）、`app-03.mjs`、`port-guard-03.mjs`、`lifecycle-03.mjs`、`deploy-static-03.mjs`、`c-reload.mjs` 修改與本文件。
+2. 本輪增量的獨立 Standards／Spec 覆核已於 2026-09-25 完成（[覆核紀錄](REVIEW-20260925.md)）：Standards PASS；Spec 本輪增量 PASS、整張 03 票 FAIL。4 條應修（第 8 節 App 列只依凍結 §4 為 22/28、待裁定；「瀏覽器自發」規則比文件寬且串流取消成因未定位；`taskkill /T` 繞過 PID 重用守衛；日常命令文件過時）與 1 條可接受限制待處置，交 Codex 執行。
 3. 請求分類中「瀏覽器自發」與「串流完整送達後取消」兩類是本輪判定器新增的分類規則；後者成因未定位。是否接受為非失敗，請使用者裁定。
 4. 全案效能目標（十檔冷庫存、K 線冷載入、暖回訪、舊 05 雙 40%）仍屬 04～07，未因本票變動。
 

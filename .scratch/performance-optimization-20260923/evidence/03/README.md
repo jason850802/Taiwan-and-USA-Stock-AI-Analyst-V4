@@ -25,6 +25,7 @@
 | [日常啟停及 App 實測](LIFECYCLE.md) | 兩次重啟、埠衝突、同源驗證、台美股、隔離庫存與假 AI 畫面觀察 |
 | [獨立雙軸覆核](REVIEW.md) | 初輪缺口、修正及定稿判定 |
 | [第二輪補證總覽（2026-09-25）](ACCEPTANCE-20260925.md) | 原 localhost:3000 App、依賴重載、生命週期、部署路徑靜態核對、啟動器孤兒修正與 03 逐項判定 |
+| [第二輪增量獨立雙軸覆核](REVIEW-20260925.md) | `c789bda..5997b92`：Standards PASS（2 條判斷題）；Spec 本輪增量 PASS、整張票 FAIL（4 條應修、1 條可接受），執行者逐條查證；發現待處置，建議處置交 Codex |
 | [原 3000 正式 App r3](app03-localhost3000-20260925-r3/raw.json) | 修正孤兒後的啟動器：桌面＋窄版各 14 步 28/28 PASS；逐步五鍵、截圖、請求分類；停止後整棵 12 程序樹 0 殘留 |
 | [生命週期原始紀錄 r3](life03-localhost3000-20260925-r3/raw.json) | 修正後綠燈：8 情境（含 vercel／Vite 只結束自身的崩潰、監督程序崩潰由看門程序清樹、看門程序也失效時 `recover` 清樹）全 PASS，結尾殘留清理 0 個 |
 | [生命週期紅燈 r2](life03-red-localhost3000-20260925-r2/raw.json) | 最終版驗收工具配修正前啟動器（`94848ac`）：5/8，`crash-vercel`、`crash-supervisor`、`crash-supervisor-no-watchdog` 留下孤兒而 FAIL（工具結尾已清除） |

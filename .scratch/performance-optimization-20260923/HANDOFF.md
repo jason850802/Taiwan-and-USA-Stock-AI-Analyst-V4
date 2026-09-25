@@ -69,3 +69,9 @@
 | 仍 OPEN 與下一步 | 正式 App 十檔冷庫存／K 線／暖回訪 B1↔C，以及 fresh B0↔C 舊 05 雙 40% 尚未量；正式部署未驗。04 先在現日常入口重測單次真報價與 FX 的握手、chart 與冷／暖成本，再只處理仍可控制的重複工作，維持三槽 |
 
 03 的來源綁定：基準 `6a7b029`，最終十一個候選產品／測試實體檔在主工作樹與隔離 checkout 逐檔 SHA-256 相同，原始位元組與 Git index blob 亦逐檔一致；FinMind／Yahoo search 已依 `.gitattributes` 正規化為 LF。原始 run 各自記錄工具與來源雜湊。前端程序 env 改採必要系統變數及公開 `VITE_` 白名單，後端金鑰不進 Vite 程序。`C:/pfv7` 的 `node_modules` junction 保留，隔離測試建的 `.env`／`.vercel` 已刪。舊 02 取消 FAIL 是當時版本的有效歷史，03 新 run 才能判新入口已修復。
+
+### 03 狀態更新（2026-09-25，Claude Code Opus 5.5）
+
+上表是 09-24 首輪紀錄，狀態已過時：其後獨立覆核判 FAIL，03 改回 **OPEN**（見[票面](issues/03-daily-dev-entry.md)）。09-25 在原 `localhost:3000` 補齊 App、依賴重載、生命週期與部署路徑靜態核對，並修正啟動器崩潰孤兒（本機提交 `3bf4159`、`94848ac`、`5997b92`，未 push），總覽見 [ACCEPTANCE-20260925](evidence/03/ACCEPTANCE-20260925.md)。本輪增量的獨立雙軸覆核見 [REVIEW-20260925](evidence/03/REVIEW-20260925.md)：Standards PASS；Spec 本輪增量 PASS、整張票 FAIL；4 條應修、1 條可接受、2 條判斷題都尚未處置。
+
+下一個可直接執行動作：依票面「2026-09-25 獨立雙軸覆核（待處置，交 Codex）」清單，從 P3（`taskkill /T` 繞過 PID 重用守衛）開始。保留給使用者：兩條新增請求分類是否接受、正式平台是否部署實測。04 未解鎖。
