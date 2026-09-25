@@ -88,7 +88,7 @@ const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Num
 // 某程序底下的整棵子孫樹，只記 PID、父 PID、程序名與建立時間。Windows 的父 PID 在父程序結束後不會清掉，
 // PID 又會被重用，所以子程序的建立時間必須不早於父程序，才算這棵樹的成員；監督程序與看門程序自己跑的
 // 短命查詢（powershell）也不列入。
-function descendantsOf(table, rootPid, excluded = []) {
+export function descendantsOf(table, rootPid, excluded = []) {
   const skip = new Set(excluded);
   const out = [];
   const seen = new Set([rootPid]);
@@ -114,21 +114,32 @@ function mergeTree(...lists) {
 }
 
 // PID 與建立時間都相同才算同一個程序，避免誤殺被重用的 PID。
-const aliveIn = (tree, table) => tree.filter(item => table.get(item.pid)?.CreationDate === item.creationDate);
+const aliveIn = (tree, table) => tree.filter(item => Number.isFinite(creationMs(item.creationDate))
+  && table.get(item.pid)?.CreationDate === item.creationDate);
 
-// 清掉樹中仍存活的程序（/T 連同其當下子孫），並等它們確實結束；讀不到程序表時視為無法確認。
-async function killTree(tree) {
-  const table = processTable();
-  if (!table) return { killed: [], left: tree, error: '無法讀取程序表' };
-  const killed = aliveIn(tree, table);
-  for (const item of killed) {
-    spawnSync('taskkill', ['/PID', String(item.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+// 每次結束前重列存活成員的子孫，先核對建立時間再逐一結束；不讓 taskkill 自行擴大範圍。
+// 先停父程序以阻止它繼續派生，已記下的子孫即使成為孤兒也保留身分；注入介面只供假程序表檢查。
+export async function killTree(tree, { readTable = processTable, terminate = item =>
+  spawnSync('taskkill', ['/PID', String(item.pid), '/F'], { encoding: 'utf8', windowsHide: true }) } = {}) {
+  let known = mergeTree(tree);
+  const attempted = new Set();
+  const killed = [];
+  while (true) {
+    const table = await readTable();
+    if (!table) return { killed, left: known, error: '無法讀取程序表' };
+    const live = aliveIn(known, table);
+    known = mergeTree(known, ...live.map(item => descendantsOf(table, item.pid)));
+    const item = aliveIn(known, table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
+    if (!item) break;
+    attempted.add(`${item.pid}|${item.creationDate}`);
+    const result = await terminate(item);
+    killed.push({ ...item, status: result.status });
   }
   const started = Date.now();
-  let left = killed;
+  let left = aliveIn(known, await readTable() ?? new Map(known.map(item => [item.pid, { CreationDate: item.creationDate }])));
   while (left.length && Date.now() - started < cleanupWaitMs) {
     await delay(250);
-    const current = processTable();
+    const current = await readTable();
     if (current) left = aliveIn(left, current);
   }
   return { killed, left, error: null };
@@ -139,15 +150,14 @@ async function runWatchdog([supervisorPidText, supervisorCreationDate, logFile])
   const supervisorPid = Number(supervisorPidText);
   const log = message => fs.appendFileSync(logFile, `[watchdog] ${new Date().toISOString()} ${message}\n`);
   let tree = [];
-  let treeReceived = false;
   let stopRequested = false;
   let finishing = false;
   let pollTimer = null;
   let livenessTimer = null;
   log(`已啟動，監看監督程序 pid=${supervisorPid}`);
-  // 監督程序送出就緒程序樹之前自己輪詢，啟動途中崩潰也有清單可清。
+  // 就緒前後都更新樹；停止時 killTree 還會對仍存活的成員重列子孫。
   const pollTree = () => {
-    if (treeReceived || finishing) return;
+    if (finishing) return;
     const table = processTable();
     if (table && table.get(supervisorPid)?.CreationDate === supervisorCreationDate) {
       tree = mergeTree(tree, descendantsOf(table, supervisorPid, [process.pid]));
@@ -174,7 +184,6 @@ async function runWatchdog([supervisorPidText, supervisorCreationDate, logFile])
       try { message = JSON.parse(line); } catch { continue; }
       if (message.type === 'tree' && Array.isArray(message.processes)) {
         tree = mergeTree(tree, message.processes.filter(item => item.pid !== process.pid));
-        treeReceived = true;
         log(`收到就緒程序樹 ${message.processes.length} 個（累計 ${tree.length}）`);
       } else if (message.type === 'stop') {
         stopRequested = true;
@@ -228,7 +237,7 @@ function spawnLogged(name, argv, env, runId) {
     windowsHide: true,
   });
   fs.closeSync(fd);
-  const record = { name, child, logFile, script: argv[0], identity: null, exited: false };
+  const record = { name, child, logFile, script: argv[0], identity: child.pid ? processIdentity(child.pid) : null, exited: false };
   child.once('exit', () => { record.exited = true; });
   return record;
 }
@@ -244,8 +253,9 @@ async function waitReady(record, port, marker) {
     if (marker.test(log)) {
       const listeners = listenerPids(port);
       if (listeners.length === 1 && listeners[0] === record.child.pid) {
-        record.identity = processIdentity(record.child.pid);
-        if (!record.identity?.CommandLine?.includes(record.script)) {
+        const current = processIdentity(record.child.pid);
+        if (!record.identity?.CreationDate || current?.CreationDate !== record.identity.CreationDate
+          || !current?.CommandLine?.includes(record.script)) {
           throw new Error(`${record.name} 程序身分未能確認，拒絕使用 listener。`);
         }
         return;
@@ -277,11 +287,9 @@ async function stopOwned(records) {
   for (const record of [...records].reverse()) {
     if (!record.child.pid || record.exited) continue;
     const current = processIdentity(record.child.pid);
-    if (!current || !current.CommandLine?.includes(record.script)) continue;
-    if (record.identity && current.CreationDate !== record.identity.CreationDate) continue;
-    spawnSync('taskkill', ['/PID', String(record.child.pid), '/T', '/F'], {
-      encoding: 'utf8', windowsHide: true,
-    });
+    if (!record.identity?.CreationDate || !current?.CommandLine?.includes(record.script)) continue;
+    if (current.CreationDate !== record.identity.CreationDate) continue;
+    await killTree([{ pid: record.child.pid, creationDate: current.CreationDate }]);
   }
 }
 
@@ -335,15 +343,13 @@ async function main() {
     if (stale.foreignListeners.length) throw new Error('舊埠由未驗證程序占用，拒絕清理。');
     // 先停看門程序（避免兩邊同時清理），再依狀態檔的程序樹清殘留，最後清子程序與監督程序；都先核對身分。
     if (stale.ownedWatchdog && matchesIdentity(processIdentity(stale.ownedWatchdog.pid), stale.ownedWatchdog)) {
-      spawnSync('taskkill', ['/PID', String(stale.ownedWatchdog.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+      await killTree([stale.ownedWatchdog]);
     }
     const treeCleanup = await killTree(previous.tree ?? []);
     for (const owned of [...stale.ownedChildren, stale.ownedSupervisor].filter(Boolean)) {
       const identity = processIdentity(owned.pid);
       if (!matchesIdentity(identity, owned)) continue;
-      spawnSync('taskkill', ['/PID', String(owned.pid), '/T', '/F'], {
-        encoding: 'utf8', windowsHide: true,
-      });
+      await killTree([owned]);
     }
     const started = Date.now();
     while (Date.now() - started < 20_000) {
@@ -413,7 +419,7 @@ async function main() {
     const started = Date.now();
     while (!watchdogExited && Date.now() - started < 15_000) await delay(100);
     if (!watchdogExited && watchdogRecord && matchesIdentity(processIdentity(watchdog.pid), watchdogRecord)) {
-      spawnSync('taskkill', ['/PID', String(watchdog.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+      await killTree([watchdogRecord]);
     }
   };
   const shutdown = async () => {
@@ -523,12 +529,13 @@ async function main() {
   }
 }
 
-if (process.argv[2] === WATCHDOG_MODE) {
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === scriptFile;
+if (isMain && process.argv[2] === WATCHDOG_MODE) {
   runWatchdog(process.argv.slice(3)).catch(error => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
   });
-} else {
+} else if (isMain) {
   main().catch(error => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;

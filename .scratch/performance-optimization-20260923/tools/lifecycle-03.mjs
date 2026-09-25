@@ -21,7 +21,7 @@ import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { claimRun, fileSha, sleep, toolVersions } from './service-kit.mjs';
 import { ROOT, parseArgs, scanSecrets } from './verify-b1-breakdown.mjs';
-import { launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
+import { identityFields, launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor, terminateVerifiedTree } from './port-guard-03.mjs';
 
 const require = createRequire(import.meta.url);
 const { LOG: PERSISTENT_LOG } = require('./persistent-functions.cjs');
@@ -143,11 +143,7 @@ async function listeners() {
 
 async function identities(view) {
   const table = await nodeProcesses();
-  return [view.supervisorPid, ...view.children.map(child => child.pid)].map(pid => {
-    const row = table.get(pid);
-    return row ? { pid, parentPid: row.ParentProcessId, creationDate: row.CreationDate, script: scriptOf(row.CommandLine) }
-      : { pid, missing: true };
-  });
+  return identityFields(table, [view.supervisorPid, ...view.children.map(child => child.pid)]);
 }
 
 // 首頁 GET 與同源 OPTIONS：證明前端與同源代理都由這一輪服務，且不碰任何上游。
@@ -533,18 +529,11 @@ async function main() {
     }
     // 本輪記錄過的子孫樹若仍有存活者（例如監督程序崩潰後沒被一併結束的程序），核對 PID＋建立時間後清掉並記錄；
     // 情境判定已在前面寫定，這裡只負責不把測試殘留留在使用者的機器上。
-    const recorded = [...new Map(allDescendants.map(item => [item.pid, item])).values()];
+    const recorded = [...new Map(allDescendants.map(item => [`${item.pid}|${item.creationDate}`, item])).values()];
     const beforeCleanup = await processTable();
     const leftovers = recorded.filter(item => beforeCleanup.get(item.pid)?.CreationDate === item.creationDate);
     raw.leftoverCleanup = { found: leftovers.map(({ pid, name, parentPid }) => ({ pid, name, parentPid })), killed: [] };
-    for (const item of leftovers) {
-      if ((await processTable()).get(item.pid)?.CreationDate !== item.creationDate) continue;   // 已隨上一棵樹結束
-      const result = await execText('taskkill', ['/PID', String(item.pid), '/T', '/F']);
-      raw.leftoverCleanup.killed.push({ pid: item.pid, name: item.name, status: result.status });
-    }
-    const afterCleanup = await processTable();
-    raw.leftoverCleanup.stillAlive = leftovers.filter(item => afterCleanup.get(item.pid)?.CreationDate === item.creationDate)
-      .map(item => item.pid);
+    Object.assign(raw.leftoverCleanup, await terminateVerifiedTree(leftovers));
     raw.finalCheck = { stateExists: fs.existsSync(STATE_FILE), listeners: await listeners() };
     raw.finishedAt = nowIso();
     fs.writeFileSync(path.join(evidenceDir, 'raw.json'), `${JSON.stringify(raw, null, 2)}\n`);

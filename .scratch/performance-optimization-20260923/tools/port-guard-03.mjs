@@ -126,6 +126,15 @@ export async function nodeProcesses() {
 // 命令列中的第一個腳本檔名（daily-dev.mjs／vc.js／vite.js／dev-server.mjs），證據只記這個名稱。
 export const scriptOf = commandLine => (commandLine ?? '').match(/[^\\/"\s]+\.(?:mjs|js|cjs)\b/)?.[0] ?? null;
 
+// 證據共用的去識別身分欄位；不輸出完整命令列。
+export function identityFields(table, pids) {
+  return pids.map(pid => {
+    const row = table.get(pid);
+    return row ? { pid, parentPid: row.ParentProcessId, creationDate: row.CreationDate, script: scriptOf(row.CommandLine) }
+      : { pid, missing: true };
+  });
+}
+
 // 某程序底下的整棵子孫樹（驗收端的獨立實作，不沿用啟動器的程式）。Windows 父 PID 在父程序結束後不會清掉，
 // PID 又會被重用，所以子程序的建立時間必須不早於父程序才算成員；只記 PID、父 PID、程序名與建立時間。
 const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Number.NaN);
@@ -152,6 +161,33 @@ export function launcherTree(table, rootPid) {
   const dropped = new Set(all.filter(item => item.name === 'powershell.exe').map(item => item.pid));
   for (const item of all) if (dropped.has(item.parentPid)) dropped.add(item.pid);   // 走訪順序為先父後子
   return all.filter(item => !dropped.has(item.pid));
+}
+
+// 驗收端獨立於 daily-dev 的清理實作：每次重新核對身分並擴展當下子孫，只結束指定的單一 PID。
+export async function terminateVerifiedTree(records, { readTable = processTable, terminate = async item => {
+  try {
+    await run('taskkill', ['/PID', String(item.pid), '/F']);
+    return { status: 0 };
+  } catch (error) {
+    return { status: error.code ?? 1 };
+  }
+} } = {}) {
+  const known = new Map(records.map(item => [`${item.pid}|${item.creationDate}`, item]));
+  const attempted = new Set();
+  const killed = [];
+  const alive = table => [...known.values()].filter(item => Number.isFinite(creationMs(item.creationDate))
+    && table.get(item.pid)?.CreationDate === item.creationDate);
+  while (true) {
+    const table = await readTable();
+    for (const root of alive(table)) {
+      for (const item of launcherTree(table, root.pid)) known.set(`${item.pid}|${item.creationDate}`, item);
+    }
+    const item = alive(table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
+    if (!item) return { killed, stillAlive: alive(table).map(row => row.pid) };
+    attempted.add(`${item.pid}|${item.creationDate}`);
+    const result = await terminate(item);
+    killed.push({ pid: item.pid, name: item.name ?? null, creationDate: item.creationDate, status: result.status });
+  }
 }
 
 export function descends(table, pid, roots) {

@@ -22,7 +22,7 @@ import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { claimRun, fileSha, sha256, sleep, toolVersions } from './service-kit.mjs';
 import { ROOT, parseArgs, scanSecrets } from './verify-b1-breakdown.mjs';
-import { launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
+import { identityFields, launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, startForeignMonitor, terminateVerifiedTree } from './port-guard-03.mjs';
 
 const require = createRequire(import.meta.url);
 const { fixtureChartBody } = require('./trace-preload.cjs');
@@ -196,14 +196,20 @@ function designedAbortOf(request, requests) {
 }
 
 // 請求分類（本輪判定器規則，逐筆記錄類別，不整批忽略）：
-// - 瀏覽器自發（發起者不是頁面腳本，例如對 stale-while-revalidate 回應的背景重新驗證）：不算 App 請求，
-//   另列；若拿到 4xx／5xx 仍算失敗。
+// - 瀏覽器自發：同視窗、完全相同網址，必須在本筆發起前已有腳本發起且完成的 200；附上前筆證據。
+//   這仍是待使用者裁定的新增分類，不能當作凍結協定已接受；4xx／5xx 仍算失敗。
 // - App 發起：HTTP 必須 200／204；§4 的 2y 例外可無回應。200 之後的傳輸層取消只有一種可接受——
 //   /api/gemini-stream 且本步畫面已證明完整收到 done（streamComplete）；其餘一律失敗。
-function classifyRequest(request, requests, streamComplete) {
+export function classifyRequest(request, requests, streamComplete, history = requests) {
   if (request.initiator && request.initiator.type !== 'script') {
-    const ok = request.status === null || [200, 204, 304].includes(request.status);
-    return { kind: request.failed ? '瀏覽器自發・已取消' : '瀏覽器自發', ok };
+    const prior = history.find(other => other !== request && other.initiator?.type === 'script'
+      && other.url && other.url === request.url && other.method === request.method && other.status === 200 && !other.failed
+      && Number.isFinite(other.finishedAtMs) && Number.isFinite(request.startedAtMs) && other.finishedAtMs <= request.startedAtMs);
+    if (prior) {
+      const ok = request.status === null || [200, 204, 304].includes(request.status);
+      return { kind: request.failed ? '瀏覽器自發・已取消' : '瀏覽器自發', ok,
+        priorScript200: { requestId: prior.requestId, route: prior.route, finishedAtMs: prior.finishedAtMs } };
+    }
   }
   if (designedAbortOf(request, requests)) return { kind: '§4 設計內 2y 取消', ok: true };
   if (![200, 204].includes(request.status)) return { kind: 'HTTP 失敗或無回應', ok: false };
@@ -497,10 +503,18 @@ async function launchChrome(profileDir, viewport) {
   const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
   const page = targets.find(target => target.type === 'page');
   if (!page) throw new Error('找不到 Chrome 分頁');
-  return { child, pid: child.pid, version: version.Browser, browserWs: version.webSocketDebuggerUrl, pageWs: page.webSocketDebuggerUrl };
+  const table = await processTable();
+  const root = table.get(child.pid);
+  if (!root?.CreationDate) throw new Error('無法確認隔離 Chrome 的建立時間');
+  return { child, pid: child.pid, tree: [{ pid: child.pid, creationDate: root.CreationDate }, ...launcherTree(table, child.pid)],
+    version: version.Browser, browserWs: version.webSocketDebuggerUrl, pageWs: page.webSocketDebuggerUrl };
 }
 
 async function closeChrome(chrome) {
+  const table = await processTable();
+  if (table.get(chrome.pid)?.CreationDate === chrome.tree[0].creationDate) {
+    chrome.tree.push(...launcherTree(table, chrome.pid));
+  }
   try {
     const browser = await Cdp.connect(chrome.browserWs);
     await browser.send('Browser.close').catch(() => {});
@@ -511,12 +525,12 @@ async function closeChrome(chrome) {
     if (chrome.child.exitCode !== null || chrome.child.signalCode !== null) return true;
     await sleep(100);
   }
-  await execText('taskkill', ['/PID', String(chrome.pid), '/T', '/F']);
+  chrome.cleanup = await terminateVerifiedTree(chrome.tree);
   return false;
 }
 
 // ── 一個視窗尺寸的完整操作序列 ──
-async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids, abortSignal }) {
+async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids, abortSignal, streamOnly = false }) {
   const profileDir = path.join(runtimeDir, `profile-${name}`);
   const chrome = await launchChrome(profileDir, viewport);
   chromePids.add(chrome.pid);
@@ -532,7 +546,7 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
     const host = new URL(url).host;
     if (host !== `localhost:${FRONT_PORT}`) externalHosts.add(host);
     network.set(params.requestId, { at: performance.now(), method: params.request.method, url, status: null, failed: null,
-      finishedAtMs: null, failedAtMs: null,
+      requestId: params.requestId, startedAtMs: Math.round(params.timestamp * 1e6) / 1e3, finishedAtMs: null, failedAtMs: null, terminalEvents: [],
       initiator: new URL(url).pathname.startsWith('/api/') ? initiatorOf(params.initiator) : null });
   });
   cdp.on('Network.responseReceived', params => {
@@ -542,13 +556,18 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
   // 完成／失敗時刻用瀏覽器的單調時鐘（同一時鐘才可比先後），供 §4 例外核對 10y 是否先完成。
   cdp.on('Network.loadingFinished', params => {
     const entry = network.get(params.requestId);
-    if (entry) entry.finishedAtMs = Math.round(params.timestamp * 1e6) / 1e3;
+    if (entry) {
+      entry.finishedAtMs = Math.round(params.timestamp * 1e6) / 1e3;
+      entry.terminalEvents.push({ event: 'Network.loadingFinished', timestamp: params.timestamp, encodedDataLength: params.encodedDataLength });
+    }
   });
   cdp.on('Network.loadingFailed', params => {
     const entry = network.get(params.requestId);
     if (!entry) return;
     entry.failed = { error: params.errorText, canceled: Boolean(params.canceled) };
     entry.failedAtMs = Math.round(params.timestamp * 1e6) / 1e3;
+    entry.terminalEvents.push({ event: 'Network.loadingFailed', timestamp: params.timestamp,
+      errorText: params.errorText, canceled: Boolean(params.canceled), type: params.type });
   });
   cdp.on('Runtime.consoleAPICalled', params => {
     if (!['error', 'assert'].includes(params.type)) return;
@@ -840,7 +859,7 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
   const screensDir = path.join(evidenceDir, 'screens');
   fs.mkdirSync(screensDir, { recursive: true });
   try {
-    for (const [index, op] of ops.entries()) {
+    for (const [index, op] of (streamOnly ? ops.slice(0, 6) : ops).entries()) {
       if (abortSignal.aborted) throw new Error('外部用戶端出現，已中止');
       const opRecord = { id: op.id, label: op.label, rule: op.rule, startedAt: nowIso(), before: null, after: null,
         docStart: null, facts: null, checks: {}, keyChecks: {}, requests: [], console: [], expectedConsole: [],
@@ -865,13 +884,19 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
         opRecord.error = error.message;
       }
       opRecord.durationMs = Math.round(performance.now() - opStart);
-      opRecord.requests = [...network.values()]
+      const history = [...network.values()].map(entry => ({ ...entry, route: routeOf(entry.url) }));
+      opRecord.requests = history
         .filter(entry => entry.at >= opStart && new URL(entry.url).pathname.startsWith('/api/'))
-        .map(entry => ({ method: entry.method, route: routeOf(entry.url), status: entry.status, failed: entry.failed,
-          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, initiator: entry.initiator }));
+        .map(entry => ({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
+          method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
+          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents, initiator: entry.initiator }));
       opRecord.designedAborts = opRecord.requests.map(request => designedAbortOf(request, opRecord.requests)).filter(Boolean);
       const streamComplete = Boolean(op.streamEvidence && !opRecord.error && op.streamEvidence(opRecord.facts ?? {}));
-      for (const request of opRecord.requests) Object.assign(request, classifyRequest(request, opRecord.requests, streamComplete));
+      for (const request of opRecord.requests) {
+        request.frozenOk = Boolean(designedAbortOf(request, opRecord.requests)) || ([200, 204].includes(request.status) && !request.failed);
+        Object.assign(request, classifyRequest(request, opRecord.requests, streamComplete, history));
+        delete request.url;
+      }
       opRecord.badRequests = opRecord.requests.filter(request => !request.ok).map(request => request.route);
       const opConsole = consoleEvents.slice(consoleFrom).map(({ kind, text }) => ({ kind, text }));
       opRecord.console = opConsole.filter(event => !isExpectedConsole(event));
@@ -920,6 +945,13 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
     }
   }
   return record;
+}
+
+// 串流對照沿用正式 App 的前六步；新 origin／新資料目錄，避免引入另一套 UI 操作或串流消費器。
+export async function runStreamViewport({ frontPort, ...options }) {
+  FRONT_PORT = frontPort;
+  ORIGIN = `http://localhost:${frontPort}`;
+  return runViewport({ ...options, streamOnly: true });
 }
 
 // ── 後端探針彙整（只數事件，不複製原始行）──
@@ -1000,6 +1032,7 @@ async function main() {
     tools: Object.fromEntries(TOOL_FILES.map(file => [file, fileSha(path.join(TOOLS, file))])),
     candidateSources: Object.fromEntries(CANDIDATE_FILES.map(file => [file, fileSha(path.join(ROOT, file))])),
     cacheMode: '每個視窗全新 user-data-dir；Chrome HTTP 快取維持預設；後端固定上游與假 AI',
+    requestClassificationStatus: '兩條新增分類待使用者裁定；ok 為提案規則，frozenOk 為凍結 §4',
     fixture: { prices: PRICES, usBuyDate: US_BUY_DATE },
     sentinel: null, launcher: {}, monitor: null, viewports: [], backendTrace: null, persistent: null,
     stop: null, stopCheck: null, errors: [],
@@ -1035,10 +1068,7 @@ async function main() {
     raw.launcher.state = owned.view;
     raw.launcher.listenersAtStart = { [FRONT_PORT]: await listenerRows(FRONT_PORT), [API_PORT]: await listenerRows(API_PORT) };
     const table = await nodeProcesses();
-    raw.launcher.identities = [owned.view.supervisorPid, ...owned.view.children.map(child => child.pid)].map(pid => {
-      const row = table.get(pid);
-      return row ? { pid, parentPid: row.ParentProcessId, creationDate: row.CreationDate, script: scriptOf(row.CommandLine) } : { pid, missing: true };
-    });
+    raw.launcher.identities = identityFields(table, [owned.view.supervisorPid, ...owned.view.children.map(child => child.pid)]);
     // 監督程序底下的整棵程序樹（含 vercel 經 cmd 殼啟動的內部開發伺服器與看門程序），停止後逐一核對。
     raw.launcher.tree = launcherTree(await processTable(), owned.view.supervisorPid);
     for (const name of names) {
@@ -1136,7 +1166,7 @@ async function main() {
   return failedOps.length || incomplete.length ? 1 : 0;
 }
 
-main().then(code => { process.exitCode = code; }).catch(error => {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().then(code => { process.exitCode = code; }).catch(error => {
   console.error(error.message);
   process.exitCode = 2;
 });
