@@ -137,7 +137,11 @@ export function identityFields(table, pids) {
 
 // 某程序底下的整棵子孫樹（驗收端的獨立實作，不沿用啟動器的程式）。Windows 父 PID 在父程序結束後不會清掉，
 // PID 又會被重用，所以子程序的建立時間必須不早於父程序才算成員；只記 PID、父 PID、程序名與建立時間。
-const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Number.NaN);
+const creationMs = value => {
+  const text = String(value ?? '');
+  const legacy = /^\/Date\((-?\d+)(?:[+-]\d{4})?\)\/$/.exec(text);
+  return legacy ? Number(legacy[1]) : Date.parse(text);
+};
 export function descendantTree(table, rootPid) {
   const out = [];
   const seen = new Set([rootPid]);

@@ -83,7 +83,11 @@ function processTable() {
   return new Map((Array.isArray(list) ? list : [list]).map(row => [row.ProcessId, row]));
 }
 
-const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Number.NaN);
+const creationMs = value => {
+  const text = String(value ?? '');
+  const legacy = /^\/Date\((-?\d+)(?:[+-]\d{4})?\)\/$/.exec(text);
+  return legacy ? Number(legacy[1]) : Date.parse(text);
+};
 
 // 某程序底下的整棵子孫樹，只記 PID、父 PID、程序名與建立時間。Windows 的父 PID 在父程序結束後不會清掉，
 // PID 又會被重用，所以子程序的建立時間必須不早於父程序，才算這棵樹的成員；監督程序與看門程序自己跑的

@@ -19,6 +19,13 @@ async function check(label, act) {
   catch (error) { results.push({ label, pass: false, error: error.message }); }
 }
 for (const [label, enumerate] of [['啟動器', descendantsOf], ['驗收端', descendantTree]]) {
+  await check(`${label}：ISO 同年但較早建立的程序不列入`, () => {
+    const rows = [row(1, 0, 200), row(2, 1, 100), row(3, 2, 300), row(4, 1, 201), row(5, 4, 202)]
+      .map(item => ({ ...item, CreationDate: new Date(Date.UTC(2026, 8, 25) + Number(/\d+/.exec(item.CreationDate)[0])).toISOString() }));
+    const actual = enumerate(tableOf(rows), 1).map(item => item.pid);
+    assert.deepEqual(actual, [4, 5]);
+    return { included: actual, excluded: [2, 3], table: rows };
+  });
   await check(`${label}：舊子程序與其子孫不列入`, () => {
     const table = tableOf([row(1, 0, 200), row(2, 1, 100), row(3, 2, 300), row(4, 1, 201), row(5, 4, 202)]);
     const actual = enumerate(table, 1).map(item => item.pid);

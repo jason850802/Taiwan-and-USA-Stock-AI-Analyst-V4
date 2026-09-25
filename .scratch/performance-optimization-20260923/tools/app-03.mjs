@@ -197,7 +197,7 @@ function designedAbortOf(request, requests) {
 
 // 請求分類（本輪判定器規則，逐筆記錄類別，不整批忽略）：
 // - 瀏覽器自發：同視窗、完全相同網址，必須在本筆發起前已有腳本發起且完成的 200；附上前筆證據。
-//   這仍是待使用者裁定的新增分類，不能當作凍結協定已接受；4xx／5xx 仍算失敗。
+//   使用者於 2026-09-26 接受此收緊規則；凍結 §4 仍分欄保留，4xx／5xx 仍算失敗。
 // - App 發起：HTTP 必須 200／204；§4 的 2y 例外可無回應。200 之後的傳輸層取消只有一種可接受——
 //   /api/gemini-stream 且本步畫面已證明完整收到 done（streamComplete）；其餘一律失敗。
 export function classifyRequest(request, requests, streamComplete, history = requests) {
@@ -1032,7 +1032,7 @@ async function main() {
     tools: Object.fromEntries(TOOL_FILES.map(file => [file, fileSha(path.join(TOOLS, file))])),
     candidateSources: Object.fromEntries(CANDIDATE_FILES.map(file => [file, fileSha(path.join(ROOT, file))])),
     cacheMode: '每個視窗全新 user-data-dir；Chrome HTTP 快取維持預設；後端固定上游與假 AI',
-    requestClassificationStatus: '兩條新增分類待使用者裁定；ok 為提案規則，frozenOk 為凍結 §4',
+    requestClassificationStatus: '瀏覽器自發收緊規則已獲使用者接受；串流例外仍待裁定；frozenOk 為凍結 §4',
     fixture: { prices: PRICES, usBuyDate: US_BUY_DATE },
     sentinel: null, launcher: {}, monitor: null, viewports: [], backendTrace: null, persistent: null,
     stop: null, stopCheck: null, errors: [],
