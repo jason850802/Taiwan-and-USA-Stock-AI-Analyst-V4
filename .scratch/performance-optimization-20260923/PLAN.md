@@ -1,6 +1,6 @@
 # 第二輪：降低實際等待時間的效能優化 PLAN
 
-建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支。02 resolved：同 handler 長駐原型通過固定低成本與當時的 API 對等。03 OPEN（2026-09-25 第二輪）：新來源 API 對等 59/59、原 `localhost:3000` 候選 App 桌面＋窄版 28/28（逐步五鍵與截圖）、依賴刪除／恢復重載、兩次啟停／埠衝突／崩潰恢復與部署路徑靜態核對均已有原始證據；正式平台 API／取消未實測、本輪增量待獨立覆核。04 暫不解鎖，全案 OPEN。** 最新結果見 [03 第二輪補證](evidence/03/ACCEPTANCE-20260925.md)與 [03 重驗](evidence/03/RETEST-20260925.md)；原 [HANDOFF](HANDOFF.md) 是覆核前快照。
+建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支。02 resolved：同 handler 長駐原型通過固定低成本與當時的 API 對等。03 OPEN（2026-09-25 第二輪）：新來源 API 對等 59/59、原 `localhost:3000` 候選 App 桌面＋窄版 28/28（逐步五鍵與截圖）、依賴刪除／恢復重載、兩次啟停／埠衝突／崩潰恢復與部署路徑靜態核對均已有原始證據；新發現監督程序崩潰時 vercel 內部開發伺服器成為孤兒（啟動器待修），正式平台 API／取消未實測、本輪增量待獨立覆核。04 暫不解鎖，全案 OPEN。** 最新結果見 [03 第二輪補證](evidence/03/ACCEPTANCE-20260925.md)與 [03 重驗](evidence/03/RETEST-20260925.md)；原 [HANDOFF](HANDOFF.md) 是覆核前快照。
 
 起點：`E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`，分支 `codex/reacceptance-fixes-p1-s1`，核對 HEAD `30dfdb2`。產品基線含 `e9fa1a2`、`2bd91f4`、`6eee87e`，全部保留。
 

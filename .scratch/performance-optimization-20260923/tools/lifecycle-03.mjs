@@ -8,7 +8,8 @@
 // 正式 run 用日常命令原樣（daily-dev.mjs start，不帶測試旗標＝使用者平常的 3000／3001、真 .env 只給後端）。
 // 只送兩種請求：前端首頁 GET（HTML）與同源代理的 OPTIONS（守門在 CORS 之後直接回 204，不碰上游）；
 // 不打行情、不執行 AI。服務期間沿用 port-guard 的哨兵與外部用戶端監看，一有外部用戶端就停服務並判無效。
-// 每個情境寫下命令、結束碼、輸出（不含控制 token）、owned PID／建立時間、listener 與停止後殘留檢查。
+// 每個情境寫下命令、結束碼、輸出（不含控制 token）、owned PID／建立時間、listener 與停止後殘留檢查；
+// 殘留檢查涵蓋就緒時監督程序底下的整棵子孫樹（含 vercel 內部開發伺服器與 esbuild），結束時清掉仍存活者並記錄。
 // exit 0＝全部情境符合預期；1＝有情境不符；2＝run 無效。
 import { execFile, spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -19,7 +20,7 @@ import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { claimRun, fileSha, sleep, toolVersions } from './service-kit.mjs';
 import { ROOT, parseArgs, scanSecrets } from './verify-b1-breakdown.mjs';
-import { listenerRows, nodeProcesses, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
+import { listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
 
 const require = createRequire(import.meta.url);
 const { LOG: PERSISTENT_LOG } = require('./persistent-functions.cjs');
@@ -170,20 +171,42 @@ async function httpChecks() {
   return out;
 }
 
-// 停止後檢查：狀態檔、兩埠 listener、監督程序與子程序（PID＋建立時間）、函式子程序（dev-server.mjs）。
-async function stoppedCheck(view, spawns) {
+// 就緒後監督程序底下的整棵程序樹（所有子孫，含 vercel 經 cmd 殼啟動的內部 Vite 與 esbuild），
+// 只記 PID、程序名與建立時間；停止或崩潰後逐一核對是否仍存活。
+const allDescendants = [];
+async function descendantsOf(rootPid) {
+  const table = await processTable();
+  const out = [];
+  const walk = parent => {
+    for (const row of table.values()) {
+      if (row.ParentProcessId !== parent || row.ProcessId === parent) continue;
+      out.push({ pid: row.ProcessId, parentPid: parent, name: row.Name, creationDate: row.CreationDate });
+      walk(row.ProcessId);
+    }
+  };
+  walk(rootPid);
+  allDescendants.push(...out);
+  return out;
+}
+
+// 停止後檢查：狀態檔、兩埠 listener、監督程序與子程序（PID＋建立時間）、函式子程序（dev-server.mjs），
+// 以及就緒時記下的整棵子孫樹（PID＋建立時間仍相同即為殘留）。
+async function stoppedCheck(view, spawns, descendants = []) {
   await sleep(500);
   const table = await nodeProcesses();
+  const everything = await processTable();
   const owned = view ? [{ pid: view.supervisorPid, creationDate: view.supervisorCreationDate }, ...view.children] : [];
   return {
     stateRemoved: !fs.existsSync(STATE_FILE),
     listeners: await listeners(),
     aliveLauncher: owned.filter(item => table.get(item.pid)?.CreationDate === item.creationDate).map(item => item.pid),
     aliveFunctions: (spawns ?? []).filter(item => /dev-server\.mjs/i.test(table.get(item.pid)?.CommandLine ?? '')).map(item => item.pid),
+    aliveDescendants: descendants.filter(item => everything.get(item.pid)?.CreationDate === item.creationDate)
+      .map(({ pid, name }) => ({ pid, name })),
   };
 }
 const isClean = check => check.stateRemoved && !check.listeners.front.length && !check.listeners.api.length
-  && !check.aliveLauncher.length && !check.aliveFunctions.length;
+  && !check.aliveLauncher.length && !check.aliveFunctions.length && !check.aliveDescendants.length;
 
 // ── 情境 ──
 async function cycle(runtimeDir, tag) {
@@ -197,13 +220,14 @@ async function cycle(runtimeDir, tag) {
     record.steps.listeners = await listeners();
     record.steps.status = await daily('status');
     record.steps.http = await httpChecks();
+    record.steps.descendants = await descendantsOf(state.view.supervisorPid);
   }
   const logs = state ? launcherLogs(state.token) : null;
   record.steps.logs = logs ? { vercel: logs.vercel, vite: logs.vite } : null;
   record.steps.persistent = logs?.persistent ?? null;
   record.steps.stop = await daily('stop');
   record.steps.supervisorExit = { value: await waitExit(run, 15_000), atMs: run.exit.atMs };
-  record.steps.afterStop = await stoppedCheck(state?.view, logs?.persistent.spawns);
+  record.steps.afterStop = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants ?? []);
   const vite = state?.view.children.find(child => child.script === 'vite.js');
   const vercel = state?.view.children.find(child => child.script === 'vc.js');
   const statusJson = (() => { try { return JSON.parse(record.steps.status?.stdout.join('\n') ?? ''); } catch { return null; } })();
@@ -223,7 +247,7 @@ async function cycle(runtimeDir, tag) {
       && logs.persistent.spawns.length === 5 && !logs.persistent.outsideForks),
     'stop 回報 stopped': record.steps.stop.status === 0 && stopJson?.stopped === true,
     '監督程序自行結束': Boolean(record.steps.supervisorExit.value),
-    '停止後無狀態、無 listener、無殘留程序': isClean(record.steps.afterStop),
+    '停止後無狀態、無 listener、整棵子孫樹無殘留': isClean(record.steps.afterStop),
   };
   record.pass = Object.values(record.checks).every(Boolean);
   return record;
@@ -277,6 +301,7 @@ async function childCrash(runtimeDir, which) {
   record.steps.target = target ? { pid: target.pid, script: target.script,
     identityVerified: table.get(target.pid)?.CreationDate === target.creationDate } : null;
   const logs = state ? launcherLogs(state.token) : null;
+  record.steps.descendants = state ? await descendantsOf(state.view.supervisorPid) : [];
   if (record.steps.target?.identityVerified) {
     const killStarted = performance.now();
     const kill = await execText('taskkill', ['/PID', String(target.pid), '/T', '/F']);
@@ -285,14 +310,14 @@ async function childCrash(runtimeDir, which) {
     record.steps.supervisorExit = { value: exitValue, msAfterKill: exitValue ? Math.round(performance.now() - killStarted) : null,
       output: run.output() };
   }
-  record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns);
+  record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
   if (!isClean(record.steps.afterCrash) && fs.existsSync(STATE_FILE)) record.steps.cleanupStop = await daily('stop');
   record.recovery = await cycle(runtimeDir, `${tag}-recover`);
   record.checks = {
     '崩潰前已就緒': run.ready && Boolean(state),
     '只對核對過身分的子程序下手': record.steps.target?.identityVerified === true,
     '監督程序在 20 秒內自行結束': Boolean(record.steps.supervisorExit?.value),
-    '崩潰後無狀態、無 listener、無殘留程序': isClean(record.steps.afterCrash),
+    '崩潰後無狀態、無 listener、整棵子孫樹無殘留': isClean(record.steps.afterCrash),
     '重新啟動並停止均正常': record.recovery.pass,
   };
   record.pass = Object.values(record.checks).every(Boolean);
@@ -308,6 +333,7 @@ async function supervisorCrash(runtimeDir) {
   record.steps.start = { command: run.command, ready: run.ready, readyMs: run.readyMs, output: run.output() };
   record.steps.state = state?.view ?? null;
   const logs = state ? launcherLogs(state.token) : null;
+  record.steps.descendants = state ? await descendantsOf(state.view.supervisorPid) : [];
   const table = await nodeProcesses();
   const verified = Boolean(state && table.get(state.view.supervisorPid)?.CreationDate === state.view.supervisorCreationDate);
   record.steps.identityVerified = verified;
@@ -317,7 +343,7 @@ async function supervisorCrash(runtimeDir) {
     record.steps.supervisorExit = await waitExit(run, 10_000);
     await sleep(1500);
   }
-  record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns);
+  record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
   record.steps.stateLeft = fs.existsSync(STATE_FILE);
   record.steps.status = await daily('status');
   const survivors = record.steps.afterCrash.aliveLauncher.length || record.steps.afterCrash.aliveFunctions.length
@@ -330,12 +356,14 @@ async function supervisorCrash(runtimeDir) {
     }
     record.steps.startWhileStale = { ready: refused.ready, exit: refused.exit.value, output: refused.output() };
     record.steps.recover = await daily('recover');
-    record.steps.afterRecover = await stoppedCheck(state?.view, logs?.persistent.spawns);
+    record.steps.afterRecover = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
   }
   const staleBefore = new Set(fs.readdirSync(DAILY_RUNTIME).filter(name => name.startsWith('state.json.')));
   record.recovery = await cycle(runtimeDir, `${tag}-recover`);
   record.steps.renamedStateFiles = fs.readdirSync(DAILY_RUNTIME)
     .filter(name => name.startsWith('state.json.') && !staleBefore.has(name)).map(name => name.replace(/\d+$/, '<時間戳>'));
+  // 下次正常啟停之後，崩潰那棵舊樹是否仍有存活者（啟動器不知道它們，不會自動清）。
+  record.steps.oldTreeAfterRecovery = (await stoppedCheck(null, [], record.steps.descendants)).aliveDescendants;
   record.checks = {
     '崩潰前已就緒且只殺核對過的監督程序': run.ready && verified,
     '監督程序已結束': Boolean(record.steps.supervisorExit),
@@ -352,6 +380,9 @@ async function supervisorCrash(runtimeDir) {
       '殘留狀態檔由下次啟動核對後改名保存': record.steps.stateLeft === true
         && record.steps.renamedStateFiles.some(name => name.startsWith('state.json.stale-')),
     }),
+    '崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）': !(survivors ? record.steps.afterRecover : record.steps.afterCrash)
+      .aliveDescendants.length,
+    '下次啟停之後舊樹也無殘留': !record.steps.oldTreeAfterRecovery.length,
     '之後重新啟動並停止均正常': record.recovery.pass,
   };
   record.pass = Object.values(record.checks).every(Boolean);
@@ -434,6 +465,20 @@ async function main() {
       raw.finalStop = await daily('stop');
       if (raw.finalStop.status !== 0) raw.finalRecover = await daily('recover');
     }
+    // 本輪記錄過的子孫樹若仍有存活者（例如監督程序崩潰後沒被一併結束的程序），核對 PID＋建立時間後清掉並記錄；
+    // 情境判定已在前面寫定，這裡只負責不把測試殘留留在使用者的機器上。
+    const recorded = [...new Map(allDescendants.map(item => [item.pid, item])).values()];
+    const beforeCleanup = await processTable();
+    const leftovers = recorded.filter(item => beforeCleanup.get(item.pid)?.CreationDate === item.creationDate);
+    raw.leftoverCleanup = { found: leftovers.map(({ pid, name, parentPid }) => ({ pid, name, parentPid })), killed: [] };
+    for (const item of leftovers) {
+      if ((await processTable()).get(item.pid)?.CreationDate !== item.creationDate) continue;   // 已隨上一棵樹結束
+      const result = await execText('taskkill', ['/PID', String(item.pid), '/T', '/F']);
+      raw.leftoverCleanup.killed.push({ pid: item.pid, name: item.name, status: result.status });
+    }
+    const afterCleanup = await processTable();
+    raw.leftoverCleanup.stillAlive = leftovers.filter(item => afterCleanup.get(item.pid)?.CreationDate === item.creationDate)
+      .map(item => item.pid);
     raw.finalCheck = { stateExists: fs.existsSync(STATE_FILE), listeners: await listeners() };
     raw.finishedAt = nowIso();
     fs.writeFileSync(path.join(evidenceDir, 'raw.json'), `${JSON.stringify(raw, null, 2)}\n`);
@@ -445,6 +490,7 @@ async function main() {
     problems.push('結束時仍有狀態檔或 listener');
   }
   if (raw.scenarios.length !== 7) problems.push(`情境數 ${raw.scenarios.length}/7`);
+  if (raw.leftoverCleanup?.stillAlive?.length) problems.push(`測試殘留程序清不掉：${raw.leftoverCleanup.stillAlive.join(',')}`);
   const leaks = scanSecrets(evidenceDir);
   if (leaks.length) problems.push(`證據疑似含秘密：${leaks.map(hit => `${hit.file}:${hit.key}`).join(',')}`);
   const failed = raw.scenarios.filter(record => !record.pass).map(record => ({
@@ -458,6 +504,7 @@ async function main() {
     scenarios: raw.scenarios.map(record => `${record.scenario}:${record.pass ? 'PASS' : 'FAIL'}`),
     sentinel: { events: raw.sentinel?.events?.length ?? null, neutralized: raw.sentinel?.visibleTabsNeutralized ?? null },
     monitor: { checks: raw.monitor?.checks ?? null, foreign: raw.monitor?.foreign?.length ?? null },
+    leftoverCleanup: raw.leftoverCleanup ?? null,
   };
   const toolSha = fileSha(fileURLToPath(import.meta.url)).slice(0, 12);
   fs.writeFileSync(path.join(evidenceDir, `lifecycle-summary-${toolSha}.json`), `${JSON.stringify(summary, null, 2)}\n`, { flag: 'wx' });
