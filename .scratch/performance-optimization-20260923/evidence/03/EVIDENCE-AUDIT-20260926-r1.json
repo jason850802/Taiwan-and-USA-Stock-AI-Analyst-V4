@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-09-25T21:51:29.043Z",
+  "secretHits": 0,
+  "nonSecretConfigHits": [
+    {
+      "file": "gate03-final-20260924-r2-lf.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-retest-20260925-r1-lf.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-accept-20260925-r2-lf.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-accept-20260925-r1-lf.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-accept-20260925-r3-lf.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-review-20260926-r2-source.json",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-review-20260926-r3-source.json",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-review-20260926-r3.txt",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-review-20260926-r4-source.json",
+      "key": "LLM_PROVIDER"
+    },
+    {
+      "file": "gate03-review-20260926-r4.txt",
+      "key": "LLM_PROVIDER"
+    }
+  ],
+  "configHitReason": "LLM_PROVIDER 是非秘密的 provider 設定名稱／值；既有 gate 正式 SECRET_NAME 規則不將它列為秘密。其餘命中一律停止。",
+  "sourceManifestFiles": 28,
+  "guardCases": 18,
+  "streamArms": 4,
+  "screenshotHashes": 24,
+  "streamSourceStable": true,
+  "originalPortSnapshot": {
+    "3000": [],
+    "3001": []
+  },
+  "originalPortRunAuthorized": false
+}

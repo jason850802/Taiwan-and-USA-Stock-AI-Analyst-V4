@@ -1,0 +1,11 @@
+{"ev":"parent.boot","t":734.39,"pid":35496}
+{"ev":"parent.listenCall","t":2469.217,"pid":35496,"seq":1}
+{"ev":"parent.listening","t":2471.921,"pid":35496,"seq":1}
+{"ev":"parent.fork","t":11184.128,"pid":35496,"trace":null,"childPid":7680,"forkCallMs":8.771}
+{"ev":"parent.childReady","t":13009.269,"pid":35496,"trace":null,"childPid":7680}
+{"ev":"parent.fork","t":13191.598,"pid":35496,"trace":null,"childPid":14496,"forkCallMs":5.234}
+{"ev":"parent.childReady","t":14978.402,"pid":35496,"trace":null,"childPid":14496}
+{"ev":"parent.fork","t":20882.636,"pid":35496,"trace":null,"childPid":22060,"forkCallMs":5.64}
+{"ev":"parent.childReady","t":22842.863,"pid":35496,"trace":null,"childPid":22060}
+{"ev":"parent.fork","t":42078.853,"pid":35496,"trace":null,"childPid":8388,"forkCallMs":5.158}
+{"ev":"parent.childReady","t":44866.456,"pid":35496,"trace":null,"childPid":8388}

@@ -1,0 +1,175 @@
+{
+  "createdAt": "2026-09-25T21:43:12.222Z",
+  "baseCommit": "db4e620241454abd00f3db29bb37ea7c99e59603",
+  "codeCommit": "7eb5ee5ca71d478aa88661058ada69ab20c73b25",
+  "files": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "committedSha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "committedSha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "committedSha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "committedSha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "committedSha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "committedSha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/finmind.ts",
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "committedSha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "committedSha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "committedSha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/gemini.ts",
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "committedSha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "committedSha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "committedSha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360",
+      "committedSha256": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "sha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "committedSha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "sha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "committedSha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "sha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "committedSha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "sha256": "65dc86801f5aeef83df1ccb8b7a34f4c4bfb05573e032d88fa587d7f6938320c",
+      "committedSha256": "65dc86801f5aeef83df1ccb8b7a34f4c4bfb05573e032d88fa587d7f6938320c",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "sha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "committedSha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "sha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "committedSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "sha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "committedSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "sha256": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "committedSha256": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": "scripts/start-dev.ps1",
+      "sha256": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "committedSha256": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "sha256": "341d3f79694fcb13e5f2335bac83b3cad935f7ec10f58a888b463faecdb076d1",
+      "committedSha256": "341d3f79694fcb13e5f2335bac83b3cad935f7ec10f58a888b463faecdb076d1",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "sha256": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+      "committedSha256": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "sha256": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "committedSha256": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "sha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "committedSha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "sha256": "1428590ef5275a0ea94f99e47e8338461d51f33837d217af72a1a1f21e6446c1",
+      "committedSha256": "1428590ef5275a0ea94f99e47e8338461d51f33837d217af72a1a1f21e6446c1",
+      "equalsCommittedBytes": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+      "sha256": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "committedSha256": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "equalsCommittedBytes": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{"ev":"child.boot","t":36.336,"pid":18196,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":50,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":4535.494,"pid":18196,"seq":1}
+{"ev":"child.listening","t":4556.193,"pid":18196,"seq":1}
+{"ev":"child.listenCall","t":4635.537,"pid":18196,"seq":2}
+{"ev":"child.listening","t":4637.211,"pid":18196,"seq":2}
+{"ev":"child.ready","t":4637.57,"pid":18196}
+{"ev":"child.fetchStart","t":4648.108,"pid":18196,"trace":null,"seq":1,"kind":"yahoo-cookie"}
+{"ev":"child.fetchHeaders","t":4711.34,"pid":18196,"trace":null,"seq":1,"kind":"yahoo-cookie","status":200,"fixture":true,"fixtureWaitMs":61.579,"scripted":false}
+{"ev":"child.fetchStart","t":4713.799,"pid":18196,"trace":null,"seq":2,"kind":"yahoo-crumb"}
+{"ev":"child.fetchHeaders","t":4771.199,"pid":18196,"trace":null,"seq":2,"kind":"yahoo-crumb","status":200,"fixture":true,"fixtureWaitMs":55.209,"scripted":false}
+{"ev":"child.fetchBody","t":4772.286,"pid":18196,"trace":null,"seq":2,"kind":"yahoo-crumb"}
+{"ev":"child.fetchStart","t":4772.86,"pid":18196,"trace":null,"seq":3,"kind":"yahoo-chart","symbol":"2317.TW","interval":"1d","range":"10y"}
+{"ev":"child.fetchHeaders","t":4834.331,"pid":18196,"trace":null,"seq":3,"kind":"yahoo-chart","symbol":"2317.TW","interval":"1d","range":"10y","status":200,"fixture":true,"fixtureWaitMs":60.665,"scripted":false}
+{"ev":"child.fetchBody","t":4834.87,"pid":18196,"trace":null,"seq":3,"kind":"yahoo-chart","symbol":"2317.TW","interval":"1d","range":"10y"}

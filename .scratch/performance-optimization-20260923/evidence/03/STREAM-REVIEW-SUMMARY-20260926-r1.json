@@ -1,0 +1,521 @@
+{
+  "input": ".scratch/performance-optimization-20260923/evidence/03/stream03-review-20260926-r1/raw.json",
+  "inputSha256": "05a3a84fbebc73a1df9579d51c080c4b4395d73a29660151072a73b7ebd2abc2",
+  "sourceCommit": "85c553680849b495a85a938503fcc91b9bb1ca8c",
+  "sourceStable": true,
+  "classificationDecision": {
+    "browserSpontaneous": "使用者已接受收緊規則",
+    "streamDoneAbort": "待使用者裁定",
+    "platformTest": "待使用者裁定"
+  },
+  "arms": [
+    {
+      "entry": "b1",
+      "viewport": "desktop",
+      "browser": "Chrome/153.0.8010.53",
+      "requests": 19,
+      "fixtureFetchStarts": 35,
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "uiPass": 6,
+      "proposalPass": 5,
+      "frozenPass": 4,
+      "streams": [
+        {
+          "requestId": "12252.134",
+          "startedAtMs": 213412992.637,
+          "method": "POST",
+          "route": "/api/gemini-stream",
+          "status": 200,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213418101.547,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213418.101547,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "callGeminiApiStream@/services/gemini.ts:29",
+              "analyzeEntryWithGemini@/services/gemini.ts:170",
+              "handleRunAnalysis@/App.tsx:299",
+              "Button@/components/ui/Button.tsx:20",
+              "App@/App.tsx:546"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "串流完整送達後的傳輸層取消",
+          "ok": true
+        }
+      ],
+      "otherFailures": [
+        {
+          "requestId": "12252.115",
+          "startedAtMs": 213379964.382,
+          "method": "GET",
+          "route": "/api/yahoo/search?q=2317",
+          "status": null,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213380273.508,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213380.273508,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "searchYahoo@/services/stockDirectory.ts:128",
+              "searchStocks@/services/stockDirectory.ts:143",
+              "(匿名)@/components/StockSearch.tsx:87",
+              "(匿名)@/components/StockSearch.tsx:86",
+              "handleChange@/components/StockSearch.tsx:97",
+              "onChange@/components/StockSearch.tsx:165",
+              "StockSearch@/components/StockSearch.tsx:154",
+              "App@/App.tsx:656",
+              "(匿名)@/index.tsx:13"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "HTTP 失敗或無回應",
+          "ok": false
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "vercel",
+          "killed": [
+            {
+              "pid": 15848,
+              "name": null,
+              "creationDate": "/Date(1790355114102)/",
+              "status": 0
+            },
+            {
+              "pid": 8212,
+              "name": "node.exe",
+              "creationDate": "/Date(1790355127127)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        },
+        {
+          "name": "vite",
+          "killed": [
+            {
+              "pid": 31704,
+              "name": null,
+              "creationDate": "/Date(1790355129605)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      ],
+      "listenersAfter": {
+        "front": [],
+        "api": []
+      },
+      "profileRemoved": true
+    },
+    {
+      "entry": "c",
+      "viewport": "desktop",
+      "browser": "Chrome/153.0.8010.53",
+      "requests": 19,
+      "fixtureFetchStarts": 21,
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "uiPass": 6,
+      "proposalPass": 5,
+      "frozenPass": 4,
+      "streams": [
+        {
+          "requestId": "28064.134",
+          "startedAtMs": 213467235.394,
+          "method": "POST",
+          "route": "/api/gemini-stream",
+          "status": 200,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213471337.906,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213471.337906,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "callGeminiApiStream@/services/gemini.ts:29",
+              "analyzeEntryWithGemini@/services/gemini.ts:170",
+              "handleRunAnalysis@/App.tsx:299",
+              "Button@/components/ui/Button.tsx:20",
+              "App@/App.tsx:546"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "串流完整送達後的傳輸層取消",
+          "ok": true
+        }
+      ],
+      "otherFailures": [
+        {
+          "requestId": "28064.115",
+          "startedAtMs": 213446044.169,
+          "method": "GET",
+          "route": "/api/yahoo/search?q=2317",
+          "status": null,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213446242.396,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213446.242396,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "searchYahoo@/services/stockDirectory.ts:128",
+              "searchStocks@/services/stockDirectory.ts:143",
+              "(匿名)@/components/StockSearch.tsx:87",
+              "(匿名)@/components/StockSearch.tsx:86",
+              "handleChange@/components/StockSearch.tsx:97",
+              "onChange@/components/StockSearch.tsx:165",
+              "StockSearch@/components/StockSearch.tsx:154",
+              "App@/App.tsx:656",
+              "(匿名)@/index.tsx:13"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "HTTP 失敗或無回應",
+          "ok": false
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "vercel",
+          "killed": [
+            {
+              "pid": 35496,
+              "name": null,
+              "creationDate": "/Date(1790355202328)/",
+              "status": 0
+            },
+            {
+              "pid": 37096,
+              "name": "node.exe",
+              "creationDate": "/Date(1790355205065)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        },
+        {
+          "name": "vite",
+          "killed": [
+            {
+              "pid": 33960,
+              "name": null,
+              "creationDate": "/Date(1790355207024)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      ],
+      "listenersAfter": {
+        "front": [],
+        "api": []
+      },
+      "profileRemoved": true
+    },
+    {
+      "entry": "c",
+      "viewport": "narrow",
+      "browser": "Chrome/153.0.8010.53",
+      "requests": 19,
+      "fixtureFetchStarts": 21,
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "uiPass": 6,
+      "proposalPass": 5,
+      "frozenPass": 3,
+      "streams": [
+        {
+          "requestId": "20840.134",
+          "startedAtMs": 213516135.8,
+          "method": "POST",
+          "route": "/api/gemini-stream",
+          "status": 200,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213520233.054,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213520.233054,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "callGeminiApiStream@/services/gemini.ts:29",
+              "analyzeEntryWithGemini@/services/gemini.ts:170",
+              "handleRunAnalysis@/App.tsx:299",
+              "Button@/components/ui/Button.tsx:20",
+              "App@/App.tsx:546"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "串流完整送達後的傳輸層取消",
+          "ok": true
+        }
+      ],
+      "otherFailures": [
+        {
+          "requestId": "20840.115",
+          "startedAtMs": 213494877.912,
+          "method": "GET",
+          "route": "/api/yahoo/search?q=2317",
+          "status": null,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213495186.828,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213495.186828,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "searchYahoo@/services/stockDirectory.ts:128",
+              "searchStocks@/services/stockDirectory.ts:143",
+              "(匿名)@/components/StockSearch.tsx:87",
+              "(匿名)@/components/StockSearch.tsx:86",
+              "handleChange@/components/StockSearch.tsx:97",
+              "onChange@/components/StockSearch.tsx:165",
+              "StockSearch@/components/StockSearch.tsx:154",
+              "App@/App.tsx:656",
+              "(匿名)@/index.tsx:13"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "HTTP 失敗或無回應",
+          "ok": false
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "vercel",
+          "killed": [
+            {
+              "pid": 33516,
+              "name": null,
+              "creationDate": "/Date(1790355254808)/",
+              "status": 0
+            },
+            {
+              "pid": 25948,
+              "name": "node.exe",
+              "creationDate": "/Date(1790355257269)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        },
+        {
+          "name": "vite",
+          "killed": [
+            {
+              "pid": 18784,
+              "name": null,
+              "creationDate": "/Date(1790355259259)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      ],
+      "listenersAfter": {
+        "front": [],
+        "api": []
+      },
+      "profileRemoved": true
+    },
+    {
+      "entry": "b1",
+      "viewport": "narrow",
+      "browser": "Chrome/153.0.8010.53",
+      "requests": 19,
+      "fixtureFetchStarts": 35,
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "uiPass": 6,
+      "proposalPass": 5,
+      "frozenPass": 4,
+      "streams": [
+        {
+          "requestId": "16156.134",
+          "startedAtMs": 213579021.292,
+          "method": "POST",
+          "route": "/api/gemini-stream",
+          "status": 200,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213582517.63,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213582.51763,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "callGeminiApiStream@/services/gemini.ts:29",
+              "analyzeEntryWithGemini@/services/gemini.ts:170",
+              "handleRunAnalysis@/App.tsx:299",
+              "Button@/components/ui/Button.tsx:20",
+              "App@/App.tsx:546"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "串流完整送達後的傳輸層取消",
+          "ok": true
+        }
+      ],
+      "otherFailures": [
+        {
+          "requestId": "16156.115",
+          "startedAtMs": 213546867.175,
+          "method": "GET",
+          "route": "/api/yahoo/search?q=2317",
+          "status": null,
+          "failed": {
+            "error": "net::ERR_ABORTED",
+            "canceled": true
+          },
+          "finishedAtMs": null,
+          "failedAtMs": 213547165.685,
+          "terminalEvents": [
+            {
+              "event": "Network.loadingFailed",
+              "timestamp": 213547.165685,
+              "errorText": "net::ERR_ABORTED",
+              "canceled": true,
+              "type": "Fetch"
+            }
+          ],
+          "initiator": {
+            "type": "script",
+            "frames": [
+              "searchYahoo@/services/stockDirectory.ts:128",
+              "searchStocks@/services/stockDirectory.ts:143",
+              "(匿名)@/components/StockSearch.tsx:87",
+              "(匿名)@/components/StockSearch.tsx:86",
+              "handleChange@/components/StockSearch.tsx:97",
+              "onChange@/components/StockSearch.tsx:165",
+              "StockSearch@/components/StockSearch.tsx:154",
+              "App@/App.tsx:656",
+              "(匿名)@/index.tsx:13"
+            ]
+          },
+          "frozenOk": false,
+          "kind": "HTTP 失敗或無回應",
+          "ok": false
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "vercel",
+          "killed": [
+            {
+              "pid": 37304,
+              "name": null,
+              "creationDate": "/Date(1790355304180)/",
+              "status": 0
+            },
+            {
+              "pid": 27784,
+              "name": "node.exe",
+              "creationDate": "/Date(1790355306817)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        },
+        {
+          "name": "vite",
+          "killed": [
+            {
+              "pid": 35956,
+              "name": null,
+              "creationDate": "/Date(1790355308955)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      ],
+      "listenersAfter": {
+        "front": [],
+        "api": []
+      },
+      "profileRemoved": true
+    }
+  ]
+}

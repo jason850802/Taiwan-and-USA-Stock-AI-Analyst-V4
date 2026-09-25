@@ -84,3 +84,7 @@ node .scratch/performance-optimization-20260923/tools/hmr-03.mjs <新代號> C:/
 ```
 
 以上工具的固定模式只用假上游／假 AI；正式日常命令不會啟用固定模式。
+
+## 2026-09-26 最新命令導引
+
+上方為歷史快照；目前 03 為 OPEN。日常啟停、recover、localhost 網址與明確回復固定點請改看 [DAILY-COMMANDS-20260926](DAILY-COMMANDS-20260926.md)，不要再套用本檔舊 §6 的 127.0.0.1 網址或泛指 HEAD 的回復命令。最新逐條處置見 [REVIEW-ADDENDUM-20260926](REVIEW-ADDENDUM-20260926.md)。
