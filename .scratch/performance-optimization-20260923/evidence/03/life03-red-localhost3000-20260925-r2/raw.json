@@ -1,0 +1,2548 @@
+{
+  "runId": "life03-red-localhost3000-20260925-r2",
+  "kind": "lifecycle-daily-entry",
+  "formal": true,
+  "createdAt": "2026-09-25T08:05:18.534Z",
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "cwd": "E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4",
+  "git": {
+    "head": "94848ac19ce364dda6de84aa2d89012546a848c0",
+    "branch": "codex/reacceptance-fixes-p1-s1"
+  },
+  "versions": {
+    "node": "v26.4.0",
+    "vercel": "55.0.0",
+    "vercelNode": "5.8.23",
+    "tsx": "4.21.0",
+    "vite": "6.4.1"
+  },
+  "tools": {
+    "lifecycle-03.mjs": "226adea969e70f961ffbe4c0d317051b7db0e2df0e47cee6345b657bad41192d",
+    "port-guard-03.mjs": "70fbfb333fe743071ba0cadea6e7973d6ff982ff277a0dad0d9a8b45db73f165",
+    "daily-dev.mjs": "ad0dec93e48594e2db296bec4a2a55f087ad433acaf11563a426e7e4c980e245",
+    "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341"
+  },
+  "env": "日常命令原樣：移除 NODE_OPTIONS 與所有 PERF01_／PERF03_ 測試變數；.env 由 vercel dev 照常只給後端",
+  "requests": "只送前端首頁 GET 與同源 OPTIONS；不打行情、不執行 AI",
+  "sentinel": {
+    "port": 3000,
+    "durationMs": 8000,
+    "holdMs": 3000,
+    "ranMs": 8078,
+    "bound": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "bindErrors": [],
+    "events": [],
+    "visibleTabsNeutralized": 0
+  },
+  "monitor": {
+    "port": 3000,
+    "intervalMs": 300,
+    "checks": 592,
+    "foreign": [],
+    "allowedClientPids": [
+      27192
+    ]
+  },
+  "scenarios": [
+    {
+      "scenario": "cycle-1",
+      "startedAt": "2026-09-25T08:05:26.688Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 24642,
+          "exit": null,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 17552、27276",
+            "正式函式預熱 5 條皆 204，耗時 7218 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 3136,
+          "supervisorCreationDate": "/Date(1790323526690)/",
+          "children": [
+            {
+              "pid": 17552,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323526797)/"
+            },
+            {
+              "pid": 27276,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323549847)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "identities": [
+          {
+            "pid": 3136,
+            "parentPid": 27192,
+            "creationDate": "/Date(1790323526690)/",
+            "script": "daily-dev.mjs"
+          },
+          {
+            "pid": 17552,
+            "parentPid": 3136,
+            "creationDate": "/Date(1790323526797)/",
+            "script": "vc.js"
+          },
+          {
+            "pid": 27276,
+            "parentPid": 3136,
+            "creationDate": "/Date(1790323549847)/",
+            "script": "vite.js"
+          }
+        ],
+        "listeners": {
+          "front": [
+            {
+              "local": "[::1]",
+              "localPort": 3000,
+              "pid": 27276
+            }
+          ],
+          "api": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3001,
+              "pid": 17552
+            }
+          ]
+        },
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 0,
+          "stdout": [
+            "{",
+            "  \"running\": true,",
+            "  \"front\": \"http://localhost:3000\",",
+            "  \"apiPort\": 3001,",
+            "  \"pids\": [",
+            "    17552,",
+            "    27276",
+            "  ]",
+            "}"
+          ],
+          "stderr": [],
+          "ms": 115
+        },
+        "http": {
+          "page": {
+            "status": 200,
+            "contentType": "text/html",
+            "hasRoot": true,
+            "hasViteClient": true
+          },
+          "options": {
+            "status": 204
+          }
+        },
+        "descendants": [
+          {
+            "pid": 17552,
+            "parentPid": 3136,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323526797)/"
+          },
+          {
+            "pid": 32492,
+            "parentPid": 17552,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323540758)/"
+          },
+          {
+            "pid": 12504,
+            "parentPid": 32492,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323540797)/"
+          },
+          {
+            "pid": 10944,
+            "parentPid": 12504,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323541629)/"
+          },
+          {
+            "pid": 16760,
+            "parentPid": 17552,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323543207)/"
+          },
+          {
+            "pid": 15556,
+            "parentPid": 17552,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323543216)/"
+          },
+          {
+            "pid": 17888,
+            "parentPid": 17552,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323543222)/"
+          },
+          {
+            "pid": 25144,
+            "parentPid": 17552,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323543228)/"
+          },
+          {
+            "pid": 11924,
+            "parentPid": 17552,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323543236)/"
+          },
+          {
+            "pid": 27276,
+            "parentPid": 3136,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323549847)/"
+          },
+          {
+            "pid": 7884,
+            "parentPid": 27276,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323550067)/"
+          }
+        ],
+        "persistent": {
+          "enabled": true,
+          "takenOver": true,
+          "spawns": [
+            {
+              "entrypoint": "api/finmind.ts",
+              "pid": 15556,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/yahoo/search.ts",
+              "pid": 25144,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/yahoo/chart.ts",
+              "pid": 11924,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/gemini-stream.ts",
+              "pid": 17888,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/gemini.ts",
+              "pid": 16760,
+              "generation": 0
+            }
+          ],
+          "outsideForks": 0
+        },
+        "stop": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+          "status": 0,
+          "stdout": [
+            "{",
+            "  \"running\": false,",
+            "  \"front\": \"http://localhost:3000\",",
+            "  \"apiPort\": 3001,",
+            "  \"pids\": [",
+            "    17552,",
+            "    27276",
+            "  ],",
+            "  \"stopped\": true",
+            "}"
+          ],
+          "stderr": [],
+          "ms": 1318
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "atMs": 30444
+        },
+        "afterStop": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "logs": {
+          "vercel": [
+            "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+            "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+            "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+            "Retrieving project…",
+            "> Running Dev Command “vite --port $PORT”",
+            "VITE v6.4.1  ready in 1088 ms",
+            "➜  Local:   http://localhost:3001/",
+            "> Ready! Available at http://127.0.0.1:3001",
+            "[persistent-functions] startDevServer 已由長駐原型接手",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 啟動 api/finmind.ts pid=15556 generation=0",
+            "[persistent-functions] 啟動 api/yahoo/search.ts pid=25144 generation=0",
+            "[persistent-functions] 啟動 api/yahoo/chart.ts pid=11924 generation=0",
+            "[persistent-functions] 啟動 api/gemini-stream.ts pid=17888 generation=0",
+            "[persistent-functions] 啟動 api/gemini.ts pid=16760 generation=0"
+          ],
+          "vite": [
+            "VITE v6.4.1  ready in 327 ms",
+            "➜  Local:   http://localhost:3000/"
+          ],
+          "watchdog": null
+        }
+      },
+      "checks": {
+        "就緒並寫出本輪狀態": true,
+        "狀態埠＝受測埠": true,
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+        "前端 listener 全是本輪 Vite": true,
+        "後端 listener 全是本輪 vercel": true,
+        "status 回報執行中": true,
+        "首頁 200 且是 Vite 開發頁": true,
+        "同源 OPTIONS 204（不碰上游）": true,
+        "長駐候選啟用並接手、五條函式預熱": true,
+        "stop 回報 stopped": true,
+        "監督程序自行結束": true,
+        "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "cycle-2",
+      "startedAt": "2026-09-25T08:05:58.573Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 8833,
+          "exit": null,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 29340、33608",
+            "正式函式預熱 5 條皆 204，耗時 3345 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 36976,
+          "supervisorCreationDate": "/Date(1790323558575)/",
+          "children": [
+            {
+              "pid": 29340,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323558690)/"
+            },
+            {
+              "pid": 33608,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323565930)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "identities": [
+          {
+            "pid": 36976,
+            "parentPid": 27192,
+            "creationDate": "/Date(1790323558575)/",
+            "script": "daily-dev.mjs"
+          },
+          {
+            "pid": 29340,
+            "parentPid": 36976,
+            "creationDate": "/Date(1790323558690)/",
+            "script": "vc.js"
+          },
+          {
+            "pid": 33608,
+            "parentPid": 36976,
+            "creationDate": "/Date(1790323565930)/",
+            "script": "vite.js"
+          }
+        ],
+        "listeners": {
+          "front": [
+            {
+              "local": "[::1]",
+              "localPort": 3000,
+              "pid": 33608
+            }
+          ],
+          "api": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3001,
+              "pid": 29340
+            }
+          ]
+        },
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 0,
+          "stdout": [
+            "{",
+            "  \"running\": true,",
+            "  \"front\": \"http://localhost:3000\",",
+            "  \"apiPort\": 3001,",
+            "  \"pids\": [",
+            "    29340,",
+            "    33608",
+            "  ]",
+            "}"
+          ],
+          "stderr": [],
+          "ms": 118
+        },
+        "http": {
+          "page": {
+            "status": 200,
+            "contentType": "text/html",
+            "hasRoot": true,
+            "hasViteClient": true
+          },
+          "options": {
+            "status": 204
+          }
+        },
+        "descendants": [
+          {
+            "pid": 29340,
+            "parentPid": 36976,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323558690)/"
+          },
+          {
+            "pid": 18524,
+            "parentPid": 29340,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323560964)/"
+          },
+          {
+            "pid": 18900,
+            "parentPid": 18524,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323561000)/"
+          },
+          {
+            "pid": 12732,
+            "parentPid": 18900,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323561233)/"
+          },
+          {
+            "pid": 13884,
+            "parentPid": 29340,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323562727)/"
+          },
+          {
+            "pid": 27168,
+            "parentPid": 29340,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323562735)/"
+          },
+          {
+            "pid": 35668,
+            "parentPid": 29340,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323562740)/"
+          },
+          {
+            "pid": 27556,
+            "parentPid": 29340,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323562745)/"
+          },
+          {
+            "pid": 28448,
+            "parentPid": 29340,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323562750)/"
+          },
+          {
+            "pid": 33608,
+            "parentPid": 36976,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323565930)/"
+          },
+          {
+            "pid": 37008,
+            "parentPid": 33608,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323566138)/"
+          }
+        ],
+        "persistent": {
+          "enabled": true,
+          "takenOver": true,
+          "spawns": [
+            {
+              "entrypoint": "api/finmind.ts",
+              "pid": 27556,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/yahoo/search.ts",
+              "pid": 27168,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/yahoo/chart.ts",
+              "pid": 13884,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/gemini-stream.ts",
+              "pid": 35668,
+              "generation": 0
+            },
+            {
+              "entrypoint": "api/gemini.ts",
+              "pid": 28448,
+              "generation": 0
+            }
+          ],
+          "outsideForks": 0
+        },
+        "stop": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+          "status": 0,
+          "stdout": [
+            "{",
+            "  \"running\": false,",
+            "  \"front\": \"http://localhost:3000\",",
+            "  \"apiPort\": 3001,",
+            "  \"pids\": [",
+            "    29340,",
+            "    33608",
+            "  ],",
+            "  \"stopped\": true",
+            "}"
+          ],
+          "stderr": [],
+          "ms": 1343
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "atMs": 11020
+        },
+        "afterStop": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "logs": {
+          "vercel": [
+            "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+            "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+            "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+            "Retrieving project…",
+            "> Running Dev Command “vite --port $PORT”",
+            "VITE v6.4.1  ready in 328 ms",
+            "➜  Local:   http://localhost:3001/",
+            "> Ready! Available at http://127.0.0.1:3001",
+            "[persistent-functions] startDevServer 已由長駐原型接手",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 函式子程序取消橋接已啟用",
+            "[persistent-functions] 啟動 api/finmind.ts pid=27556 generation=0",
+            "[persistent-functions] 啟動 api/yahoo/search.ts pid=27168 generation=0",
+            "[persistent-functions] 啟動 api/yahoo/chart.ts pid=13884 generation=0",
+            "[persistent-functions] 啟動 api/gemini-stream.ts pid=35668 generation=0",
+            "[persistent-functions] 啟動 api/gemini.ts pid=28448 generation=0"
+          ],
+          "vite": [
+            "VITE v6.4.1  ready in 312 ms",
+            "➜  Local:   http://localhost:3000/"
+          ],
+          "watchdog": null
+        }
+      },
+      "checks": {
+        "就緒並寫出本輪狀態": true,
+        "狀態埠＝受測埠": true,
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+        "前端 listener 全是本輪 Vite": true,
+        "後端 listener 全是本輪 vercel": true,
+        "status 回報執行中": true,
+        "首頁 200 且是 Vite 開發頁": true,
+        "同源 OPTIONS 204（不碰上游）": true,
+        "長駐候選啟用並接手、五條函式預熱": true,
+        "stop 回報 stopped": true,
+        "監督程序自行結束": true,
+        "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "conflict-front",
+      "startedAt": "2026-09-25T08:06:11.145Z",
+      "occupiedPort": 3000,
+      "steps": {
+        "holder": {
+          "pid": 27192,
+          "listeners": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3000,
+              "pid": 27192
+            }
+          ]
+        },
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "exit": {
+            "code": 1,
+            "signal": null
+          },
+          "output": [
+            "指定埠已有 listener；不接管其他服務。"
+          ]
+        },
+        "holderStillServing": "占用測試",
+        "otherPortListeners": [],
+        "stateExists": false,
+        "afterClose": []
+      },
+      "checks": {
+        "啟動被拒且沒有就緒": true,
+        "訊息為不接管其他服務": true,
+        "占用中的服務仍正常回應": true,
+        "另一個埠沒有被啟動": true,
+        "沒有寫出狀態檔": true,
+        "測試占用結束後該埠已釋放": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "conflict-api",
+      "startedAt": "2026-09-25T08:06:11.464Z",
+      "occupiedPort": 3001,
+      "steps": {
+        "holder": {
+          "pid": 27192,
+          "listeners": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3001,
+              "pid": 27192
+            }
+          ]
+        },
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "exit": {
+            "code": 1,
+            "signal": null
+          },
+          "output": [
+            "指定埠已有 listener；不接管其他服務。"
+          ]
+        },
+        "holderStillServing": "占用測試",
+        "otherPortListeners": [],
+        "stateExists": false,
+        "afterClose": []
+      },
+      "checks": {
+        "啟動被拒且沒有就緒": true,
+        "訊息為不接管其他服務": true,
+        "占用中的服務仍正常回應": true,
+        "另一個埠沒有被啟動": true,
+        "沒有寫出狀態檔": true,
+        "測試占用結束後該埠已釋放": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "crash-vercel",
+      "startedAt": "2026-09-25T08:06:11.775Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 8488,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 18024、32976",
+            "正式函式預熱 5 條皆 204，耗時 3561 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 5128,
+          "supervisorCreationDate": "/Date(1790323571777)/",
+          "children": [
+            {
+              "pid": 18024,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323571903)/"
+            },
+            {
+              "pid": 32976,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323578813)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "target": {
+          "pid": 18024,
+          "script": "vc.js",
+          "identityVerified": true
+        },
+        "descendants": [
+          {
+            "pid": 18024,
+            "parentPid": 5128,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323571903)/"
+          },
+          {
+            "pid": 20904,
+            "parentPid": 18024,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323574165)/"
+          },
+          {
+            "pid": 21004,
+            "parentPid": 20904,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323574196)/"
+          },
+          {
+            "pid": 37624,
+            "parentPid": 21004,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323574481)/"
+          },
+          {
+            "pid": 28452,
+            "parentPid": 18024,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323575518)/"
+          },
+          {
+            "pid": 9828,
+            "parentPid": 18024,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323575528)/"
+          },
+          {
+            "pid": 36300,
+            "parentPid": 18024,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323575534)/"
+          },
+          {
+            "pid": 36196,
+            "parentPid": 18024,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323575541)/"
+          },
+          {
+            "pid": 2584,
+            "parentPid": 18024,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323575546)/"
+          },
+          {
+            "pid": 32976,
+            "parentPid": 5128,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323578813)/"
+          },
+          {
+            "pid": 32348,
+            "parentPid": 32976,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323579053)/"
+          }
+        ],
+        "kill": {
+          "command": "taskkill /PID 18024 /F（不含 /T，只結束該子程序）",
+          "status": 0
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "msAfterKill": 755,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 18024、32976",
+            "正式函式預熱 5 條皆 204，耗時 3561 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "treeGoneMsAfterSupervisorExit": null,
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": [
+            {
+              "pid": 21004,
+              "name": "node.exe"
+            },
+            {
+              "pid": 37624,
+              "name": "esbuild.exe"
+            }
+          ]
+        },
+        "watchdogLog": null
+      },
+      "recovery": {
+        "scenario": "crash-vercel-recover",
+        "startedAt": "2026-09-25T08:06:33.271Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": true,
+            "readyMs": 9115,
+            "exit": null,
+            "output": [
+              "日常入口已就緒：http://localhost:3000；後端 3001；程序 6068、16184",
+              "正式函式預熱 5 條皆 204，耗時 3514 ms。",
+              "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+            ]
+          },
+          "state": {
+            "frontPort": 3000,
+            "apiPort": 3001,
+            "supervisorPid": 21956,
+            "supervisorCreationDate": "/Date(1790323593275)/",
+            "children": [
+              {
+                "pid": 6068,
+                "script": "vc.js",
+                "creationDate": "/Date(1790323593405)/"
+              },
+              {
+                "pid": 16184,
+                "script": "vite.js",
+                "creationDate": "/Date(1790323600782)/"
+              }
+            ],
+            "watchdog": null,
+            "treeCount": null
+          },
+          "identities": [
+            {
+              "pid": 21956,
+              "parentPid": 27192,
+              "creationDate": "/Date(1790323593275)/",
+              "script": "daily-dev.mjs"
+            },
+            {
+              "pid": 6068,
+              "parentPid": 21956,
+              "creationDate": "/Date(1790323593405)/",
+              "script": "vc.js"
+            },
+            {
+              "pid": 16184,
+              "parentPid": 21956,
+              "creationDate": "/Date(1790323600782)/",
+              "script": "vite.js"
+            }
+          ],
+          "listeners": {
+            "front": [
+              {
+                "local": "[::1]",
+                "localPort": 3000,
+                "pid": 16184
+              }
+            ],
+            "api": [
+              {
+                "local": "127.0.0.1",
+                "localPort": 3001,
+                "pid": 6068
+              }
+            ]
+          },
+          "status": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": true,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    6068,",
+              "    16184",
+              "  ]",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 129
+          },
+          "http": {
+            "page": {
+              "status": 200,
+              "contentType": "text/html",
+              "hasRoot": true,
+              "hasViteClient": true
+            },
+            "options": {
+              "status": 204
+            }
+          },
+          "descendants": [
+            {
+              "pid": 6068,
+              "parentPid": 21956,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323593405)/"
+            },
+            {
+              "pid": 15620,
+              "parentPid": 6068,
+              "name": "cmd.exe",
+              "creationDate": "/Date(1790323595651)/"
+            },
+            {
+              "pid": 13988,
+              "parentPid": 15620,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323595680)/"
+            },
+            {
+              "pid": 18752,
+              "parentPid": 13988,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323595920)/"
+            },
+            {
+              "pid": 32976,
+              "parentPid": 6068,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323597422)/"
+            },
+            {
+              "pid": 34484,
+              "parentPid": 6068,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323597430)/"
+            },
+            {
+              "pid": 23820,
+              "parentPid": 6068,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323597435)/"
+            },
+            {
+              "pid": 19768,
+              "parentPid": 6068,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323597440)/"
+            },
+            {
+              "pid": 29344,
+              "parentPid": 6068,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323597446)/"
+            },
+            {
+              "pid": 16184,
+              "parentPid": 21956,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323600782)/"
+            },
+            {
+              "pid": 26660,
+              "parentPid": 16184,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323601012)/"
+            }
+          ],
+          "persistent": {
+            "enabled": true,
+            "takenOver": true,
+            "spawns": [
+              {
+                "entrypoint": "api/yahoo/search.ts",
+                "pid": 19768,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/finmind.ts",
+                "pid": 32976,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/chart.ts",
+                "pid": 29344,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini.ts",
+                "pid": 34484,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini-stream.ts",
+                "pid": 23820,
+                "generation": 0
+              }
+            ],
+            "outsideForks": 0
+          },
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": false,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    6068,",
+              "    16184",
+              "  ],",
+              "  \"stopped\": true",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 1554
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 11511
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": {
+            "vercel": [
+              "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+              "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+              "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+              "Retrieving project…",
+              "> Running Dev Command “vite --port $PORT”",
+              "VITE v6.4.1  ready in 338 ms",
+              "➜  Local:   http://localhost:3001/",
+              "> Ready! Available at http://127.0.0.1:3001",
+              "[persistent-functions] startDevServer 已由長駐原型接手",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 啟動 api/yahoo/search.ts pid=19768 generation=0",
+              "[persistent-functions] 啟動 api/finmind.ts pid=32976 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/chart.ts pid=29344 generation=0",
+              "[persistent-functions] 啟動 api/gemini.ts pid=34484 generation=0",
+              "[persistent-functions] 啟動 api/gemini-stream.ts pid=23820 generation=0"
+            ],
+            "vite": [
+              "VITE v6.4.1  ready in 345 ms",
+              "➜  Local:   http://localhost:3000/"
+            ],
+            "watchdog": null
+          }
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": true,
+          "狀態埠＝受測埠": true,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+          "前端 listener 全是本輪 Vite": true,
+          "後端 listener 全是本輪 vercel": true,
+          "status 回報執行中": true,
+          "首頁 200 且是 Vite 開發頁": true,
+          "同源 OPTIONS 204（不碰上游）": true,
+          "長駐候選啟用並接手、五條函式預熱": true,
+          "stop 回報 stopped": true,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": true
+      },
+      "checks": {
+        "崩潰前已就緒": true,
+        "只對核對過身分的子程序下手": true,
+        "監督程序在 20 秒內自行結束": true,
+        "崩潰後無狀態、無 listener、整棵子孫樹無殘留": false,
+        "重新啟動並停止均正常": true
+      },
+      "pass": false
+    },
+    {
+      "scenario": "crash-vite",
+      "startedAt": "2026-09-25T08:06:46.499Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 9106,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 19680、21124",
+            "正式函式預熱 5 條皆 204，耗時 3540 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 7744,
+          "supervisorCreationDate": "/Date(1790323606501)/",
+          "children": [
+            {
+              "pid": 19680,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323606657)/"
+            },
+            {
+              "pid": 21124,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323614079)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "target": {
+          "pid": 21124,
+          "script": "vite.js",
+          "identityVerified": true
+        },
+        "descendants": [
+          {
+            "pid": 19680,
+            "parentPid": 7744,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323606657)/"
+          },
+          {
+            "pid": 33176,
+            "parentPid": 19680,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323608996)/"
+          },
+          {
+            "pid": 22704,
+            "parentPid": 33176,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323609024)/"
+          },
+          {
+            "pid": 26576,
+            "parentPid": 22704,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323609261)/"
+          },
+          {
+            "pid": 24348,
+            "parentPid": 19680,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323610685)/"
+          },
+          {
+            "pid": 21780,
+            "parentPid": 19680,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323610694)/"
+          },
+          {
+            "pid": 8244,
+            "parentPid": 19680,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323610699)/"
+          },
+          {
+            "pid": 2832,
+            "parentPid": 19680,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323610705)/"
+          },
+          {
+            "pid": 30508,
+            "parentPid": 19680,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323610711)/"
+          },
+          {
+            "pid": 21124,
+            "parentPid": 7744,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323614079)/"
+          },
+          {
+            "pid": 12504,
+            "parentPid": 21124,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323614306)/"
+          }
+        ],
+        "kill": {
+          "command": "taskkill /PID 21124 /F（不含 /T，只結束該子程序）",
+          "status": 0
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "msAfterKill": 772,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 19680、21124",
+            "正式函式預熱 5 條皆 204，耗時 3540 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "treeGoneMsAfterSupervisorExit": 440,
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "watchdogLog": null
+      },
+      "recovery": {
+        "scenario": "crash-vite-recover",
+        "startedAt": "2026-09-25T08:06:59.101Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": true,
+            "readyMs": 8704,
+            "exit": null,
+            "output": [
+              "日常入口已就緒：http://localhost:3000；後端 3001；程序 32572、37876",
+              "正式函式預熱 5 條皆 204，耗時 3580 ms。",
+              "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+            ]
+          },
+          "state": {
+            "frontPort": 3000,
+            "apiPort": 3001,
+            "supervisorPid": 13444,
+            "supervisorCreationDate": "/Date(1790323619103)/",
+            "children": [
+              {
+                "pid": 32572,
+                "script": "vc.js",
+                "creationDate": "/Date(1790323619271)/"
+              },
+              {
+                "pid": 37876,
+                "script": "vite.js",
+                "creationDate": "/Date(1790323626216)/"
+              }
+            ],
+            "watchdog": null,
+            "treeCount": null
+          },
+          "identities": [
+            {
+              "pid": 13444,
+              "parentPid": 27192,
+              "creationDate": "/Date(1790323619103)/",
+              "script": "daily-dev.mjs"
+            },
+            {
+              "pid": 32572,
+              "parentPid": 13444,
+              "creationDate": "/Date(1790323619271)/",
+              "script": "vc.js"
+            },
+            {
+              "pid": 37876,
+              "parentPid": 13444,
+              "creationDate": "/Date(1790323626216)/",
+              "script": "vite.js"
+            }
+          ],
+          "listeners": {
+            "front": [
+              {
+                "local": "[::1]",
+                "localPort": 3000,
+                "pid": 37876
+              }
+            ],
+            "api": [
+              {
+                "local": "127.0.0.1",
+                "localPort": 3001,
+                "pid": 32572
+              }
+            ]
+          },
+          "status": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": true,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    32572,",
+              "    37876",
+              "  ]",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 121
+          },
+          "http": {
+            "page": {
+              "status": 200,
+              "contentType": "text/html",
+              "hasRoot": true,
+              "hasViteClient": true
+            },
+            "options": {
+              "status": 204
+            }
+          },
+          "descendants": [
+            {
+              "pid": 32572,
+              "parentPid": 13444,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323619271)/"
+            },
+            {
+              "pid": 35480,
+              "parentPid": 32572,
+              "name": "cmd.exe",
+              "creationDate": "/Date(1790323621621)/"
+            },
+            {
+              "pid": 28368,
+              "parentPid": 35480,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323621647)/"
+            },
+            {
+              "pid": 4520,
+              "parentPid": 28368,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323621882)/"
+            },
+            {
+              "pid": 26276,
+              "parentPid": 32572,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323622793)/"
+            },
+            {
+              "pid": 32216,
+              "parentPid": 32572,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323622801)/"
+            },
+            {
+              "pid": 30900,
+              "parentPid": 32572,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323622806)/"
+            },
+            {
+              "pid": 22480,
+              "parentPid": 32572,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323622811)/"
+            },
+            {
+              "pid": 34512,
+              "parentPid": 32572,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323622816)/"
+            },
+            {
+              "pid": 37876,
+              "parentPid": 13444,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323626216)/"
+            },
+            {
+              "pid": 14368,
+              "parentPid": 37876,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323626452)/"
+            }
+          ],
+          "persistent": {
+            "enabled": true,
+            "takenOver": true,
+            "spawns": [
+              {
+                "entrypoint": "api/finmind.ts",
+                "pid": 26276,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/chart.ts",
+                "pid": 30900,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/search.ts",
+                "pid": 22480,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini.ts",
+                "pid": 32216,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini-stream.ts",
+                "pid": 34512,
+                "generation": 0
+              }
+            ],
+            "outsideForks": 0
+          },
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": false,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    32572,",
+              "    37876",
+              "  ],",
+              "  \"stopped\": true",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 1499
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 11109
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": {
+            "vercel": [
+              "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+              "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+              "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+              "Retrieving project…",
+              "> Running Dev Command “vite --port $PORT”",
+              "VITE v6.4.1  ready in 330 ms",
+              "➜  Local:   http://localhost:3001/",
+              "> Ready! Available at http://127.0.0.1:3001",
+              "[persistent-functions] startDevServer 已由長駐原型接手",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 啟動 api/finmind.ts pid=26276 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/chart.ts pid=30900 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/search.ts pid=22480 generation=0",
+              "[persistent-functions] 啟動 api/gemini.ts pid=32216 generation=0",
+              "[persistent-functions] 啟動 api/gemini-stream.ts pid=34512 generation=0"
+            ],
+            "vite": [
+              "VITE v6.4.1  ready in 353 ms",
+              "➜  Local:   http://localhost:3000/"
+            ],
+            "watchdog": null
+          }
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": true,
+          "狀態埠＝受測埠": true,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+          "前端 listener 全是本輪 Vite": true,
+          "後端 listener 全是本輪 vercel": true,
+          "status 回報執行中": true,
+          "首頁 200 且是 Vite 開發頁": true,
+          "同源 OPTIONS 204（不碰上游）": true,
+          "長駐候選啟用並接手、五條函式預熱": true,
+          "stop 回報 stopped": true,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": true
+      },
+      "checks": {
+        "崩潰前已就緒": true,
+        "只對核對過身分的子程序下手": true,
+        "監督程序在 20 秒內自行結束": true,
+        "崩潰後無狀態、無 listener、整棵子孫樹無殘留": true,
+        "重新啟動並停止均正常": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "crash-supervisor",
+      "startedAt": "2026-09-25T08:07:11.895Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 9304,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 20668、33324",
+            "正式函式預熱 5 條皆 204，耗時 4012 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 36612,
+          "supervisorCreationDate": "/Date(1790323631897)/",
+          "children": [
+            {
+              "pid": 20668,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323632081)/"
+            },
+            {
+              "pid": 33324,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323639518)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "descendants": [
+          {
+            "pid": 20668,
+            "parentPid": 36612,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323632081)/"
+          },
+          {
+            "pid": 18752,
+            "parentPid": 20668,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323634367)/"
+          },
+          {
+            "pid": 17288,
+            "parentPid": 18752,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323634396)/"
+          },
+          {
+            "pid": 37784,
+            "parentPid": 17288,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323634631)/"
+          },
+          {
+            "pid": 20652,
+            "parentPid": 20668,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323635670)/"
+          },
+          {
+            "pid": 9528,
+            "parentPid": 20668,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323635679)/"
+          },
+          {
+            "pid": 9924,
+            "parentPid": 20668,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323635686)/"
+          },
+          {
+            "pid": 27528,
+            "parentPid": 20668,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323635692)/"
+          },
+          {
+            "pid": 7920,
+            "parentPid": 20668,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323635697)/"
+          },
+          {
+            "pid": 33324,
+            "parentPid": 36612,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323639518)/"
+          },
+          {
+            "pid": 20348,
+            "parentPid": 33324,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323639762)/"
+          }
+        ],
+        "identityVerified": true,
+        "kill": {
+          "command": "taskkill /PID 36612 /F（不含 /T，只殺監督程序）",
+          "status": 0
+        },
+        "supervisorExit": {
+          "code": 1,
+          "signal": null
+        },
+        "treeGoneMs": null,
+        "afterCrash": {
+          "stateRemoved": false,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": [
+            {
+              "pid": 17288,
+              "name": "node.exe"
+            },
+            {
+              "pid": 37784,
+              "name": "esbuild.exe"
+            }
+          ]
+        },
+        "watchdogLog": null,
+        "stateLeft": true,
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 64
+        },
+        "renamedStateFiles": [
+          "state.json.stale-<時間戳>"
+        ],
+        "oldTreeAfterRecovery": [
+          {
+            "pid": 17288,
+            "name": "node.exe"
+          },
+          {
+            "pid": 37784,
+            "name": "esbuild.exe"
+          }
+        ]
+      },
+      "recovery": {
+        "scenario": "crash-supervisor-recover",
+        "startedAt": "2026-09-25T08:07:34.132Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": true,
+            "readyMs": 10752,
+            "exit": null,
+            "output": [
+              "日常入口已就緒：http://localhost:3000；後端 3001；程序 22884、10020",
+              "正式函式預熱 5 條皆 204，耗時 3517 ms。",
+              "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+            ]
+          },
+          "state": {
+            "frontPort": 3000,
+            "apiPort": 3001,
+            "supervisorPid": 15556,
+            "supervisorCreationDate": "/Date(1790323654135)/",
+            "children": [
+              {
+                "pid": 22884,
+                "script": "vc.js",
+                "creationDate": "/Date(1790323655608)/"
+              },
+              {
+                "pid": 10020,
+                "script": "vite.js",
+                "creationDate": "/Date(1790323663267)/"
+              }
+            ],
+            "watchdog": null,
+            "treeCount": null
+          },
+          "identities": [
+            {
+              "pid": 15556,
+              "parentPid": 27192,
+              "creationDate": "/Date(1790323654135)/",
+              "script": "daily-dev.mjs"
+            },
+            {
+              "pid": 22884,
+              "parentPid": 15556,
+              "creationDate": "/Date(1790323655608)/",
+              "script": "vc.js"
+            },
+            {
+              "pid": 10020,
+              "parentPid": 15556,
+              "creationDate": "/Date(1790323663267)/",
+              "script": "vite.js"
+            }
+          ],
+          "listeners": {
+            "front": [
+              {
+                "local": "[::1]",
+                "localPort": 3000,
+                "pid": 10020
+              }
+            ],
+            "api": [
+              {
+                "local": "127.0.0.1",
+                "localPort": 3001,
+                "pid": 22884
+              }
+            ]
+          },
+          "status": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": true,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    22884,",
+              "    10020",
+              "  ]",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 118
+          },
+          "http": {
+            "page": {
+              "status": 200,
+              "contentType": "text/html",
+              "hasRoot": true,
+              "hasViteClient": true
+            },
+            "options": {
+              "status": 204
+            }
+          },
+          "descendants": [
+            {
+              "pid": 22884,
+              "parentPid": 15556,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323655608)/"
+            },
+            {
+              "pid": 24140,
+              "parentPid": 22884,
+              "name": "cmd.exe",
+              "creationDate": "/Date(1790323658007)/"
+            },
+            {
+              "pid": 24952,
+              "parentPid": 24140,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323658034)/"
+            },
+            {
+              "pid": 28584,
+              "parentPid": 24952,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323658298)/"
+            },
+            {
+              "pid": 30964,
+              "parentPid": 22884,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323659901)/"
+            },
+            {
+              "pid": 21784,
+              "parentPid": 22884,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323659909)/"
+            },
+            {
+              "pid": 32172,
+              "parentPid": 22884,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323659915)/"
+            },
+            {
+              "pid": 18084,
+              "parentPid": 22884,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323659920)/"
+            },
+            {
+              "pid": 16940,
+              "parentPid": 22884,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323659925)/"
+            },
+            {
+              "pid": 10020,
+              "parentPid": 15556,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323663267)/"
+            },
+            {
+              "pid": 30484,
+              "parentPid": 10020,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323663504)/"
+            }
+          ],
+          "persistent": {
+            "enabled": true,
+            "takenOver": true,
+            "spawns": [
+              {
+                "entrypoint": "api/finmind.ts",
+                "pid": 30964,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/chart.ts",
+                "pid": 18084,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/search.ts",
+                "pid": 16940,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini.ts",
+                "pid": 21784,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini-stream.ts",
+                "pid": 32172,
+                "generation": 0
+              }
+            ],
+            "outsideForks": 0
+          },
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": false,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    22884,",
+              "    10020",
+              "  ],",
+              "  \"stopped\": true",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 1551
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 13459
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": {
+            "vercel": [
+              "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+              "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+              "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+              "Retrieving project…",
+              "> Running Dev Command “vite --port $PORT”",
+              "VITE v6.4.1  ready in 366 ms",
+              "➜  Local:   http://localhost:3001/",
+              "> Ready! Available at http://127.0.0.1:3001",
+              "[persistent-functions] startDevServer 已由長駐原型接手",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 啟動 api/finmind.ts pid=30964 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/chart.ts pid=18084 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/search.ts pid=16940 generation=0",
+              "[persistent-functions] 啟動 api/gemini.ts pid=21784 generation=0",
+              "[persistent-functions] 啟動 api/gemini-stream.ts pid=32172 generation=0"
+            ],
+            "vite": [
+              "VITE v6.4.1  ready in 362 ms",
+              "➜  Local:   http://localhost:3000/"
+            ],
+            "watchdog": null
+          }
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": true,
+          "狀態埠＝受測埠": true,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+          "前端 listener 全是本輪 Vite": true,
+          "後端 listener 全是本輪 vercel": true,
+          "status 回報執行中": true,
+          "首頁 200 且是 Vite 開發頁": true,
+          "同源 OPTIONS 204（不碰上游）": true,
+          "長駐候選啟用並接手、五條函式預熱": true,
+          "stop 回報 stopped": true,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": true
+      },
+      "checks": {
+        "崩潰前已就緒且只殺核對過的監督程序": true,
+        "監督程序已結束": true,
+        "status 誠實回報失聯（非 0 且說明沒有可確認的服務）": true,
+        "子程序隨監督程序一併結束（無 listener、無殘留）": true,
+        "殘留狀態檔由下次啟動核對後改名保存": true,
+        "崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）": false,
+        "看門程序留下失聯清理紀錄": false,
+        "下次啟停之後舊樹也無殘留": false,
+        "之後重新啟動並停止均正常": true
+      },
+      "pass": false
+    },
+    {
+      "scenario": "crash-supervisor-no-watchdog",
+      "startedAt": "2026-09-25T08:07:50.962Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": true,
+          "readyMs": 8934,
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 28956、37544",
+            "正式函式預熱 5 條皆 204，耗時 3582 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "state": {
+          "frontPort": 3000,
+          "apiPort": 3001,
+          "supervisorPid": 9964,
+          "supervisorCreationDate": "/Date(1790323670964)/",
+          "children": [
+            {
+              "pid": 28956,
+              "script": "vc.js",
+              "creationDate": "/Date(1790323671187)/"
+            },
+            {
+              "pid": 37544,
+              "script": "vite.js",
+              "creationDate": "/Date(1790323678231)/"
+            }
+          ],
+          "watchdog": null,
+          "treeCount": null
+        },
+        "descendants": [
+          {
+            "pid": 28956,
+            "parentPid": 9964,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323671187)/"
+          },
+          {
+            "pid": 27256,
+            "parentPid": 28956,
+            "name": "cmd.exe",
+            "creationDate": "/Date(1790323673479)/"
+          },
+          {
+            "pid": 34772,
+            "parentPid": 27256,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323673509)/"
+          },
+          {
+            "pid": 27340,
+            "parentPid": 34772,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323673751)/"
+          },
+          {
+            "pid": 14980,
+            "parentPid": 28956,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323674809)/"
+          },
+          {
+            "pid": 32368,
+            "parentPid": 28956,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323674818)/"
+          },
+          {
+            "pid": 37552,
+            "parentPid": 28956,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323674823)/"
+          },
+          {
+            "pid": 17696,
+            "parentPid": 28956,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323674833)/"
+          },
+          {
+            "pid": 37040,
+            "parentPid": 28956,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323674838)/"
+          },
+          {
+            "pid": 37544,
+            "parentPid": 9964,
+            "name": "node.exe",
+            "creationDate": "/Date(1790323678231)/"
+          },
+          {
+            "pid": 23332,
+            "parentPid": 37544,
+            "name": "esbuild.exe",
+            "creationDate": "/Date(1790323678460)/"
+          }
+        ],
+        "watchdog": null,
+        "killSupervisor": {
+          "command": "taskkill /PID 9964 /F（不含 /T）",
+          "status": 0
+        },
+        "supervisorExit": {
+          "code": 1,
+          "signal": null
+        },
+        "afterCrash": {
+          "stateRemoved": false,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": [
+            {
+              "pid": 34772,
+              "name": "node.exe"
+            },
+            {
+              "pid": 27340,
+              "name": "esbuild.exe"
+            }
+          ]
+        },
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 65
+        },
+        "unexpectedStop": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+          "status": 0,
+          "stdout": [
+            "{",
+            "  \"running\": false,",
+            "  \"front\": \"http://localhost:3000\",",
+            "  \"apiPort\": 3001,",
+            "  \"pids\": [",
+            "    20348,",
+            "    3424",
+            "  ],",
+            "  \"stopped\": true",
+            "}"
+          ],
+          "stderr": [],
+          "ms": 1526
+        },
+        "startWhileStale": {
+          "ready": true,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "output": [
+            "日常入口已就緒：http://localhost:3000；後端 3001；程序 20348、3424",
+            "正式函式預熱 5 條皆 204，耗時 3604 ms。",
+            "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+          ]
+        },
+        "recover": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs recover",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可復原的本案狀態檔。"
+          ],
+          "ms": 67
+        },
+        "afterRecover": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": [
+            {
+              "pid": 34772,
+              "name": "node.exe"
+            },
+            {
+              "pid": 27340,
+              "name": "esbuild.exe"
+            }
+          ]
+        }
+      },
+      "recovery": {
+        "scenario": "crash-supervisor-no-watchdog-recover",
+        "startedAt": "2026-09-25T08:08:17.708Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": true,
+            "readyMs": 10122,
+            "exit": null,
+            "output": [
+              "日常入口已就緒：http://localhost:3000；後端 3001；程序 15264、23684",
+              "正式函式預熱 5 條皆 204，耗時 4246 ms。",
+              "停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop"
+            ]
+          },
+          "state": {
+            "frontPort": 3000,
+            "apiPort": 3001,
+            "supervisorPid": 36080,
+            "supervisorCreationDate": "/Date(1790323697711)/",
+            "children": [
+              {
+                "pid": 15264,
+                "script": "vc.js",
+                "creationDate": "/Date(1790323697974)/"
+              },
+              {
+                "pid": 23684,
+                "script": "vite.js",
+                "creationDate": "/Date(1790323706340)/"
+              }
+            ],
+            "watchdog": null,
+            "treeCount": null
+          },
+          "identities": [
+            {
+              "pid": 36080,
+              "parentPid": 27192,
+              "creationDate": "/Date(1790323697711)/",
+              "script": "daily-dev.mjs"
+            },
+            {
+              "pid": 15264,
+              "parentPid": 36080,
+              "creationDate": "/Date(1790323697974)/",
+              "script": "vc.js"
+            },
+            {
+              "pid": 23684,
+              "parentPid": 36080,
+              "creationDate": "/Date(1790323706340)/",
+              "script": "vite.js"
+            }
+          ],
+          "listeners": {
+            "front": [
+              {
+                "local": "[::1]",
+                "localPort": 3000,
+                "pid": 23684
+              }
+            ],
+            "api": [
+              {
+                "local": "127.0.0.1",
+                "localPort": 3001,
+                "pid": 15264
+              }
+            ]
+          },
+          "status": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": true,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    15264,",
+              "    23684",
+              "  ]",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 119
+          },
+          "http": {
+            "page": {
+              "status": 200,
+              "contentType": "text/html",
+              "hasRoot": true,
+              "hasViteClient": true
+            },
+            "options": {
+              "status": 204
+            }
+          },
+          "descendants": [
+            {
+              "pid": 15264,
+              "parentPid": 36080,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323697974)/"
+            },
+            {
+              "pid": 18940,
+              "parentPid": 15264,
+              "name": "cmd.exe",
+              "creationDate": "/Date(1790323700494)/"
+            },
+            {
+              "pid": 23240,
+              "parentPid": 18940,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323700547)/"
+            },
+            {
+              "pid": 14688,
+              "parentPid": 23240,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323700981)/"
+            },
+            {
+              "pid": 11940,
+              "parentPid": 15264,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323702310)/"
+            },
+            {
+              "pid": 14384,
+              "parentPid": 15264,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323702321)/"
+            },
+            {
+              "pid": 25740,
+              "parentPid": 15264,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323702328)/"
+            },
+            {
+              "pid": 36856,
+              "parentPid": 15264,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323702336)/"
+            },
+            {
+              "pid": 31704,
+              "parentPid": 15264,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323702345)/"
+            },
+            {
+              "pid": 23684,
+              "parentPid": 36080,
+              "name": "node.exe",
+              "creationDate": "/Date(1790323706340)/"
+            },
+            {
+              "pid": 21424,
+              "parentPid": 23684,
+              "name": "esbuild.exe",
+              "creationDate": "/Date(1790323706555)/"
+            }
+          ],
+          "persistent": {
+            "enabled": true,
+            "takenOver": true,
+            "spawns": [
+              {
+                "entrypoint": "api/yahoo/search.ts",
+                "pid": 31704,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/finmind.ts",
+                "pid": 11940,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/yahoo/chart.ts",
+                "pid": 36856,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini-stream.ts",
+                "pid": 14384,
+                "generation": 0
+              },
+              {
+                "entrypoint": "api/gemini.ts",
+                "pid": 25740,
+                "generation": 0
+              }
+            ],
+            "outsideForks": 0
+          },
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 0,
+            "stdout": [
+              "{",
+              "  \"running\": false,",
+              "  \"front\": \"http://localhost:3000\",",
+              "  \"apiPort\": 3001,",
+              "  \"pids\": [",
+              "    15264,",
+              "    23684",
+              "  ],",
+              "  \"stopped\": true",
+              "}"
+            ],
+            "stderr": [],
+            "ms": 1301
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 12212
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": {
+            "vercel": [
+              "[persistent-functions] 已啟用（vercel 55.0.0、@vercel/node 5.8.23）",
+              "<claude-code-hint v=\"1\" type=\"plugin\" value=\"vercel@claude-plugins-official\" />",
+              "Vercel CLI 55.0.0 (Node.js 26.4.0)",
+              "Retrieving project…",
+              "> Running Dev Command “vite --port $PORT”",
+              "VITE v6.4.1  ready in 638 ms",
+              "➜  Local:   http://localhost:3001/",
+              "> Ready! Available at http://127.0.0.1:3001",
+              "[persistent-functions] startDevServer 已由長駐原型接手",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 函式子程序取消橋接已啟用",
+              "[persistent-functions] 啟動 api/yahoo/search.ts pid=31704 generation=0",
+              "[persistent-functions] 啟動 api/finmind.ts pid=11940 generation=0",
+              "[persistent-functions] 啟動 api/yahoo/chart.ts pid=36856 generation=0",
+              "[persistent-functions] 啟動 api/gemini-stream.ts pid=14384 generation=0",
+              "[persistent-functions] 啟動 api/gemini.ts pid=25740 generation=0"
+            ],
+            "vite": [
+              "VITE v6.4.1  ready in 334 ms",
+              "➜  Local:   http://localhost:3000/"
+            ],
+            "watchdog": null
+          }
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": true,
+          "狀態埠＝受測埠": true,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": true,
+          "前端 listener 全是本輪 Vite": true,
+          "後端 listener 全是本輪 vercel": true,
+          "status 回報執行中": true,
+          "首頁 200 且是 Vite 開發頁": true,
+          "同源 OPTIONS 204（不碰上游）": true,
+          "長駐候選啟用並接手、五條函式預熱": true,
+          "stop 回報 stopped": true,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": true
+      },
+      "checks": {
+        "崩潰前已就緒，看門程序與監督程序都核對身分後才結束": false,
+        "看門程序失效時確有殘留（後備清理的前提）": true,
+        "status 誠實回報失聯": true,
+        "start 在殘留存在時拒絕另起並指向 recover": false,
+        "recover 依狀態檔的程序樹核對並清掉殘留": false,
+        "之後重新啟動並停止均正常": true
+      },
+      "pass": false
+    }
+  ],
+  "errors": [],
+  "finalCheck": {
+    "stateExists": false,
+    "listeners": {
+      "front": [],
+      "api": []
+    }
+  },
+  "leftoverCleanup": {
+    "found": [
+      {
+        "pid": 21004,
+        "name": "node.exe",
+        "parentPid": 20904
+      },
+      {
+        "pid": 37624,
+        "name": "esbuild.exe",
+        "parentPid": 21004
+      },
+      {
+        "pid": 17288,
+        "name": "node.exe",
+        "parentPid": 18752
+      },
+      {
+        "pid": 37784,
+        "name": "esbuild.exe",
+        "parentPid": 17288
+      },
+      {
+        "pid": 34772,
+        "name": "node.exe",
+        "parentPid": 27256
+      },
+      {
+        "pid": 27340,
+        "name": "esbuild.exe",
+        "parentPid": 34772
+      }
+    ],
+    "killed": [
+      {
+        "pid": 21004,
+        "name": "node.exe",
+        "status": 0
+      },
+      {
+        "pid": 17288,
+        "name": "node.exe",
+        "status": 0
+      },
+      {
+        "pid": 34772,
+        "name": "node.exe",
+        "status": 0
+      }
+    ],
+    "stillAlive": []
+  },
+  "finishedAt": "2026-09-25T08:08:34.700Z"
+}

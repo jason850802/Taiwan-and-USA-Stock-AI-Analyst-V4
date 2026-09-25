@@ -1,0 +1,36 @@
+{
+  "runId": "recover03-20260925-r3",
+  "createdAt": "2026-09-25T05:11:05.233Z",
+  "port": 4785,
+  "source": {
+    "head": "94848ac19ce364dda6de84aa2d89012546a848c0",
+    "runnerSha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+    "dailySha256": "a58630f7753389797c44fc17c74d41ce3cdd07735200ecfca0f7cbe9382db181",
+    "versions": {
+      "node": "v26.4.0",
+      "vercel": "55.0.0",
+      "vercelNode": "5.8.23",
+      "tsx": "4.21.0",
+      "vite": "6.4.1"
+    }
+  },
+  "owned": {
+    "pid": 16276,
+    "creationDate": "/Date(1790313065287)/",
+    "status": 0,
+    "stdout": "{\"recovered\":true,\"stopped\":true,\"pids\":[16276],\"treeCleaned\":[]}",
+    "stderr": "",
+    "listenerStopped": true,
+    "stateRemoved": true
+  },
+  "reusedPid": {
+    "pid": 19028,
+    "status": 0,
+    "stdout": "{\"recovered\":true,\"stopped\":true,\"pids\":[],\"treeCleaned\":[]}",
+    "stderr": "",
+    "callerAlive": true,
+    "stateRemoved": true
+  },
+  "errors": [],
+  "finishedAt": "2026-09-25T05:11:12.120Z"
+}

@@ -49,13 +49,15 @@ Type: task
 
 | 驗收項 | 判定 | 證據路徑 |
 |---|---|---|
-| 同源、同 handler、同設定，來源 manifest 可證明 | **PASS** | `evidence/03/SOURCE-MANIFEST-20260925-r5.json`（26 檔 SHA-256＋blob）；App／重載 raw 內的候選來源雜湊 |
-| 兩次啟停、埠衝突、語法錯誤、依賴刪除／恢復、環境變更有明確結果 | **PASS（結果明確）** | `evidence/03/life03-localhost3000-20260925-r2/`（兩次啟停、雙埠衝突、vercel／Vite 崩潰與恢復 PASS；監督程序崩潰見下一列）；`evidence/03/reload03-deps-20260925-r1/`（12 步，刪共用依賴兩邊 500、恢復 200，`diffs=[]`） |
-| 無 orphan、無舊碼服務、無秘密洩漏、其他服務未被關閉 | **FAIL（監督程序崩潰路徑有孤兒）**；其餘 PASS | 生命週期 r2 `crash-supervisor`：vercel 經 `cmd.exe` 啟動的內部 Vite＋esbuild 存活、監聽 `0.0.0.0`，下次啟停後仍在，啟動器看不到；正常 stop 與子程序崩潰路徑整棵 11 程序樹無殘留。重載不回舊碼；各工具 `.env` 值掃描 0；只終止身分核對過的 PID |
-| 正式 App 端到端打到候選；固定 GET／OPTIONS 低成本仍成立 | **PASS** | `evidence/03/app03-localhost3000-20260925-r2/`：原 3000、桌面＋窄版 28/28，逐步五鍵 before／after 原始字串與 28 張截圖；低成本沿用 `daily03-cost-20260925-r1`（同啟動器與來源，量於 4633） |
+| 同源、同 handler、同設定，來源 manifest 可證明 | **PASS** | `evidence/03/SOURCE-MANIFEST-20260925-r6.json`（26 檔 SHA-256＋blob，含修正後啟動器）；App／重載 raw 內的候選來源雜湊 |
+| 兩次啟停、埠衝突、語法錯誤、依賴刪除／恢復、環境變更有明確結果 | **PASS** | `evidence/03/life03-localhost3000-20260925-r3/`（8 情境：兩次啟停、雙埠衝突、vercel／Vite／監督程序崩潰、看門程序也失效）；`evidence/03/reload03-deps-20260925-r1/`（12 步，刪共用依賴兩邊 500、恢復 200，`diffs=[]`） |
+| 無 orphan、無舊碼服務、無秘密洩漏、其他服務未被關閉 | **PASS**（修正後；修正前 r2 與紅燈 run 的 FAIL 原樣保留） | 生命週期 r3 每個情境停止或崩潰後整棵程序樹 0 殘留、結尾清理找到 0 個；App r3 停止後 12 個程序 0 殘留；紅燈 `life03-red-localhost3000-20260925-r2` 證明修正前三個崩潰情境會留孤兒。重載不回舊碼；各工具 `.env` 值掃描 0；只終止身分核對過的 PID |
+| 正式 App 端到端打到候選；固定 GET／OPTIONS 低成本仍成立 | **PASS** | `evidence/03/app03-localhost3000-20260925-r3/`（修正後啟動器）與 `-r2/`：原 3000、桌面＋窄版各 28/28，逐步五鍵 before／after 原始字串與截圖；低成本 `daily03-cost-20260925-r2`（修正後啟動器，OPTIONS 中位 15.48 ms、GET 77.89 ms，各 20/20） |
 | 原 Vercel 部署配置及 API 行為保留；可驗證的回復命令 | **部分 PASS，正式平台 OPEN** | `evidence/03/deploy03-static-20260925-r1/`：部署設定零差異、路由不變、本機預載被 `.vercelignore` 排除、03 前後正式前端建置 15 檔逐位元組相同；本機標準 runtime API 以 parity r5 59/59；**正式平台 API／取消未實測**。回復入口為原 `scripts/start-dev.ps1`（09-25 使用者實跑、重驗核對 200／204）；產品碼 `git revert` 未演練 |
-| 隔離 gate、獨立 Standards／Spec 覆核、精確提交、日常命令文件 | **部分完成，覆核 OPEN** | 隔離 gate 兩次全綠：tsc 0 錯、829/829、build、金鑰掃描含本輪新檔（追蹤原始碼 4451 檔；修正生命週期工具後重跑 4455 檔）、package／lock 無差異（`evidence/03/gate03-accept-20260925-r1-lf.txt`、`-r2-lf.txt`）；精確提交為本輪 commit；**本輪增量尚未做獨立雙軸覆核** |
+| 隔離 gate、獨立 Standards／Spec 覆核、精確提交、日常命令文件 | **部分完成，覆核 OPEN** | 隔離 gate 三次全綠：tsc 0 錯、829/829、build、金鑰掃描含本輪新檔（追蹤原始碼 4451 → 4455 → 修正啟動器後 4496 檔）、package／lock 無差異（`evidence/03/gate03-accept-20260925-r1-lf.txt`、`-r2-lf.txt`、`-r3-lf.txt`）；精確提交為本輪 commit；**本輪增量尚未做獨立雙軸覆核** |
 
 失敗歷史照留：`app03-localhost3000-20260925-r1` 窄版 1 步 FAIL（畫面與五鍵正確，判定器當時未實作協定 §4 的 2y 例外、缺完成時刻），修正後以 r2 重跑，不追認 r1。`life03-localhost3000-20260925-r1` 報 7/7 PASS 但殘留檢查漏了 vercel 內部開發伺服器，`crash-supervisor` 判定作廢；事後全系統查詢找到 r1 與冒煙各留下的一個孤兒內部 Vite（PID 6916、24416，監聽 `0.0.0.0:62424`／`57424`），核對建立時間後清除，工具改為核對整棵子孫樹後以 r2 重跑。App 判定新增逐筆請求分類：除 §4 的 2y 外，另把「發起者非頁面腳本的瀏覽器背景重新驗證」與「`/api/gemini-stream` 畫面已證明完整收到 `done` 後被 Chrome 標為取消」列為非失敗；這兩類是**本輪判定器新增規則、非協定凍結條文，後者成因未定位**，請使用者裁定是否接受。
 
-剩餘缺口：（1）**啟動器孤兒缺陷**——監督程序被強制結束時內部開發伺服器存活，需改 `daily-dev.mjs` 追蹤並清理整棵子孫樹後重驗，本輪未改；（2）正式部署的 API 與取消行為未實測（依指示不部署）；（3）本輪增量待獨立 Standards／Spec 覆核；（4）上述請求分類待裁定；（5）04～07 的全案效能目標不受本輪影響。**本票維持 OPEN，04 不自動解鎖。**
+**啟動器孤兒缺陷修正（先紅後綠）**：vercel 經 `cmd.exe` 啟動的內部開發伺服器不在 Node 的 job object 內，vercel 自己崩潰或監督程序被強制結束時會成為孤兒並監聽 `0.0.0.0`。先把生命週期測試改為只結束崩潰的那個程序（不含 `/T`）並加「看門程序也失效」情境，用最終版驗收工具配舊啟動器（暫時換回 `94848ac` 版、跑完換回並核對雜湊）跑出紅燈 `life03-red-localhost3000-20260925-r2`（5/8，`crash-vercel`、`crash-supervisor`、`crash-supervisor-no-watchdog` FAIL；r1 為中間版工具、結論相同）。`daily-dev.mjs` 改為：就緒後記錄整棵子孫樹（建立時間不得早於父程序，防 PID 重用）寫進狀態檔；任何停止路徑依樹清到底；另起脫離 job 的看門程序以 stdin 管道感知監督程序，失聯時核對身分清樹；看門程序也失效時 `start` 拒絕另起、`recover` 依樹清理。綠燈 `life03-localhost3000-20260925-r3` 8/8、`app03-localhost3000-20260925-r3` 28/28，回歸 `stale03-20260925-r2`、`recover03-20260925-r3`、`daily03-cost-20260925-r2` 均 PASS。代價：`stop` 約 2.2～2.6 秒、多一個常駐看門程序。
+
+剩餘缺口：（1）正式部署的 API 與取消行為未實測（依指示不部署）；（2）本輪增量（含 `daily-dev.mjs` 孤兒修正這項實作變更）待獨立 Standards／Spec 覆核；（3）上述請求分類待裁定；（4）04～07 的全案效能目標不受本輪影響。**本票維持 OPEN，04 不自動解鎖。**

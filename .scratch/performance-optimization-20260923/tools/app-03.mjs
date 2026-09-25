@@ -11,6 +11,7 @@
 // 原始字串、截圖、DOM 事實、同源 API 請求（含發起者堆疊與完成／失敗時刻）與 console 錯誤，
 // 並分畫面／五鍵／console／請求四欄判定；請求逐筆分類（見 classifyRequest），不整批忽略取消。
 // 服務期間持續監看有沒有本輪以外的用戶端連進 3000；一有就停服務、判本輪無效。
+// 停止後核對就緒時監督程序底下的整棵程序樹（含 vercel 內部開發伺服器與看門程序）是否全部結束。
 // 不打真行情（函式子程序在固定上游模式封鎖非本機連線）、不執行真 AI（claude CLI 一律換假 CLI）。
 // exit 0＝全部通過；1＝有操作不符；2＝run 無效（身分、保護、清理或啟停失敗）。
 import { execFile, spawn } from 'node:child_process';
@@ -21,7 +22,7 @@ import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { claimRun, fileSha, sha256, sleep, toolVersions } from './service-kit.mjs';
 import { ROOT, parseArgs, scanSecrets } from './verify-b1-breakdown.mjs';
-import { listenerRows, nodeProcesses, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
+import { launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
 
 const require = createRequire(import.meta.url);
 const { fixtureChartBody } = require('./trace-preload.cjs');
@@ -470,6 +471,8 @@ function ownedState() {
     view: {
       supervisorPid: state.supervisorPid, supervisorCreationDate: state.supervisorCreationDate,
       children: state.children.map(({ pid, script, creationDate }) => ({ pid, script: path.basename(script), creationDate })),
+      watchdog: state.watchdog ? { pid: state.watchdog.pid, creationDate: state.watchdog.creationDate } : null,
+      treeCount: Array.isArray(state.tree) ? state.tree.length : null,
     },
   };
 }
@@ -1036,6 +1039,8 @@ async function main() {
       const row = table.get(pid);
       return row ? { pid, parentPid: row.ParentProcessId, creationDate: row.CreationDate, script: scriptOf(row.CommandLine) } : { pid, missing: true };
     });
+    // 監督程序底下的整棵程序樹（含 vercel 經 cmd 殼啟動的內部開發伺服器與看門程序），停止後逐一核對。
+    raw.launcher.tree = launcherTree(await processTable(), owned.view.supervisorPid);
     for (const name of names) {
       if (abortSignal.aborted) break;
       raw.viewports.push(await runViewport({ name, viewport: VIEWPORTS[name], runtimeDir, evidenceDir, chromePids, abortSignal }));
@@ -1061,6 +1066,9 @@ async function main() {
       const functionAlive = (raw.persistent?.spawns ?? [])
         .filter(item => /dev-server\.mjs/i.test(table.get(item.pid)?.CommandLine ?? '')).map(item => item.pid);
       raw.stopCheck.aliveOwned = [...launcherAlive, ...functionAlive];
+      const everything = await processTable();
+      raw.stopCheck.aliveTree = (raw.launcher.tree ?? []).filter(item => everything.get(item.pid)?.CreationDate === item.creationDate)
+        .map(({ pid, name }) => ({ pid, name }));
     }
     if (daily) raw.backendTrace = summarizeTrace(daily.traceDir);
     raw.finishedAt = nowIso();
@@ -1081,6 +1089,12 @@ async function main() {
   if (raw.stop?.status !== 0 || !raw.stopCheck.stateRemoved || raw.stopCheck.supervisorExited === false
     || raw.stopCheck.listeners[FRONT_PORT].length || raw.stopCheck.listeners[API_PORT].length) problems.push('停止後仍有狀態、監督程序或 listener');
   if (raw.stopCheck.aliveOwned?.length) problems.push(`停止後殘留程序：${raw.stopCheck.aliveOwned.join(',')}`);
+  const watchdogPid = raw.launcher.state?.watchdog?.pid;
+  if (!raw.launcher.tree?.length || !watchdogPid || !raw.launcher.tree.some(item => item.pid === watchdogPid)
+    || !raw.launcher.state.children.every(child => raw.launcher.tree.some(item => item.pid === child.pid))) {
+    problems.push('就緒程序樹未涵蓋子程序與看門程序');
+  }
+  if (raw.stopCheck.aliveTree?.length) problems.push(`停止後整棵程序樹仍有殘留：${JSON.stringify(raw.stopCheck.aliveTree)}`);
   const trace = raw.backendTrace;
   if (!trace || trace.blocked.net || trace.blocked.fetch || trace.blocked.ai) problems.push('後端探針有非預期 outbound 或 AI 被擋');
   if (trace && Object.keys(trace.fetchKinds).some(kind => !FIXTURE_KINDS.includes(kind))) problems.push('後端出現非固定上游的 outbound 類別');
@@ -1113,6 +1127,7 @@ async function main() {
     monitor: { checks: raw.monitor?.checks ?? null, foreign: raw.monitor?.foreign?.length ?? null },
     fakeCli: trace?.fakeCli ?? null, fetchKinds: trace?.fetchKinds ?? null, blocked: trace?.blocked ?? null,
     persistentSpawns: raw.persistent?.spawns?.length ?? null,
+    tree: { recorded: raw.launcher.tree?.length ?? null, aliveAfterStop: raw.stopCheck.aliveTree ?? null },
   };
   const toolSha = fileSha(fileURLToPath(import.meta.url)).slice(0, 12);
   fs.writeFileSync(path.join(evidenceDir, `app-summary-${toolSha}.json`), `${JSON.stringify(summary, null, 2)}\n`, { flag: 'wx' });

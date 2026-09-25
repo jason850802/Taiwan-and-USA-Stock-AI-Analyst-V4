@@ -126,6 +126,34 @@ export async function nodeProcesses() {
 // 命令列中的第一個腳本檔名（daily-dev.mjs／vc.js／vite.js／dev-server.mjs），證據只記這個名稱。
 export const scriptOf = commandLine => (commandLine ?? '').match(/[^\\/"\s]+\.(?:mjs|js|cjs)\b/)?.[0] ?? null;
 
+// 某程序底下的整棵子孫樹（驗收端的獨立實作，不沿用啟動器的程式）。Windows 父 PID 在父程序結束後不會清掉，
+// PID 又會被重用，所以子程序的建立時間必須不早於父程序才算成員；只記 PID、父 PID、程序名與建立時間。
+const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Number.NaN);
+export function descendantTree(table, rootPid) {
+  const out = [];
+  const seen = new Set([rootPid]);
+  const walk = (parent, parentMs) => {
+    for (const row of table.values()) {
+      if (row.ParentProcessId !== parent || seen.has(row.ProcessId)) continue;
+      const ms = creationMs(row.CreationDate);
+      if (!(ms >= parentMs)) continue;
+      seen.add(row.ProcessId);
+      out.push({ pid: row.ProcessId, parentPid: parent, name: row.Name, creationDate: row.CreationDate });
+      walk(row.ProcessId, ms);
+    }
+  };
+  walk(rootPid, creationMs(table.get(rootPid)?.CreationDate));
+  return out;
+}
+
+// 日常入口的程序樹：略過各層短命的查詢程序（powershell 及其子孫），其餘全部列入（含看門程序）。
+export function launcherTree(table, rootPid) {
+  const all = descendantTree(table, rootPid);
+  const dropped = new Set(all.filter(item => item.name === 'powershell.exe').map(item => item.pid));
+  for (const item of all) if (dropped.has(item.parentPid)) dropped.add(item.pid);   // 走訪順序為先父後子
+  return all.filter(item => !dropped.has(item.pid));
+}
+
 export function descends(table, pid, roots) {
   const seen = new Set();
   let current = pid;

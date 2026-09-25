@@ -10,6 +10,7 @@
 // 不打行情、不執行 AI。服務期間沿用 port-guard 的哨兵與外部用戶端監看，一有外部用戶端就停服務並判無效。
 // 每個情境寫下命令、結束碼、輸出（不含控制 token）、owned PID／建立時間、listener 與停止後殘留檢查；
 // 殘留檢查涵蓋就緒時監督程序底下的整棵子孫樹（含 vercel 內部開發伺服器與 esbuild），結束時清掉仍存活者並記錄。
+// 崩潰一律只結束該程序本身（taskkill /F，不含 /T），重現真實崩潰時子孫留存與否；另驗看門程序也失效時的後備清理。
 // exit 0＝全部情境符合預期；1＝有情境不符；2＝run 無效。
 import { execFile, spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -20,7 +21,7 @@ import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { claimRun, fileSha, sleep, toolVersions } from './service-kit.mjs';
 import { ROOT, parseArgs, scanSecrets } from './verify-b1-breakdown.mjs';
-import { listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
+import { launcherTree, listenerRows, nodeProcesses, processTable, runSentinel, scriptOf, startForeignMonitor } from './port-guard-03.mjs';
 
 const require = createRequire(import.meta.url);
 const { LOG: PERSISTENT_LOG } = require('./persistent-functions.cjs');
@@ -107,6 +108,8 @@ function readStateView() {
         frontPort: state.frontPort, apiPort: state.apiPort,
         supervisorPid: state.supervisorPid, supervisorCreationDate: state.supervisorCreationDate,
         children: (state.children ?? []).map(({ pid, script, creationDate }) => ({ pid, script: path.basename(script), creationDate })),
+        watchdog: state.watchdog ? { pid: state.watchdog.pid, creationDate: state.watchdog.creationDate } : null,
+        treeCount: Array.isArray(state.tree) ? state.tree.length : null,
       },
     };
   } catch {
@@ -123,7 +126,7 @@ function launcherLogs(token) {
   };
   const vercel = read('vercel');
   return {
-    vercel, vite: read('vite'),
+    vercel, vite: read('vite'), watchdog: read('watchdog'),
     persistent: {
       enabled: Boolean(vercel?.some(line => line.includes(PERSISTENT_LOG.enabled))),
       takenOver: Boolean(vercel?.some(line => line.includes(PERSISTENT_LOG.takenOver))),
@@ -171,20 +174,11 @@ async function httpChecks() {
   return out;
 }
 
-// 就緒後監督程序底下的整棵程序樹（所有子孫，含 vercel 經 cmd 殼啟動的內部 Vite 與 esbuild），
-// 只記 PID、程序名與建立時間；停止或崩潰後逐一核對是否仍存活。
+// 就緒後監督程序底下的整棵程序樹（所有子孫，含 vercel 經 cmd 殼啟動的內部 Vite 與 esbuild、看門程序），
+// 只記 PID、程序名與建立時間；停止或崩潰後逐一核對是否仍存活。短命的查詢程序（powershell）不列入。
 const allDescendants = [];
 async function descendantsOf(rootPid) {
-  const table = await processTable();
-  const out = [];
-  const walk = parent => {
-    for (const row of table.values()) {
-      if (row.ParentProcessId !== parent || row.ProcessId === parent) continue;
-      out.push({ pid: row.ProcessId, parentPid: parent, name: row.Name, creationDate: row.CreationDate });
-      walk(row.ProcessId);
-    }
-  };
-  walk(rootPid);
+  const out = launcherTree(await processTable(), rootPid);
   allDescendants.push(...out);
   return out;
 }
@@ -208,6 +202,19 @@ async function stoppedCheck(view, spawns, descendants = []) {
 const isClean = check => check.stateRemoved && !check.listeners.front.length && !check.listeners.api.length
   && !check.aliveLauncher.length && !check.aliveFunctions.length && !check.aliveDescendants.length;
 
+// 崩潰後等整棵子孫樹消失（清理需要時間）；回傳從呼叫起算的毫秒數，逾時回 null（仍有殘留）。
+async function waitTreeGone(descendants, timeoutMs = 10_000) {
+  const started = performance.now();
+  while (performance.now() - started < timeoutMs) {
+    const table = await processTable();
+    if (!descendants.some(item => table.get(item.pid)?.CreationDate === item.creationDate)) {
+      return Math.round(performance.now() - started);
+    }
+    await sleep(250);
+  }
+  return null;
+}
+
 // ── 情境 ──
 async function cycle(runtimeDir, tag) {
   const record = { scenario: tag, startedAt: nowIso(), steps: {} };
@@ -223,11 +230,13 @@ async function cycle(runtimeDir, tag) {
     record.steps.descendants = await descendantsOf(state.view.supervisorPid);
   }
   const logs = state ? launcherLogs(state.token) : null;
-  record.steps.logs = logs ? { vercel: logs.vercel, vite: logs.vite } : null;
   record.steps.persistent = logs?.persistent ?? null;
   record.steps.stop = await daily('stop');
   record.steps.supervisorExit = { value: await waitExit(run, 15_000), atMs: run.exit.atMs };
   record.steps.afterStop = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants ?? []);
+  // log 在停止後再讀，才包含看門程序收到正常停止後的紀錄。
+  const finalLogs = state ? launcherLogs(state.token) : null;
+  record.steps.logs = finalLogs ? { vercel: finalLogs.vercel, vite: finalLogs.vite, watchdog: finalLogs.watchdog } : null;
   const vite = state?.view.children.find(child => child.script === 'vite.js');
   const vercel = state?.view.children.find(child => child.script === 'vc.js');
   const statusJson = (() => { try { return JSON.parse(record.steps.status?.stdout.join('\n') ?? ''); } catch { return null; } })();
@@ -288,7 +297,8 @@ async function portConflict(runtimeDir, which) {
   return record;
 }
 
-// 某個子程序崩潰：監督程序必須自行停掉另一個子程序、清狀態並結束；之後重新啟動要能恢復。
+// 某個子程序崩潰：只結束該程序本身（真實崩潰不會連帶殺掉它的子孫）；監督程序必須自行停掉其餘程序、
+// 清掉整棵樹與狀態並結束；之後重新啟動要能恢復。
 async function childCrash(runtimeDir, which) {
   const tag = `crash-${which}`;
   const record = { scenario: tag, startedAt: nowIso(), steps: {} };
@@ -304,13 +314,15 @@ async function childCrash(runtimeDir, which) {
   record.steps.descendants = state ? await descendantsOf(state.view.supervisorPid) : [];
   if (record.steps.target?.identityVerified) {
     const killStarted = performance.now();
-    const kill = await execText('taskkill', ['/PID', String(target.pid), '/T', '/F']);
-    record.steps.kill = { command: `taskkill /PID ${target.pid} /T /F`, status: kill.status };
+    const kill = await execText('taskkill', ['/PID', String(target.pid), '/F']);
+    record.steps.kill = { command: `taskkill /PID ${target.pid} /F（不含 /T，只結束該子程序）`, status: kill.status };
     const exitValue = await waitExit(run, 20_000);
     record.steps.supervisorExit = { value: exitValue, msAfterKill: exitValue ? Math.round(performance.now() - killStarted) : null,
       output: run.output() };
+    record.steps.treeGoneMsAfterSupervisorExit = await waitTreeGone(record.steps.descendants);
   }
   record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
+  record.steps.watchdogLog = state ? launcherLogs(state.token).watchdog : null;
   if (!isClean(record.steps.afterCrash) && fs.existsSync(STATE_FILE)) record.steps.cleanupStop = await daily('stop');
   record.recovery = await cycle(runtimeDir, `${tag}-recover`);
   record.checks = {
@@ -341,9 +353,10 @@ async function supervisorCrash(runtimeDir) {
     const kill = await execText('taskkill', ['/PID', String(state.view.supervisorPid), '/F']);
     record.steps.kill = { command: `taskkill /PID ${state.view.supervisorPid} /F（不含 /T，只殺監督程序）`, status: kill.status };
     record.steps.supervisorExit = await waitExit(run, 10_000);
-    await sleep(1500);
+    record.steps.treeGoneMs = await waitTreeGone(record.steps.descendants);
   }
   record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
+  record.steps.watchdogLog = state ? launcherLogs(state.token).watchdog : null;
   record.steps.stateLeft = fs.existsSync(STATE_FILE);
   record.steps.status = await daily('status');
   const survivors = record.steps.afterCrash.aliveLauncher.length || record.steps.afterCrash.aliveFunctions.length
@@ -382,7 +395,59 @@ async function supervisorCrash(runtimeDir) {
     }),
     '崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）': !(survivors ? record.steps.afterRecover : record.steps.afterCrash)
       .aliveDescendants.length,
+    '看門程序留下失聯清理紀錄': Boolean(record.steps.watchdogLog?.some(line => line.includes('監督程序失聯'))),
     '下次啟停之後舊樹也無殘留': !record.steps.oldTreeAfterRecovery.length,
+    '之後重新啟動並停止均正常': record.recovery.pass,
+  };
+  record.pass = Object.values(record.checks).every(Boolean);
+  return record;
+}
+
+// 看門程序也失效（先把它結束）再強制結束監督程序：沒被一併結束的程序只能靠狀態檔記下的程序樹找回。
+// start 必須拒絕在殘留存在時另起，recover 核對身分後清掉，之後才能正常啟停。
+async function supervisorCrashWithoutWatchdog(runtimeDir) {
+  const tag = 'crash-supervisor-no-watchdog';
+  const record = { scenario: tag, startedAt: nowIso(), steps: {} };
+  const run = await startSupervisor(runtimeDir, tag);
+  const state = readStateView();
+  record.steps.start = { command: run.command, ready: run.ready, readyMs: run.readyMs, output: run.output() };
+  record.steps.state = state?.view ?? null;
+  const logs = state ? launcherLogs(state.token) : null;
+  record.steps.descendants = state ? await descendantsOf(state.view.supervisorPid) : [];
+  const table = await processTable();
+  const watchdog = state?.view.watchdog ?? null;
+  const watchdogVerified = Boolean(watchdog && table.get(watchdog.pid)?.CreationDate === watchdog.creationDate);
+  const supervisorVerified = Boolean(state && table.get(state.view.supervisorPid)?.CreationDate === state.view.supervisorCreationDate);
+  record.steps.watchdog = watchdog ? { pid: watchdog.pid, identityVerified: watchdogVerified } : null;
+  if (watchdogVerified) {
+    const kill = await execText('taskkill', ['/PID', String(watchdog.pid), '/F']);
+    record.steps.killWatchdog = { command: `taskkill /PID ${watchdog.pid} /F（模擬看門程序失效）`, status: kill.status };
+  }
+  if (supervisorVerified) {
+    const kill = await execText('taskkill', ['/PID', String(state.view.supervisorPid), '/F']);
+    record.steps.killSupervisor = { command: `taskkill /PID ${state.view.supervisorPid} /F（不含 /T）`, status: kill.status };
+    record.steps.supervisorExit = await waitExit(run, 10_000);
+    await sleep(2000);
+  }
+  record.steps.afterCrash = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
+  record.steps.status = await daily('status');
+  const attempt = await startSupervisor(runtimeDir, `${tag}-while-stale`, { expectFailure: true });
+  if (attempt.ready) {
+    record.steps.unexpectedStop = await daily('stop');
+    await waitExit(attempt, 15_000);
+  }
+  record.steps.startWhileStale = { ready: attempt.ready, exit: attempt.exit.value, output: attempt.output() };
+  record.steps.recover = await daily('recover');
+  record.steps.afterRecover = await stoppedCheck(state?.view, logs?.persistent.spawns, record.steps.descendants);
+  record.recovery = await cycle(runtimeDir, `${tag}-recover`);
+  record.checks = {
+    '崩潰前已就緒，看門程序與監督程序都核對身分後才結束': run.ready && watchdogVerified && supervisorVerified,
+    '看門程序失效時確有殘留（後備清理的前提）': record.steps.afterCrash.aliveDescendants.length > 0,
+    'status 誠實回報失聯': record.steps.status.status !== 0
+      && record.steps.status.stderr.some(line => line.includes(NO_SERVICE_MESSAGE)),
+    'start 在殘留存在時拒絕另起並指向 recover': record.steps.startWhileStale.ready === false
+      && record.steps.startWhileStale.output.some(line => line.includes(STALE_MESSAGE)),
+    'recover 依狀態檔的程序樹核對並清掉殘留': record.steps.recover.status === 0 && isClean(record.steps.afterRecover),
     '之後重新啟動並停止均正常': record.recovery.pass,
   };
   record.pass = Object.values(record.checks).every(Boolean);
@@ -450,6 +515,7 @@ async function main() {
       () => childCrash(runtimeDir, 'vercel'),
       () => childCrash(runtimeDir, 'vite'),
       () => supervisorCrash(runtimeDir),
+      () => supervisorCrashWithoutWatchdog(runtimeDir),
     ];
     for (const step of plan) {
       if (aborted.value) break;
@@ -489,7 +555,7 @@ async function main() {
   if (raw.finalCheck.stateExists || raw.finalCheck.listeners.front.length || raw.finalCheck.listeners.api.length) {
     problems.push('結束時仍有狀態檔或 listener');
   }
-  if (raw.scenarios.length !== 7) problems.push(`情境數 ${raw.scenarios.length}/7`);
+  if (raw.scenarios.length !== 8) problems.push(`情境數 ${raw.scenarios.length}/8`);
   if (raw.leftoverCleanup?.stillAlive?.length) problems.push(`測試殘留程序清不掉：${raw.leftoverCleanup.stillAlive.join(',')}`);
   const leaks = scanSecrets(evidenceDir);
   if (leaks.length) problems.push(`證據疑似含秘密：${leaks.map(hit => `${hit.file}:${hit.key}`).join(',')}`);

@@ -1,0 +1,123 @@
+{
+  "runId": "app03-localhost3000-20260925-r3",
+  "formal": true,
+  "origin": "http://localhost:3000",
+  "problems": [],
+  "failedOps": [],
+  "incompleteViewports": [],
+  "viewports": [
+    {
+      "name": "desktop",
+      "ops": [
+        "open-app:PASS",
+        "search-tw-2317:PASS",
+        "interval-tw-week:PASS",
+        "search-us-aapl:PASS",
+        "interval-us-day:PASS",
+        "ai-analysis-fake:PASS",
+        "open-portfolio:PASS",
+        "add-us-aapl:PASS",
+        "add-tw-2330:PASS",
+        "health-check-aapl:PASS",
+        "reload-app:PASS",
+        "revisit-portfolio:PASS",
+        "delete-us-aapl:PASS",
+        "delete-tw-2330:PASS"
+      ],
+      "externalHosts": [
+        "fonts.googleapis.com",
+        "fonts.gstatic.com"
+      ],
+      "unexpectedConsole": 0,
+      "expectedConsole": 1,
+      "designedAborts": [],
+      "failedAxes": [],
+      "requestKinds": {
+        "成功": 21,
+        "瀏覽器自發・已取消": 1,
+        "串流完整送達後的傳輸層取消": 2,
+        "瀏覽器自發": 1
+      },
+      "failedRequests": [],
+      "finalKeys": {
+        "portfolio_items": "[]",
+        "portfolio_transactions_v1": "{\"version\":1,\"txns\":[]}",
+        "portfolio_import_log_v1": null,
+        "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+        "portfolio_snapshots_v1": "{\"version\":1,\"rows\":[]}"
+      }
+    },
+    {
+      "name": "narrow",
+      "ops": [
+        "open-app:PASS",
+        "search-tw-2317:PASS",
+        "interval-tw-week:PASS",
+        "search-us-aapl:PASS",
+        "interval-us-day:PASS",
+        "ai-analysis-fake:PASS",
+        "open-portfolio:PASS",
+        "add-us-aapl:PASS",
+        "add-tw-2330:PASS",
+        "health-check-aapl:PASS",
+        "reload-app:PASS",
+        "revisit-portfolio:PASS",
+        "delete-us-aapl:PASS",
+        "delete-tw-2330:PASS"
+      ],
+      "externalHosts": [
+        "fonts.googleapis.com",
+        "fonts.gstatic.com"
+      ],
+      "unexpectedConsole": 0,
+      "expectedConsole": 1,
+      "designedAborts": [],
+      "failedAxes": [],
+      "requestKinds": {
+        "成功": 21,
+        "瀏覽器自發・已取消": 1,
+        "串流完整送達後的傳輸層取消": 2,
+        "瀏覽器自發": 1
+      },
+      "failedRequests": [],
+      "finalKeys": {
+        "portfolio_items": "[]",
+        "portfolio_transactions_v1": "{\"version\":1,\"txns\":[]}",
+        "portfolio_import_log_v1": null,
+        "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+        "portfolio_snapshots_v1": "{\"version\":1,\"rows\":[]}"
+      }
+    }
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 530,
+    "foreign": 0
+  },
+  "fakeCli": {
+    "spawn": 4,
+    "delta": 20,
+    "done": 4,
+    "kill": 0
+  },
+  "fetchKinds": {
+    "yahoo-cookie": 2,
+    "yahoo-crumb": 2,
+    "yahoo-search": 2,
+    "yahoo-chart": 22,
+    "finmind": 18
+  },
+  "blocked": {
+    "net": 0,
+    "fetch": 0,
+    "ai": 0
+  },
+  "persistentSpawns": 5,
+  "tree": {
+    "recorded": 12,
+    "aliveAfterStop": []
+  }
+}

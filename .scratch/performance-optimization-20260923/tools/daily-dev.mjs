@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 // 03 票日常入口：同一個監督程序起停 Vercel 函式與 Vite，只接管自己啟動的程序。
 // 用法：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start|stop|status|recover
+//
+// 孤兒防護：vercel dev 經 cmd.exe 殼啟動的內部開發伺服器（Vite＋esbuild）不在 Node 為子程序建立的
+// job object 裡，vercel 或監督程序異常結束時會存活並監聽 0.0.0.0。因此：
+// 1. 就緒後把監督程序底下整棵子孫樹（PID＋建立時間）寫進狀態檔；任何停止路徑都依它清到底。
+// 2. 另起脫離 job 的看門程序（本腳本的 __watchdog 模式），以 stdin 管道感知監督程序；監督程序沒送出
+//    停止訊息就消失時，核對身分後清掉整棵樹再結束。
+// 3. 看門程序也失效時，start 依狀態檔的樹發現殘留就拒絕另起，由 recover 核對後清理。
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
@@ -8,7 +15,8 @@ import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const scriptFile = fileURLToPath(import.meta.url);
+const scriptDir = path.dirname(scriptFile);
 const root = path.resolve(scriptDir, '..', '..', '..');
 const runtimeDir = path.join(process.env.LOCALAPPDATA, 'Temp', 'perf-opt-20260923', 'daily');
 const stateFile = path.join(runtimeDir, 'state.json');
@@ -16,7 +24,9 @@ const vercelScript = path.join(process.env.APPDATA, 'npm', 'node_modules', 'verc
 const viteScript = path.join(root, 'node_modules', 'vite', 'bin', 'vite.js');
 const persistentFile = path.join(scriptDir, 'persistent-functions.cjs');
 const traceFile = path.join(scriptDir, 'trace-preload.cjs');
+const WATCHDOG_MODE = '__watchdog';
 const timeoutMs = 90_000;
+const cleanupWaitMs = 8000;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const frontendSystemEnv = new Set([
   'appdata', 'comspec', 'home', 'homedrive', 'homepath', 'localappdata',
@@ -62,17 +72,151 @@ function matchesIdentity(identity, expected) {
     && script && scriptMatches);
 }
 
+// ── 程序樹：一次讀全部程序的父子關係與建立時間 ──
+function processTable() {
+  const command = 'Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,CreationDate | ConvertTo-Json -Compress';
+  const result = spawnSync('powershell', ['-NoProfile', '-Command', command], {
+    encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
+  });
+  if (result.status !== 0 || !result.stdout.trim()) return null;
+  const list = JSON.parse(result.stdout);
+  return new Map((Array.isArray(list) ? list : [list]).map(row => [row.ProcessId, row]));
+}
+
+const creationMs = value => Number(/-?\d+/.exec(String(value ?? ''))?.[0] ?? Number.NaN);
+
+// 某程序底下的整棵子孫樹，只記 PID、父 PID、程序名與建立時間。Windows 的父 PID 在父程序結束後不會清掉，
+// PID 又會被重用，所以子程序的建立時間必須不早於父程序，才算這棵樹的成員；監督程序與看門程序自己跑的
+// 短命查詢（powershell）也不列入。
+function descendantsOf(table, rootPid, excluded = []) {
+  const skip = new Set(excluded);
+  const out = [];
+  const seen = new Set([rootPid]);
+  const walk = (parent, parentMs) => {
+    for (const row of table.values()) {
+      if (row.ParentProcessId !== parent || seen.has(row.ProcessId) || skip.has(row.ProcessId)) continue;
+      const ms = creationMs(row.CreationDate);
+      if (!(ms >= parentMs)) continue;
+      if ((parent === process.pid || parent === rootPid) && row.Name === 'powershell.exe') continue;
+      seen.add(row.ProcessId);
+      out.push({ pid: row.ProcessId, parentPid: parent, name: row.Name, creationDate: row.CreationDate });
+      walk(row.ProcessId, ms);
+    }
+  };
+  walk(rootPid, creationMs(table.get(rootPid)?.CreationDate));
+  return out;
+}
+
+function mergeTree(...lists) {
+  const byKey = new Map();
+  for (const item of lists.flat()) byKey.set(`${item.pid}|${item.creationDate}`, item);
+  return [...byKey.values()];
+}
+
+// PID 與建立時間都相同才算同一個程序，避免誤殺被重用的 PID。
+const aliveIn = (tree, table) => tree.filter(item => table.get(item.pid)?.CreationDate === item.creationDate);
+
+// 清掉樹中仍存活的程序（/T 連同其當下子孫），並等它們確實結束；讀不到程序表時視為無法確認。
+async function killTree(tree) {
+  const table = processTable();
+  if (!table) return { killed: [], left: tree, error: '無法讀取程序表' };
+  const killed = aliveIn(tree, table);
+  for (const item of killed) {
+    spawnSync('taskkill', ['/PID', String(item.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+  }
+  const started = Date.now();
+  let left = killed;
+  while (left.length && Date.now() - started < cleanupWaitMs) {
+    await delay(250);
+    const current = processTable();
+    if (current) left = aliveIn(left, current);
+  }
+  return { killed, left, error: null };
+}
+
+// ── 看門程序：監督程序消失而沒送出停止訊息時，清掉整棵樹 ──
+async function runWatchdog([supervisorPidText, supervisorCreationDate, logFile]) {
+  const supervisorPid = Number(supervisorPidText);
+  const log = message => fs.appendFileSync(logFile, `[watchdog] ${new Date().toISOString()} ${message}\n`);
+  let tree = [];
+  let treeReceived = false;
+  let stopRequested = false;
+  let finishing = false;
+  let pollTimer = null;
+  let livenessTimer = null;
+  log(`已啟動，監看監督程序 pid=${supervisorPid}`);
+  // 監督程序送出就緒程序樹之前自己輪詢，啟動途中崩潰也有清單可清。
+  const pollTree = () => {
+    if (treeReceived || finishing) return;
+    const table = processTable();
+    if (table && table.get(supervisorPid)?.CreationDate === supervisorCreationDate) {
+      tree = mergeTree(tree, descendantsOf(table, supervisorPid, [process.pid]));
+    }
+  };
+  const finish = async reason => {
+    if (finishing) return;
+    finishing = true;
+    clearInterval(pollTimer);
+    clearInterval(livenessTimer);
+    const { killed, left, error } = await killTree(tree);
+    log(`${reason}：程序樹 ${tree.length} 個，清理存活 ${killed.length} 個`
+      + `（${killed.map(item => `${item.name}#${item.pid}`).join('、') || '無'}），剩餘 ${left.length}${error ? `；${error}` : ''}`);
+    process.exit(left.length ? 1 : 0);
+  };
+  let buffer = '';
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', chunk => {
+    buffer += chunk;
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const line of lines) {
+      let message;
+      try { message = JSON.parse(line); } catch { continue; }
+      if (message.type === 'tree' && Array.isArray(message.processes)) {
+        tree = mergeTree(tree, message.processes.filter(item => item.pid !== process.pid));
+        treeReceived = true;
+        log(`收到就緒程序樹 ${message.processes.length} 個（累計 ${tree.length}）`);
+      } else if (message.type === 'stop') {
+        stopRequested = true;
+      }
+    }
+  });
+  const onPipeClosed = () => { void finish(stopRequested ? '收到正常停止' : '監督程序失聯（管道結束）'); };
+  process.stdin.on('end', onPipeClosed);
+  process.stdin.on('close', onPipeClosed);
+  process.stdin.on('error', onPipeClosed);
+  // 後備：管道沒有結束但監督程序已不在。
+  livenessTimer = setInterval(() => {
+    try {
+      process.kill(supervisorPid, 0);
+    } catch {
+      void finish(stopRequested ? '收到正常停止' : '監督程序失聯（程序已不存在）');
+    }
+  }, 1000);
+  pollTimer = setInterval(pollTree, 2000);
+  pollTree();
+}
+
 function staleProcesses(state) {
+  const table = processTable();
+  if (!table) throw new Error('無法讀取程序表，拒絕判斷舊服務是否仍在。');
   const listeners = [...new Set([...listenerPids(state.frontPort), ...listenerPids(state.apiPort)])];
   const supervisor = { pid: state.supervisorPid, creationDate: state.supervisorCreationDate,
-    script: fileURLToPath(import.meta.url), supervisor: true };
+    script: scriptFile, supervisor: true };
   const ownedSupervisor = matchesIdentity(processIdentity(supervisor.pid), supervisor) ? supervisor : null;
   const ownedChildren = (state.children ?? []).filter(child =>
     matchesIdentity(processIdentity(child.pid), child));
-  const knownPids = new Set([ownedSupervisor?.pid, ...ownedChildren.map(child => child.pid)]);
+  const watchdog = state.watchdog ? { ...state.watchdog, supervisor: true } : null;
+  const ownedWatchdog = watchdog && matchesIdentity(processIdentity(watchdog.pid), watchdog) ? watchdog : null;
+  const ownedTree = aliveIn(state.tree ?? [], table);
+  const knownPids = new Set([ownedSupervisor?.pid, ownedWatchdog?.pid, ...ownedChildren.map(child => child.pid),
+    ...ownedTree.map(item => item.pid)]);
   const foreignListeners = listeners.filter(pid => !knownPids.has(pid));
-  return { listeners, ownedSupervisor, ownedChildren, foreignListeners };
+  return { listeners, ownedSupervisor, ownedChildren, ownedWatchdog, ownedTree, foreignListeners };
 }
+
+const hasStale = stale => Boolean(stale.listeners.length || stale.ownedSupervisor || stale.ownedChildren.length
+  || stale.ownedWatchdog || stale.ownedTree.length);
 
 function spawnLogged(name, argv, env, runId) {
   const logFile = path.join(runtimeDir, `${name}-${runId}.log`);
@@ -189,6 +333,11 @@ async function main() {
     if (await contact(previous, 'status')) throw new Error('本案監督程序仍可聯絡；請使用 stop。');
     const stale = staleProcesses(previous);
     if (stale.foreignListeners.length) throw new Error('舊埠由未驗證程序占用，拒絕清理。');
+    // 先停看門程序（避免兩邊同時清理），再依狀態檔的程序樹清殘留，最後清子程序與監督程序；都先核對身分。
+    if (stale.ownedWatchdog && matchesIdentity(processIdentity(stale.ownedWatchdog.pid), stale.ownedWatchdog)) {
+      spawnSync('taskkill', ['/PID', String(stale.ownedWatchdog.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+    }
+    const treeCleanup = await killTree(previous.tree ?? []);
     for (const owned of [...stale.ownedChildren, stale.ownedSupervisor].filter(Boolean)) {
       const identity = processIdentity(owned.pid);
       if (!matchesIdentity(identity, owned)) continue;
@@ -196,15 +345,16 @@ async function main() {
         encoding: 'utf8', windowsHide: true,
       });
     }
-    for (let i = 0; i < 100; i++) {
-      const after = staleProcesses(previous);
-      if (!after.listeners.length && !after.ownedSupervisor && !after.ownedChildren.length) {
+    const started = Date.now();
+    while (Date.now() - started < 20_000) {
+      if (!hasStale(staleProcesses(previous))) {
         fs.renameSync(stateFile, `${stateFile}.recovered-${Date.now()}`);
         console.log(JSON.stringify({ recovered: true, stopped: true,
-          pids: [...stale.ownedChildren.map(child => child.pid), stale.ownedSupervisor?.pid].filter(Boolean) }));
+          pids: [...stale.ownedChildren.map(child => child.pid), stale.ownedSupervisor?.pid, stale.ownedWatchdog?.pid].filter(Boolean),
+          treeCleaned: treeCleanup.killed.map(item => item.pid) }));
         return;
       }
-      await delay(100);
+      await delay(250);
     }
     throw new Error('已要求清理，但舊 listener 或原程序仍存在；狀態檔保留。');
   }
@@ -213,7 +363,7 @@ async function main() {
     if (!answer) throw new Error('沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。');
     if (action === 'stop') {
       const started = Date.now();
-      while (Date.now() - started < 15_000) {
+      while (Date.now() - started < 30_000) {
         if (!fs.existsSync(stateFile) && !listenerPids(previous.frontPort).length
           && !listenerPids(previous.apiPort).length) {
           console.log(JSON.stringify({ ...answer, running: false, stopped: true }, null, 2));
@@ -229,8 +379,7 @@ async function main() {
   if (previous && await contact(previous, 'status')) throw new Error('本案日常入口已在執行。');
   if (fs.existsSync(stateFile) && !previous) throw new Error('舊狀態檔無法解析，拒絕覆寫。');
   if (previous) {
-    const stale = staleProcesses(previous);
-    if (stale.listeners.length || stale.ownedSupervisor || stale.ownedChildren.length) {
+    if (hasStale(staleProcesses(previous))) {
       throw new Error('舊狀態的控制管道失聯，但程序或 listener 仍存在；請先使用 recover 核對並清理。');
     }
     fs.renameSync(stateFile, `${stateFile}.stale-${Date.now()}`);
@@ -250,12 +399,35 @@ async function main() {
   const records = [];
   const token = randomUUID();
   const pipe = `\\\\.\\pipe\\stock-perf03-${process.pid}-${token}`;
+  const supervisorCreationDate = processIdentity(process.pid)?.CreationDate;
+  if (!supervisorCreationDate) throw new Error('無法確認監督程序身分。');
   let server;
   let stopping = false;
+  let tree = [];
+  let watchdog = null;
+  let watchdogRecord = null;
+  let watchdogExited = false;
+  const stopWatchdog = async () => {
+    if (!watchdog || watchdogExited) return;
+    try { watchdog.stdin.end(`${JSON.stringify({ type: 'stop' })}\n`); } catch { /* 看門程序已結束 */ }
+    const started = Date.now();
+    while (!watchdogExited && Date.now() - started < 15_000) await delay(100);
+    if (!watchdogExited && watchdogRecord && matchesIdentity(processIdentity(watchdog.pid), watchdogRecord)) {
+      spawnSync('taskkill', ['/PID', String(watchdog.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+    }
+  };
   const shutdown = async () => {
     if (stopping) return;
     stopping = true;
+    // 仍在的子孫先補記，再與就緒時的樹合併：子程序已崩潰時，逃出 job 的孫程序只能從就緒時的樹找回。
+    const table = processTable();
+    if (table) tree = mergeTree(tree, descendantsOf(table, process.pid, [watchdog?.pid].filter(Boolean)));
     await stopOwned(records);
+    const cleanup = await killTree(tree);
+    if (cleanup.left.length || cleanup.error) {
+      console.error(`仍有程序未能確認結束：${cleanup.left.map(item => `${item.name}#${item.pid}`).join('、')}${cleanup.error ? `（${cleanup.error}）` : ''}`);
+    }
+    await stopWatchdog();
     await new Promise(resolve => server?.close(resolve) ?? resolve());
     const state = readState();
     if (state?.token === token) fs.rmSync(stateFile);
@@ -263,7 +435,22 @@ async function main() {
   };
   process.on('SIGINT', () => { void shutdown(); });
   process.on('SIGTERM', () => { void shutdown(); });
+  process.on('SIGHUP', () => { void shutdown(); });   // 關閉終端機視窗
   try {
+    // 看門程序先於服務啟動：服務啟動途中監督程序就崩潰，也有人收拾。
+    const watchdogLog = path.join(runtimeDir, `watchdog-${token}.log`);
+    const watchdogFd = fs.openSync(watchdogLog, 'a');
+    watchdog = spawn(process.execPath, [scriptFile, WATCHDOG_MODE, String(process.pid), supervisorCreationDate, watchdogLog], {
+      cwd: root, detached: true, stdio: ['pipe', watchdogFd, watchdogFd], windowsHide: true,
+    });
+    fs.closeSync(watchdogFd);
+    watchdog.once('exit', () => { watchdogExited = true; });
+    watchdog.once('error', () => { watchdogExited = true; });
+    watchdog.stdin.on('error', () => { /* 看門程序已結束時寫入失敗，由 exit 事件處理 */ });
+    const watchdogIdentity = watchdog.pid ? processIdentity(watchdog.pid) : null;
+    if (!watchdogIdentity?.CommandLine?.includes(WATCHDOG_MODE)) throw new Error('看門程序未能啟動，拒絕啟動日常入口。');
+    watchdogRecord = { pid: watchdog.pid, creationDate: watchdogIdentity.CreationDate, script: scriptFile };
+
     const preloads = [persistentFile, ...(fixedTest ? [traceFile] : [])];
     const backend = spawnLogged('vercel', [vercelScript, 'dev', '--listen', `127.0.0.1:${apiPort}`], {
       ...process.env,
@@ -284,6 +471,15 @@ async function main() {
     records.push(frontend);
     frontend.child.once('exit', () => { if (!stopping) void shutdown(); });
     await waitReady(frontend, frontPort, /ready in/i);
+
+    // 就緒程序樹：寫進狀態檔並交給看門程序；記不下來就不宣告就緒。
+    const table = processTable();
+    if (table) tree = descendantsOf(table, process.pid, [watchdog.pid]);
+    if (!records.every(record => tree.some(item => item.pid === record.child.pid))) {
+      throw new Error('無法記錄完整程序樹，拒絕宣告就緒。');
+    }
+    if (watchdogExited) throw new Error('看門程序已提前結束，拒絕宣告就緒。');
+    watchdog.stdin.write(`${JSON.stringify({ type: 'tree', processes: tree })}\n`);
 
     server = net.createServer(socket => {
       let input = '';
@@ -306,17 +502,20 @@ async function main() {
     await new Promise((resolve, reject) => server.listen(pipe, error => error ? reject(error) : resolve()));
     const state = {
       token, pipe, supervisorPid: process.pid,
-      supervisorCreationDate: processIdentity(process.pid)?.CreationDate,
+      supervisorCreationDate,
       frontPort, apiPort,
       children: records.map(record => ({
         pid: record.child.pid, script: record.script,
         creationDate: record.identity?.CreationDate,
       })),
+      watchdog: watchdogRecord,
+      tree,
     };
     fs.writeFileSync(`${stateFile}.tmp`, `${JSON.stringify(state)}\n`, { flag: 'wx' });
     fs.renameSync(`${stateFile}.tmp`, stateFile);
     console.log(`日常入口已就緒：http://localhost:${frontPort}；後端 ${apiPort}；程序 ${records.map(record => record.child.pid).join('、')}`);
     console.log(`正式函式預熱 ${prewarm.routes} 條皆 204，耗時 ${prewarm.ms} ms。`);
+    console.log(`程序樹 ${tree.length} 個已記錄；看門程序 ${watchdog.pid}。`);
     console.log(`停止：node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop`);
   } catch (error) {
     await shutdown();
@@ -324,7 +523,14 @@ async function main() {
   }
 }
 
-main().catch(error => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-});
+if (process.argv[2] === WATCHDOG_MODE) {
+  runWatchdog(process.argv.slice(3)).catch(error => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+} else {
+  main().catch(error => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}

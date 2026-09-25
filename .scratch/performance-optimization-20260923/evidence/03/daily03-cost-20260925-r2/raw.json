@@ -1,0 +1,266 @@
+{
+  "runId": "daily03-cost-20260925-r2",
+  "createdAt": "2026-09-25T05:11:53.138Z",
+  "origin": "http://localhost:4791",
+  "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+  "baseCommit": "94848ac19ce364dda6de84aa2d89012546a848c0",
+  "versions": {
+    "node": "v26.4.0",
+    "vercel": "55.0.0",
+    "vercelNode": "5.8.23",
+    "tsx": "4.21.0",
+    "vite": "6.4.1"
+  },
+  "cacheMode": "固定資料、無瀏覽器快取",
+  "source": {
+    "runnerSha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+    "launcherSha256": "a58630f7753389797c44fc17c74d41ce3cdd07735200ecfca0f7cbe9382db181",
+    "proxySha256": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360",
+    "chartSha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "yahooSha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+    "guardSha256": "397c23dc8c27888d14f14c069c2e81c4e4cefb9dfdfb92d6200b0510397c4068",
+    "ratelimitSha256": "3d604628651fd3003f43a31c9d68d4d5e310f5ed53838e1f5038c6ccbbd1e630"
+  },
+  "launcher": {
+    "frontPort": 4791,
+    "apiPort": 4792,
+    "supervisorPid": 14380,
+    "children": [
+      {
+        "pid": 27368,
+        "creationDate": "/Date(1790313104761)/"
+      },
+      {
+        "pid": 19108,
+        "creationDate": "/Date(1790313111600)/"
+      }
+    ],
+    "sameStateBeforeAfter": true
+  },
+  "cases": [
+    {
+      "name": "OPTIONS",
+      "method": "OPTIONS",
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+      "expected": 204,
+      "samples": [
+        {
+          "index": 1,
+          "status": 204,
+          "ms": 1.712
+        },
+        {
+          "index": 2,
+          "status": 204,
+          "ms": 1.321
+        },
+        {
+          "index": 3,
+          "status": 204,
+          "ms": 15.845
+        },
+        {
+          "index": 4,
+          "status": 204,
+          "ms": 5.353
+        },
+        {
+          "index": 5,
+          "status": 204,
+          "ms": 9.85
+        },
+        {
+          "index": 6,
+          "status": 204,
+          "ms": 14.716
+        },
+        {
+          "index": 7,
+          "status": 204,
+          "ms": 15.581
+        },
+        {
+          "index": 8,
+          "status": 204,
+          "ms": 16.222
+        },
+        {
+          "index": 9,
+          "status": 204,
+          "ms": 16.218
+        },
+        {
+          "index": 10,
+          "status": 204,
+          "ms": 15.467
+        },
+        {
+          "index": 11,
+          "status": 204,
+          "ms": 16.524
+        },
+        {
+          "index": 12,
+          "status": 204,
+          "ms": 14.648
+        },
+        {
+          "index": 13,
+          "status": 204,
+          "ms": 15.988
+        },
+        {
+          "index": 14,
+          "status": 204,
+          "ms": 15.478
+        },
+        {
+          "index": 15,
+          "status": 204,
+          "ms": 15.489
+        },
+        {
+          "index": 16,
+          "status": 204,
+          "ms": 16.104
+        },
+        {
+          "index": 17,
+          "status": 204,
+          "ms": 15.763
+        },
+        {
+          "index": 18,
+          "status": 204,
+          "ms": 17.095
+        },
+        {
+          "index": 19,
+          "status": 204,
+          "ms": 14.173
+        },
+        {
+          "index": 20,
+          "status": 204,
+          "ms": 15.349
+        }
+      ],
+      "medianMs": 15.4835,
+      "maxMs": 17.095
+    },
+    {
+      "name": "固定 GET",
+      "method": "GET",
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+      "expected": 200,
+      "samples": [
+        {
+          "index": 1,
+          "status": 200,
+          "ms": 87.883
+        },
+        {
+          "index": 2,
+          "status": 200,
+          "ms": 76.872
+        },
+        {
+          "index": 3,
+          "status": 200,
+          "ms": 77.213
+        },
+        {
+          "index": 4,
+          "status": 200,
+          "ms": 78.853
+        },
+        {
+          "index": 5,
+          "status": 200,
+          "ms": 78.024
+        },
+        {
+          "index": 6,
+          "status": 200,
+          "ms": 77.382
+        },
+        {
+          "index": 7,
+          "status": 200,
+          "ms": 77.756
+        },
+        {
+          "index": 8,
+          "status": 200,
+          "ms": 77.515
+        },
+        {
+          "index": 9,
+          "status": 200,
+          "ms": 77.075
+        },
+        {
+          "index": 10,
+          "status": 200,
+          "ms": 78.097
+        },
+        {
+          "index": 11,
+          "status": 200,
+          "ms": 76.936
+        },
+        {
+          "index": 12,
+          "status": 200,
+          "ms": 78.112
+        },
+        {
+          "index": 13,
+          "status": 200,
+          "ms": 79.145
+        },
+        {
+          "index": 14,
+          "status": 200,
+          "ms": 76.989
+        },
+        {
+          "index": 15,
+          "status": 200,
+          "ms": 78.342
+        },
+        {
+          "index": 16,
+          "status": 200,
+          "ms": 77.474
+        },
+        {
+          "index": 17,
+          "status": 200,
+          "ms": 78.873
+        },
+        {
+          "index": 18,
+          "status": 200,
+          "ms": 77.43
+        },
+        {
+          "index": 19,
+          "status": 200,
+          "ms": 78.37
+        },
+        {
+          "index": 20,
+          "status": 200,
+          "ms": 78.423
+        }
+      ],
+      "medianMs": 77.89,
+      "maxMs": 87.883
+    }
+  ],
+  "errors": [],
+  "finishedAt": "2026-09-25T05:11:55.254Z"
+}
