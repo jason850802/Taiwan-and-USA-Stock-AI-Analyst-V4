@@ -1,0 +1,10 @@
+{"ev":"parent.boot","t":25.54,"pid":18700}
+{"ev":"parent.listenCall","t":2199.532,"pid":18700,"seq":1}
+{"ev":"parent.listening","t":2201.204,"pid":18700,"seq":1}
+{"ev":"parent.recv","t":3170.06,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","layer":"entry","method":"GET","route":"/api/yahoo/search"}
+{"ev":"parent.fork","t":3326.633,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","childPid":35104,"forkCallMs":7.856}
+{"ev":"parent.childReady","t":5154.232,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","childPid":35104}
+{"ev":"parent.proxyReq","t":5156.69,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","port":"53019"}
+{"ev":"parent.writeHead","t":5167.626,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","layer":"entry","status":500}
+{"ev":"parent.finish","t":5168.752,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","layer":"entry"}
+{"ev":"parent.childExit","t":5185.867,"pid":18700,"trace":"reload03-deps-20260925-r1-b1-13","childPid":35104,"code":1,"signal":null}

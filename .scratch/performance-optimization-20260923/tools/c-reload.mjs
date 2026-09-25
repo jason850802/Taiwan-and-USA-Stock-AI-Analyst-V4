@@ -35,6 +35,10 @@ const CANDIDATE03_FILES = [
   'api/gemini-stream.ts', 'api/gemini.ts', 'api/yahoo/chart.ts',
   'api/yahoo/search.ts', 'vite.config.ts',
 ];
+// 03 候選之外、HEAD 已提交的產品樹檔案：使用者的主機啟動腳本（b7b04c7）。vercel dev 與 Vite 都不載入它，
+// 但它仍是相對 30dfdb2 的產品樹差異，必須與主工作樹逐位元組相同才算同一來源。
+const HEAD_EXTRA03_FILES = ['scripts/start-dev.ps1'];
+const SOURCE03_FILES = [...CANDIDATE03_FILES, ...HEAD_EXTRA03_FILES];
 const LIB_FILE = 'api/_lib/yahoo.ts';
 const CHART_FILE = 'api/yahoo/chart.ts';
 const SEARCH_FILE = 'api/yahoo/search.ts';
@@ -128,9 +132,9 @@ function productState(workdir) {
 }
 const productClean = state => CANDIDATE03
   ? JSON.stringify([...new Set([...state.differsFromBaseline, ...state.untrackedFunctionFiles])].sort())
-      === JSON.stringify([...CANDIDATE03_FILES].sort())
+      === JSON.stringify([...SOURCE03_FILES].sort())
   : !state.untrackedFunctionFiles.length && !state.differsFromBaseline.length;
-const candidateHashes = dir => Object.fromEntries(CANDIDATE03_FILES.map(file =>
+const candidateHashes = dir => Object.fromEntries(SOURCE03_FILES.map(file =>
   [file, fileSha(path.join(dir, file))]));
 const candidateMatches = workdir => JSON.stringify(candidateHashes(workdir)) === JSON.stringify(candidateHashes(ROOT));
 

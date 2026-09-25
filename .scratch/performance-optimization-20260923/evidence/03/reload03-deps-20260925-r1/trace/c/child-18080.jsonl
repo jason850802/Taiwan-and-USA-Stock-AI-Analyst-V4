@@ -1,0 +1,5 @@
+{"ev":"child.boot","t":119.925,"pid":18080,"entry":"api/yahoo/search.ts","fixture":true,"fixtureDelayMs":10,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1453.566,"pid":18080,"seq":1}
+{"ev":"child.listening","t":1468.119,"pid":18080,"seq":1}
+{"ev":"child.ready","t":1516.167,"pid":18080}
+{"ev":"child.recv","t":1519.333,"pid":18080,"trace":"reload03-deps-20260925-r1-c-13","layer":"devProxy","method":"GET","route":"/api/yahoo/search"}

@@ -24,7 +24,16 @@
 | [元件與 CSS HMR](hmr03-20260924-r1/raw.json) | `App.tsx` 與 `index.css` 各收到 Vite update，原檔逐位元組還原 |
 | [日常啟停及 App 實測](LIFECYCLE.md) | 兩次重啟、埠衝突、同源驗證、台美股、隔離庫存與假 AI 畫面觀察 |
 | [獨立雙軸覆核](REVIEW.md) | 初輪缺口、修正及定稿判定 |
+| [第二輪補證總覽（2026-09-25）](ACCEPTANCE-20260925.md) | 原 localhost:3000 App、依賴重載、生命週期、部署路徑靜態核對與 03 逐項判定 |
+| [原 3000 正式 App r2](app03-localhost3000-20260925-r2/raw.json) | 隔離資料目錄、桌面＋窄版各 14 步 28/28 PASS；逐步五鍵 before／after、截圖、請求分類 |
+| [原 3000 正式 App r1](app03-localhost3000-20260925-r1/raw.json) | 失敗歷史：判定器當時未實作協定 §4 的 2y 例外、缺完成時刻，窄版 1 步 FAIL；不追認 |
+| [依賴刪除／恢復重載](reload03-deps-20260925-r1/raw.json) | 隔離 checkout 12 步 B1／候選對照，含刪除與恢復共用依賴，`diffs=[]`、`problems=[]` |
+| [生命週期原始紀錄](life03-localhost3000-20260925-r1/raw.json) | 原 3000／3001 日常命令：兩次啟停、雙埠衝突、vercel／Vite／監督程序崩潰與恢復，7/7 PASS |
+| [部署路徑靜態核對](deploy03-static-20260925-r1/raw.json) | 部署設定零差異、路由不變、本機預載隔離、03 前後正式前端建置逐檔相同；正式平台行為不在可證範圍 |
+| [來源清單 r4](SOURCE-MANIFEST-20260925-r4.json) | 26 檔實體 SHA-256 與 Git blob |
 
 開發期保留：`cancel03-red-20260924-r1`～`r3` 是啟動或假 AI 設定未成立，不能當取消紅燈；`cancel03-green-20260924-r1` 因未處理上游 body `AbortError` 造成子程序退出，`r2` 修正後綠燈、`r3` 增加產品來源雜湊後重跑；`reload03-20260924-r1` 的長串流缺假 CLI 測試旗標而回 500。`reload03-allroutes-20260924-r4` 在跑時來源檔有變更，清理身分檢查判紅；`r5`～`r7` 是其後版本，定稿以 LF 最終來源的 `r8` 為準。`guard03-20260924-r1` 與搜尋／FinMind 先前 run 的程式換行位元組不同於最後提交，只保留歷史。以上舊 run 不作最終來源 PASS，保留查錯歷史。
 
 執行時的 runtime、fixture 與日誌在 `%LOCALAPPDATA%\Temp\perf-opt-20260923\`；未提交任何 `.env` 複本。正式部署、真行情與真 AI 均不屬於上述固定資料證據。
+
+2026-09-25 第二輪另有四次 App 冒煙（`app03-smoke-*`，4741～4748 埠）與一次生命週期冒煙（`life03-smoke-*`，4761／4762 埠），用來除錯工具，證據只留在 runtime、不作正式判定。

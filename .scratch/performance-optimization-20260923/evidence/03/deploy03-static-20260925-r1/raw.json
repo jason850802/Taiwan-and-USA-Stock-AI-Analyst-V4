@@ -1,0 +1,96 @@
+{
+  "runId": "deploy03-static-20260925-r1",
+  "kind": "deploy-static",
+  "createdAt": "2026-09-25T04:10:08.047Z",
+  "base": "6a7b029ad9cf99d399ac648c37fcc096efffbe89",
+  "head": "c789bda64c338440387197ca043a45eea0720823",
+  "workdir": "C:/pfv7",
+  "versions": {
+    "node": "v26.4.0",
+    "vercel": "55.0.0",
+    "vercelNode": "5.8.23",
+    "tsx": "4.21.0",
+    "vite": "6.4.1"
+  },
+  "toolSha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+  "deployFiles": {
+    "files": [
+      "package.json",
+      "package-lock.json",
+      ".vercelignore",
+      "vercel.json",
+      "vercel.ts",
+      "index.html",
+      "tsconfig.json"
+    ],
+    "changedSinceBase": [],
+    "present": [
+      "package.json",
+      "package-lock.json",
+      ".vercelignore",
+      "index.html",
+      "tsconfig.json"
+    ]
+  },
+  "functionRoutes": {
+    "base": [
+      "api/finmind.ts",
+      "api/gemini-stream.ts",
+      "api/gemini.ts",
+      "api/yahoo/chart.ts",
+      "api/yahoo/search.ts"
+    ],
+    "head": [
+      "api/finmind.ts",
+      "api/gemini-stream.ts",
+      "api/gemini.ts",
+      "api/yahoo/chart.ts",
+      "api/yahoo/search.ts"
+    ],
+    "same": true
+  },
+  "vercelignore": {
+    "excludesScratch": true,
+    "preloadPaths": [
+      ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      ".scratch/performance-optimization-20260923/tools/trace-preload.cjs"
+    ]
+  },
+  "localOnlyRefs": {
+    "pattern": "persistent-functions|trace-preload|PERF0[13]_|NODE_OPTIONS",
+    "productHits": []
+  },
+  "frontendBuild": {
+    "baseConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db",
+    "headConfigSha256": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360",
+    "files": 15,
+    "differing": [],
+    "aggregateBase": "37cfeed5562db9f756cb5aa2804db76f4beb4e84d7eb99f213b77381f02aff77",
+    "aggregateHead": "37cfeed5562db9f756cb5aa2804db76f4beb4e84d7eb99f213b77381f02aff77",
+    "head": {
+      "assets/AnalysisResult-DlKahCHb.js": "9d9f90771eb42cffc9a4653da56451e40678148e20f2151bedbc1bb719967e74",
+      "assets/CartesianChart-BUKkHTzZ.js": "8ab4653c890a5a678446e59d2479f5257de661d40ffe7bfea69e1eb007e0b0f8",
+      "assets/ComposedChart-BmgE5sLj.js": "74b7d2198c0dc0446d77f556a4068351f7e706d7e21de4c6031238d2e83cde32",
+      "assets/FundamentalsPanel-M4UB6Blm.js": "8e6fb2e82cbd86f6164a3ed11826c2f6ec7e9bb6f3150336d714a33685131e76",
+      "assets/Portfolio-CXyFgmdy.js": "bd150ccc83e4b6a0706b8c410763bf18d74b180464d9c838a1c5c97933fcde2a",
+      "assets/ReferenceLine-Bdm4eHdI.js": "7df5e3ce239ff1c232683850431cf0cc73823a1eb61712453a13155532882877",
+      "assets/Skeleton-D44s97Ww.js": "a872d668dba325746e828d75c06748c626cf69446413d7572d4397eb25567f11",
+      "assets/StatCard-BE0i2i7X.js": "8f94939a335d129b9f537c2b3eda1de1681c15dceeae98fde71c093b5f1cfd63",
+      "assets/StockChart-BrdvRABY.js": "eb5459311ae4aaf567a0d6a8aefe5c4a587bc22028fda4b7e7abdf1496ec5f72",
+      "assets/gemini-DBG2TWOB.js": "8128c255e9ea138f29d23fe1fdc57cd8dbb404cd3b0d5d7cd774df35fa850de6",
+      "assets/index-B_sm1K_I.js": "30daa3129070eb68fa047557618cb9f5822c9c87b99a31abc031793d7c2b9589",
+      "assets/index-YaWf-Iy0.css": "634b895fe160b78822265cfb6b61daaa52735400c46a266413c630629140b5c8",
+      "assets/vendor-CmCSiRIh.js": "2fd3521facdf29908dee0b4e8740bf17228db8620d68bd727997b3d344c6fa24",
+      "assets/xlsxReader-Bboq1lzx.js": "967b2c91255d087eee571151cee8e89bc75f555c44c3ee7698b43349a1dd1f72",
+      "index.html": "57805df6cff319c576555e2926481d546e987da95f4d9e7d1d0ffeccc69dcbe8"
+    }
+  },
+  "notProvable": [
+    "正式平台（Vercel Node runtime）是否在用戶端斷線時對 handler 的 res 發出 close／req aborted",
+    "正式平台取消後上游（Yahoo／FinMind／AI）是否實際停止",
+    "正式平台的串流 flush 與取消時序"
+  ],
+  "errors": [],
+  "tempConfigRemoved": true,
+  "finishedAt": "2026-09-25T04:10:26.953Z"
+}
