@@ -1,0 +1,35 @@
+{
+  "realProcessKills": 0,
+  "events": [
+    {
+      "marker": "perf03-platform",
+      "trace": "fixture-check",
+      "event": "handler-start",
+      "atMs": 37.2779
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "fixture-check",
+      "streaming": true,
+      "deltas": 5,
+      "intervalMs": 600,
+      "mode": "success",
+      "event": "child.fakeCli.spawn",
+      "atMs": 37.705
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "fixture-check",
+      "emitted": 0,
+      "event": "child.fakeCli.kill",
+      "atMs": 37.7678
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "fixture-check",
+      "event": "handler-return",
+      "atMs": 38.224
+    }
+  ],
+  "pass": true
+}
