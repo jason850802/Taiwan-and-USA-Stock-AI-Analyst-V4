@@ -15,8 +15,8 @@ export default defineConfig({
   // 日常入口另給空白 envDir，避免前端程序讀入根目錄的後端 .env。
   envDir: process.env.LOCAL_FRONTEND_ENV_DIR || undefined,
   test: {
-    // agent worktree 內的測試複本不屬於本專案測試母體（曾致 32 案例被重複計成 64）
-    exclude: [...configDefaults.exclude, '**/.claude/**'],
+    // agent worktree（.claude/）與驗收證據（.scratch/）內的測試複本不屬於本專案測試母體（曾致 32 案例被重複計成 64）
+    exclude: [...configDefaults.exclude, '**/.claude/**', '**/.scratch/**'],
   },
   server: {
     port: 3000,

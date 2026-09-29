@@ -17,4 +17,4 @@ powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "E:\My Project\Tai
 
 這台機器的 Windows PowerShell 5.1 預設不執行 `.ps1`；入口 `.cmd` 僅對啟動腳本的程序指定 `RemoteSigned`，不修改持久執行原則。若腳本回報「無法取得主機程序」或存取被拒，先確認自己使用的是主機 PowerShell；不要改用受限 shell 重試開視窗。若逾時，讀兩個視窗的錯誤訊息，不以視窗 PID 或單一埠代替服務就緒。測完在兩個服務視窗各按 `Ctrl+C`。
 
-本次繞路與修法記在 [2026-09-25 啟動教訓](references/2026-09-25-start-dev.md)。
+已知陷阱見 [pitfalls](references/pitfalls.md)。
