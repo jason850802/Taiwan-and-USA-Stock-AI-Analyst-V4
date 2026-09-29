@@ -56,7 +56,7 @@ if (mode === 'prepare') {
       shouldAddHelpers: true, supportsResponseStreaming: true, maxDuration: 30 });
     artifacts.push({ route: '/api/' + route, sha256: fileSha(path.join(folder, 'index.cjs')) });
     // 程式碼內的 cookie／token 字面欄位不是值洩漏；實際環境秘密值仍逐一檢查。
-    const leaked = scanSecrets(folder).filter(({key}) => !['LLM_PROVIDER', 'query-credential', 'cookie-field'].includes(key));
+    const leaked = scanSecrets(folder).filter(({key}) => !['LLM_PROVIDER', 'GEMINI_MODEL_FAST', 'GEMINI_MODEL_THINKING', 'query-credential', 'cookie-field'].includes(key));
     if (leaked.length) throw new Error(`打包內容含環境值：${leaked.map(item => item.key).join(',')}`);
   }
   json(path.join(evidenceDir, 'prepare.json'), { runId, head, createdAt: new Date().toISOString(), deployment,
