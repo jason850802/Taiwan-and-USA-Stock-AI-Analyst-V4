@@ -239,7 +239,7 @@ export function classifyRequest(request, requests, streamComplete, history = req
   if (request.initiator && request.initiator.type !== 'script') {
     const prior = history.find(other => other !== request && other.initiator?.type === 'script'
       && other.url && other.url === request.url && other.method === request.method && other.status === 200 && !other.failed
-      && Number.isFinite(other.finishedAtMs) && Number.isFinite(request.startedAtMs) && other.finishedAtMs <= request.startedAtMs);
+      && Number.isFinite(other.finishedAtMs) && Number.isFinite(request.startedAtMs) && other.finishedAtMs < request.startedAtMs);
     if (prior) {
       const ok = request.status === null || [200, 204, 304].includes(request.status);
       return { kind: request.failed ? '瀏覽器自發・已取消' : '瀏覽器自發', ok,

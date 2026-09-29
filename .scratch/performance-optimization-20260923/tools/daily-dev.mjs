@@ -500,13 +500,15 @@ async function main() {
         let request;
         try { request = JSON.parse(input.split('\n')[0]); } catch { return socket.destroy(); }
         if (request.token !== token) return socket.destroy();
+        // 先讓客戶端收到完整回覆並結束連線，才執行同步 CIM／逐一終止。
+        // 否則清理阻塞事件迴圈，FIN 送不出，客戶端會在 3 秒後誤報控制管道失聯。
+        if (request.action === 'stop') socket.once('close', () => { void shutdown(); });
         socket.end(JSON.stringify({
           running: !stopping && records.every(record => !record.exited),
           front: `http://localhost:${frontPort}`,
           apiPort,
           pids: records.map(record => record.child.pid),
         }));
-        if (request.action === 'stop') setImmediate(() => { void shutdown(); });
       });
     });
     await new Promise((resolve, reject) => server.listen(pipe, error => error ? reject(error) : resolve()));

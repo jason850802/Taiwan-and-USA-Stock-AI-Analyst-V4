@@ -86,6 +86,7 @@ for (const [label, history, request, accepted] of [
   ['沒有先前成功', [], background, false],
   ['網址不同', [{ ...script, url: `${script.url}&extra=1` }], background, false],
   ['成功發生在本筆開始之後', [{ ...script, finishedAtMs: 21 }], background, false],
+  ['完成與本筆開始同時、不能證明先後', [{ ...script, finishedAtMs: 20 }], background, false],
   ['先前 200 後仍取消', [{ ...script, failed: background.failed }], background, false],
   ['先前 200 非腳本', [{ ...script, initiator: { type: 'other' } }], background, false],
   ['本筆 HTTP 500', [script], { ...background, status: 500 }, false],
