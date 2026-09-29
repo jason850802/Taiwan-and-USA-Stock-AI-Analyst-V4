@@ -116,12 +116,29 @@ describe('generateText / claude-cli — 子程序啟動契約', () => {
       '--tools', '',
       '--no-session-persistence',
       '--disable-slash-commands',
+      '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}',
+      '--setting-sources', 'project',
       '--model', 'sonnet',
       '--effort', 'medium',
       '--system-prompt', '測試用系統指令',
     ]);
     // 提示字串只走 stdin：argv 裡不得出現（避免進 process 列表／歷史紀錄）
     expect((args as string[]).some((a) => a.includes('測試用提示字串'))).toBe(false);
+  });
+
+  it('兩條路徑都隔離使用者層 MCP 與設定（--tools 只關內建工具），且不用會跳過 OAuth 的 --bare', async () => {
+    const { generateText, generateTextStream } = await loadLlm();
+    void generateText(REQ).catch(() => {});
+    void generateTextStream(REQ, vi.fn(), {}).catch(() => {});
+
+    expect(spawnMock).toHaveBeenCalledTimes(2);
+    for (const [, args] of spawnMock.mock.calls as [string, string[]][]) {
+      expect(args).toContain('--strict-mcp-config');
+      expect(args[args.indexOf('--mcp-config') + 1]).toBe('{"mcpServers":{}}');
+      expect(args[args.indexOf('--setting-sources') + 1]).toBe('project');
+      // 紅線：一律走已登入的訂閱憑證；--bare 下 OAuth 與 keychain 都不會被讀取
+      expect(args).not.toContain('--bare');
+    }
   });
 
   it('子程序 cwd 為系統暫存目錄、windowsHide 開啟——避免載入專案 hooks/CLAUDE.md/skills', async () => {
@@ -336,6 +353,8 @@ describe('generateTextStream / claude-cli — 串流參數與逐段解析', () =
       '--tools', '',
       '--no-session-persistence',
       '--disable-slash-commands',
+      '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}',
+      '--setting-sources', 'project',
       '--model', 'sonnet',
       '--effort', 'medium',
       '--system-prompt', '測試用系統指令',
