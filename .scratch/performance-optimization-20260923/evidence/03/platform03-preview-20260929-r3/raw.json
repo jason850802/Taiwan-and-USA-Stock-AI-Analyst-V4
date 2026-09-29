@@ -1,0 +1,123 @@
+{
+  "runId": "platform03-preview-20260929-r3",
+  "url": "https://taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+  "createdAt": "2026-09-29T08:37:15.311Z",
+  "tools": {
+    "platform-03.mjs": "39b655dadbfea535674dad01eb475799e472e90830a8c5f5ef4915ffd9940b77",
+    "platform-fixture-03.cjs": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+    "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+    "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1"
+  },
+  "results": [
+    {
+      "route": "/api/yahoo/chart",
+      "method": "OPTIONS",
+      "trace": "platform03-preview-20260929-r3-0",
+      "startedAt": "2026-09-29T08:37:03.865Z",
+      "status": 204,
+      "text": "",
+      "completed": true
+    },
+    {
+      "route": "/api/yahoo/search",
+      "method": "OPTIONS",
+      "trace": "platform03-preview-20260929-r3-1",
+      "startedAt": "2026-09-29T08:37:04.486Z",
+      "status": 204,
+      "text": "",
+      "completed": true
+    },
+    {
+      "route": "/api/finmind",
+      "method": "OPTIONS",
+      "trace": "platform03-preview-20260929-r3-2",
+      "startedAt": "2026-09-29T08:37:04.762Z",
+      "status": 204,
+      "text": "",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini",
+      "method": "OPTIONS",
+      "trace": "platform03-preview-20260929-r3-3",
+      "startedAt": "2026-09-29T08:37:05.032Z",
+      "status": 204,
+      "text": "",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini-stream",
+      "method": "OPTIONS",
+      "trace": "platform03-preview-20260929-r3-4",
+      "startedAt": "2026-09-29T08:37:05.313Z",
+      "status": 204,
+      "text": "",
+      "completed": true
+    },
+    {
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=2y",
+      "method": "GET",
+      "trace": "platform03-preview-20260929-r3-5",
+      "startedAt": "2026-09-29T08:37:05.584Z",
+      "status": 200,
+      "text": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"AAPL\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":588,\"longName\":\"FIXTURE AAPL\",\"shortName\":\"FIXTURE AAPL\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[585.75,586.25,586.75,587.25,587.75],\"high\":[587,587.5,588,588.5,589],\"low\":[585,585.5,586,586.5,587],\"close\":[586,586.5,587,587.5,588],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[586,586.5,587,587.5,588]}]}}],\"error\":null}}",
+      "completed": true
+    },
+    {
+      "route": "/api/yahoo/search?q=2330",
+      "method": "GET",
+      "trace": "platform03-preview-20260929-r3-6",
+      "startedAt": "2026-09-29T08:37:05.906Z",
+      "status": 200,
+      "text": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+      "completed": true
+    },
+    {
+      "route": "/api/finmind?dataset=TaiwanStockInfo",
+      "method": "GET",
+      "trace": "platform03-preview-20260929-r3-7",
+      "startedAt": "2026-09-29T08:37:06.216Z",
+      "status": 200,
+      "text": "{\"msg\":\"success\",\"status\":200,\"data\":[{\"stock_id\":\"2330\",\"stock_name\":\"固定資料台積電\",\"industry_category\":\"半導體業\",\"type\":\"twse\"},{\"stock_id\":\"0050\",\"stock_name\":\"固定資料元大台灣50\",\"industry_category\":\"ETF\",\"type\":\"twse\"},{\"stock_id\":\"2317\",\"stock_name\":\"固定資料鴻海\",\"industry_category\":\"其他電子業\",\"type\":\"twse\"}]}",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini-stream",
+      "method": "POST",
+      "trace": "platform03-preview-20260929-r3-8",
+      "startedAt": "2026-09-29T08:37:06.825Z",
+      "status": 400,
+      "text": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求格式不正確，請重新整理頁面後再試一次。\"}",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini",
+      "method": "POST",
+      "trace": "platform03-preview-20260929-r3-9",
+      "startedAt": "2026-09-29T08:37:07.107Z",
+      "status": 200,
+      "text": "{\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini-stream",
+      "method": "POST",
+      "trace": "platform03-preview-20260929-r3-10",
+      "startedAt": "2026-09-29T08:37:10.366Z",
+      "status": 200,
+      "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}\n{\"t\":\"delta\",\"text\":\"假片段2\"}\n{\"t\":\"delta\",\"text\":\"假片段3\"}\n{\"t\":\"delta\",\"text\":\"假片段4\"}\n{\"t\":\"delta\",\"text\":\"假片段5\"}\n{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5\"}\n",
+      "completed": true
+    },
+    {
+      "route": "/api/gemini-stream",
+      "method": "POST",
+      "trace": "platform03-preview-20260929-r3-11",
+      "startedAt": "2026-09-29T08:37:14.447Z",
+      "status": 200,
+      "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}\n",
+      "canceledAfterFirstDelta": true
+    }
+  ],
+  "serverCancellation": "須另對帳平台 logs 的同 trace fakeCli.kill／response-close，不能由客戶端取消推定"
+}

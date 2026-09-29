@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "url": "https://taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "inspectorUrl": "https://vercel.com/chuan0802/taiwan-and-usa-stock-ai-analyst-v4/GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "readyState": "READY",
+    "target": null,
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S"
+  },
+  "message": "Deployment taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel inspect taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app --cwd C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\platform03-preview-20260929-r3\\preview",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --cwd C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\platform03-preview-20260929-r3\\preview",
+      "when": "Promote to production"
+    }
+  ]
+}

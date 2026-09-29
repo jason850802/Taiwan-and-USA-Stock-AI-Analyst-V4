@@ -1,0 +1,136 @@
+{
+  "runId": "platform03-preview-20260929-r3",
+  "head": "6b1476926284bef08141d3866bc1899cfd092544",
+  "createdAt": "2026-09-29T08:33:39.712Z",
+  "deployment": "C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\platform03-preview-20260929-r3\\preview",
+  "tools": {
+    "platform-03.mjs": "39b655dadbfea535674dad01eb475799e472e90830a8c5f5ef4915ffd9940b77",
+    "platform-fixture-03.cjs": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+    "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+    "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1"
+  },
+  "sources": {
+    ".scratch/performance-optimization-20260923/tools/trace-preload.cjs": {
+      "sha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "committedSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs": {
+      "sha256": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+      "committedSha256": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/config.ts": {
+      "sha256": "339bf8774c49ee9eb12ec69adc4605d04b7ba2ae4ff3d31bb441e1e1e0fc8f40",
+      "committedSha256": "339bf8774c49ee9eb12ec69adc4605d04b7ba2ae4ff3d31bb441e1e1e0fc8f40",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/ratelimit.ts": {
+      "sha256": "3d604628651fd3003f43a31c9d68d4d5e310f5ed53838e1f5038c6ccbbd1e630",
+      "committedSha256": "8f4763cdba66fa2a8455a4b73c949a5741c5b71a6b4b28f8cfe9fb01a77bd4c7",
+      "exact": false,
+      "lineEndingsOnly": true
+    },
+    "api/_lib/guard.ts": {
+      "sha256": "397c23dc8c27888d14f14c069c2e81c4e4cefb9dfdfb92d6200b0510397c4068",
+      "committedSha256": "397c23dc8c27888d14f14c069c2e81c4e4cefb9dfdfb92d6200b0510397c4068",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/yahoo.ts": {
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "committedSha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/clientAbort.ts": {
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "committedSha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/yahoo/chart.ts": {
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "committedSha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/yahoo/search.ts": {
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "committedSha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/finmind.ts": {
+      "sha256": "05179a8c38fb92f7368ba9e7dbf0f18b6dceec95274d52c7a8a019e629c29833",
+      "committedSha256": "05179a8c38fb92f7368ba9e7dbf0f18b6dceec95274d52c7a8a019e629c29833",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/finmind.ts": {
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "committedSha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/http.ts": {
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "committedSha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/_lib/llm.ts": {
+      "sha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "committedSha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/gemini.ts": {
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "committedSha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    "api/gemini-stream.ts": {
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "committedSha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "exact": true,
+      "lineEndingsOnly": false
+    }
+  },
+  "artifacts": [
+    {
+      "route": "/api/yahoo/chart",
+      "sha256": "982715848e153b45ec86f43f1adc7f083cd6b22b976a4b20b05381c89110cdca"
+    },
+    {
+      "route": "/api/yahoo/search",
+      "sha256": "40c993b096f1b0dc5c3187935c9ccbb71376af08d0e90fb9bb8ac1cefae67b26"
+    },
+    {
+      "route": "/api/finmind",
+      "sha256": "f559152112aacaf2812469ce88a25c2e68fbfac08071cbec6f24d5dfc586ed4d"
+    },
+    {
+      "route": "/api/gemini",
+      "sha256": "d517064c016617bc2bcf9275c6dc2e1f1bb35b5bf2add8dcd185af628100a3e0"
+    },
+    {
+      "route": "/api/gemini-stream",
+      "sha256": "80aefe6b08f9da7976a4cc5d60061405708228a123fb0c2234a1cc9509643056"
+    }
+  ],
+  "runtime": "nodejs22.x",
+  "kind": "Preview 原 handler＋固定上游／假 CLI 注入",
+  "limits": [
+    "不是正式網域部署",
+    "無真上游、無真 AI",
+    "測試注入另列，不能宣稱原部署包完全等價",
+    "清除 Upstash 與 shared secret：未驗真限流服務或正式密鑰配置",
+    "本探針 maxDuration=30，原串流 handler 宣告 200，非設定等價驗收"
+  ]
+}
