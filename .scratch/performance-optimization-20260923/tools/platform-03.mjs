@@ -7,7 +7,7 @@ import https from 'node:https';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { claimRun, fileSha } from './service-kit.mjs';
+import { claimRun, fileSha, sha256 } from './service-kit.mjs';
 import { ROOT, scanSecrets } from './verify-b1-breakdown.mjs';
 const require = createRequire(import.meta.url);
 const { build } = require('esbuild');
@@ -45,8 +45,12 @@ if (mode === 'prepare') {
       if (file === '<stdin>' || file.includes('node_modules')) continue;
       const absolute = path.resolve(ROOT, file);
       const relative = path.relative(ROOT, absolute).replaceAll('\\', '/');
-      if (!git(['show', `${head}:${relative}`]).equals(fs.readFileSync(absolute))) throw new Error(`來源未提交：${relative}`);
-      sources.set(relative, fileSha(absolute));
+      const committed = git(['show', `${head}:${relative}`]);
+      const actual = fs.readFileSync(absolute);
+      const exact = committed.equals(actual);
+      const lineEndingsOnly = !exact && committed.toString('utf8').replaceAll('\r\n', '\n') === actual.toString('utf8').replaceAll('\r\n', '\n');
+      if (!exact && !lineEndingsOnly) throw new Error(`來源未提交：${relative}`);
+      sources.set(relative, { sha256: sha256(actual), committedSha256: sha256(committed), exact, lineEndingsOnly });
     }
     json(path.join(folder, '.vc-config.json'), { runtime: 'nodejs22.x', handler: 'index.cjs', launcherType: 'Nodejs',
       shouldAddHelpers: true, supportsResponseStreaming: true, maxDuration: 30 });
