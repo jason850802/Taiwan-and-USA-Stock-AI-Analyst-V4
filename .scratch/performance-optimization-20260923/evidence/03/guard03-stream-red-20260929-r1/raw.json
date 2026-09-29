@@ -1,0 +1,402 @@
+{
+  "runId": "guard03-stream-red-20260929-r1",
+  "at": "2026-09-29T06:41:34.757Z",
+  "kind": "純假資料守衛檢查",
+  "realProcessKills": 0,
+  "tools": {
+    "guard-review-03.mjs": "edb6afc428e2e7246257a62b79aff0931711cc73a2ec3738553d49ff8f5ee7d6",
+    "daily-dev.mjs": "65dc86801f5aeef83df1ccb8b7a34f4c4bfb05573e032d88fa587d7f6938320c",
+    "port-guard-03.mjs": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+    "app-03.mjs": "341d3f79694fcb13e5f2335bac83b3cad935f7ec10f58a888b463faecdb076d1"
+  },
+  "results": [
+    {
+      "label": "啟動器：ISO 同年但較早建立的程序不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ],
+        "table": [
+          {
+            "ProcessId": 1,
+            "ParentProcessId": 0,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.200Z"
+          },
+          {
+            "ProcessId": 2,
+            "ParentProcessId": 1,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.100Z"
+          },
+          {
+            "ProcessId": 3,
+            "ParentProcessId": 2,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.300Z"
+          },
+          {
+            "ProcessId": 4,
+            "ParentProcessId": 1,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.201Z"
+          },
+          {
+            "ProcessId": 5,
+            "ParentProcessId": 4,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.202Z"
+          }
+        ]
+      }
+    },
+    {
+      "label": "啟動器：舊子程序與其子孫不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "label": "驗收端：ISO 同年但較早建立的程序不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ],
+        "table": [
+          {
+            "ProcessId": 1,
+            "ParentProcessId": 0,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.200Z"
+          },
+          {
+            "ProcessId": 2,
+            "ParentProcessId": 1,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.100Z"
+          },
+          {
+            "ProcessId": 3,
+            "ParentProcessId": 2,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.300Z"
+          },
+          {
+            "ProcessId": 4,
+            "ParentProcessId": 1,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.201Z"
+          },
+          {
+            "ProcessId": 5,
+            "ParentProcessId": 4,
+            "Name": "fake.exe",
+            "CreationDate": "2026-09-25T00:00:00.202Z"
+          }
+        ]
+      }
+    },
+    {
+      "label": "驗收端：舊子程序與其子孫不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "label": "啟動器：根 PID 重用時不擴展、不終止",
+      "pass": true,
+      "detail": {
+        "killed": [],
+        "left": [],
+        "error": null
+      }
+    },
+    {
+      "label": "啟動器：每次結束重列、保留孤兒、略過已重用成員",
+      "pass": true,
+      "detail": {
+        "killed": [
+          1,
+          4,
+          5
+        ],
+        "untouched": [
+          2,
+          7
+        ],
+        "result": {
+          "killed": [
+            {
+              "pid": 1,
+              "creationDate": "/Date(200)/",
+              "status": 0
+            },
+            {
+              "pid": 4,
+              "parentPid": 1,
+              "name": "fake.exe",
+              "creationDate": "/Date(201)/",
+              "status": 0
+            },
+            {
+              "pid": 5,
+              "parentPid": 4,
+              "name": "fake.exe",
+              "creationDate": "/Date(203)/",
+              "status": 0
+            }
+          ],
+          "left": [],
+          "error": null
+        }
+      }
+    },
+    {
+      "label": "啟動器：缺建立時間不得終止",
+      "pass": true,
+      "detail": {
+        "kills": 0
+      }
+    },
+    {
+      "label": "驗收端：根 PID 重用時不擴展、不終止",
+      "pass": true,
+      "detail": {
+        "killed": [],
+        "stillAlive": []
+      }
+    },
+    {
+      "label": "驗收端：每次結束重列、保留孤兒、略過已重用成員",
+      "pass": true,
+      "detail": {
+        "killed": [
+          1,
+          4,
+          5
+        ],
+        "untouched": [
+          2,
+          7
+        ],
+        "result": {
+          "killed": [
+            {
+              "pid": 1,
+              "name": null,
+              "creationDate": "/Date(200)/",
+              "status": 0
+            },
+            {
+              "pid": 4,
+              "name": "fake.exe",
+              "creationDate": "/Date(201)/",
+              "status": 0
+            },
+            {
+              "pid": 5,
+              "name": "fake.exe",
+              "creationDate": "/Date(203)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      }
+    },
+    {
+      "label": "驗收端：缺建立時間不得終止",
+      "pass": true,
+      "detail": {
+        "kills": 0
+      }
+    },
+    {
+      "label": "S2：身分只輸出既定欄位，缺 PID 明列",
+      "pass": true,
+      "detail": [
+        {
+          "pid": 1,
+          "parentPid": 0,
+          "creationDate": "/Date(200)/",
+          "script": "daily-dev.mjs"
+        },
+        {
+          "pid": 2,
+          "missing": true
+        }
+      ]
+    },
+    {
+      "label": "P2：先有同網址腳本 200",
+      "pass": true,
+      "detail": {
+        "kind": "瀏覽器自發・已取消",
+        "ok": true,
+        "priorScript200": {
+          "requestId": "prior",
+          "route": "/api/finmind?dataset=TaiwanStockInfo",
+          "finishedAtMs": 10
+        }
+      }
+    },
+    {
+      "label": "P2：沒有先前成功",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：網址不同",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：成功發生在本筆開始之後",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：先前 200 後仍取消",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：先前 200 非腳本",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：本筆 HTTP 500",
+      "pass": true,
+      "detail": {
+        "kind": "瀏覽器自發・已取消",
+        "ok": false,
+        "priorScript200": {
+          "requestId": "prior",
+          "route": "/api/finmind?dataset=TaiwanStockInfo",
+          "finishedAtMs": 10
+        }
+      }
+    },
+    {
+      "label": "P2 串流：同筆五段與 done 先到且畫面完整",
+      "pass": true,
+      "detail": {
+        "kind": "串流完整送達後的傳輸層取消",
+        "ok": true
+      }
+    },
+    {
+      "label": "P2 串流：只有畫面完整、沒有串流證據",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：HTTP 204 不套用",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：其他網路錯誤",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：取消旗標不符",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：畫面缺段",
+      "pass": true,
+      "detail": {
+        "kind": "200 之後被取消",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2 串流：缺 done",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：缺中間段",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：done 晚於取消",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：done 與取消同時、無法證明先後",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：缺取消時間",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：串流來自另一筆請求",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：採集失敗",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "label": "P2 串流：內容錯誤",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    }
+  ],
+  "pass": false
+}

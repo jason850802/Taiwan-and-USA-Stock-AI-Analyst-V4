@@ -199,7 +199,42 @@ function designedAbortOf(request, requests) {
 // - 瀏覽器自發：同視窗、完全相同網址，必須在本筆發起前已有腳本發起且完成的 200；附上前筆證據。
 //   使用者於 2026-09-26 接受此收緊規則；凍結 §4 仍分欄保留，4xx／5xx 仍算失敗。
 // - App 發起：HTTP 必須 200／204；§4 的 2y 例外可無回應。200 之後的傳輸層取消只有一種可接受——
-//   /api/gemini-stream 且本步畫面已證明完整收到 done（streamComplete）；其餘一律失敗。
+//   2026-09-29 使用者接受限定例外：同筆 200、固定五段與 done 先於 ERR_ABORTED、畫面完整，原始錯誤保留。
+// CDP 僅旁觀原消費器的 NDJSON，不 clone／重讀 response，也不更動取消或產品碼。
+export function streamProofOf(request) {
+  const capture = request.streamCapture;
+  if (!capture?.ready || capture.error || capture.requestId !== request.requestId) return null;
+  const chunks = [capture.buffered, ...(capture.chunks ?? [])].filter(chunk => chunk?.data);
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  const events = [];
+  let pending = '';
+  let bytes = 0;
+  try {
+    for (const chunk of chunks) {
+      if (!Number.isFinite(chunk.atMs) || !Number.isFinite(request.startedAtMs) || chunk.atMs < request.startedAtMs) return null;
+      const buffer = Buffer.from(chunk.data, 'base64');
+      bytes += buffer.length;
+      if (bytes > 65536) return null;
+      pending += decoder.decode(buffer, { stream: true });
+      let end;
+      while ((end = pending.indexOf('\n')) >= 0) {
+        const line = pending.slice(0, end).trim();
+        pending = pending.slice(end + 1);
+        if (line) events.push({ ...JSON.parse(line), atMs: chunk.atMs });
+      }
+    }
+    pending += decoder.decode();
+    if (pending.trim() || events.length !== 6) return null;
+  } catch { return null; }
+  const expected = Array.from({ length: 5 }, (_, index) => `假片段${index + 1}`);
+  if (!events.slice(0, 5).every((event, index) => event.t === 'delta' && event.text === expected[index])) return null;
+  const done = events[5];
+  if (done.t !== 'done' || done.text !== expected.join('') || !Number.isFinite(request.failedAtMs)
+    || done.atMs >= request.failedAtMs) return null;
+  return { requestId: request.requestId, deltaCount: 5, doneAtMs: done.atMs, canceledAtMs: request.failedAtMs,
+    clock: 'CDP Network monotonic', events };
+}
+
 export function classifyRequest(request, requests, streamComplete, history = requests) {
   if (request.initiator && request.initiator.type !== 'script') {
     const prior = history.find(other => other !== request && other.initiator?.type === 'script'
@@ -214,8 +249,11 @@ export function classifyRequest(request, requests, streamComplete, history = req
   if (designedAbortOf(request, requests)) return { kind: '§4 設計內 2y 取消', ok: true };
   if (![200, 204].includes(request.status)) return { kind: 'HTTP 失敗或無回應', ok: false };
   if (!request.failed) return { kind: '成功', ok: true };
-  if (request.method === 'POST' && request.route === '/api/gemini-stream' && streamComplete) {
-    return { kind: '串流完整送達後的傳輸層取消', ok: true };
+  const streamProof = request.status === 200 && request.method === 'POST' && request.route === '/api/gemini-stream'
+    && request.failed.error === 'net::ERR_ABORTED' && request.failed.canceled === true && streamComplete
+    ? streamProofOf(request) : null;
+  if (streamProof) {
+    return { kind: '串流完整送達後的傳輸層取消', ok: true, streamProof };
   }
   return { kind: '200 之後被取消', ok: false };
 }
@@ -538,6 +576,7 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
     ops: [], finalKeys: null, closedCleanly: null, profileRemoved: null };
   const cdp = await Cdp.connect(chrome.pageWs);
   const network = new Map();
+  const streamCaptures = [];
   const consoleEvents = [];
   const externalHosts = new Set();
   cdp.on('Network.requestWillBeSent', params => {
@@ -552,6 +591,23 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
   cdp.on('Network.responseReceived', params => {
     const entry = network.get(params.requestId);
     if (entry) entry.status = params.response.status;
+    if (entry?.method === 'POST' && new URL(entry.url).pathname === '/api/gemini-stream' && entry.status === 200) {
+      const capture = { requestId: params.requestId, ready: false, buffered: null, chunks: [], error: null };
+      entry.streamCapture = capture;
+      streamCaptures.push(cdp.send('Network.streamResourceContent', { requestId: params.requestId }).then(result => {
+        // bufferedData 沒有自帶時刻；取尚未帶 data 的 dataReceived 最後時刻作保守上界。
+        // 找不到同筆時刻即無法證明先後，分類器會拒絕套用例外。
+        if (result.bufferedData) capture.buffered = { data: result.bufferedData, atMs: entry.unstreamedAtMs ?? null };
+        capture.ready = true;
+      }).catch(error => { capture.error = error.message; }));
+    }
+  });
+  cdp.on('Network.dataReceived', params => {
+    const entry = network.get(params.requestId);
+    if (!entry) return;
+    const atMs = Math.round(params.timestamp * 1e6) / 1e3;
+    if (params.data && entry.streamCapture) entry.streamCapture.chunks.push({ atMs, data: params.data });
+    else entry.unstreamedAtMs = atMs;
   });
   // 完成／失敗時刻用瀏覽器的單調時鐘（同一時鐘才可比先後），供 §4 例外核對 10y 是否先完成。
   cdp.on('Network.loadingFinished', params => {
@@ -884,12 +940,14 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
         opRecord.error = error.message;
       }
       opRecord.durationMs = Math.round(performance.now() - opStart);
+      await Promise.all(streamCaptures);
       const history = [...network.values()].map(entry => ({ ...entry, route: routeOf(entry.url) }));
       opRecord.requests = history
         .filter(entry => entry.at >= opStart && new URL(entry.url).pathname.startsWith('/api/'))
         .map(entry => ({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
           method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
-          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents, initiator: entry.initiator }));
+          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents,
+          streamCapture: entry.streamCapture ?? null, initiator: entry.initiator }));
       opRecord.designedAborts = opRecord.requests.map(request => designedAbortOf(request, opRecord.requests)).filter(Boolean);
       const streamComplete = Boolean(op.streamEvidence && !opRecord.error && op.streamEvidence(opRecord.facts ?? {}));
       for (const request of opRecord.requests) {
@@ -1032,7 +1090,7 @@ async function main() {
     tools: Object.fromEntries(TOOL_FILES.map(file => [file, fileSha(path.join(TOOLS, file))])),
     candidateSources: Object.fromEntries(CANDIDATE_FILES.map(file => [file, fileSha(path.join(ROOT, file))])),
     cacheMode: '每個視窗全新 user-data-dir；Chrome HTTP 快取維持預設；後端固定上游與假 AI',
-    requestClassificationStatus: '瀏覽器自發收緊規則已獲使用者接受；串流例外仍待裁定；frozenOk 為凍結 §4',
+    requestClassificationStatus: '背景收緊規則及串流限定例外均獲使用者接受；串流須同筆五段與 done 先於 ERR_ABORTED；frozenOk 為凍結 §4',
     fixture: { prices: PRICES, usBuyDate: US_BUY_DATE },
     sentinel: null, launcher: {}, monitor: null, viewports: [], backendTrace: null, persistent: null,
     stop: null, stopCheck: null, errors: [],
