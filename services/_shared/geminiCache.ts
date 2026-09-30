@@ -18,7 +18,7 @@ const MAX_ENTRIES = 50;
  * 兩個限制（由 utils/geminiCache.test.ts 鎖住）：不得為空、不得含 `|`
  * （含 `|` 會讓段位錯亂，跨日清理就抓錯段）。
  */
-export const ENGINE_TAG = 'e2';
+export const ENGINE_TAG = 'e3';
 
 /** FNV-1a 32-bit 雜湊，回傳 hex 字串（無依賴、對 prompt 級長度足夠） */
 export function fnv1aHash(str: string): string {

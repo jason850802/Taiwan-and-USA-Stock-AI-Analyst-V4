@@ -172,12 +172,12 @@ describe('generateText / claude-cli — 子程序啟動契約', () => {
     expect(env.PATH_KEEP_ME).toBe('保留');
   });
 
-  it('mode=thinking → opus/max；mode=fast → sonnet/medium', async () => {
+  it('mode=thinking → opus/xhigh；mode=fast → sonnet/medium', async () => {
     const { generateText } = await loadLlm();
     void generateText({ ...REQ, mode: 'thinking' }).catch(() => {});
     const thinkingArgs = spawnMock.mock.calls[0][1] as string[];
     expect(thinkingArgs[thinkingArgs.indexOf('--model') + 1]).toBe('opus');
-    expect(thinkingArgs[thinkingArgs.indexOf('--effort') + 1]).toBe('max');
+    expect(thinkingArgs[thinkingArgs.indexOf('--effort') + 1]).toBe('xhigh');
 
     void generateText({ ...REQ, mode: 'fast' }).catch(() => {});
     const fastArgs = spawnMock.mock.calls[1][1] as string[];
