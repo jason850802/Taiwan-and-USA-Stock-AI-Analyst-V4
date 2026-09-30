@@ -54,7 +54,7 @@ Google Gemini 產生中文分析報告；另有可做 AI 健檢的庫存（Portf
 - 依賴單軌：只維護 `package.json`＋`package-lock.json`（index.html 的 esm.sh importmap 已移除，Vite 從 node_modules 解析）。
 - 測試跑道＝vitest（`npm run test`）：核心 utils 有行為鎖案例；仍無 lint、tsconfig 非 strict。改被鎖的檔案前先跑 test。
 - 資料鏈：Yahoo（公共 CORS proxy 輪替）→ 失敗 fallback FinMind；429 是常態，先懷疑限流再改碼。
-- Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；**改型號（或改 `LLM_PROVIDER`）三處都要動**——前兩處，加上 `services/_shared/geminiCache.ts` 的 `ENGINE_TAG` bump 一格讓前端舊模型快取失效（前端拿不到型號，只能靠這個不含型號名的世代代號；`services/gemini.ts` 仍不含型號字串）。不 bump 的後果有上限：key 仍有日期段且跨日全清，最壞是當天繼續端出舊模型的結果。
+- Gemini 型號**只在後端**：`api/_lib/config.ts` 的環境變數 fallback（`GEMINI_MODEL_FAST`=`gemini-3.5-flash`／`GEMINI_MODEL_THINKING`=`gemini-3.1-pro-preview`），另一份在 `.env.example`；**改型號（或改 `LLM_PROVIDER`）三處都要動**——前兩處，加上 `services/_shared/geminiCache.ts` 的 `ENGINE_TAG` bump 一格讓前端舊模型快取失效（前端拿不到型號，只能靠這個不含型號名的世代代號；`services/gemini.ts` 仍不含型號字串）。不 bump 的後果有上限：key 仍有日期段且跨日全清，最壞是當天繼續端出舊模型的結果。**claude-cli 路徑同理**：改 `.env` 的 `CLAUDE_CLI_MODEL_*`／`CLAUDE_CLI_EFFORT_*`（或 `api/_lib/llm.ts` 的預設）也要 bump——快取鍵不含模型與 effort（2026-09-29 實例：改成 Sonnet 5.5 後同輸入仍回舊結果，被誤認為新設定很快）。
 - `services/gemini.ts` 的 5 個 system instruction 受 snapshot **逐位元組鎖定**（`utils/geminiRules.test.ts`）——改一個字就會讓 AI 分析快取全失效，動它前先讀 `.planning/phases/12-arch-deepening/12-CONTEXT.md` 的 D-06。
 
 ## 工作流：Matt Pocock skills（2026-07-26 起，GSD 已完全停用）

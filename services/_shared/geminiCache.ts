@@ -12,13 +12,13 @@ const MAX_ENTRIES = 50;
  * GEMINI_MODEL_THINKING；`LLM_PROVIDER=claude-cli` 時整個換成 Claude），前端拿不到、
  * 也不准內含型號字串（CORE_RULES 紅線）。這裡改用不含型號名的世代代號代打：
  *
- * **換型號或換 provider 時把它 bump 一格**（e1 → e2），全體使用者的舊模型快取當場失效。
+ * **換型號、換 provider，或改 claude-cli 的 CLAUDE_CLI_MODEL_*／CLAUDE_CLI_EFFORT_* 時把它 bump 一格**（例：e1 → e2），全體使用者的舊模型快取當場失效。
  * 忘了 bump 的後果有上限——key 仍有日期段且跨日會全清，最壞是當天繼續吃舊模型的結果。
  *
  * 兩個限制（由 utils/geminiCache.test.ts 鎖住）：不得為空、不得含 `|`
  * （含 `|` 會讓段位錯亂，跨日清理就抓錯段）。
  */
-export const ENGINE_TAG = 'e1';
+export const ENGINE_TAG = 'e2';
 
 /** FNV-1a 32-bit 雜湊，回傳 hex 字串（無依賴、對 prompt 級長度足夠） */
 export function fnv1aHash(str: string): string {
