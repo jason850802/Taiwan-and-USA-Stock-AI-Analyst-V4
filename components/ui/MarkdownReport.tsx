@@ -6,6 +6,22 @@ interface MarkdownReportProps {
   content: string;
 }
 
+const BR_TAG = /<br\s*\/?>/i;
+
+// react-markdown 不渲染原始 HTML，Claude 常在表格儲存格用 <br> 換行而被原樣顯示成文字；拆成真正的換行元素。
+const withLineBreaks = (children: React.ReactNode): React.ReactNode =>
+  React.Children.toArray(children).map((child, i) =>
+    typeof child === 'string' && BR_TAG.test(child)
+      ? (
+        <React.Fragment key={i}>
+          {child.split(BR_TAG).map((part, j) => (
+            <React.Fragment key={j}>{j > 0 && <br />}{part}</React.Fragment>
+          ))}
+        </React.Fragment>
+      )
+      : child,
+  );
+
 const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
   <ReactMarkdown
     remarkPlugins={[remarkGfm]}
@@ -51,8 +67,8 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       },
       ul: ({node, ...props}) => <ul className="space-y-3 my-4 pl-4" {...props} />,
       ol: ({node, ...props}) => <ol className="space-y-3 my-4 pl-4 list-decimal marker:text-blue-500" {...props} />,
-      li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
-      p: ({node, ...props}) => <p className="mb-4 leading-7 text-slate-200" {...props} />,
+      li: ({node, children, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props}>{withLineBreaks(children)}</li>,
+      p: ({node, children, ...props}) => <p className="mb-4 leading-7 text-slate-200" {...props}>{withLineBreaks(children)}</p>,
       table: ({node, ...props}) => (
         <div className="overflow-x-auto my-4">
           <table className="w-full text-sm border-collapse" {...props} />
@@ -61,11 +77,11 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       thead: ({node, ...props}) => <thead className="bg-surface-inset" {...props} />,
       tbody: ({node, ...props}) => <tbody className="divide-y divide-surface-line" {...props} />,
       tr: ({node, ...props}) => <tr className="hover:bg-surface-inset/60 transition-colors" {...props} />,
-      th: ({node, ...props}) => (
-        <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 border border-surface-line" {...props} />
+      th: ({node, children, ...props}) => (
+        <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 border border-surface-line" {...props}>{withLineBreaks(children)}</th>
       ),
-      td: ({node, ...props}) => (
-        <td className="px-3 py-2 text-sm text-slate-200 align-top border border-surface-line" {...props} />
+      td: ({node, children, ...props}) => (
+        <td className="px-3 py-2 text-sm text-slate-200 align-top border border-surface-line" {...props}>{withLineBreaks(children)}</td>
       ),
     }}
   >
