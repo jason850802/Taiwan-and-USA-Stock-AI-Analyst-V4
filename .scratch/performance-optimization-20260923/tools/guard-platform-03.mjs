@@ -26,6 +26,16 @@ check('沒有中止訊號不足', () => assert.equal(canceledWorkStopped(client,
 check('其他請求 kill 不得誤收', () => assert.equal(canceledWorkStopped(client, green.map(item => ({ ...item, trace: 'other' }))), false));
 check('done 與 kill 同在拒絕', () => assert.equal(canceledWorkStopped(client, [...green, event('child.fakeCli.done')]), false));
 check('完成回應後 kill 拒絕', () => assert.equal(canceledWorkStopped(client, [...green, event('response-finish')]), false));
+const quietEnd = [
+  { ...event('child.fakeCli.spawn'), atMs: 1 },
+  { ...event('response-close'), finished: false, atMs: 2 },
+  { ...event('child.fakeCli.kill'), atMs: 3 },
+  { ...event('response-finish'), atMs: 4 },
+];
+check('斷線且 kill 後靜默收尾可通過', () => assert.equal(canceledWorkStopped(client, quietEnd), true));
+check('收尾早於 kill 拒絕', () => assert.equal(canceledWorkStopped(client, quietEnd.map(item => item.event === 'response-finish' ? { ...item, atMs: 2.5 } : item)), false));
+check('kill 後仍出字拒絕', () => assert.equal(canceledWorkStopped(client, [...quietEnd, { ...event('child.fakeCli.delta'), atMs: 3.5 }]), false));
+check('靜默收尾缺斷線時間拒絕', () => assert.equal(canceledWorkStopped(client, quietEnd.map(item => item.event === 'response-close' ? { ...item, atMs: undefined } : item)), false));
 check('沒有客戶端取消拒絕', () => assert.equal(canceledWorkStopped({ ...client, canceled: false }, green), false));
 const message = JSON.stringify({ marker: 'perf03-platform', trace, event: 'request-aborted', atMs: 1 });
 check('同部署事件去重', () => assert.equal(platformEvents([{ deploymentId: 'dpl1', message, logs: [{ message }] }], 'dpl1', 'platform03-guard').length, 1));

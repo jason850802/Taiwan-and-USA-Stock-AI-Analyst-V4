@@ -50,10 +50,18 @@ export function platformEvents(rows, deploymentId, prefix) {
 
 export function canceledWorkStopped(client, events) {
   const own = events.filter(event => event.trace === client.trace);
+  const kills = own.filter(event => event.event === 'child.fakeCli.kill');
+  const disconnects = own.filter(event => event.event === 'request-aborted' || (event.event === 'response-close' && event.finished === false));
+  // 斷線後 res.end() 也可能發 finish；只收已有斷線與 kill 的靜默收尾，不將 finish 當作 done。
+  const quietFinish = own.filter(event => event.event === 'response-finish').every(finish =>
+    Number.isFinite(finish.atMs)
+      && kills.some(kill => Number.isFinite(kill.atMs) && kill.atMs < finish.atMs)
+      && disconnects.some(disconnect => Number.isFinite(disconnect.atMs) && disconnect.atMs < finish.atMs));
+  const noDeltaAfterKill = !own.some(event => event.event === 'child.fakeCli.delta'
+    && kills.some(kill => Number.isFinite(kill.atMs) && Number.isFinite(event.atMs) && event.atMs >= kill.atMs));
   return client.canceled === true && own.some(event => event.event === 'child.fakeCli.spawn')
-    && own.some(event => event.event === 'child.fakeCli.kill')
-    && own.some(event => event.event === 'request-aborted' || (event.event === 'response-close' && event.finished === false))
-    && !own.some(event => ['child.fakeCli.done', 'response-finish'].includes(event.event));
+    && kills.length > 0 && disconnects.length > 0 && quietFinish && noDeltaAfterKill
+    && !own.some(event => event.event === 'child.fakeCli.done');
 }
 
 export function verifiedDeployment(deployed, preparedSha256, origin) {
