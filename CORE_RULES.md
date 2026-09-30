@@ -119,3 +119,7 @@ Codex 只收 PLAN 文件不自行規劃）；`start-dev`（起 dev 環境固定�
   兩個來源、白名單制、**不要手動改鏡像端**；機制、孤兒行為、兩端呼叫方式見 `docs/skill-invocation.md`。
 - **交接紀律**：票據刻意**不寫檔案路徑與行號**（耐久原則，票可能躺數天）——
   接手方依行為描述自行探索現況程式碼。一票一個 commit。
+- **程式碼知識圖譜（codebase-memory-mcp）**：兩端共用同一份索引，專案名 `E-My-Project-Taiwan-and-USA-Stock-AI-Analyst-V4`，
+  CBM 常駐時隨檔案變動自動更新。找函式、查呼叫鏈、評估改動影響時**先查圖**（`search_graph`／`trace_path`），
+  圖查不到或要找文字內容再 grep。索引刻意排除 `.scratch/`（規則在根目錄 `.cbmignore`，不排會撐爆記憶體），
+  票據與證據直接讀檔。`.cbmignore` 刻意不進 git：**不要 commit、不要刪**。
