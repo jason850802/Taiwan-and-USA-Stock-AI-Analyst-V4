@@ -6,10 +6,13 @@
 > - 2026-09-30：「Comments」「TypeScript Configuration」兩節。
 > - 2026-10-01：檔頭 Scope；「Linting」「Environment & Secrets」兩節；「Error Handling」第一點；
 >   「Styling」第一點中 Tailwind 載入方式那一句；「Where to Add New Code」的資料／AI 整合那一點。
+> - 2026-10-01（第二輪）：「Styling」兩點的其餘部分；「Error Handling」第二點。
 >
 > 其餘段落仍是 2026-05-31 的分析、未重新核對——當時還沒有 `api/`（2026-07-05 `6b13f22` 起）與
-> `config/`（2026-07-29 `88363f1` 起），那些段落的範例也不涵蓋它們。與 `CORE_RULES.md` 衝突時
-> 以 CORE_RULES 為準。
+> `config/`（2026-07-29 `88363f1` 起），那些段落的範例也不涵蓋它們。已知「Naming Patterns」舉的例子
+> 有 8 個已不存在：`analyzeStockWithGemini`、`formatPromptData`、`passPriceCheck`、`passVolumeCheck`、
+> `PROXIES`、`YAHOO_BASE`、`FINMIND_BASE`、`FINMIND`（對證：`git grep -c -w <名稱> -- '*.ts' '*.tsx'
+> ':!*.test.ts'` 無命中）。與 `CORE_RULES.md` 衝突時以 CORE_RULES 為準。
 
 > Scope：應用程式原始碼——根目錄的 `App.tsx`、`index.tsx`、`types.ts`，以及 `components/`、
 > `services/`、`utils/`、`prompts/`、`config/`（台股費率／稅率設定）、`api/`（後端：Vercel
@@ -151,9 +154,17 @@ consistency.
     `git grep -n 'MISSING_KEY' -- api/ ':!*.test.ts'`。
 - Network/parse failures are caught and logged with `console.warn` /
   `console.error`, then either return a safe fallback (`[]`, `null`) or rethrow
-  a normalized `Error`. Examples: proxy rotation in `queryYahoo`, the
-  Yahoo→FinMind fallback in `getStockData` (`services/yahoo.ts`), and
-  `catch { /* ignore */ }` for non-critical paths (`stockDirectory.ts`).
+  a normalized error（本點 2026-10-01 核對）。例子都在前端：
+  - `services/yahoo.ts` 的 `queryYahoo` 打後端 `/api/yahoo/chart`：非 2xx 丟 `DataFetchError`（429→
+    `RATE_LIMIT`、其餘→`BACKEND_DOWN`）；回應帶 `chart.error` 時 `Not Found`→`NOT_FOUND`、其餘→`PARSE`。
+  - 同檔 `fetchRawData`：裸台股代號先查名錄決定 `.TW`／`.TWO`；名錄沒有、或名錄給的後綴抓不到時，
+    依序試 `.TW`、`.TWO`，都失敗丟 `NOT_FOUND`。
+  - 同檔 `fetchStockDataUncached`（`getStockData` 的無快取本體）：台股日線 Yahoo 失敗時改抓 FinMind
+    （`fetchFinMindDailyData`）；使用者主動取消（`AbortError`）直接上拋、不觸發這條備援。
+  - `services/stockDirectory.ts` 的非關鍵路徑用 `catch { /* ignore */ }`。
+  - 舊版寫的「proxy rotation in `queryYahoo`」（公共 CORS proxy 輪替）已隨 proxy 移除（2026-07-05
+    `e7da3c7`）。Yahoo 的 cookie／crumb 握手與遇 401／429 重試一次，現在在後端 `api/_lib/yahoo.ts` 的
+    `fetchYahooWithHandshake`。對證：`git grep -n -E 'PROXIES|corsproxy|allorigins' -- services/ api/` 無命中。
 - UI layer catches with `catch (err: any)` and sets an error state string
   (`App.tsx` `fetchData`), or renders a fallback markdown error message
   (`App.tsx` `handleRunAnalysis`, `Portfolio.tsx` health-check handlers).
@@ -217,14 +228,34 @@ consistency.
   `^3.4.19` 是 devDependency，經 PostCSS（`postcss.config.js`，另掛 `autoprefixer`）處理
   `index.css` 的 `@tailwind` 指令（`index.tsx` 第 1 行 import），設定在 `tailwind.config.js`；
   `index.html` 沒有 Tailwind CDN（`git grep -i tailwind -- index.html` 沒有命中）。
-  Dark theme: `slate-800/900` surfaces, `blue/indigo`
-  accents. Domain color convention: **red = up/bullish, green/emerald =
-  down/bearish** (Taiwan market convention) — see candle colors in
-  `StockChart.tsx` (`#ef4444` up, `#10b981` down) and `AnalysisResult.tsx`
-  keyword coloring. Keep this inverted-from-Western mapping.
-- Icons come from `lucide-react`; charts from `recharts`; AI markdown via
-  `react-markdown` + `remark-gfm` with custom component renderers
-  (`AnalysisResult.tsx`).
+  本點以下三項 2026-10-01 第二輪核對：
+  - **語意色 token**：`tailwind.config.js` 的 `theme.extend.colors` 定義 `surface`（`DEFAULT`／`card`／
+    `inset`／`line`）、`accent`（含 `hover`）、`ai`、`up`／`down`、`ok`／`danger`（皆含 `muted`）、`warn`。
+    底色、框線、強調色以 token 為主，文字色仍多用 slate——用量（`components/`＋`App.tsx`）：
+    `bg-surface*` 70 處對 `bg-slate-*` 44 處、`border-surface*` 77 對 `border-slate-*` 43、
+    `bg-accent*` 33 對 `bg-blue-*`／`bg-indigo-*` 2、`text-slate-*` 319。深色底由 `index.css` 設在
+    `body`（`#0f172a`，與 `surface` 同色）。新程式優先用 token。
+    - 對證：`git grep -o -E '\bbg-surface(-[a-z]+)?\b' -- components/ App.tsx | wc -l`，其餘換樣式同法。
+  - **K 線與漲跌＝台股慣例紅漲綠跌**：token `up`＝`#f0405a`（紅）、`down`＝`#22c55e`（綠），元件用
+    `text-up`／`text-down` 等 class。recharts 的自訂 SVG 圖形吃不到 Tailwind class，所以
+    `components/StockChart.tsx` 直接寫同一組色碼並加註 `// token: up 紅漲 / down 綠跌`：K 線 `:72`、
+    量能 `:708`；MACD 柱 `:909`、法人買賣超 `:122` 也是正紅負綠。KDJ／RSI 的超買超賣參考線
+    （`:547-548`、`:559-560`）另用 `#ef4444`（紅）／`#10b981`（綠）。舊版寫 K 線是
+    `#ef4444`／`#10b981`，已過時。保持紅漲綠跌，不要改成西方的綠漲紅跌。
+  - **AI 報告的關鍵字上色是另一套語意，方向和 K 線相反**：`components/ui/MarkdownReport.tsx` 的粗體
+    （`strong`）依兩組關鍵字清單上色，含「空、賣、跌、風險、停損」等字→`text-danger`（紅），含
+    「多、買、漲、獲利、停利」等字→`text-ok`（綠）；h4 標題同理（空方／警示／出場／減碼→紅，
+    多方／進場／獲利／停利→綠）。`danger`／`ok` 與 `up`／`down` 是同一組色碼。這從第一版
+    （`f657acb`，2026-01-14，當時是 `text-red-400`／`text-emerald-400`）就是如此，`acb9023`
+    （2026-07-07）只換成語意 token。舊版把「`AnalysisResult.tsx` keyword coloring」當成紅漲綠跌的
+    例子，是誤記。本段只記錄現況，不判定哪一套才對。
+- Icons come from `lucide-react`; charts from `recharts`（`StockChart.tsx`、
+  `fundamentals/MonthlyRevenueChart.tsx`、`fundamentals/QuarterlyTrendCharts.tsx`、
+  `portfolio/PnlHistoryChart.tsx`）。AI 報告的 Markdown 渲染集中在 `components/ui/MarkdownReport.tsx`
+  （`react-markdown`＋`remark-gfm`，自訂各元素的 renderer），`AnalysisResult.tsx` 與 `Portfolio.tsx`
+  （交易決策、健檢兩個 modal）都用它；新的 AI 報告畫面沿用這個元件即可（本點 2026-10-01 核對）。
+  - 對證：`git grep -n -E "from 'react-markdown'|from 'remark-gfm'" -- '*.ts' '*.tsx'` 只命中 `MarkdownReport.tsx`；
+    `git grep -l "from 'recharts'" -- components/` 為上列 4 檔。
 
 ## Environment & Secrets
 
@@ -263,4 +294,5 @@ consistency.
 
 *Convention analysis: 2026-05-31; re-checked 2026-09-30 (Comments, TypeScript Configuration) and
 2026-10-01 (Scope, Linting, Environment & Secrets, and parts of Error Handling / Styling /
-Where to Add New Code — see the header for exact scope)*
+Where to Add New Code; second round the same day: the rest of Styling and Error Handling point 2 —
+see the header for exact scope)*

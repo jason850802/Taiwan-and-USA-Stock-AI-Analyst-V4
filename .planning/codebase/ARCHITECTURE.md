@@ -1,7 +1,23 @@
-<!-- refreshed: 2026-05-31 -->
+<!-- refreshed: 2026-05-31; partial re-check 2026-10-01 -->
 # Architecture
 
-**Analysis Date:** 2026-05-31
+**Analysis Date:** 2026-05-31（2026-10-01 部分核對）
+
+> **本檔整體仍是 2026-05-31 的「純前端、無後端」架構，大部分已過時。** 2026-10-01 只修了說金鑰或
+> Gemini 型號在前端的敘述（金鑰紅線；`CORE_RULES.md` 的 Constraints 與「本專案關鍵事實」）：
+> Entry Points 的 Vite 一點；Architectural Constraints 的 Global state、Client-side secret exposure、
+> No backend、Two model-config worlds 四點；Anti-Patterns 的「Client-side API key injection」與
+> 「Inconsistent fast/thinking model handling」兩節；Error Handling 的 Gemini 一點；Cross-Cutting 的
+> Authentication。其餘段落讀的時候以下列現況為準：
+> - **有後端**：前端只打同源 `/api/*`，由 `api/` 的 Vercel Serverless 函式代打 Gemini、Yahoo（2026-07-05，
+>   Phase 01／02）與 FinMind（2026-07-09，Phase 03）。所以圖中 AI Layer 直連 Gemini、Data Layer
+>   「via corsproxy.io / allorigins」、Pattern Overview 的「Client-only / no backend」、各處的「proxy rotation」
+>   都已不成立。外部整合的現況見 `INTEGRATIONS.md`（2026-10-01 重寫）。
+> - **沒有 esm.sh importmap、沒有 Tailwind CDN**（2026-07-13 `e6e4140`、`24a8135` 移除）：圖頂的
+>   「Tailwind CDN」與 Entry Points 的 Note 已過時。
+> - **元件與目錄大幅重整**：Portfolio 拆出 `components/portfolio/`、新增基本面分頁（`components/fundamentals/`，
+>   `currentView` 多了 `'fundamentals'`）、共用 UI 在 `components/ui/`；`analyzeStockWithGemini` 已刪
+>   （2026-07-12 `7bc35f1`）。本檔的檔案行號引用多半失準；目錄現況見 `STRUCTURE.md`（2026-10-01 重寫）。
 
 ## System Overview
 
@@ -164,16 +180,16 @@
 **Vite dev/build:**
 - Location: `vite.config.ts`
 - Triggers: `npm run dev` / `npm run build`.
-- Responsibilities: React plugin; `@` alias to project root; inject `GEMINI_API_KEY` into `process.env.API_KEY` and `process.env.GEMINI_API_KEY`; dev server on port 3000.
+- Responsibilities（2026-10-01 核對）: React plugin; `@` alias to project root; dev server on port 3000，`/api` 由 `server.proxy` 轉給 `http://localhost:3001`（本機 `vercel dev`）；`envPrefix: 'VITE_'`、**沒有 `define`**——只有 `VITE_` 前綴的變數會進 bundle，`GEMINI_API_KEY` 進不去（`utils/viteConfigGuard.test.ts` 鎖住）；vitest 的 `test` 區塊；`manualChunks` 把 React 分到 `vendor` chunk。舊版寫的「inject `GEMINI_API_KEY` into `process.env.API_KEY` and `process.env.GEMINI_API_KEY`」已於 2026-07-05 `0d2800e` 移除。
 
 ## Architectural Constraints
 
 - **Threading:** Single-threaded browser main thread; async via `fetch` promises. No web workers. Heavy indicator math over multi-year series runs synchronously on the main thread.
-- **Global state:** Module-level singletons `memCache`/`loadingPromise` in `services/stockDirectory.ts`; per-call `new GoogleGenAI(...)` in `services/gemini.ts` (a fresh client per analysis call, not a singleton).
+- **Global state:** Module-level singletons `memCache`/`loadingPromise` in `services/stockDirectory.ts`（`:21-22`）。`new GoogleGenAI(...)` 只在後端 `api/_lib/http.ts` 的 `callGeminiWithTimeout`（每次呼叫建一個 client、不是 singleton）；前端 `services/gemini.ts` 不含 SDK（2026-10-01 核對：`git grep -n -E '@google/genai|GoogleGenAI' -- '*.ts' ':!*.test.ts'` 只命中 `api/_lib/http.ts`）。
 - **Circular imports:** None observed. `App.tsx` imports `EntryFilterResult`/`VolumeProjection` types from util modules.
-- **Client-side secret exposure:** `GEMINI_API_KEY` is inlined into the client bundle by `vite.config.ts` (`define`); it ships to the browser.
-- **No backend:** All third-party calls run from the browser and depend on public proxies (`corsproxy.io`, `api.allorigins.win`) or direct FinMind calls.
-- **Two model-config worlds:** `services/gemini.ts` references model names like `gemini-3.5-flash` / `gemini-3.1-pro-preview` and `thinkingConfig`; verify these against the installed `@google/genai` SDK before relying on them.
+- **金鑰只在後端**（2026-10-01 核對；舊版此點為「Client-side secret exposure」）：`GEMINI_API_KEY` 由 `api/_lib/config.ts` 的 `getGeminiApiKey()` 讀；前端經 `services/gemini.ts` 的 `callGeminiApi`／`callGeminiApiStream` 打 `/api/gemini`、`/api/gemini-stream`（2026-07-05 `0d2800e` 起）。對證：`git grep -c 'process.env.API_KEY' -- services/ components/ App.tsx` 無命中。
+- **有後端**（2026-10-01 核對；舊版此點為「No backend」）：第三方呼叫全經 `api/` 的 Serverless 函式——Gemini、Yahoo（2026-07-05）、FinMind（2026-07-09 `07ec1f7`）；前端原始碼沒有外部網址（`git grep -n -E 'https?://' -- App.tsx index.tsx components/ services/ utils/ config/ ':!*.test.ts' ':!*.snap'` 無命中）。
+- **型號只在後端**（2026-10-01 核對；舊版此點為「Two model-config worlds」）：`api/_lib/config.ts` 的 `getModelForMode` 依 `mode` 取 `GEMINI_MODEL_FAST`／`GEMINI_MODEL_THINKING`（fallback `gemini-3.5-flash`／`gemini-3.1-pro-preview`）；前端 payload 只帶 `mode`（多數呼叫另帶 `thinkingConfig`），沒有型號字串。改型號的規則見 `CORE_RULES.md`「本專案關鍵事實」。
 
 ## Anti-Patterns
 
@@ -183,11 +199,10 @@
 **Why it's wrong:** Any state change re-renders the whole dashboard tree; the component is hard to test and grows unbounded.
 **Do this instead:** Extract `useStockAnalysis` (fetch + filter + AI) and `usePortfolio` (localStorage CRUD) hooks; keep `App.tsx` as composition.
 
-### Client-side API key injection
+### Client-side API key injection（已解決，2026-07-05）
 
-**What happens:** `vite.config.ts:13` inlines `GEMINI_API_KEY`; `services/gemini.ts` reads `process.env.API_KEY` in-browser.
-**Why it's wrong:** The key ships in public JS and can be extracted and abused.
-**Do this instead:** Proxy Gemini calls through a server-side function holding the key.
+**原問題：** `vite.config.ts` 以 `define` 把 `GEMINI_API_KEY` 內聯進 bundle，`services/gemini.ts` 在瀏覽器讀 `process.env.API_KEY`——金鑰隨公開 JS 外流。
+**現況（2026-10-01 核對）：** Phase 01 的 `0d2800e`（2026-07-05）移除 `define`、前端改打 `/api/gemini`，金鑰只由後端 `api/_lib/config.ts` 讀；`dab7508`（2026-07-26）再把 `envPrefix: 'VITE_'` 顯式化，由 `utils/viteConfigGuard.test.ts` 鎖住（gate-audit G3）。金鑰外洩由 `npm run gate` 第 4 道掃描。見上方 Architectural Constraints 的「金鑰只在後端」。
 
 ### Public CORS proxy dependency
 
@@ -201,11 +216,10 @@
 **Why it's wrong:** Changes to formatting must be made in several places; high drift risk.
 **Do this instead:** Extract shared formatters into a `prompts/` module and reuse.
 
-### Inconsistent fast/thinking model handling
+### Inconsistent fast/thinking model handling（已解決，2026-06-12／07-05）
 
-**What happens:** Some calls hard-code `gemini-3.5-flash` (`services/gemini.ts:687`) while others switch on `mode`; `App.tsx:155` references a `REACT_APP_GEMINI_API_KEY` env var that the Vite config does not define.
-**Why it's wrong:** Confusing, mismatched configuration paths.
-**Do this instead:** Centralize model selection and the env-var name.
+**原問題：** 部分呼叫在前端寫死 `gemini-3.5-flash`、其他依 `mode` 切換；`App.tsx` 引用 Vite 設定沒有定義的 `REACT_APP_GEMINI_API_KEY`。
+**現況（2026-10-01 核對）：** `REACT_APP_GEMINI_API_KEY` 那段錯誤訊息已於 2026-06-12 `1a7dd92` 移除（`git grep -n 'REACT_APP_' -- '*.ts' '*.tsx'` 無命中）；型號選擇於 2026-07-05 `0d2800e` 移到後端，集中在 `api/_lib/config.ts` 的 `getModelForMode`，金鑰變數只有後端的 `GEMINI_API_KEY`。前端仍有三支分析固定送 `mode: 'fast'`（`analyzeTradeDecision`、`analyzePortfolioHealth`、`analyzeFundamentals`），只有 `analyzeEntryWithGemini` 依使用者選的模式——這是送出的模式固定，不是寫死型號。
 
 ## Error Handling
 
@@ -214,16 +228,17 @@
 **Patterns:**
 - Yahoo: proxy rotation with 429 detection, content-type check, and Yahoo `chart.error` mapping; on TW daily failure, falls back to FinMind (`services/yahoo.ts:272`, `:477`).
 - Directory/search failures swallowed and return `[]` (`services/stockDirectory.ts:62`, `:113`).
-- Gemini failures: `console.error` then throw a generic message; `App.handleRunAnalysis` shows a markdown error block, distinguishing missing API key (`App.tsx:153`).
+- Gemini failures（2026-10-01 核對）：後端把錯誤分類成 `ClassifiedError`（`api/_lib/http.ts`；`MODEL_NOT_FOUND`、`RATE_LIMITED`、`UPSTREAM_ERROR`、`BAD_REQUEST`、`MISSING_KEY`、`CANCELLED`），handler 依代碼回 HTTP 狀態（404／429／502／400／500；`CANCELLED` 對應的 499 只為型別完整，實際不寫回應）與中文訊息；前端 `callGeminiApi`／`callGeminiApiStream` 收到非 2xx 丟 `DataFetchError`、訊息沿用後端的 `message`；`App.tsx` 的 `handleRunAnalysis` 把 `err.message` 顯示在報告區。缺金鑰是後端的 `MISSING_KEY`（500），前端不再自己檢查金鑰（舊版寫的「distinguishing missing API key」已不存在）。
 - `localStorage` parse failures caught in the `useState` initializer (`App.tsx:54`).
 
 ## Cross-Cutting Concerns
 
 **Logging:** `console.warn`/`console.error`/`console.log` only; no structured logging.
 **Validation:** Empty-data guards (`data.length === 0`); ticker normalization + TW/US detection via regex (`services/yahoo.ts:342`, `App.tsx:178`). No schema validation of AI output (free-form markdown).
-**Authentication:** None for users. Gemini API key only (client-exposed). FinMind/Yahoo accessed unauthenticated.
+**Authentication（2026-10-01 核對）:** 使用者沒有帳號登入。`GEMINI_API_KEY` 只在後端；`/api/*` 每支 handler 先過 `api/_lib/guard.ts` 的 `applyGuards`（CORS 與來源白名單、`X-Proxy-Secret` 共享密鑰、Upstash 限流）。FinMind 由後端附上選填的 `FINMIND_TOKEN`；Yahoo 無金鑰，由後端做 cookie／crumb 握手（`api/_lib/yahoo.ts`）。
 **Domain knowledge:** The "朱家泓 × 林穎" trading methodology is encoded both in `utils/entryFilter.ts` (deterministic) and in `services/gemini.ts` system prompts, and additionally in user-authored Claude skills under `.claude/skills/` (separate from the runtime app).
 
 ---
 
 *Architecture analysis: 2026-05-31*
+*Partial re-check 2026-10-01：只修金鑰／Gemini 型號在前端的敘述，並在檔頭列出其餘段落已知過時處（範圍見檔頭）*
