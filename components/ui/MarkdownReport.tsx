@@ -6,25 +6,57 @@ interface MarkdownReportProps {
   content: string;
 }
 
-const BR_TAG = /<br\s*\/?>/i;
+// hast（HTML 語法樹）節點只用到這幾個欄位；自訂最小型別，不直接依賴 react-markdown 底下的型別套件。
+interface HastNode {
+  type: string;
+  value?: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
 
-// react-markdown 不渲染原始 HTML，Claude 常在表格儲存格用 <br> 換行而被原樣顯示成文字；拆成真正的換行元素。
-const withLineBreaks = (children: React.ReactNode): React.ReactNode =>
-  React.Children.toArray(children).map((child, i) =>
-    typeof child === 'string' && BR_TAG.test(child)
-      ? (
-        <React.Fragment key={i}>
-          {child.split(BR_TAG).map((part, j) => (
-            <React.Fragment key={j}>{j > 0 && <br />}{part}</React.Fragment>
-          ))}
-        </React.Fragment>
-      )
-      : child,
-  );
+const BR_TAG = /^<br\s*\/?>$/i;
+const SUB_OPEN = /^<sub>$/i;
+const SUB_CLOSE = /^<\/sub>$/i;
+
+const isRawTag = (node: HastNode, tag: RegExp) => node.type === 'raw' && tag.test(node.value ?? '');
+
+const toElement = (tagName: string, children: HastNode[] = []): HastNode =>
+  ({ type: 'element', tagName, properties: {}, children });
+
+// react-markdown 不渲染原始 HTML（會原樣顯示成文字），Claude 卻常在表格儲存格用 <br> 換行、在結尾用 <sub>…</sub> 標小字免責。
+// 只把這兩種無屬性標籤轉成真元素：<sub> 須在同一層成對才轉，落單的與其他 HTML 仍照原樣顯示成文字。
+const convertInlineTags = (nodes: HastNode[]): HastNode[] => {
+  const out: HastNode[] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (isRawTag(node, BR_TAG)) {
+      out.push(toElement('br'));
+      continue;
+    }
+    if (isRawTag(node, SUB_OPEN)) {
+      const close = nodes.findIndex((n, j) => j > i && isRawTag(n, SUB_CLOSE));
+      if (close !== -1) {
+        out.push(toElement('sub', convertInlineTags(nodes.slice(i + 1, close))));
+        i = close;
+        continue;
+      }
+    }
+    if (node.children) node.children = convertInlineTags(node.children);
+    out.push(node);
+  }
+  return out;
+};
+
+// rehype 外掛：在 react-markdown 把剩下的 raw 節點轉成文字之前執行，所以分得出「真 HTML」與長得像標籤的文字。
+const rehypeInlineTags = () => (tree: HastNode) => {
+  tree.children = convertInlineTags(tree.children ?? []);
+};
 
 const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
   <ReactMarkdown
     remarkPlugins={[remarkGfm]}
+    rehypePlugins={[rehypeInlineTags]}
     components={{
       h2: ({node, ...props}) => (
         <h2 className="text-2xl font-extrabold text-white mt-2 mb-6 pb-4 border-b border-slate-700 flex flex-wrap gap-2 items-center" {...props} />
@@ -67,8 +99,8 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       },
       ul: ({node, ...props}) => <ul className="space-y-3 my-4 pl-4" {...props} />,
       ol: ({node, ...props}) => <ol className="space-y-3 my-4 pl-4 list-decimal marker:text-blue-500" {...props} />,
-      li: ({node, children, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props}>{withLineBreaks(children)}</li>,
-      p: ({node, children, ...props}) => <p className="mb-4 leading-7 text-slate-200" {...props}>{withLineBreaks(children)}</p>,
+      li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
+      p: ({node, ...props}) => <p className="mb-4 leading-7 text-slate-200" {...props} />,
       table: ({node, ...props}) => (
         <div className="overflow-x-auto my-4">
           <table className="w-full text-sm border-collapse" {...props} />
@@ -77,11 +109,11 @@ const MarkdownReport: React.FC<MarkdownReportProps> = ({ content }) => (
       thead: ({node, ...props}) => <thead className="bg-surface-inset" {...props} />,
       tbody: ({node, ...props}) => <tbody className="divide-y divide-surface-line" {...props} />,
       tr: ({node, ...props}) => <tr className="hover:bg-surface-inset/60 transition-colors" {...props} />,
-      th: ({node, children, ...props}) => (
-        <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 border border-surface-line" {...props}>{withLineBreaks(children)}</th>
+      th: ({node, ...props}) => (
+        <th className="px-3 py-2 text-left text-xs font-bold text-slate-300 border border-surface-line" {...props} />
       ),
-      td: ({node, children, ...props}) => (
-        <td className="px-3 py-2 text-sm text-slate-200 align-top border border-surface-line" {...props}>{withLineBreaks(children)}</td>
+      td: ({node, ...props}) => (
+        <td className="px-3 py-2 text-sm text-slate-200 align-top border border-surface-line" {...props} />
       ),
     }}
   >
