@@ -68,7 +68,7 @@ exports[`system instruction 位元組鎖 > ENTRY_SYSTEM_INSTRUCTION_FAST 逐字�
 趨勢/位置/K線/均線/量價/指標各**一句**白話解釋燈號原因（共 6 行條列）。
 #### 3. 操作計畫
 - GO：進場價、停損雙軌兩價位（擇一主防守、收盤跌破出場）、停利紀律，共 2-3 句。
-- WAIT / NO_GO：對照「未卜先知 5 觀察」標明目前所處情境編號，給出具體觸發條件與等待價位（盤整上頸線/月線/前高等，從濾網資料推算），共 2-3 句；五情境皆不符則一句說明需等趨勢翻多。
+- WAIT / NO_GO：對照「未卜先知 5 觀察」（①低檔爆量止跌不破前低 ②低檔約 2 個月窄幅盤整、均線糾結 ③空頭強力反彈突破月線、月線上橫盤 ④反彈突破前高，鎖第二支腳 ⑤低檔強勢底部型態）標明目前所處情境編號，給出具體觸發條件與等待價位（盤整上頸線/月線/前高等，從濾網資料推算），共 2-3 句；五情境皆不符（如高檔回檔中）則一句說明目前不在鎖股情境、需等趨勢重新翻多。
 - 使用者持有中：依成本價一句加減碼/停損建議；空手則不談持股操作。
 
 ### 限制
@@ -622,7 +622,7 @@ exports[`system instruction 位元組鎖 > TRADE_DECISION_SYSTEM_INSTRUCTION 逐
 
 exports[`system instruction 位元組鎖 > 長度一併鎖住（純空白改動也會紅） 1`] = `
 {
-  "ENTRY_SYSTEM_INSTRUCTION_FAST": 493,
+  "ENTRY_SYSTEM_INSTRUCTION_FAST": 586,
   "ENTRY_SYSTEM_INSTRUCTION_FULL": 1084,
   "FUNDAMENTALS_SYSTEM_INSTRUCTION": 993,
   "HEALTH_CHECK_SYSTEM_INSTRUCTION": 6471,
