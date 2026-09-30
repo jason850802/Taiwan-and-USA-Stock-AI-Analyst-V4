@@ -6,3 +6,8 @@
 .planning
 .codex
 node_modules
+
+# api/ 底下的 vitest 測試檔：Vercel 零設定會把 api/ 內非 _／. 開頭的 .ts 都部署成函式，
+# 測試檔也不例外（2026-07-31 正式部署就多了 api/gemini-stream.test，一呼叫就 500）。
+# 由 utils/vercelIgnoreGuard.test.ts 鎖住，改這行前先讀那支測試。
+api/**/*.test.ts
