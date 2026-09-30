@@ -1,0 +1,84 @@
+﻿{
+  "tag": "diag03-munyypiy",
+  "origin": "https://taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+  "route": "/api/gemini-stream",
+  "deployment": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+  "gapMs": 15000,
+  "logLinesFetched": 7,
+  "red": 3,
+  "green": 0,
+  "unknown": 0,
+  "note": "時間軸中 * ＝平台觸發、依請求紀錄歸屬的事件",
+  "verdicts": [
+    {
+      "trace": "diag03-munyypiy-0",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1554,
+      "verdict": "紅：斷線後伺服器仍跑完",
+      "firstSignalMs": null,
+      "killMs": null,
+      "deltasBeforeStop": null,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "5ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "1207ms child.fakeCli.delta#2",
+        "1808ms child.fakeCli.delta#3",
+        "2408ms child.fakeCli.delta#4",
+        "3008ms child.fakeCli.delta#5",
+        "3609ms child.fakeCli.done emitted=5",
+        "3610ms handler-return",
+        "3611ms response-finish",
+        "3611ms response-close finished=true"
+      ]
+    },
+    {
+      "trace": "diag03-munyypiy-1",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1207,
+      "verdict": "紅：斷線後伺服器仍跑完",
+      "firstSignalMs": null,
+      "killMs": null,
+      "deltasBeforeStop": null,
+      "serverTimeline": [
+        "0ms handler-start",
+        "1ms child.fakeCli.spawn",
+        "2ms child.fakeCli.stdin",
+        "603ms child.fakeCli.delta#1",
+        "1204ms child.fakeCli.delta#2",
+        "1805ms child.fakeCli.delta#3",
+        "2406ms child.fakeCli.delta#4",
+        "3006ms child.fakeCli.delta#5",
+        "3606ms child.fakeCli.done emitted=5",
+        "3607ms handler-return",
+        "3607ms response-finish",
+        "3608ms response-close finished=true"
+      ]
+    },
+    {
+      "trace": "diag03-munyypiy-2",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 939,
+      "verdict": "紅：斷線後伺服器仍跑完",
+      "firstSignalMs": null,
+      "killMs": null,
+      "deltasBeforeStop": null,
+      "serverTimeline": [
+        "0ms handler-start",
+        "1ms child.fakeCli.spawn",
+        "1ms child.fakeCli.stdin",
+        "602ms child.fakeCli.delta#1",
+        "1203ms child.fakeCli.delta#2",
+        "1803ms child.fakeCli.delta#3",
+        "2405ms child.fakeCli.delta#4",
+        "3005ms child.fakeCli.delta#5",
+        "3607ms child.fakeCli.done emitted=5",
+        "3607ms handler-return",
+        "3608ms response-finish",
+        "3608ms response-close finished=true"
+      ]
+    }
+  ],
+  "otherLogs": []
+}

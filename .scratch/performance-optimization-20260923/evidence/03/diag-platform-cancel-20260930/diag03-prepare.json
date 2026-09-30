@@ -1,0 +1,56 @@
+{
+  "head": "abc8d9bb02694de7909a7dd592d993a1283ec523",
+  "createdAt": "2026-09-30T10:30:09.446Z",
+  "handler": "api/gemini-stream.ts",
+  "handlerSha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+  "secretsChecked": [
+    "GEMINI_API_KEY",
+    "FINMIND_TOKEN"
+  ],
+  "routes": [
+    {
+      "route": "/api/gemini-stream",
+      "vcConfig": {
+        "runtime": "nodejs22.x",
+        "handler": "index.cjs",
+        "launcherType": "Nodejs",
+        "shouldAddHelpers": true,
+        "supportsResponseStreaming": true,
+        "maxDuration": 60,
+        "supportsCancellation": true
+      },
+      "extraEvents": false,
+      "bundleSha256": "c3c8ee57c5b9aab5a5e4668a1afc7a4b08f49c3559c5aa9bdd37b8ed2cf630aa",
+      "bundleBytes": 1861007
+    },
+    {
+      "route": "/api/gemini-stream-events",
+      "vcConfig": {
+        "runtime": "nodejs22.x",
+        "handler": "index.cjs",
+        "launcherType": "Nodejs",
+        "shouldAddHelpers": true,
+        "supportsResponseStreaming": true,
+        "maxDuration": 60,
+        "supportsCancellation": true
+      },
+      "extraEvents": true,
+      "bundleSha256": "272abb64e8b17e56fda420b049f96e24be3a57e754a13db68a63afb41640ac16",
+      "bundleBytes": 1861006
+    },
+    {
+      "route": "/api/gemini-stream-control",
+      "vcConfig": {
+        "runtime": "nodejs22.x",
+        "handler": "index.cjs",
+        "launcherType": "Nodejs",
+        "shouldAddHelpers": true,
+        "supportsResponseStreaming": true,
+        "maxDuration": 60
+      },
+      "extraEvents": false,
+      "bundleSha256": "c3c8ee57c5b9aab5a5e4668a1afc7a4b08f49c3559c5aa9bdd37b8ed2cf630aa",
+      "bundleBytes": 1861007
+    }
+  ]
+}

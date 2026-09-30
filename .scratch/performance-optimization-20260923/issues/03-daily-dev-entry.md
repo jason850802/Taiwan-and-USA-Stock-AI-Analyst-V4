@@ -101,3 +101,23 @@ Type: task
 平台 r3 Preview 已部署 READY（使用者另明確同意具體目的地與包），12 筆受控請求已保存。五 OPTIONS 204、固定 GET 200、無效串流 400、兩種 AI 固定請求 200；**首段後客戶端取消，伺服器仍完成五段＋done，無 fakeCli.kill，取消傳遞未通過**。見 platform03-preview-20260929-r3/{prepare, deployment, raw, platform-logs, cancellation-analysis}.json。
 
 剩餘缺口：平台取消傳遞；真平台配置／真上游不在本次固定資料包驗證內；Ctrl+C／終端機關閉及回復演練未測、程序輪詢與非原子身分檢查限制仍在。下一步從該平台 trace 診斷，不能將本機 PASS 代替平台取消；原埠不需從頭重做。**03 維持 OPEN，04 不自動解鎖。**
+
+## 2026-09-30 平台取消診斷（diagnosing-bugs；非正式證據）
+
+先建紅燈迴圈：對既有 r3 Preview 送與第 11 筆同形的請求（收到首段 delta 即斷線），當場以 `vercel logs` 撈同請求的平台紀錄判定；4/4 紅，重現「客戶端已斷、伺服器照樣五段＋done」。
+
+根因：**Vercel 的請求取消是 opt-in**，函式設定要有 `supportsCancellation: true` 才會通知函式用戶端已斷線；r3 包的 `.vc-config.json` 沒有，正式站也沒有 `vercel.json`。使用者授權上傳一個診斷 Preview（`dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx`），同一份已提交的 `api/gemini-stream.ts`、bundle 雜湊相同，路由之間只差這個旗標；假 CLI 20 段 × 600 ms、請求間隔 15 秒：
+
+| 組別 | 旗標 | 結果 |
+|---|---|---|
+| 產品碼原樣 | 開 | 3/3 停；斷線後約 0.85 秒 kill，20 段只送 1 段 |
+| 送出 400 ms 就斷線（伺服器尚未寫出） | 開 | 3/3 停；1 筆 48 ms 即停，2 筆在首段寫出後約 200 ms |
+| 多記 req error/close、res error | 開 | 3/3 停；平台同一刻發出 res 'close'（finished=false）、req 'aborted'、req 'error'（aborted／ECONNRESET） |
+| 對照 | 關 | 3/3 跑滿 12.6 秒到 done |
+| r3 回歸（5 段） | 無 | 3/3 紅 |
+
+結論：開旗標後現有 `api/_lib/clientAbort.ts` 不必改就能停。「需加聽 req 'error'」的假設否證：第一輪看到的提早 error，是三筆在 Fluid 同一實例重疊、平台事件沒有 trace 而混入他筆，拉開間隔後消失。停止訊號多半在函式下一次寫出後約 200～280 ms 才到（偶爾立即）；長時間靜默思考時，可能要等第一段文字寫出才停。限制：用假 CLI 路徑，真 Gemini 在平台上的中止未實測。
+
+處置（使用者 2026-09-30 裁定全部 API 開啟）：新增 `vercel.json`，對 `api/**/*.ts` 開 `supportsCancellation`、不設 `maxDuration`（vercel.json 與程式碼設定逐欄合併，`gemini-stream.ts` 的 200 秒照舊，已核對 CLI 原始碼）；設定鎖 `utils/vercelConfigGuard.test.ts` 先紅（缺 vercel.json）後綠；gate 838/838、五道全綠。這項刻意改動「原 Vercel 部署配置」，屬使用者核准的例外。
+
+仍待：以提交版工具與新 run-id 做正式平台驗收（需另行授權上傳 Preview）。腳本與原始結果見 [診斷紀錄](../evidence/03/diag-platform-cancel-20260930/README.md)。**03 維持 OPEN，04 不自動解鎖。**

@@ -1,0 +1,72 @@
+﻿{
+  "tag": "diag03-munz4sdk",
+  "origin": "https://taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app",
+  "route": "/api/gemini-stream",
+  "deployment": "dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+  "gapMs": 15000,
+  "logLinesFetched": 18,
+  "red": 0,
+  "green": 3,
+  "unknown": 0,
+  "note": "時間軸中 * ＝平台觸發、依請求紀錄歸屬的事件",
+  "verdicts": [
+    {
+      "trace": "diag03-munz4sdk-0",
+      "clientCanceledAtMs": 434,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 808,
+      "firstSignal": "response-close",
+      "killMs": 808,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "1ms child.fakeCli.spawn",
+        "1ms child.fakeCli.stdin",
+        "602ms child.fakeCli.delta#1",
+        "808ms* response-close finished=false",
+        "808ms child.fakeCli.kill emitted=1",
+        "809ms* request-aborted",
+        "809ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munz4sdk-1",
+      "clientCanceledAtMs": 402,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 813,
+      "firstSignal": "response-close",
+      "killMs": 814,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "607ms child.fakeCli.delta#1",
+        "813ms* response-close finished=false",
+        "814ms child.fakeCli.kill emitted=1",
+        "814ms* request-aborted",
+        "815ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munz4sdk-2",
+      "clientCanceledAtMs": 402,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 48,
+      "firstSignal": "response-close",
+      "killMs": 48,
+      "deltasBeforeStop": 0,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "48ms* response-close finished=false",
+        "48ms child.fakeCli.kill emitted=0",
+        "49ms* request-aborted",
+        "51ms handler-return",
+        "52ms response-finish"
+      ]
+    }
+  ],
+  "otherLogs": []
+}
