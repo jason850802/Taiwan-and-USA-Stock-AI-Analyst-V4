@@ -1,15 +1,21 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-09-30 (partial re-check; original analysis 2026-05-31)
+**Analysis Date:** 2026-10-01 (partial re-check; original analysis 2026-05-31)
 
-> **2026-09-30 部分核對**：只核對並修正「Comments」與「TypeScript Configuration」兩節，
-> 其餘段落仍是 2026-05-31 的分析、未重新核對；與 `CORE_RULES.md` 衝突時以 CORE_RULES 為準
-> （例：本檔提到的 `process.env.API_KEY` 前端注入已不存在——`vite.config.ts` 沒有 `define` 設定、
-> `envPrefix` 只曝 `VITE_`，金鑰只在後端）。
+> **部分核對**：下列範圍已對照現況修正，每條附對證的指令或檔案——
+> - 2026-09-30：「Comments」「TypeScript Configuration」兩節。
+> - 2026-10-01：檔頭 Scope；「Linting」「Environment & Secrets」兩節；「Error Handling」第一點；
+>   「Styling」第一點中 Tailwind 載入方式那一句；「Where to Add New Code」的資料／AI 整合那一點。
+>
+> 其餘段落仍是 2026-05-31 的分析、未重新核對——當時還沒有 `api/`（2026-07-05 `6b13f22` 起）與
+> `config/`（2026-07-29 `88363f1` 起），那些段落的範例也不涵蓋它們。與 `CORE_RULES.md` 衝突時
+> 以 CORE_RULES 為準。
 
-> Scope: application source only — `App.tsx`, `index.tsx`, `types.ts`,
-> `components/`, `services/`, `utils/`, `prompts/`. The `.claude/` directory
-> (GSD tooling) and `node_modules/` are excluded.
+> Scope：應用程式原始碼——根目錄的 `App.tsx`、`index.tsx`、`types.ts`，以及 `components/`、
+> `services/`、`utils/`、`prompts/`、`config/`（台股費率／稅率設定）、`api/`（後端：Vercel
+> Serverless 函式，共用模組在 `api/_lib/`）。不含 `node_modules/` 與 `.claude/`——後者是 agent
+> 工具目錄，進 git 的只有 `.claude/skills/`（專案 skills），其餘（本機設定、agent worktree）由
+> `.gitignore` 的 `.claude/*` 排除。
 
 ## Naming Patterns
 
@@ -78,10 +84,15 @@
   comment banners (`// ── ... ──`) — follow this when adding sections.
 
 **Linting:**
-- No linter configured (no ESLint/Biome dep, no config file). One inline
-  `// eslint-disable-next-line react-hooks/exhaustive-deps` exists in
-  `components/Portfolio.tsx` (line ~609), implying ESLint may have been run
-  ad-hoc historically, but it is not part of the committed toolchain.
+- 沒有 linter：`package.json` 沒有 ESLint／Biome，也沒有進 git 的設定檔
+  （`git ls-files | grep -i -E 'eslint|biome'` 為空）。
+- 原始碼裡有 5 處停用 `react-hooks/exhaustive-deps`（hook 依賴陣列完整性檢查）的註解，分在 4 個檔：
+  `components/FundamentalsPanel.tsx:103`、`components/portfolio/PnlHistorySection.tsx:110` 與 `:113`、
+  `components/portfolio/useHoldingPrices.ts:138`（以上是 `eslint-disable-next-line`）、
+  `components/portfolio/SellModal.tsx:63`（`eslint-disable-line`）。專案沒裝 ESLint，這些註解目前
+  沒有工具會讀。對證：`git grep -n 'eslint-disable' -- '*.ts' '*.tsx'`。
+  - 舊版記載的 `components/Portfolio.tsx` ~609 那一處，已在 `03bf94a`（2026-07-23，Phase 12 抽出
+    Portfolio 的 hooks）移到 `components/portfolio/useHoldingPrices.ts`。
 
 ## TypeScript Configuration
 
@@ -130,9 +141,14 @@ consistency.
 
 ## Error Handling
 
-- Service functions that require the key throw early:
-  `if (!process.env.API_KEY) throw new Error("API Key is missing.");` at the
-  top of every Gemini call (`services/gemini.ts`).
+- 金鑰檢查在後端、不在前端。前端的 AI 呼叫一律經 `services/gemini.ts` 的 `callGeminiApi`／
+  `callGeminiApiStream` 打 `/api/gemini`、`/api/gemini-stream`；後端預設的 Gemini API 路徑
+  （`api/_lib/llm.ts` 的 `callGeminiApiProvider`）讀不到金鑰就丟 `ClassifiedError('MISSING_KEY')`，
+  handler 回 500 與中文訊息（`api/_lib/http.ts` 的 `errorMessages`）。前端收到非 2xx 回應時丟
+  `DataFetchError`（`services/fetchError.ts`；429→`RATE_LIMIT`、5xx→`BACKEND_DOWN`、其餘→`UNKNOWN`），
+  訊息沿用後端回的 `message`。
+  - 對證：`git grep -c 'process.env.API_KEY' -- services/ components/ App.tsx` 沒有任何命中；
+    `git grep -n 'MISSING_KEY' -- api/ ':!*.test.ts'`。
 - Network/parse failures are caught and logged with `console.warn` /
   `console.error`, then either return a safe fallback (`[]`, `null`) or rethrow
   a normalized `Error`. Examples: proxy rotation in `queryYahoo`, the
@@ -197,8 +213,11 @@ consistency.
 ## Styling
 
 - **Tailwind CSS utility classes** inline in `className` (no CSS modules,
-  no styled-components). Tailwind is loaded via `index.html` (not a build dep
-  in `package.json`). Dark theme: `slate-800/900` surfaces, `blue/indigo`
+  no styled-components). Tailwind 在建置期編譯（本句 2026-10-01 核對）：`tailwindcss`
+  `^3.4.19` 是 devDependency，經 PostCSS（`postcss.config.js`，另掛 `autoprefixer`）處理
+  `index.css` 的 `@tailwind` 指令（`index.tsx` 第 1 行 import），設定在 `tailwind.config.js`；
+  `index.html` 沒有 Tailwind CDN（`git grep -i tailwind -- index.html` 沒有命中）。
+  Dark theme: `slate-800/900` surfaces, `blue/indigo`
   accents. Domain color convention: **red = up/bullish, green/emerald =
   down/bearish** (Taiwan market convention) — see candle colors in
   `StockChart.tsx` (`#ef4444` up, `#10b981` down) and `AnalysisResult.tsx`
@@ -209,17 +228,32 @@ consistency.
 
 ## Environment & Secrets
 
-- `.env` holds `GEMINI_API_KEY` (git-ignored). Build-time injection in
-  `vite.config.ts` `define` exposes it as `process.env.API_KEY` /
-  `process.env.GEMINI_API_KEY`. Service code reads `process.env.API_KEY`.
-  Never hardcode or echo the key value.
+- **金鑰紅線**（`CORE_RULES.md` Constraints）：`GEMINI_API_KEY` 只存在後端（Vercel 環境變數／本機
+  `.env`），絕不可進前端 bundle 或 git。`.gitignore` 排除 `.env`、`.env.*`，只有範本 `.env.example`
+  進 git（列出變數名，值留空或只放範例值）。不要把金鑰值寫死在程式裡，也不要印出來。
+- 後端讀秘密：`GEMINI_API_KEY` 由 `api/_lib/config.ts` 的 `getGeminiApiKey()` 讀 `process.env`；
+  其餘後端設定也只在 `api/` 內讀 `process.env`（`api/_lib/config.ts`、`api/_lib/llm.ts`、
+  `api/_lib/ratelimit.ts`、`api/finmind.ts`）。
+- 前端拿不到後端秘密：`vite.config.ts` 顯式設 `envPrefix: 'VITE_'`、沒有 `define`，只有 `VITE_`
+  前綴的變數會被內聯進 bundle；這條由 `utils/viteConfigGuard.test.ts` 鎖住，改 Vite 設定前先讀它。
+  前端原始碼讀環境變數的只有 `services/_shared/apiClient.ts`（`VITE_PROXY_SECRET`）。
+  - 對證：下面這條只命中 `services/_shared/apiClient.ts`——
+    `git grep -n -E 'process\.env|import\.meta' -- App.tsx index.tsx types.ts components/ services/ utils/ config/ ':!*.test.ts'`；
+    `git grep -c 'process.env.API_KEY' -- services/ components/ App.tsx` 沒有任何命中。
+- 驗證金鑰沒外洩用 `npm run gate` 的金鑰掃描，不要用手動 `grep AIza`（原因見 `CORE_RULES.md`
+  「機械驗收 gate」段）。
 
 ## Where to Add New Code
 
 - New UI component → `components/<PascalCase>.tsx`, `React.FC<Props>` + default
   export, Tailwind classes, red/green = up/down.
-- New data/AI integration → `services/<camelCase>.ts`, named exports,
-  `process.env.API_KEY` guard for AI calls, proxy + fallback for network.
+- 新的資料／AI 整合（本點 2026-10-01 核對）→ 前端 `services/<camelCase>.ts`（named exports）
+  只打同源的 `/api/*`，請求帶 `services/_shared/apiClient.ts` 的 `proxyHeaders`（現有的 `fetch('/api/…')`
+  都這樣帶）。需要金鑰或要打外部服務的部分放後端 `api/<name>.ts`（Vercel 函式，共用模組放
+  `api/_lib/`），handler 第一步先過 `api/_lib/guard.ts` 的 `applyGuards`（CORS、來源檢查、
+  共享密鑰、限流；現有 5 支 handler 都是）。AI 呼叫沿用 `services/gemini.ts` 的 `callGeminiApi`／
+  `callGeminiApiStream`，金鑰只在後端（見 Error Handling 與 Environment & Secrets）。行情備援可參考
+  `services/yahoo.ts`：台股日線在 Yahoo 失敗時改抓 FinMind（`fetchFinMindDailyData`）。
 - New pure calculation → `utils/<camelCase>.ts`, pure functions over arrays,
   null-padded warm-up, default-param periods.
 - New shared type → root `types.ts` (or co-located `export interface` next to
@@ -227,4 +261,6 @@ consistency.
 
 ---
 
-*Convention analysis: 2026-05-31; re-checked 2026-09-30 (Comments and TypeScript Configuration only)*
+*Convention analysis: 2026-05-31; re-checked 2026-09-30 (Comments, TypeScript Configuration) and
+2026-10-01 (Scope, Linting, Environment & Secrets, and parts of Error Handling / Styling /
+Where to Add New Code — see the header for exact scope)*

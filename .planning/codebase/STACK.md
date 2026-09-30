@@ -29,7 +29,10 @@
 - React `^19.2.3` - UI framework (`react`, `react-dom`). Entry mounts via `ReactDOM.createRoot` in `index.tsx` inside `<React.StrictMode>`. App is a single-component state container (`App.tsx`, ~600 lines) with all view state in `useState` hooks; no router (view toggled by `currentView: 'dashboard' | 'portfolio'`).
 
 **Testing:**
-- None detected. No test runner, no test files, no test script in `package.json`.
+- Vitest（devDependency `~3.2.7`，2026-07-13 `6ed7713` 建立跑道）：`npm run test`（＝`vitest run`），
+  機械驗收 `npm run gate` 的第 2 道就是它；設定寫在 `vite.config.ts` 的 `test` 區塊。2026-09-30 時
+  49 個測試檔、811 個案例。現況、慣例與已知缺口見同目錄的 `TESTING.md`（本點 2026-10-01 更正，
+  舊版寫「沒有測試」）。
 
 **Build/Dev:**
 - Vite `^6.2.0` - Dev server (port 3000, host `0.0.0.0`) and bundler. Scripts: `dev` (vite), `build` (vite build), `preview` (vite preview).
@@ -92,3 +95,4 @@
 
 *Stack analysis: 2026-05-31*
 *Updated 2026-07-13: D-1b build-time Tailwind + D-1c importmap removal（依賴單軌化）*
+*Updated 2026-10-01: 只改 Testing 一點（指向 `TESTING.md` 現況）；其餘段落未重新核對*

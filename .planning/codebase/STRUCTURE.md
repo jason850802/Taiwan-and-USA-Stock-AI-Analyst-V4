@@ -88,7 +88,10 @@ Taiwan-and-USA-Stock-AI-Analyst-V4/
 - `types.ts`: shared domain contracts.
 
 **Testing:**
-- None present (no test files, runner, or config).
+- Vitest（`~3.2.7`）；沒有獨立的 `vitest.config.*`，設定寫在 `vite.config.ts` 的 `test` 區塊。測試檔副檔名
+  一律 `.test.ts`（`<模組>.test.ts`，同一模組多支時 `<模組>.<面向>.test.ts`），多數與受測檔放同目錄，
+  snapshot 在 `utils/__snapshots__/`；2026-09-30 時 49 個測試檔、811 個案例。放置規則與例外見同目錄的
+  `TESTING.md`（本點 2026-10-01 更正，舊版寫「沒有測試」）。
 
 ## Naming Conventions
 
@@ -143,3 +146,4 @@ Taiwan-and-USA-Stock-AI-Analyst-V4/
 ---
 
 *Structure analysis: 2026-05-31*
+*Updated 2026-10-01: 只改 Key File Locations 的 Testing 一點（指向 `TESTING.md` 現況）；其餘段落未重新核對*
