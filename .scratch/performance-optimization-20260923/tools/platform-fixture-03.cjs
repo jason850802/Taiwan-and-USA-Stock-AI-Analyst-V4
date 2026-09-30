@@ -7,12 +7,17 @@ const { performance } = require('node:perf_hooks');
 const fixture = require('./trace-preload.cjs');
 const context = new AsyncLocalStorage();
 const record = (event, detail = {}) => console.log(JSON.stringify({ marker: 'perf03-platform',
-  ...detail, trace: context.getStore()?.trace ?? detail.trace ?? null, event, atMs: performance.now() }));
+  ...detail, trace: detail.trace ?? context.getStore()?.trace ?? null, event, atMs: performance.now() }));
 for (const key of ['GEMINI_API_KEY', 'FINMIND_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN',
   'PROXY_SHARED_SECRET', 'ALLOWED_ORIGIN']) delete process.env[key];
 process.env.LLM_PROVIDER = 'claude-cli';
 process.env.CLAUDE_CLI_PATH = process.execPath;
 process.env.PERF03_TEST_APP = '1';
+// 固定測試值只供後端守門驗收，保留真守門與真限流器程式，所有 Redis 請求仍由固定回應接走。
+process.env.ALLOWED_ORIGIN = 'https://perf03.invalid';
+process.env.PROXY_SHARED_SECRET = 'perf03-fixed-secret';
+process.env.UPSTASH_REDIS_REST_URL = 'https://perf03.upstash.invalid';
+process.env.UPSTASH_REDIS_REST_TOKEN = 'perf03-fixed-token';
 childProcess.spawn = (command, args) => {
   if (!fixture.looksLikeClaude(command, args)) throw new Error('平台固定資料禁止啟動非假 CLI');
   return fixture.createFakeCli({ args, ai: { intervalMs: 600, deltas: 5 }, record, trace: context.getStore()?.trace ?? null });
@@ -27,16 +32,19 @@ globalThis.fetch = async (input, init) => {
   }
   record('fixture-fetch', { kind: kind.kind });
   if (init?.signal?.aborted) throw init.signal.reason;
-  return fixture.fixtureResponse(kind, null, { commands: kind.kind === 'ratelimit' ? fixture.countRedisCommands(init?.body) : null });
+  const step = kind.kind === 'ratelimit' && context.getStore()?.scenario === 'rate-limit' ? { remaining: -1 } : null;
+  return fixture.fixtureResponse(kind, step, { commands: kind.kind === 'ratelimit' ? fixture.countRedisCommands(init?.body) : null });
 };
 module.exports.wrap = handler => async (req, res) => {
   const header = req.headers['x-perf03-trace'];
   const trace = typeof header === 'string' && /^[a-z0-9-]{1,90}$/.test(header) ? header : 'unlabelled';
-  return context.run({ trace }, async () => {
+  const scenario = req.headers['x-perf03-case'];
+  return context.run({ trace, scenario }, async () => {
     record('handler-start');
-    req.once('aborted', () => record('request-aborted'));
-    res.once('close', () => record('response-close', { finished: res.writableFinished }));
-    res.once('finish', () => record('response-finish'));
+    // 平台觸發事件可能沒有 AsyncLocalStorage，明綁此請求 trace，避免併行事件歸到其他請求。
+    req.once('aborted', () => record('request-aborted', { trace }));
+    res.once('close', () => record('response-close', { trace, finished: res.writableFinished }));
+    res.once('finish', () => record('response-finish', { trace }));
     try { await handler(req, res); }
     finally { record('handler-return'); }
   });
