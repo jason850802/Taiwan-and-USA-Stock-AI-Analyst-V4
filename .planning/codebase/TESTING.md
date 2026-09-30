@@ -49,7 +49,9 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 - **就地放置**：測試檔與受測檔同目錄，檔名 `<模組>.test.ts`（例：`utils/portfolioFees.ts` ↔
   `utils/portfolioFees.test.ts`、`api/_lib/guard.ts` ↔ `api/_lib/guard.test.ts`）。後端由 ADR-0002
   （2026-07-28）拍板；2026-07-30 起 `services/`、`components/` 也開始有同目錄的測試。核對時 49 檔中
-  有 39 檔的同目錄就有同名受測檔。
+  有 38 檔的同目錄就有同名受測檔（2026-10-01 更正，原寫 39——漏算守門測試
+  `utils/appLazyBoundaries.test.ts`）。對證：對 `git ls-files '*.test.ts'` 的每支，取檔名第一段為
+  `<模組>`，檢查同目錄有沒有 `<模組>.ts`／`<模組>.tsx`。
 - **同一模組多支測試**：`<模組>.<面向>.test.ts`，例：`services/yahoo.loading.test.ts`、
   `services/yahoo.revalidation.test.ts`、`services/finmind.bounds.test.ts`、
   `api/_lib/llm.claude-cli.test.ts`。
@@ -59,15 +61,15 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
   測 `QuarterlyTrendCharts.tsx` 匯出的 `formatEpsLabel`。
 - **測試標題**：`it` 用繁體中文描述行為；`describe` 常以受測函式名分組（核對時 947 行標題中
   894 行含中文，純英文的多是 `describe('getModelForMode', …)` 這類分組）。
-- 同目錄沒有同名受測檔的 10 支都在 `utils/`，分三類：
-  1. **同目錄、以功能命名**：`utils/backfillFromTxns.test.ts`（測 `utils/portfolioHistory.ts` 的回推）、
+- 同目錄沒有同名受測檔的 11 支（2026-10-01 更正，原寫 10）都在 `utils/`，分三類：
+  1. **同目錄、以功能命名**（2 支）：`utils/backfillFromTxns.test.ts`（測 `utils/portfolioHistory.ts` 的回推）、
      `utils/statementParsers/parsers.test.ts`（同目錄的多個對帳單解析器合測）。
-  2. **早期放置，不搬**：2026-07-28 以前的測試全放 `utils/`，受測物在 `services/` 也一樣——
+  2. **早期放置，不搬**（5 支）：2026-07-28 以前的測試全放 `utils/`，受測物在 `services/` 也一樣——
      `fetchError`（測 `services/fetchError.ts`）、`geminiRules`／`geminiPrompts`（測 `services/gemini.ts`）、
      `geminiCache`（測 `services/_shared/geminiCache.ts`）。這幾支檔頭寫的「沿用現行 vitest 收錄範圍」
      描述的是當時現況、不是規定（ADR-0002 背景節）；ADR-0002 也決定不搬舊檔。之後同主題的
      `utils/portfolioHealthStreaming.test.ts`（測 `services/gemini.ts`）也放在這裡。
-  3. **守門測試**：受測物是根目錄的設定檔或跨檔結構，見下節。
+  3. **守門測試**（4 支）：受測物是根目錄的設定檔或跨檔結構，見下節。
 
 ## 守門測試（guard tests）
 
@@ -159,3 +161,5 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 *對證來源：`package.json`、`vite.config.ts`（`test` 區塊）、`tsconfig.json`、`.vercelignore`、
 `scripts/run-gate.mjs`、`docs/adr/0002-api-lib-test-colocation.md`、`git ls-files '*.test.ts'`，
 以及 2026-09-30 在 worktree 跑的 `npm run test`（49 檔／811 案例全綠）。*
+*2026-10-01 更正：「放置與命名」的同名受測檔計數 39／10 → 38／11（原計數漏了守門測試
+`utils/appLazyBoundaries.test.ts`；三類各標支數 2＋5＋4＝11）。其餘內容未變動。*
