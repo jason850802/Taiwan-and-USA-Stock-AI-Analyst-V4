@@ -156,7 +156,7 @@
 
 ## Test Coverage Gaps
 
-- **What's not tested:** Everything. No test runner, no test files; `package.json` declares only `dev`/`build`/`preview` scripts.
+- **現況（2026-10-01 更正，舊版寫「全部沒測試」）：** 已有 Vitest 測試跑道（`~3.2.7`，2026-07-13 `6ed7713` 建立，`npm run test`）；2026-09-30 時 49 個測試檔、811 個案例。目前的覆蓋與已知缺口以同目錄的 `TESTING.md` 為準。下方「Highest-risk untested logic」是 2026-05-31 的原始清單，未逐項重新核對。
 - **Highest-risk untested logic:**
   - Indicator math — `utils/math.ts` (RSI/MACD/KDJ/Bollinger), including the non-standard MACD params (10,20,10) and KDJ (5,3).
   - Entry filter decision logic — `utils/entryFilter.ts` (swing detection, trend classification, SOP/precept/decision).
@@ -197,3 +197,4 @@
 ---
 
 *Concerns audit: 2026-05-31*
+*Updated 2026-10-01: 只改 Test Coverage Gaps 第一點（指向 `TESTING.md` 現況）；其餘段落未重新核對*
