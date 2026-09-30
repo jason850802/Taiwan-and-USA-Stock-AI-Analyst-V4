@@ -23,7 +23,7 @@ import path from 'node:path';
 const ROOT = path.resolve(__dirname, '..');
 const TEST_FILE_RULE = 'api/**/*.test.ts';
 // vitest 預設 include（**/*.{test,spec}.?(c|m)[jt]s?(x)）收得到的測試檔命名
-const TEST_LIKE = /\.(test|spec)\.[cm]?[jt]sx?$/;
+const VITEST_FILE_PATTERN = /\.(test|spec)\.[cm]?[jt]sx?$/;
 
 function vercelIgnoreRules(): string[] {
   return readFileSync(path.join(ROOT, '.vercelignore'), 'utf8')
@@ -43,7 +43,7 @@ function filesUnder(dir: string): string[] {
 }
 
 describe('.vercelignore：api/ 測試檔不部署成函式', () => {
-  const testFiles = filesUnder('api').filter((file) => TEST_LIKE.test(file));
+  const testFiles = filesUnder('api').filter((file) => VITEST_FILE_PATTERN.test(file));
 
   it('找得到 api/ 的測試檔（避免清單為空時空轉的假綠燈）', () => {
     expect(testFiles).toContain('api/gemini-stream.test.ts');
