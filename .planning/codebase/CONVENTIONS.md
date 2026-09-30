@@ -1,6 +1,11 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-05-31
+**Analysis Date:** 2026-09-30 (partial re-check; original analysis 2026-05-31)
+
+> **2026-09-30 部分核對**：只核對並修正「Comments」與「TypeScript Configuration」兩節，
+> 其餘段落仍是 2026-05-31 的分析、未重新核對；與 `CORE_RULES.md` 衝突時以 CORE_RULES 為準
+> （例：本檔提到的 `process.env.API_KEY` 前端注入已不存在——`vite.config.ts` 沒有 `define` 設定、
+> `envPrefix` 只曝 `VITE_`，金鑰只在後端）。
 
 > Scope: application source only — `App.tsx`, `index.tsx`, `types.ts`,
 > `components/`, `services/`, `utils/`, `prompts/`. The `.claude/` directory
@@ -92,6 +97,21 @@ From `tsconfig.json`:
   for Recharts custom shapes/tooltips in `components/StockChart.tsx`. When the
   shape is known, prefer explicit interfaces (as `types.ts` does); fall back to
   `any` only for third-party callback payloads, matching existing usage.
+- `exclude: ["node_modules", "dist", ".claude", "scripts"]`, and there is no
+  `include` — everything else under the repo root is type-checked, test files
+  included; with `allowJs`, root-level JS counts too (currently
+  `postcss.config.js`, `tailwind.config.js`; check with
+  `npx --no -- tsc --listFilesOnly`). Why each entry:
+  - `node_modules`：自訂 `exclude` 會**整個取代** TS 的預設排除清單、不是附加，所以必須顯式列出。
+  - `dist`：沒有它時，`dist/` 存在就會把建置產物（`dist/assets/*.js`）一起型檢，`tsc` 的結果取決於
+    有沒有先 build（2026-07-26，`dd3e1e8`，gate-audit G5）。
+  - `.claude`：只是把意圖寫明——TS 預設 glob 本來就不收 `.` 開頭的路徑段，`.claude/` 底下的檔案
+    從沒被收進來過（`dd3e1e8` 以 `.claude/hooks/` 的 JS 實測，修前修後都是 0 檔）。
+  - `scripts`：開發／量測腳本不屬於 App。2026-09-30 `scripts/benchmark-market-data.mjs` 為了量測把
+    `globalThis.fetch` 換成假函式；`@vercel/node` 建置 `api/` 函式時用這份 tsconfig 型檢，把假函式
+    當成 `fetch` 的型別正本，正式建置 log 多出 5 個 error TS（只印不擋，gate 與 runtime 都不會紅）。
+    加入於 `ac456dc`（merge `8176fca`），由 `utils/tsconfigScopeGuard.test.ts` 鎖住——改
+    `exclude`／`include` 前先讀它的檔頭。
 
 ## Import Organization
 
@@ -132,9 +152,19 @@ consistency.
 
 ## Comments
 
-- No JSDoc/TSDoc convention. Comments are inline `//` (often Chinese),
-  describing business rules (the 朱家泓 "六六大順" trading logic in
+- Inline `//` comments (often Chinese) are the most common form, describing
+  business rules (the 朱家泓 "六六大順" trading logic in
   `utils/entryFilter.ts` and the rule library in `services/gemini.ts`).
+- `/** … */` doc comments directly above a function, constant, type or field
+  are an established convention (test files included), usually one line in
+  Traditional Chinese — e.g. `/** 模式對應 CLI effort；env 可覆寫 */`
+  (`api/_lib/llm.ts`). Longer explanations use a multi-line `/**` block.
+  JSDoc tags are rare (`@param` only); there is no tag convention and no
+  generated API docs.
+  - 對證（2026-09-30）：單行型 `git grep -c -E '^\s*/\*\* .*\*/\s*$' -- '*.ts' '*.tsx'`
+    → 40 檔、124 處（其中測試檔 6 檔、16 處）；多行區塊開頭
+    `git grep -c -E '^\s*/\*\*\s*$' -- '*.ts' '*.tsx'` → 29 檔、69 處；`@param` 4 檔、5 行；
+    整行 `//` 註解（`^\s*//`）112 檔、1730 行。
 - Use comments to explain non-obvious financial/domain logic and numeric
   thresholds (e.g. why volume ratio > 1.3 = "攻擊量"), not to restate code.
 
@@ -197,4 +227,4 @@ consistency.
 
 ---
 
-*Convention analysis: 2026-05-31*
+*Convention analysis: 2026-05-31; re-checked 2026-09-30 (Comments and TypeScript Configuration only)*
