@@ -51,3 +51,7 @@
 7. **證據入口、日常啟停／重跑命令、回復方式：** 本檔及 validation-summary／integration-result。在乾淨整合副本依 README-main-03 起停；所有重跑換新 run-id。撤回本次 main 範圍可在獨立乾淨 main checkout 執行 `git revert -m 1 1a9269fe781f4ae5e0d432d1c22b4c77d6cc3bcd`，本新合併命令未另演練；既有03精確撤回／恢復 PASS 照留。不要在髒來源工作區切換或回復。
 8. **仍 OPEN 的具體原因、不可控下限與已嘗試措施：** 03／本輪 main 整合無剩餘技術阻擋。真上游、production 等價及 Windows 非原子空窗是已明列的驗證界線，非用來反覆重開03。全案其他票仍未完成。
 9. **下一票名稱、前置是否滿足、下一個可直接執行動作：** 04 技術前置已滿足，但本輪沒有授權領取／執行；production 暫不新增。此階段停止，沒有待使用者重複確認的 main 整合動作。
+
+## 提交後原始位元組核對
+
+來源證據提交 `e8bc11765c309587b6eed728bbdee188177a144c` 的129檔均與工作檔逐位元組相同，結果見 `main03-integration-20261001-r1/postcommit-byte-check.json`。四份PowerShell守衛JSON保留原UTF-8 BOM／CRLF；本證據資料夾的局部 `.gitattributes` 只對這四檔禁止換行過濾，避免Windows Git誤顯修改或取回時改寫raw，沒有調整其他路徑或全域Git設定。main47檔及所有驗收固定點不變。
