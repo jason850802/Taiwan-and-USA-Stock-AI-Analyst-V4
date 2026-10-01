@@ -13,6 +13,7 @@ export interface PriceInfo {
   date?: string;      // 該報價所屬交易日（交易所當地 'YYYY-MM-DD'）
   loading?: boolean;
   error?: boolean;
+  notFound?: boolean; // 查無行情（NOT_FOUND，永久；伴隨 error）：缺價日，不擋整個市場
 }
 
 const usLotNeedsRate = (lot: PortfolioItem): boolean =>
@@ -39,6 +40,10 @@ const usLotCostUsd = (lot: PortfolioItem, rate: number): number =>
 
 // ── S3：live 快照聚合（守衛 A/B 內建，被擋回傳 null）───────────────────────
 
+/** 查無行情（永久）：只認已定案的失敗，載入中的不算 */
+const isNotFoundQuote = (p: PriceInfo | undefined): boolean =>
+  !!p && !p.loading && !!p.error && !!p.notFound;
+
 export const computeLiveSnapshot = (
   market: 'TW' | 'US',
   lots: PortfolioItem[],
@@ -48,13 +53,19 @@ export const computeLiveSnapshot = (
 ): DailyPnlSnapshot | null => {
   if (lots.length === 0) return null;
 
-  // 守衛 A（完整性）：任一 symbol 報價缺/錯/無日期 → 本輪跳過（部分報價的快照是毒資料）
+  // 守衛 A（完整性）：任一 symbol 報價缺/錯/無日期 → 本輪跳過（部分報價的快照是毒資料）。
+  // 例外是查無行情：永久的，等也等不到——那檔不計入、以 notFoundSymbols 標成缺價日，圖表不畫
+  // （2026-10-01 拍板，與回推同一套）。整個市場都查無則沒有報價可定交易日 → 照舊跳過。
+  const missing = new Set<string>();                    // 缺價日：持有中卻查無行情的標的
   for (const lot of lots) {
     const p = prices[lot.symbol];
+    if (isNotFoundQuote(p)) { missing.add(lot.symbol); continue; }
     if (!p || p.loading || p.error || !(p.price > 0) || !p.date) return null;
   }
+  const priced = lots.filter(l => !missing.has(l.symbol));   // 以下只算查得到的批次
+  if (priced.length === 0) return null;
   // 守衛 B（美股匯率）：需要 TWD→USD 換算而匯率不可得 → 跳過（fallback 32 禁入持久化）
-  const rateNeeded = market === 'US' && lots.some(usLotNeedsRate);
+  const rateNeeded = market === 'US' && priced.some(usLotNeedsRate);
   const rateOk = usdTwdRate !== undefined && usdTwdRate > 0;
   if (rateNeeded && !rateOk) return null;
 
@@ -64,7 +75,7 @@ export const computeLiveSnapshot = (
   let totalCostTwd = 0, twdCostOk = market === 'US';
   const symbols = new Set<string>();
   let date = '';
-  for (const lot of lots) {
+  for (const lot of priced) {
     const p = prices[lot.symbol]!;
     if (p.date! > date) date = p.date!;   // 快照日＝該市場最新交易日（字串比較）
     symbols.add(lot.symbol);
@@ -101,6 +112,7 @@ export const computeLiveSnapshot = (
     // 台幣口徑：市值側用當下即時匯率；成本側用各批買入匯率（有缺就整組不出）
     ...(market === 'US' && rateOk ? { fxRate: usdTwdRate } : {}),
     ...(market === 'US' && twdCostOk ? { totalCostTwd } : {}),
+    ...(missing.size > 0 ? { notFoundSymbols: [...missing].sort() } : {}),
     symbolCount: symbols.size,
     capturedAt,
   };

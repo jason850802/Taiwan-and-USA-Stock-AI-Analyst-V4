@@ -108,15 +108,22 @@ export const backfillFailMessage = (r: {
 /**
  * 缺價日提示（2026-10-01 拍板，持久標示）：把快照列的 notFoundSymbols 彙整成圖下黃字，
  * 重載後照樣在；沒有缺價日回 null。rows 須已篩到單一市場。
+ * heldSymbols（目前庫存的代號）：查無的標的仍在庫存、且最新一筆快照還缺它，之後每天都會是缺價日、
+ * 曲線一直停住（live 快照也比照缺價日之後）→ 補一句怎麼讓曲線接著畫；已刪除或報價恢復的不再催。
  */
-export const notFoundGapNote = (rows: DailyPnlSnapshot[]): string | null => {
+export const notFoundGapNote = (rows: DailyPnlSnapshot[], heldSymbols?: ReadonlySet<string>): string | null => {
   const gaps = rows.filter(r => r.notFoundSymbols?.length);
   if (gaps.length === 0) return null;
   const symbols = [...new Set(gaps.flatMap(r => r.notFoundSymbols!))].sort();
   const dates = gaps.map(r => r.date).sort();
   const span = dates.length > 1 ? `${dates[0]}～${dates[dates.length - 1]}` : dates[0];
   const pronoun = symbols.length > 1 ? '它們' : '它';
-  return `${listSymbols(symbols)} ${NOT_FOUND_TEXT}：持有${pronoun}的 ${gaps.length} 天（${span}）算不出當日損益，曲線略過不畫`;
+  const note = `${listSymbols(symbols)} ${NOT_FOUND_TEXT}：持有${pronoun}的 ${gaps.length} 天（${span}）算不出當日損益，曲線略過不畫`;
+  const latest = rows.reduce((a, b) => (b.date > a.date ? b : a));
+  const stuck = symbols.filter(s => heldSymbols?.has(s) && latest.notFoundSymbols?.includes(s));
+  return stuck.length > 0
+    ? `${note}；${listSymbols(stuck)} 仍在庫存中，刪除或改用正確代號重新新增後，曲線才會接著畫`
+    : note;
 };
 
 /** 台幣曲線因缺匯率畫不出的天數：缺價日本來就不畫，不算在內 */
@@ -249,7 +256,8 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const divTotal = marketDivs.reduce((s, d) => s + d.amount, 0);
     // 台幣曲線缺口：有快照但因缺匯率而畫不出來的天數（提示使用者重算）
     const twdGap = market === 'US' && curr === 'TWD' ? twdGapDays(mRows, points.length) : 0;
-    const gapNote = notFoundGapNote(mRows);   // 缺價日：持有查無行情標的、曲線略過的那幾天
+    // 缺價日：持有查無行情標的、曲線略過的那幾天（仍在庫存的另說明怎麼接著畫）
+    const gapNote = notFoundGapNote(mRows, new Set(mLots.map(l => l.symbol)));
     const datedLots = mLots.filter(l => !!l.buyDate);
     const undatedLots = mLots.filter(l => !l.buyDate);
     const hasBackfill = mRows.some(r => r.source === 'backfill');
@@ -329,14 +337,19 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>
             ) : gapNote ? (
-              // 回推過，但每一天都持有查無行情的標的 → 沒有畫得出的點
+              // 每一筆快照（回推或 live）都持有查無行情的標的 → 沒有畫得出的點。
+              // 只有 live 缺價日時還沒回推過：沒填買進日期就回推不出東西，改提示補填
               <>
                 <p className="text-sm text-amber-300/80">{gapNote}</p>
-                <button onClick={() => runBackfill(market)} disabled={st.running}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
-                  {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
-                  {st.running ? progressLabel(st) : '重算歷史回推'}
-                </button>
+                {hasBackfill || datedLots.length > 0 ? (
+                  <button onClick={() => runBackfill(market)} disabled={st.running}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
+                    {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
+                    {st.running ? progressLabel(st) : (hasBackfill ? '重算歷史回推' : '建立歷史曲線')}
+                  </button>
+                ) : (
+                  <p className="text-sm text-slate-500">持股尚未填「買進日期」——點各批明細列的日期欄補填後，即可回推歷史損益</p>
+                )}
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>
             ) : datedLots.length > 0 ? (
