@@ -16,6 +16,7 @@ import { calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
 import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
 import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
 import { fmtShares } from '../../utils/shareUnits';
+import { findQuoteGaps, describeQuoteGaps } from '../../utils/quoteGaps';
 import { Trash2, Loader2, ChevronDown, ChevronUp, Info, HeartPulse, Banknote } from 'lucide-react';
 import Badge from '../ui/Badge';
 import type { PriceData } from './useHoldingPrices';
@@ -226,7 +227,9 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
     if (isTW) return s + i.cashDividends;
     return s + (dc === 'USD' ? i.cashDividends / rate : i.cashDividends);
   }, 0);
-  const groupPnL    = groupValue > 0
+  // 報價不齊 → 群組小計不出數字、改列缺哪幾檔（比照全局摘要，台美各自判斷；2026-10-01 拍板）
+  const groupGapNote = describeQuoteGaps(findQuoteGaps(items.map(i => i.symbol), prices));
+  const groupPnL    = groupGapNote === null && groupValue > 0
     ? groupValue - groupCost - groupSellCosts + (includeDividend ? groupCashDiv : 0) : null;
   const groupPnLPct = groupPnL !== null && groupCost > 0 ? (groupPnL / groupCost) * 100 : null;
   const f = (v: number) => dc === 'USD' ? fmtUsd(v) : `${fmt(v)}`;
@@ -263,6 +266,9 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
           <span className={`font-bold font-mono tabular-nums ${groupPnL >= 0 ? 'text-up' : 'text-down'}`}>
             {groupPnL >= 0 ? '+' : ''}{f(groupPnL)} ({groupPnL >= 0 ? '+' : ''}{groupPnLPct.toFixed(2)}%)
           </span>
+        )}
+        {groupGapNote !== null && (
+          <span className="text-xs text-slate-500">—（{groupGapNote}）</span>
         )}
         {collapsed ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronUp size={16} className="text-slate-400" />}
       </div>

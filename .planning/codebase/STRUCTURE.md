@@ -125,7 +125,7 @@ Taiwan-and-USA-Stock-AI-Analyst-V4/
 | 分組 | 模組 |
 |---|---|
 | 指標與判定 | `math.ts`（指標）、`entryFilter.ts`（六六大順進場濾網）、`volume.ts`（盤中預估量）、`market.ts`（市場分類的唯一權威） |
-| 庫存帳務與歷史 | `portfolioFees.ts`、`portfolioLedger.ts`（賣出引擎）、`portfolioGrouping.ts`、`portfolioHistory.ts`、`backfillPipeline.ts`（歷史回推）、`dividendEstimator.ts`、`fx.ts`、`shareUnits.ts` |
+| 庫存帳務與歷史 | `portfolioFees.ts`、`portfolioLedger.ts`（賣出引擎）、`portfolioGrouping.ts`、`portfolioHistory.ts`、`backfillPipeline.ts`（歷史回推）、`dividendEstimator.ts`、`fx.ts`、`shareUnits.ts`、`quoteGaps.ts`（報價不齊判定） |
 | 對帳單匯入 | `importPlan.ts`、`importReplay.ts`、`statementParsers/`（`index.ts` 偵測格式並分派，`cathay.ts`、`cathayTw.ts`、`sinopac.ts` 各解一種對帳單，`xlsxReader.ts`、`twSymbolResolver.ts` 輔助） |
 | localStorage 持久層 | `persistentStore.ts`（工廠）→ `portfolioItemsStore.ts`、`txnStore.ts`、`importStore.ts`、`portfolioHistoryStore.ts`、`closeSeriesCache.ts`；`portfolioBackup.ts`（備份／回灌） |
 | 其他 | `framePublisher.ts`（串流文字逐幀發佈）、`panMath.ts`（圖表拖曳平移）、`workerPool.ts`（併發游標池）、`quoteTime.ts`（報價時間格式） |

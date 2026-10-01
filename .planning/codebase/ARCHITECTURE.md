@@ -92,7 +92,7 @@ Vercel Serverless：api/（零設定，5 支 handler）
 | fetchError | 前端錯誤分類 `DataFetchError`、`classifyHttpStatus`、`classifyCaught` | `services/fetchError.ts` |
 | _shared | `apiClient`（共享密鑰 header）、`geminiCache`（AI 快取）、`boundedSession`（有上限的 sessionStorage 命名空間）、`healthDecision`（健檢回應解析） | `services/_shared/` |
 | 指標與判定 | `math`（指標）、`entryFilter`（六六大順濾網）、`volume`（盤中全日量預估）、`market`（市場分類唯一權威） | `utils/` |
-| 庫存帳務 | `portfolioFees`＋`config/twFeeRates.ts`（費稅）、`portfolioLedger`（賣出引擎、當沖判定）、`fx`（匯率口徑）、`shareUnits`、`portfolioGrouping` | `utils/`、`config/` |
+| 庫存帳務 | `portfolioFees`＋`config/twFeeRates.ts`（費稅）、`portfolioLedger`（賣出引擎、當沖判定）、`fx`（匯率口徑）、`shareUnits`、`portfolioGrouping`、`quoteGaps`（報價不齊判定） | `utils/`、`config/` |
 | 對帳單匯入 | `statementParsers/`（依內容偵測格式並解析；xlsx 用自寫的零依賴讀取器）、`importPlan`（去重＋乾跑）、`importReplay`（重播引擎） | `utils/` |
 | 歷史與股利 | `portfolioHistory`（快照、回推計算、圖表序列）、`backfillPipeline`（回推編排）、`dividendEstimator`（配息推算） | `utils/` |
 | 持久層 | `persistentStore`（工廠）→ `portfolioItemsStore`、`txnStore`、`importStore`、`portfolioHistoryStore`、`closeSeriesCache`；`portfolioBackup`（備份／回灌） | `utils/` |
