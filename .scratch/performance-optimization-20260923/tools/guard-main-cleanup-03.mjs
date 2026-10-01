@@ -17,13 +17,16 @@ for (const [name, cleanup, state, expected] of [
   ['程序表失敗不可宣稱成功', { left: [], error: 'fixture CIM failure' }, original, 1],
   ['成功才能移除自己狀態', { left: [], error: null }, original, 0],
   ['失敗不得改別人的狀態', { left: original.tree, error: null }, { token: 'foreign' }, 1],
+  ['第一輪清理新增孤兒必須重核', { left: [], error: null }, original, 1],
 ]) {
   let saved = structuredClone(state);
   let removed = false;
   const context = { stopping: false, process: { pid: 9, exitCode: null }, tree: original.tree,
     records: [], watchdog: null, server: null, token: 'own', stateFile: 'memory-state',
     processTable: () => new Map(), mergeTree: (...lists) => lists.flat(), descendantsOf: () => [],
-    stopOwned: async () => {}, killTree: async () => cleanup, stopWatchdog: async () => null,
+    stopOwned: async () => ({ known: name.startsWith('第一輪') ? [{ pid: 43, creationDate: '/Date(1800)/', name: 'node.exe' }] : [] }),
+    killTree: async tree => name.startsWith('第一輪') ? { left: tree.filter(item => item.pid === 43), error: null } : cleanup,
+    stopWatchdog: async () => null,
     readState: () => saved, cleanupState: daily.cleanupState,
     fs: { rmSync: () => { removed = true; saved = null; },
       writeFileSync: (_file, data) => { saved = JSON.parse(data); } }, console: { error: () => {} } };

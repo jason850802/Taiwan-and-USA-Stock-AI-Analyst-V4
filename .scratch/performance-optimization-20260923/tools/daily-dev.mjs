@@ -298,13 +298,16 @@ async function prewarmFunctions(port) {
 }
 
 async function stopOwned(records) {
+  const known = [];
   for (const record of [...records].reverse()) {
     if (!record.child.pid || record.exited) continue;
     const current = processIdentity(record.child.pid);
     if (!record.identity?.CreationDate || !current?.CommandLine?.includes(record.script)) continue;
     if (current.CreationDate !== record.identity.CreationDate) continue;
-    await killTree([{ pid: record.child.pid, creationDate: current.CreationDate }]);
+    const cleanup = await killTree([{ pid: record.child.pid, creationDate: current.CreationDate }]);
+    known.push(...cleanup.known);
   }
+  return { known: mergeTree(known) };
 }
 
 function commandArgs() {
@@ -449,7 +452,8 @@ async function main() {
       pid: record.child.pid, creationDate: record.identity.CreationDate, name: record.name,
     })));
     if (table) tree = mergeTree(tree, descendantsOf(table, process.pid, [watchdog?.pid].filter(Boolean)));
-    await stopOwned(records);
+    const ownedCleanup = await stopOwned(records);
+    tree = mergeTree(tree, ownedCleanup?.known ?? []);
     const cleanup = await killTree(tree);
     if (cleanup.left.length || cleanup.error) {
       console.error(`仍有程序未能確認結束：${cleanup.left.map(item => `${item.name}#${item.pid}`).join('、')}${cleanup.error ? `（${cleanup.error}）` : ''}`);
