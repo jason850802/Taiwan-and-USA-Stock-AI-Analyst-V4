@@ -22,8 +22,12 @@ interface HealthResult { status: 'loading' | 'done' | 'error'; decision: string;
  * 行情抓取失敗的健檢文案（T3）：依錯誤 kind 分流，不再無條件寫「可能限流中」。
  * 後端沒開跟被限流的處置完全不同，猜錯會把使用者指去做錯的事。
  * tail 是各呼叫點的尾句（單檔＝句號；批次＝「，或單獨對此檔重跑健檢。」）。
+ * 查無代號（NOT_FOUND）重試也是同樣結果：不接 tail、不叫人稍後再試，改請使用者確認代號（2026-10-01 拍板）。
  */
-const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
+export const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
+  if (kind === 'NOT_FOUND') {
+    return '**查無此代號的行情資料**\n\n行情來源找不到這個代號，可能已下市、更換代號，或代號有誤，請先確認代號。';
+  }
   const lead = kind === 'RATE_LIMIT' ? '（Yahoo／FinMind 可能限流中）請'
     : (kind === 'BACKEND_DOWN' || kind === 'NETWORK') ? '行情後端目前無回應，請確認網路或'
     : '請';

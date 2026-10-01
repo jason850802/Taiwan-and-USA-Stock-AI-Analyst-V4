@@ -37,11 +37,16 @@ interface BackfillState {
 }
 const IDLE: BackfillState = { running: false, done: 0, total: 0, error: null };
 
-/** 進度文字：一般抓取 vs 退避等待——退避成因依 kind 分流（T7 B4），後端關閉≠限流 */
-const progressLabel = (st: BackfillState): string => {
+/**
+ * 進度文字：一般抓取 vs 退避等待——退避成因依 kind 分流（T7 B4），後端關閉≠限流；
+ * 其他種類（含查無代號、認不出的錯誤）不猜成因（2026-10-01 拍板）。
+ */
+export const progressLabel = (st: BackfillState): string => {
   if (st.waitSec) {
-    const cause = st.kind === 'BACKEND_DOWN' || st.kind === 'NETWORK' ? '後端無回應中' : '限流中';
-    return `${cause}，${st.waitSec} 秒後重試 ${st.retrying} 檔…`;
+    const cause = st.kind === 'RATE_LIMIT' ? '限流中，'
+      : (st.kind === 'BACKEND_DOWN' || st.kind === 'NETWORK') ? '後端無回應中，'
+      : '';
+    return `${cause}${st.waitSec} 秒後重試 ${st.retrying} 檔…`;
   }
   return st.retrying ? `重試 ${st.retrying} 檔…` : `回推中 ${st.done}/${st.total} 檔…`;
 };
@@ -58,6 +63,31 @@ const diagnose = (kind: FetchErrorKind | 'NO_DATA' | undefined, message: string)
     return BACKEND_DOWN_HINT;
   }
   return message ? `（${message.slice(0, 60)}）` : '（原因不明）請稍後再試';
+};
+
+/** 列出標的：最多 6 檔，超過補總數 */
+const listSymbols = (symbols: string[]): string =>
+  symbols.slice(0, 6).join('、') + (symbols.length > 6 ? ` 等 ${symbols.length} 檔` : '');
+
+/**
+ * 回推失敗訊息：查無代號的標的不進重試（2026-10-01 拍板），不能跟著說「已自動重試 2 次」；
+ * 與還要處置的失敗同時發生時分兩段寫，處置提示只給後者（管線保證此時 kind／detail 屬於後者）。
+ */
+export const backfillFailMessage = (r: {
+  missedSymbols: string[];
+  notFoundSymbols: string[];
+  kind?: FetchErrorKind | 'NO_DATA';
+  detail: string;
+}): string => {
+  const retried = r.missedSymbols.filter(s => !r.notFoundSymbols.includes(s));
+  const parts: string[] = [];
+  if (r.notFoundSymbols.length > 0) {
+    parts.push(`${listSymbols(r.notFoundSymbols)} 查無行情資料（可能已下市、更換代號或代號有誤）`);
+  }
+  if (retried.length > 0) {
+    parts.push(`${listSymbols(retried)} 行情抓取失敗，已自動重試 2 次${diagnose(r.kind, r.detail)}`);
+  }
+  return parts.join('；');
 };
 
 const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
@@ -158,11 +188,10 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       })),
     });
 
-    if (!result.ok) {
+    // 用 === false 而非 !result.ok：本專案 tsconfig 非 strict，後者不會把型別收窄成失敗分支
+    if (result.ok === false) {
       if (result.kind === 'NO_DATA') { setBfState(s => ({ ...s, [market]: IDLE })); return; }
-      const failed = result.missedSymbols;
-      const shown = failed.slice(0, 6).join('、') + (failed.length > 6 ? ` 等 ${failed.length} 檔` : '');
-      setBfState(s => ({ ...s, [market]: { ...IDLE, error: `${shown} 行情抓取失敗，已自動重試 2 次 ${diagnose(result.kind, result.detail)}` } }));
+      setBfState(s => ({ ...s, [market]: { ...IDLE, error: backfillFailMessage(result) } }));
       return;
     }
 

@@ -43,7 +43,7 @@ Serverless 函式代打。
 - **用途**：產生中文 Markdown 報告——進場分析 `analyzeEntryWithGemini`、交易決策 `analyzeTradeDecision`、
   庫存健檢 `analyzePortfolioHealth`、基本面解讀 `analyzeFundamentals`（都在 `services/gemini.ts`）。
 - **端點**：`POST /api/gemini`（一次回完整文字）；`POST /api/gemini-stream`（`application/x-ndjson` 串流，
-  `Cache-Control: no-store`）。有傳 `onChunk` 回呼的進場分析與庫存健檢走串流（`services/gemini.ts:250`、`:971`）。
+  `Cache-Control: no-store`）。有傳 `onChunk` 回呼的進場分析與庫存健檢走串流（`services/gemini.ts:248`、`:969`）。
 - **請求驗證**：`api/_lib/http.ts` 的 `validateGeminiRequest`——`prompt`、`systemInstruction` 不可為空，`mode`
   只能是 `fast`／`thinking`，否則 `BAD_REQUEST`。
 - **金鑰**：`GEMINI_API_KEY` 只在後端，由 `api/_lib/config.ts` 的 `getGeminiApiKey()` 讀；讀不到時
@@ -58,8 +58,8 @@ Serverless 函式代打。
   其他值回設定錯誤。
 - **錯誤分類**：`api/_lib/http.ts` 的 `ClassifiedError`——`MODEL_NOT_FOUND`（404）、`RATE_LIMITED`（429）、
   `UPSTREAM_ERROR`（502）、`BAD_REQUEST`（400）、`MISSING_KEY`（500）、`CANCELLED`（499，只為型別完整、實際
-  不寫回應）。前端收到非 2xx 丟 `DataFetchError`（429→`RATE_LIMIT`、5xx→`BACKEND_DOWN`、其餘→`UNKNOWN`），
-  訊息沿用後端回的中文 `message`。
+  不寫回應）。前端收到非 2xx 丟 `DataFetchError`，種類由 `classifyHttpStatus` 決定（429→`RATE_LIMIT`、
+  404→`NOT_FOUND`，在這裡＝設定的模型不存在、5xx→`BACKEND_DOWN`、其餘→`UNKNOWN`），訊息沿用後端回的中文 `message`。
 - **函式時限**：`api/gemini.ts` `maxDuration = 120`、`api/gemini-stream.ts` `maxDuration = 200`（秒）。
 - **前端快取**：`services/_shared/geminiCache.ts`，localStorage key
   `gemini_cache_v1|<ENGINE_TAG>|<mode>|<台北日期>|<hash>`（hash 取 system instruction＋prompt），跨日即清；
@@ -80,7 +80,7 @@ Serverless 函式代打。
 - **錯誤分類**：`BAD_REQUEST` 400、`UPSTREAM_UNAUTHORIZED` 502、`RATE_LIMITED` 429、`UPSTREAM_ERROR` 502、
   `NOT_FOUND` 404。兩支 `maxDuration = 30`，只接受 GET。
 - **前端**：`services/yahoo.ts` 的 `queryYahoo`→`fetchRawData`（裸台股代號先查名錄決定 `.TW`／`.TWO`，
-  不行再依序試）；搜尋在 `services/stockDirectory.ts`。行情快取在 `services/quoteCache.ts`（sessionStorage）。
+  查無才改試另一個後綴，其他失敗原樣上拋）；搜尋在 `services/stockDirectory.ts`。行情快取在 `services/quoteCache.ts`（sessionStorage）。
 - **限流**：`marketPerMin`（每 IP 60 次／分，與 FinMind 共用同一組計數）。
 
 ## FinMind（台股資料）
