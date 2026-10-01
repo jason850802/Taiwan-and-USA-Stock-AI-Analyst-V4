@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { descendantsOf, killTree } from './daily-dev.mjs';
 import { descendantTree, identityFields, terminateVerifiedTree } from './port-guard-03.mjs';
-import { classifyRequest } from './app-03.mjs';
+import { classifyRequest, reconcileRequests } from './app-03.mjs';
 import { claimRun, fileSha } from './service-kit.mjs';
 
 const { evidenceDir } = claimRun({ ticket: '03', runId: process.argv[2] });
@@ -126,6 +126,34 @@ for (const [label, request, visible, accepted] of [
     return result;
   });
 }
+for (const [label, latest, prior, accepted] of [
+  ['晚到腳本取消改判失敗', { failed: { error: 'net::ERR_ABORTED', canceled: true }, failedAtMs: 30 }, [], false],
+  ['晚到背景取消有先前腳本200可收', { initiator: { type: 'other' }, failed: { error: 'net::ERR_ABORTED', canceled: true }, failedAtMs: 30 },
+    [{ requestId: 'prior', url: 'http://localhost:3000/api/test', method: 'GET', route: '/api/test', status: 200, failed: null, finishedAtMs: 5, initiator: { type: 'script' } }], true],
+  ['只有200標頭但沒有終態不能通過', { finishedAtMs: null }, [], false],
+]) {
+  await check(`P2 終態：${label}`, () => {
+    const snapshot = { requestId: 'late', route: '/api/test', method: 'GET', startedAtMs: 10, status: 200, failed: null,
+      frozenOk: true, ok: true, terminalEvents: [], finishedAtMs: 20, initiator: { type: 'script' } };
+    const op = { requests: [snapshot], streamCompleteAtStep: false, verdict: { ui: true, keys: true, console: true, requests: true }, pass: true };
+    const entry = { ...snapshot, url: 'http://localhost:3000/api/test', ...latest };
+    reconcileRequests([op], [...prior, entry]);
+    assert.equal(op.pass, accepted);
+    assert.equal(op.requests[0].frozenOk, false);
+    assert.equal(op.requestsAtStep[0].failed, null);
+    entry.terminalEvents.push({ event: 'late mutation' });
+    assert.equal(op.requestsAtStep[0].terminalEvents.length, 0);
+    assert.equal(op.requests[0].terminalEvents.length, 0);
+    return { snapshot: op.requestsAtStep[0], final: op.requests[0], pass: op.pass };
+  });
+}
+await check('P2 終態：未完成步驟沒有 verdict 時判失敗且不拋錯', () => {
+  const op = { requests: [] };
+  reconcileRequests([op], []);
+  assert.equal(op.pass, false);
+  assert.equal(op.verdict.ui, false);
+  return op;
+});
 const tools = Object.fromEntries(['guard-review-03.mjs', 'daily-dev.mjs', 'port-guard-03.mjs', 'app-03.mjs']
   .map(file => [file, fileSha(path.join(path.dirname(fileURLToPath(import.meta.url)), file))]));
 const raw = { runId: process.argv[2], at: new Date().toISOString(), kind: '純假資料守衛檢查', realProcessKills: 0,

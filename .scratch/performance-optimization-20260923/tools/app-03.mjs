@@ -258,6 +258,37 @@ export function classifyRequest(request, requests, streamComplete, history = req
   return { kind: '200 之後被取消', ok: false };
 }
 
+// 每步快照保留原樣；視窗完成時依同筆最新事件重算，避免晚到的取消留在共享陣列而漏算。
+export function reconcileRequests(ops, history) {
+  const byId = new Map(history.map(entry => [entry.requestId, entry]));
+  for (const op of ops) {
+    op.verdict ??= { ui: false, keys: false, console: false, requests: false };
+    op.requestsAtStep = structuredClone(op.requests ?? []);
+    op.requests = op.requestsAtStep.map(snapshot => {
+      const entry = byId.get(snapshot.requestId);
+      if (!entry) return { ...snapshot, frozenOk: false, ok: false, kind: '缺請求終態' };
+      return structuredClone({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
+        method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
+        finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents,
+        streamCapture: entry.streamCapture ?? null, initiator: entry.initiator });
+    });
+    op.designedAborts = op.requests.map(request => designedAbortOf(request, op.requests)).filter(Boolean);
+    for (const request of op.requests) {
+      if (request.kind === '缺請求終態') continue;
+      request.frozenOk = Boolean(designedAbortOf(request, op.requests)) || ([200, 204].includes(request.status) && !request.failed);
+      Object.assign(request, classifyRequest(request, op.requests, op.streamCompleteAtStep === true, history));
+      // 標頭成功但視窗結束仍無完成／取消事件，不當成成功請求。
+      if (!request.failed && !Number.isFinite(request.finishedAtMs)) {
+        Object.assign(request, { frozenOk: false, ok: false, kind: '請求尚未完成' });
+      }
+      delete request.url;
+    }
+    op.badRequests = op.requests.filter(request => !request.ok).map(request => request.route);
+    op.verdict.requests = op.badRequests.length === 0;
+    op.pass = Object.values(op.verdict).every(Boolean);
+  }
+}
+
 // ── 最小 CDP 用戶端（Node 內建 WebSocket）──
 class Cdp {
   static async connect(url) {
@@ -946,10 +977,11 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
         .filter(entry => entry.at >= opStart && new URL(entry.url).pathname.startsWith('/api/'))
         .map(entry => ({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
           method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
-          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents,
-          streamCapture: entry.streamCapture ?? null, initiator: entry.initiator }));
+          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: structuredClone(entry.terminalEvents),
+          streamCapture: structuredClone(entry.streamCapture ?? null), initiator: entry.initiator }));
       opRecord.designedAborts = opRecord.requests.map(request => designedAbortOf(request, opRecord.requests)).filter(Boolean);
       const streamComplete = Boolean(op.streamEvidence && !opRecord.error && op.streamEvidence(opRecord.facts ?? {}));
+      opRecord.streamCompleteAtStep = streamComplete;
       for (const request of opRecord.requests) {
         request.frozenOk = Boolean(designedAbortOf(request, opRecord.requests)) || ([200, 204].includes(request.status) && !request.failed);
         Object.assign(request, classifyRequest(request, opRecord.requests, streamComplete, history));
@@ -991,15 +1023,33 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
     record.externalHosts = [...externalHosts].sort();
     record.allConsole = consoleEvents.map(({ kind, text }) => ({ kind, text }));
   } finally {
-    cdp.close();
-    record.closedCleanly = await closeChrome(chrome);
-    await sleep(500);
     try {
-      fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-      record.profileRemoved = !fs.existsSync(profileDir);
+      await Promise.all(streamCaptures);
+      const history = [...network.values()].map(entry => ({ ...entry, route: routeOf(entry.url) }));
+      reconcileRequests(record.ops, history);
+      record.requestReconciliation = '視窗關閉前同筆最新事件；requestsAtStep 保留操作快照';
     } catch (error) {
-      record.profileRemoved = false;
-      record.profileRemoveError = error.message;
+      record.requestReconciliationError = error.message;
+      for (const op of record.ops) {
+        op.verdict = { ...op.verdict, requests: false };
+        op.pass = false;
+      }
+    } finally {
+      try {
+        try { cdp.close(); } finally { record.closedCleanly = await closeChrome(chrome); }
+      } catch (error) {
+        record.closedCleanly = false;
+        record.chromeCloseError = error.message;
+      } finally {
+        await sleep(500);
+        try {
+          fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+          record.profileRemoved = !fs.existsSync(profileDir);
+        } catch (error) {
+          record.profileRemoved = false;
+          record.profileRemoveError = error.message;
+        }
+      }
     }
   }
   return record;
@@ -1187,6 +1237,7 @@ async function main() {
   if (!trace || trace.blocked.net || trace.blocked.fetch || trace.blocked.ai) problems.push('後端探針有非預期 outbound 或 AI 被擋');
   if (trace && Object.keys(trace.fetchKinds).some(kind => !FIXTURE_KINDS.includes(kind))) problems.push('後端出現非固定上游的 outbound 類別');
   for (const viewport of raw.viewports) {
+    if (viewport.requestReconciliationError) problems.push(`${viewport.name} 請求終態重算失敗：${viewport.requestReconciliationError}`);
     if (!viewport.closedCleanly) problems.push(`${viewport.name} Chrome 未正常關閉`);
     if (!viewport.profileRemoved) problems.push(`${viewport.name} 隔離資料目錄未刪除`);
   }
@@ -1198,6 +1249,8 @@ async function main() {
   const summary = {
     runId, formal: raw.formal, origin: raw.origin, problems, failedOps, incompleteViewports: incomplete,
     viewports: raw.viewports.map(viewport => ({ name: viewport.name, ops: viewport.ops.map(op => `${op.id}:${op.pass ? 'PASS' : 'FAIL'}`),
+      frozenAtStep: viewport.ops.filter(op => op.verdict.ui && op.verdict.keys && op.verdict.console && op.requestsAtStep.every(request => request.frozenOk)).length,
+      frozenFinal: viewport.ops.filter(op => op.verdict.ui && op.verdict.keys && op.verdict.console && op.requests.every(request => request.frozenOk)).length,
       externalHosts: viewport.externalHosts ?? null, unexpectedConsole: viewport.ops.reduce((sum, op) => sum + op.console.length, 0),
       expectedConsole: viewport.ops.reduce((sum, op) => sum + op.expectedConsole.length, 0),
       designedAborts: viewport.ops.flatMap(op => (op.designedAborts ?? []).map(item => `${op.id}：${item.aborted}`)),
