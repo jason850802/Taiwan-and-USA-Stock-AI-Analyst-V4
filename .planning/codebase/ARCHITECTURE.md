@@ -208,8 +208,8 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
 4. **歷史損益曲線**（`PnlHistorySection`）：依 `historyTick` 從 storage 重讀快照，`buildChartSeries` 組合已實現帳本與
    配息流水後交給 `PnlHistoryChart`（台股 TWD；美股可切 USD／TWD）。「建立／重算歷史回推」→ `runBackfillPipeline`：
    先查收盤價快取，缺的以 `getStockData(sym, '1d')` 抓（首輪 3 條並行，失敗者最多再重試 2 輪、每輪 1 條、間隔
-   45 秒；仍有標的失敗則整輪不寫入）；有交易流水時以流水重播（含已清倉部位），沒有才從現存持股逆推；只填第一筆
-   live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
+   45 秒，查無代號（`NOT_FOUND`）不重試；仍有標的失敗則整輪不寫入）；有交易流水時以流水重播（含已清倉部位），
+   沒有才從現存持股逆推；只填第一筆 live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
 5. **賣出**（`SellModal` → `App.handlePortfolioSell`）：預覽與入帳都走 `utils/portfolioLedger.ts` 的 `buildSellResult`；
    產出 `RealizedTrade`（含當沖旗標，ADR-0003），追加手動賣出流水，批次扣減或移除。
 6. **對帳單匯入**（`ImportStatementModal` → `App.handleStatementImport`）：`parseStatementFile` 依內容判別格式（xlsx
@@ -386,18 +386,6 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 **方向：** 兩份輸出都被 snapshot 鎖住（`utils/geminiRules.test.ts`、`utils/geminiPrompts.test.ts`）；合併時須證明輸出
 逐位元組不變，否則等於讓所有使用者的 AI 快取失效一輪。
 
-### `NOT_FOUND` 已可信，下游還沒用它決定處置
-
-**現況：** 台股試探鏈原本把任何失敗（含限流、後端沒開）都改寫成 `NOT_FOUND`；2026-10-01 起 `services/yahoo.ts` 的
-`fetchRawData` 只有 `NOT_FOUND` 才換下一個後綴、其他失敗原樣上拋，`fetchStockDataUncached` 的台股 FinMind 備援也改成
-兩邊都查無才丟 `NOT_FOUND`（行為鎖：`services/yahoo.twSuffixChain.test.ts`）。但下游三處還沒用它：健檢的
-`quoteFailMarkdown` 對 `NOT_FOUND` 只給通用「請稍後再試」；歷史回推退避期間的文案（`PnlHistorySection` 的
-`progressLabel`）只分「後端無回應中」與其他一律「限流中」，`NOT_FOUND`（例如下市的美股代號）會顯示成「限流中」；
-`utils/backfillPipeline.ts` 對所有失敗一律重試兩輪、各等 45 秒。
-**問題：** 查無代號的標的在回推時白等 90 秒，退避期間還顯示成「限流中」；健檢也說不出「查無此代號」。
-**方向：** 給 `NOT_FOUND` 專屬文案、退避文案補中性分支、查無代號免重試（措辭與政策待使用者拍板）。
-- 對證：``git grep -n "isNotFound" -- services/yahoo.ts``；``git grep -n "後端無回應中" -- components/``。
-
 ### 展示層直接呼叫低階資料函式，除權息抓取寫了兩份
 
 **現況：** `PnlHistorySection` 的 `runDividendEstimate` 與 `useLotDividendUpdate` 的 `runLotDividendUpdate` 各自以
@@ -460,7 +448,9 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 - 串流收尾（`callGeminiApiStream`）：收到 `done` → 回全文並寫快取；只有部分 `delta` → 回部分內容並附「報告生成
   中斷」提示、不寫快取；什麼都沒有 → 丟錯。
 - 消費端：儀表板抓資料失敗 → 可重試的 `Banner`；進場分析失敗 → 錯誤訊息直接顯示在報告區；健檢 →
-  `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案；歷史回推 → `diagnose` 依種類（認不出再比對訊息）；
+  `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案（查無代號有專屬文案、請使用者確認代號）；歷史回推 →
+  查無代號的標的不重試、失敗訊息單獨列出，其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說
+  「限流中」（`progressLabel`、`backfillFailMessage` 有行為鎖：`components/portfolio/PnlHistorySection.test.ts`）；
   基本面 → `Banner`＋強制重抓。
 
 **降級：**

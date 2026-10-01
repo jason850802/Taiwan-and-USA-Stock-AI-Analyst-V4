@@ -1,6 +1,6 @@
 // services/yahoo.twSuffixChain.test.ts — 台股裸代號 .TW／.TWO 試探鏈的錯誤種類
 //
-// 修掉的症狀（原記在 .planning/codebase/ARCHITECTURE.md 反模式，現為「NOT_FOUND 已可信，下游還沒用它決定處置」）：
+// 修掉的症狀（原記在 .planning/codebase/ARCHITECTURE.md 反模式，2026-10-01 連同下游三處一併處理完）：
 // 試探鏈的兩層 catch 只放行 AbortError，兩個後綴都失敗就統一丟 NOT_FOUND「找不到台股代號」，
 // 限流（429）、後端沒開（Vite proxy 連不到 3001 回空本文 500）也被說成查無代號，
 // 下游因此不能拿 NOT_FOUND 決定處置（健檢文案、回推退避文案、回推要不要重試）。

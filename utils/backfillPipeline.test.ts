@@ -187,6 +187,87 @@ describe('runBackfillPipeline｜限流退避重試', () => {
   });
 });
 
+// ── 查無代號不重試（2026-10-01 使用者拍板）──────────────────────────────────
+// NOT_FOUND 重試也是同樣結果，不進 45 秒 × 2 輪的退避；其他失敗照舊重試。
+// 退避成因與最終原因只看「真正還要重試／還失敗」的那幾檔，不能被查無那檔或已重試成功那檔帶偏。
+describe('runBackfillPipeline｜查無代號不重試', () => {
+  const notFound = (s: string) => new DataFetchError('NOT_FOUND', `找不到台股代號: ${s}`);
+  const rateLimited = (s: string) => new DataFetchError('RATE_LIMIT', `Fetch error (429) ${s}`);
+
+  it('查無代號首輪就算失敗：不等待、不重抓，結果標出哪幾檔是查無', async () => {
+    const { ports, state } = makePorts({ failTimes: { BBB: 99 }, errorFor: notFound });
+    const res = await run({}, ports);
+    expect(res.ok).toBe(false);
+    if (res.ok) return;
+    expect(state.sleeps).toEqual([]);
+    expect(state.fetched.filter(s => s === 'BBB')).toHaveLength(1);
+    expect(res.missedSymbols).toEqual(['BBB']);
+    expect(res.notFoundSymbols).toEqual(['BBB']);
+    expect(res.kind).toBe('NOT_FOUND');
+    expect(res.detail).toBe('找不到台股代號: BBB');
+  });
+
+  it('查無與限流同時發生：只重試限流那檔，最終原因報還要處置的限流', async () => {
+    const { ports, state } = makePorts({
+      failTimes: { AAA: 99, BBB: 99 },
+      errorFor: s => (s === 'AAA' ? notFound(s) : rateLimited(s)),
+    });
+    const res = await run({}, ports);
+    expect(res.ok).toBe(false);
+    if (res.ok) return;
+    expect(state.sleeps).toEqual([45000, 45000]);
+    expect(state.fetched.filter(s => s === 'AAA')).toHaveLength(1);
+    expect(state.fetched.filter(s => s === 'BBB')).toHaveLength(3);
+    expect([...res.missedSymbols].sort()).toEqual(['AAA', 'BBB']);
+    expect(res.notFoundSymbols).toEqual(['AAA']);
+    expect(res.kind).toBe('RATE_LIMIT');
+    expect(res.detail).toBe('Fetch error (429) BBB');
+  });
+
+  it('限流那檔重試成功、只剩查無：最終原因是查無，不是已成功那檔的限流', async () => {
+    // AAA 先結算（查無）、BBB 後結算（限流）→ 首輪「最後一個錯誤」是 BBB 的限流
+    const { ports } = makePorts({
+      failTimes: { AAA: 99, BBB: 1 },
+      errorFor: s => (s === 'AAA' ? notFound(s) : rateLimited(s)),
+    });
+    const res = await run({}, ports);
+    expect(res.ok).toBe(false);
+    if (res.ok) return;
+    expect(res.missedSymbols).toEqual(['AAA']);
+    expect(res.notFoundSymbols).toEqual(['AAA']);
+    expect(res.kind).toBe('NOT_FOUND');
+    expect(res.detail).toBe('找不到台股代號: AAA');
+  });
+
+  it('退避成因只看要重試的標的：查無那檔最後才失敗也不會被當成成因', async () => {
+    // AAA 先結算（後端無回應，下一輪會好）、BBB 後結算（查無）
+    const { ports } = makePorts({
+      failTimes: { AAA: 1, BBB: 99 },
+      errorFor: s => (s === 'BBB' ? notFound(s) : new DataFetchError('BACKEND_DOWN', `Fetch error (503) ${s}`)),
+    });
+    const seen: BackfillProgress[] = [];
+    await run({ onProgress: p => seen.push({ ...p }) }, ports);
+    const waiting = seen.filter(p => p.waitSec === 45);
+    expect(waiting).toHaveLength(1);
+    expect(waiting[0]).toMatchObject({ retrying: 1, kind: 'BACKEND_DOWN' });
+  });
+
+  it('重試時才回查無的標的，下一輪就不再重試', async () => {
+    let failures = 0;
+    const { ports, state } = makePorts({
+      failTimes: { BBB: 99 },
+      errorFor: s => (++failures === 1 ? rateLimited(s) : notFound(s)),
+    });
+    const res = await run({}, ports);
+    expect(state.sleeps).toEqual([45000]);                              // 只退避一輪
+    expect(state.fetched.filter(s => s === 'BBB')).toHaveLength(2);     // 首輪＋一次重試
+    expect(res.ok).toBe(false);
+    if (res.ok) return;
+    expect(res.notFoundSymbols).toEqual(['BBB']);
+    expect(res.kind).toBe('NOT_FOUND');
+  });
+});
+
 describe('runBackfillPipeline｜模式選擇與邊界', () => {
   it('有流水走流水模式（含已清倉部位）', async () => {
     const { ports } = makePorts({
