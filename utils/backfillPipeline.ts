@@ -70,7 +70,7 @@ export type BackfillResult =
       snapshots: DailyPnlSnapshot[];
       fetched: number;        // 本輪實際打網路抓到的檔數
       cacheHits: number;      // 吃到快取、免抓的檔數
-      missedSymbols: string[];// 成功路徑恆為空
+      missedSymbols: string[];// 成功路徑恆為空（查無的標的不算 missed：標在快照列的 notFoundSymbols）
       kind?: undefined;
       detail?: undefined;
       notFoundSymbols?: undefined;
@@ -79,7 +79,7 @@ export type BackfillResult =
       ok: false;
       kind?: FetchErrorKind | 'NO_DATA';   // 認不出來就 undefined，交由 UI 退回訊息比對
       // 回報那個錯誤的原文（未經包裝）：還有該處置的失敗（限流、後端沒開…）就是它們最近一次的錯誤，
-      // 只剩查無代號才是查無的——UI 的處置提示只對前者
+      // 全部標的都查無才是查無的——UI 的處置提示只對前者
       detail: string;
       missedSymbols: string[];
       notFoundSymbols: string[];           // missedSymbols 之中查無代號（NOT_FOUND）、沒有重試的那幾檔
@@ -105,7 +105,8 @@ const DEFAULT_PORTS: BackfillPorts = {
 /**
  * 跑完一個市場的歷史回推，回傳待合併的快照列（不負責存檔）。
  * 重試政策沿用既有：首輪 3 workers、失敗者再重試 2 輪各 1 worker、輪間等 45 秒；
- * 查無代號（NOT_FOUND）重試也是同樣結果，不進重試（2026-10-01 拍板）。
+ * 查無代號（NOT_FOUND）重試也是同樣結果，不進重試，也不擋整輪——持有它的日子標成缺價日
+ * （2026-10-01 拍板）。
  */
 export const runBackfillPipeline = async (params: BackfillParams): Promise<BackfillResult> => {
   const { market, items, txns, realizedTrades, usdTwdRate, onProgress } = params;
@@ -206,13 +207,14 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
   // 匯率抓失敗不算失敗：USD 曲線照常，只是這輪沒有台幣口徑的資料
   const notFoundReal = notFound.filter(s => s !== FX_SYMBOL);
   const retriedReal = pending.filter(s => s !== FX_SYMBOL);
-  const missedReal = [...notFoundReal, ...retriedReal];
-  if (missedReal.length > 0) {
-    // 還有該處置的失敗（限流、後端沒開…）就報它，只剩查無才報查無
+  // 查無是永久的，重按也不會好：只剩查無時照建曲線，持有它們的日子標成缺價日（2026-10-01 拍板）。
+  // 還有暫時失敗（限流、後端沒開…）等一下重按有意義，照舊整輪不寫；全部標的都查無則沒東西可畫。
+  if (retriedReal.length > 0 || notFoundReal.length === symbols.length) {
+    // 還有該處置的失敗就報它，全部查無才報查無
     const reported = latestFailure(retriedReal.length > 0 ? retriedReal : notFoundReal);
     return {
       ok: false, kind: reported.kind, detail: reported.message,
-      missedSymbols: missedReal, notFoundSymbols: notFoundReal,
+      missedSymbols: [...notFoundReal, ...retriedReal], notFoundSymbols: notFoundReal,
     };
   }
   const fxSeries = market === 'US' ? closeSeries[FX_SYMBOL] : undefined;
@@ -244,6 +246,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
         fxSeries,
+        notFoundSymbols: notFoundReal,
         capturedAt: Date.now(),
       })
     : buildBackfillRows({
@@ -269,6 +272,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
         fxSeries,
+        notFoundSymbols: notFoundReal,
         capturedAt: Date.now(),
       }).rows;
 

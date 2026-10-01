@@ -164,6 +164,7 @@ export interface BackfillParams {
   boundaryDate?: string;      // 第一筆 live 快照日（exclusive：只產出 < boundary 的列）
   usdTwdRate?: number;        // US 有 TWD→USD 換算時記入列（審計）
   fxSeries?: { date: string; close: number }[];   // USD/TWD 日線（台幣口徑市值側）
+  notFoundSymbols?: string[]; // 查無行情（NOT_FOUND）的標的：持有它們的日子是缺價日，照樣出列並標出
   capturedAt: number;
 }
 
@@ -174,6 +175,7 @@ export interface BackfillResult {
 
 export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
   const { market, lots, closeSeries, trades, boundaryDate, usdTwdRate, fxSeries, capturedAt } = params;
+  const notFound = new Set(params.notFoundSymbols ?? []);
   const excludedLots = lots.filter(l => !l.buyDate).map(l => ({ id: l.id, symbol: l.symbol, shares: l.shares }));
   const participants = lots.filter(l => !!l.buyDate);
   if (participants.length === 0) return { rows: [], excludedLots };
@@ -221,14 +223,18 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
     let marketValue = 0, totalCost = 0, estSellCosts = 0, cashDividends = 0;
     let totalCostTwd = 0, twdCostOk = market === 'US';
     const activeSymbols = new Set<string>();
+    const missing = new Set<string>();                   // 缺價日：持有中卻查無行情的標的
     for (const lot of participants) {
       if (lot.buyDate! > d) continue;                    // 尚未買進
-      const close = cursor.get(lot.symbol)!.last;
-      if (close === null) continue;                      // 上市/資料起點前：不 carry-backward
       const asOf = reconstructLotAsOf(
         { shares: lot.shares, cost: lot.cost, cashDiv: lot.cashDiv },
         tradesByLot.get(lot.id) ?? [], d);
       if (asOf.shares <= 0) continue;
+      const close = cursor.get(lot.symbol)!.last;
+      if (close === null) {
+        if (notFound.has(lot.symbol)) missing.add(lot.symbol);
+        continue;                                        // 其餘：上市/資料起點前，不 carry-backward
+      }
       const value = close * asOf.shares;
       activeSymbols.add(lot.symbol);
       marketValue += value;
@@ -247,7 +253,8 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
         estSellCosts += calcUsFee(value, lot.isUsEtf ?? false);
       }
     }
-    if (activeSymbols.size === 0) continue;
+    // 只持有查無標的的日子也出列，缺價日才標得完整
+    if (activeSymbols.size === 0 && missing.size === 0) continue;
     if (market === 'US') {
       marketValue = round2(marketValue);
       totalCost = round2(totalCost);
@@ -260,6 +267,7 @@ export const buildBackfillRows = (params: BackfillParams): BackfillResult => {
       ...(market === 'US' && usdTwdRate !== undefined ? { usdTwdRate } : {}),
       ...(market === 'US' && fxCursor.last !== null ? { fxRate: fxCursor.last } : {}),
       ...(market === 'US' && twdCostOk ? { totalCostTwd: round2(totalCostTwd) } : {}),
+      ...(missing.size > 0 ? { notFoundSymbols: [...missing].sort() } : {}),
       symbolCount: activeSymbols.size,
       capturedAt,
     });
@@ -293,6 +301,8 @@ export interface BackfillFromTxnsParams {
   usdTwdRate?: number;
   /** USD/TWD 日線（升冪）——美股台幣口徑的市值側換算；缺此序列則不產出台幣欄位 */
   fxSeries?: { date: string; close: number }[];
+  /** 查無行情（NOT_FOUND）的標的：持有它們的日子是缺價日，照樣出列並標出（2026-10-01 拍板） */
+  notFoundSymbols?: string[];
   capturedAt: number;
 }
 
@@ -307,6 +317,7 @@ interface ReplayLot { shares: number; cost: number; cashDiv: number; costTwd: nu
 export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlSnapshot[] => {
   const { market, txns, closeSeries, boundaryDate, usdTwdRate, fxSeries, capturedAt } = params;
   if (txns.length === 0) return [];
+  const notFound = new Set(params.notFoundSymbols ?? []);
 
   const sorted = [...txns].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   const firstDate = sorted[0].date;
@@ -388,15 +399,19 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
       fxCursor.i++;
     }
     const active = new Set<string>();
+    const missing = new Set<string>();                     // 缺價日：持有中卻查無行情的標的
     for (const sym of symbols) {
       const lots = pool.get(sym);
       if (!lots || lots.length === 0) continue;
       const c = cursor.get(sym)!;
       const series = closeSeries[sym] ?? [];
       while (c.i < series.length && series[c.i].date <= d) { c.last = series[c.i].close; c.i++; }
-      if (c.last === null) continue;                       // 尚無行情（上市前/資料起點前）
       const shares = lots.reduce((s, l) => s + l.shares, 0);
       if (shares <= 1e-9) continue;
+      if (c.last === null) {
+        if (notFound.has(sym)) missing.add(sym);
+        continue;                                          // 其餘：尚無行情（上市前/資料起點前）
+      }
       const value = c.last * shares;
       active.add(sym);
       marketValue += value;
@@ -411,7 +426,8 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
         estSellCosts += calcUsFee(value, etfFlag.get(sym) ?? false);
       }
     }
-    if (active.size === 0) continue;
+    // 只持有查無標的的日子也出列，缺價日才標得完整
+    if (active.size === 0 && missing.size === 0) continue;
 
     rows.push({
       date: d, market, source: 'backfill',
@@ -423,6 +439,7 @@ export const buildBackfillFromTxns = (params: BackfillFromTxnsParams): DailyPnlS
       // 台幣口徑：市值側用**該日**匯率（回推的重點——匯差隨時間變動）；成本側用買入匯率
       ...(market === 'US' && fxCursor.last !== null ? { fxRate: fxCursor.last } : {}),
       ...(market === 'US' && twdCostOk ? { totalCostTwd: round2(totalCostTwd) } : {}),
+      ...(missing.size > 0 ? { notFoundSymbols: [...missing].sort() } : {}),
       symbolCount: active.size,
       capturedAt,
     });
@@ -490,6 +507,9 @@ export const buildChartSeries = (
       const d = divs[di++];
       divCum += twdMode ? (d.amountTwd ?? 0) : d.amount;
     }
+    // 缺價日：數字缺了查無行情的標的，畫出來會系統性偏差 → 不畫（寧缺勿錯，2026-10-01 拍板）；
+    // 這幾天的賣出與配息已在上面累計，下一個點照樣接得上
+    if (r.notFoundSymbols?.length) continue;
     // 台幣模式缺當日匯率或買入匯率成本 → 該點無解，跳過（不用今天的匯率造史料）
     if (twdMode && !(r.fxRate! > 0 && r.totalCostTwd !== undefined)) continue;
 

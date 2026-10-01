@@ -2,7 +2,7 @@
 // 兩張圖（台股 TWD／美股 USD，D-04 不換匯）＋回推按鈕（3-worker 游標池，D-09 手動觸發）
 // ＋進度＋無買進日期批次提示＋空狀態階梯。快照資料源＝localStorage（historyTick 通知重讀）。
 import React, { useMemo, useState } from 'react';
-import { PortfolioItem, RealizedTrade } from '../../types';
+import { DailyPnlSnapshot, PortfolioItem, RealizedTrade } from '../../types';
 import { isTwStock } from '../../utils/portfolioFees';
 import { buildChartSeries, upsertSnapshots } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
@@ -69,6 +69,8 @@ const diagnose = (kind: FetchErrorKind | 'NO_DATA' | undefined, message: string)
 const listSymbols = (symbols: string[]): string =>
   symbols.slice(0, 6).join('、') + (symbols.length > 6 ? ` 等 ${symbols.length} 檔` : '');
 
+const NOT_FOUND_TEXT = '查無行情資料（可能已下市、更換代號或代號有誤）';
+
 /**
  * 回推失敗訊息：查無代號的標的不進重試（2026-10-01 拍板），不能跟著說「已自動重試 2 次」；
  * 與還要處置的失敗同時發生時分兩段寫，處置提示只給後者（管線保證此時 kind／detail 屬於後者）。
@@ -82,13 +84,31 @@ export const backfillFailMessage = (r: {
   const retried = r.missedSymbols.filter(s => !r.notFoundSymbols.includes(s));
   const parts: string[] = [];
   if (r.notFoundSymbols.length > 0) {
-    parts.push(`${listSymbols(r.notFoundSymbols)} 查無行情資料（可能已下市、更換代號或代號有誤）`);
+    parts.push(`${listSymbols(r.notFoundSymbols)} ${NOT_FOUND_TEXT}`);
   }
   if (retried.length > 0) {
     parts.push(`${listSymbols(retried)} 行情抓取失敗，已自動重試 2 次${diagnose(r.kind, r.detail)}`);
   }
   return parts.join('；');
 };
+
+/**
+ * 缺價日提示（2026-10-01 拍板，持久標示）：把快照列的 notFoundSymbols 彙整成圖下黃字，
+ * 重載後照樣在；沒有缺價日回 null。rows 須已篩到單一市場。
+ */
+export const notFoundGapNote = (rows: DailyPnlSnapshot[]): string | null => {
+  const gaps = rows.filter(r => r.notFoundSymbols?.length);
+  if (gaps.length === 0) return null;
+  const symbols = [...new Set(gaps.flatMap(r => r.notFoundSymbols!))].sort();
+  const dates = gaps.map(r => r.date).sort();
+  const span = dates.length > 1 ? `${dates[0]}～${dates[dates.length - 1]}` : dates[0];
+  const pronoun = symbols.length > 1 ? '它們' : '它';
+  return `${listSymbols(symbols)} ${NOT_FOUND_TEXT}：持有${pronoun}的 ${gaps.length} 天（${span}）算不出當日損益，曲線略過不畫`;
+};
+
+/** 台幣曲線因缺匯率畫不出的天數：缺價日本來就不畫，不算在內 */
+export const twdGapDays = (rows: DailyPnlSnapshot[], drawn: number): number =>
+  rows.filter(r => !r.notFoundSymbols?.length).length - drawn;
 
 const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
   items, realizedTrades, includeDividend, usdTwdRate, historyTick,
@@ -225,7 +245,8 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
     const points = buildChartSeries(rows, realizedTrades, market, includeDividend, marketDivs, curr);
     const divTotal = marketDivs.reduce((s, d) => s + d.amount, 0);
     // 台幣曲線缺口：有快照但因缺匯率而畫不出來的天數（提示使用者重算）
-    const twdGap = market === 'US' && curr === 'TWD' ? mRows.length - points.length : 0;
+    const twdGap = market === 'US' && curr === 'TWD' ? twdGapDays(mRows, points.length) : 0;
+    const gapNote = notFoundGapNote(mRows);   // 缺價日：持有查無行情標的、曲線略過的那幾天
     const datedLots = mLots.filter(l => !!l.buyDate);
     const undatedLots = mLots.filter(l => !l.buyDate);
     const hasBackfill = mRows.some(r => r.source === 'backfill');
@@ -277,6 +298,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                   {twdGap} 天缺當日匯率或買入匯率，台幣曲線未涵蓋——按「重算歷史回推」可補上
                 </span>
               )}
+              {gapNote && <span className="text-amber-300/80">{gapNote}</span>}
               {undatedLots.length > 0 && (
                 <span className="text-amber-300/80">
                   {undatedLots.length} 筆持股未填買進日期，回推曲線未包含（點明細列的日期欄補填）
@@ -299,6 +321,17 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
                   {st.running ? progressLabel(st) : '重算歷史回推（含匯率）'}
+                </button>
+                {st.error && <p className="text-danger text-xs">{st.error}</p>}
+              </>
+            ) : gapNote ? (
+              // 回推過，但每一天都持有查無行情的標的 → 沒有畫得出的點
+              <>
+                <p className="text-sm text-amber-300/80">{gapNote}</p>
+                <button onClick={() => runBackfill(market)} disabled={st.running}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
+                  {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
+                  {st.running ? progressLabel(st) : '重算歷史回推'}
                 </button>
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>

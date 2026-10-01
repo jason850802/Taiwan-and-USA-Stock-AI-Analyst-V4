@@ -208,8 +208,10 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
 4. **歷史損益曲線**（`PnlHistorySection`）：依 `historyTick` 從 storage 重讀快照，`buildChartSeries` 組合已實現帳本與
    配息流水後交給 `PnlHistoryChart`（台股 TWD；美股可切 USD／TWD）。「建立／重算歷史回推」→ `runBackfillPipeline`：
    先查收盤價快取，缺的以 `getStockData(sym, '1d')` 抓（首輪 3 條並行，失敗者最多再重試 2 輪、每輪 1 條、間隔
-   45 秒，查無代號（`NOT_FOUND`）不重試；仍有標的失敗則整輪不寫入）；有交易流水時以流水重播（含已清倉部位），
-   沒有才從現存持股逆推；只填第一筆 live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
+   45 秒，查無代號（`NOT_FOUND`）不重試；還有其他失敗或全部標的都查無則整輪不寫入）；有交易流水時以流水重播
+   （含已清倉部位），沒有才從現存持股逆推；只填第一筆 live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
+   查無的標的不擋整輪：持有它的日子是**缺價日**（`CONTEXT.md`），照樣出列但數字只算查得到的、以 `notFoundSymbols`
+   標出，`buildChartSeries` 不畫這些點（期間的賣出與配息照樣累計），圖下以 `notFoundGapNote` 持久提示。
 5. **賣出**（`SellModal` → `App.handlePortfolioSell`）：預覽與入帳都走 `utils/portfolioLedger.ts` 的 `buildSellResult`；
    產出 `RealizedTrade`（含當沖旗標，ADR-0003），追加手動賣出流水，批次扣減或移除。
 6. **對帳單匯入**（`ImportStatementModal` → `App.handleStatementImport`）：`parseStatementFile` 依內容判別格式（xlsx
@@ -438,8 +440,9 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
   中斷」提示、不寫快取；什麼都沒有 → 丟錯。
 - 消費端：儀表板抓資料失敗 → 可重試的 `Banner`；進場分析失敗 → 錯誤訊息直接顯示在報告區；健檢 →
   `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案（查無代號有專屬文案、請使用者確認代號）；歷史回推 →
-  查無代號的標的不重試、失敗訊息單獨列出，其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說
-  「限流中」（`progressLabel`、`backfillFailMessage` 有行為鎖：`components/portfolio/PnlHistorySection.test.ts`）；
+  查無代號的標的不重試、只剩查無時照建曲線並把缺價日標出、圖下持久提示（整輪失敗時查無的標的在訊息裡單獨列出），
+  其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說「限流中」（`progressLabel`、
+  `backfillFailMessage`、`notFoundGapNote` 有行為鎖：`components/portfolio/PnlHistorySection.test.ts`）；
   基本面 → `Banner`＋強制重抓。
 
 **降級：**

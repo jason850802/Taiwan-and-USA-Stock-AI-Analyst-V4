@@ -5,9 +5,12 @@
 //   其他（查無代號、認不出的錯誤）不猜成因。
 // - 失敗訊息：查無代號的標的不進重試，訊息不能說「已自動重試 2 次」；
 //   與還要處置的失敗同時發生時分兩段寫。
+// - 缺價日（同日拍板，持久標示）：圖下提示列出查無的標的、天數與起訖日；
+//   台幣曲線「缺匯率」的天數不能把本來就不畫的缺價日算進去。
 // 放置決策同 docs/adr/0002-api-lib-test-colocation.md：測試與受測碼放一起。
 import { describe, it, expect } from 'vitest';
-import { backfillFailMessage, progressLabel } from './PnlHistorySection';
+import type { DailyPnlSnapshot } from '../../types';
+import { backfillFailMessage, notFoundGapNote, progressLabel, twdGapDays } from './PnlHistorySection';
 
 type Kind = Parameters<typeof progressLabel>[0]['kind'];
 
@@ -58,5 +61,37 @@ describe('backfillFailMessage｜回推失敗訊息', () => {
     const many = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7'];
     expect(backfillFailMessage({ missedSymbols: many, notFoundSymbols: many, kind: 'NOT_FOUND', detail: '' }))
       .toBe(`A1、A2、A3、A4、A5、A6 等 7 檔 ${NOT_FOUND_TEXT}`);
+  });
+});
+
+const row = (date: string, notFoundSymbols?: string[]): DailyPnlSnapshot => ({
+  date, market: 'US', source: 'backfill',
+  marketValue: 0, totalCost: 0, estSellCosts: 0, cashDividends: 0, symbolCount: 1, capturedAt: 1,
+  ...(notFoundSymbols ? { notFoundSymbols } : {}),
+});
+
+describe('notFoundGapNote｜缺價日提示', () => {
+  it('沒有缺價日 → 不提示', () => {
+    expect(notFoundGapNote([row('2025-03-03'), row('2025-03-10')])).toBeNull();
+  });
+
+  it('一檔：列出代號、天數與起訖日', () => {
+    expect(notFoundGapNote([
+      row('2025-03-03'), row('2025-03-04', ['XYZ']), row('2025-03-07', ['XYZ']), row('2025-03-10'),
+    ])).toBe('XYZ 查無行情資料（可能已下市、更換代號或代號有誤）：'
+      + '持有它的 2 天（2025-03-04～2025-03-07）算不出當日損益，曲線略過不畫');
+  });
+
+  it('多檔合併依代號排序；只有一天時不寫區間', () => {
+    expect(notFoundGapNote([row('2025-03-04', ['XYZ', 'ABC'])]))
+      .toBe('ABC、XYZ 查無行情資料（可能已下市、更換代號或代號有誤）：'
+        + '持有它們的 1 天（2025-03-04）算不出當日損益，曲線略過不畫');
+  });
+});
+
+describe('twdGapDays｜台幣曲線缺匯率的天數', () => {
+  it('缺價日本來就不畫，不算成缺匯率', () => {
+    // 3 列：一列是缺價日、另兩列只畫出 1 點 → 缺匯率 1 天（舊算法會說 2 天）
+    expect(twdGapDays([row('2025-03-03'), row('2025-03-04', ['XYZ']), row('2025-03-05')], 1)).toBe(1);
   });
 });

@@ -187,24 +187,30 @@ describe('runBackfillPipeline｜限流退避重試', () => {
   });
 });
 
-// ── 查無代號不重試（2026-10-01 使用者拍板）──────────────────────────────────
+// ── 查無代號不重試、只剩查無照建曲線（2026-10-01 使用者拍板）────────────────────
 // NOT_FOUND 重試也是同樣結果，不進 45 秒 × 2 輪的退避；其他失敗照舊重試。
+// 查無是永久的：只剩查無時照建曲線，持有查無標的的日子標成缺價日（快照列的 notFoundSymbols），
+// 由圖表不畫；還有暫時失敗（限流、後端沒開…）照舊整輪不寫，全部標的都查無也照舊失敗（沒東西可畫）。
 // 退避成因與最終原因只看「真正還要重試／還失敗」的那幾檔，不能被查無那檔或已重試成功那檔帶偏。
 describe('runBackfillPipeline｜查無代號不重試', () => {
   const notFound = (s: string) => new DataFetchError('NOT_FOUND', `找不到台股代號: ${s}`);
   const rateLimited = (s: string) => new DataFetchError('RATE_LIMIT', `Fetch error (429) ${s}`);
 
-  it('查無代號首輪就算失敗：不等待、不重抓，結果標出哪幾檔是查無', async () => {
+  it('查無代號首輪就定案：不等待、不重抓，照建曲線並標出持有它的缺價日', async () => {
     const { ports, state } = makePorts({ failTimes: { BBB: 99 }, errorFor: notFound });
     const res = await run({}, ports);
-    expect(res.ok).toBe(false);
-    if (res.ok) return;
     expect(state.sleeps).toEqual([]);
     expect(state.fetched.filter(s => s === 'BBB')).toHaveLength(1);
-    expect(res.missedSymbols).toEqual(['BBB']);
-    expect(res.notFoundSymbols).toEqual(['BBB']);
-    expect(res.kind).toBe('NOT_FOUND');
-    expect(res.detail).toBe('找不到台股代號: BBB');
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    // BBB 01/05 起持有 → 01/05、01/06 是缺價日；01/02 只有 AAA，照常
+    expect(res.snapshots.map(r => r.notFoundSymbols)).toEqual([undefined, ['BBB'], ['BBB']]);
+    // 手排：01/05 只算 AAA 11×1000＝11,000（成本 10,014，賣費 15＋稅 33＝48）；BBB 查無不計
+    expect(strip(res.snapshots)[1]).toEqual({
+      date: '2026-01-05', market: 'TW', source: 'backfill',
+      marketValue: 11000, totalCost: 10014, estSellCosts: 48, cashDividends: 0, symbolCount: 1,
+      notFoundSymbols: ['BBB'],
+    });
   });
 
   it('查無與限流同時發生：只重試限流那檔，最終原因報還要處置的限流', async () => {
@@ -224,19 +230,39 @@ describe('runBackfillPipeline｜查無代號不重試', () => {
     expect(res.detail).toBe('Fetch error (429) BBB');
   });
 
-  it('限流那檔重試成功、只剩查無：最終原因是查無，不是已成功那檔的限流', async () => {
+  it('限流那檔重試成功、只剩查無：照建曲線，已解除的限流不算失敗', async () => {
     // AAA 先結算（查無）、BBB 後結算（限流）→ 首輪「最後一個錯誤」是 BBB 的限流
-    const { ports } = makePorts({
+    const { ports, state } = makePorts({
       failTimes: { AAA: 99, BBB: 1 },
       errorFor: s => (s === 'AAA' ? notFound(s) : rateLimited(s)),
     });
     const res = await run({}, ports);
+    expect(state.sleeps).toEqual([45000]);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    // AAA 01/02 起一路持有 → 每天都是缺價日；BBB 重試抓到的行情照樣入列（500 股 @50、@52）
+    expect(res.snapshots.map(r => [r.date, r.marketValue, r.notFoundSymbols])).toEqual([
+      ['2026-01-02', 0, ['AAA']],
+      ['2026-01-05', 25000, ['AAA']],
+      ['2026-01-06', 26000, ['AAA']],
+    ]);
+  });
+
+  it('全部標的都查無：仍失敗（沒東西可畫），原因報查無、不被中途的限流帶偏', async () => {
+    // AAA 首輪就查無；BBB 首輪限流、重試才查無 → 兩檔都查無，最後一個錯誤是 BBB 的查無
+    let bbbFailures = 0;
+    const { ports, state } = makePorts({
+      failTimes: { AAA: 99, BBB: 99 },
+      errorFor: s => (s === 'AAA' ? notFound(s) : (++bbbFailures === 1 ? rateLimited(s) : notFound(s))),
+    });
+    const res = await run({}, ports);
+    expect(state.sleeps).toEqual([45000]);
     expect(res.ok).toBe(false);
     if (res.ok) return;
-    expect(res.missedSymbols).toEqual(['AAA']);
-    expect(res.notFoundSymbols).toEqual(['AAA']);
+    expect(res.missedSymbols).toEqual(['AAA', 'BBB']);
+    expect(res.notFoundSymbols).toEqual(['AAA', 'BBB']);
     expect(res.kind).toBe('NOT_FOUND');
-    expect(res.detail).toBe('找不到台股代號: AAA');
+    expect(res.detail).toBe('找不到台股代號: BBB');
   });
 
   it('退避成因只看要重試的標的：查無那檔最後才失敗也不會被當成成因', async () => {
@@ -261,10 +287,27 @@ describe('runBackfillPipeline｜查無代號不重試', () => {
     const res = await run({}, ports);
     expect(state.sleeps).toEqual([45000]);                              // 只退避一輪
     expect(state.fetched.filter(s => s === 'BBB')).toHaveLength(2);     // 首輪＋一次重試
-    expect(res.ok).toBe(false);
-    if (res.ok) return;
-    expect(res.notFoundSymbols).toEqual(['BBB']);
-    expect(res.kind).toBe('NOT_FOUND');
+    expect(res.ok).toBe(true);                                          // 只剩查無 → 照建曲線
+    if (!res.ok) return;
+    expect(res.snapshots.map(r => r.notFoundSymbols)).toEqual([undefined, ['BBB'], ['BBB']]);
+  });
+
+  it('lots 模式（沒有流水）也一樣：照建曲線，查無那批持有的日子標成缺價日', async () => {
+    const { ports } = makePorts({ failTimes: { BBB: 99 }, errorFor: notFound });
+    const items = [
+      { id: 'l1', symbol: 'AAA', totalShares: 1000, totalCost: 10014, buyDate: '2026-01-02',
+        cashDividends: 0, stockDividends: 0 },
+      { id: 'l2', symbol: 'BBB', totalShares: 500, totalCost: 25035, buyDate: '2026-01-05',
+        cashDividends: 0, stockDividends: 0 },
+    ] as PortfolioItem[];
+    const res = await run({ txns: [], items }, ports);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.snapshots.map(r => [r.date, r.marketValue, r.notFoundSymbols])).toEqual([
+      ['2026-01-02', 10000, undefined],
+      ['2026-01-05', 11000, ['BBB']],
+      ['2026-01-06', 12000, ['BBB']],
+    ]);
   });
 });
 
