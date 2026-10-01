@@ -1,7 +1,8 @@
 // components/FundamentalsPanel.test.ts — 基本面分頁搜尋閘門的行為鎖
 //
 // 本檔守什麼：搜尋框交來的字串哪些會被當成台股代碼去抓 FinMind、哪些改顯示「僅支援台股」提示。
-// 輸入有兩條路：名錄點選（台股是純代碼）與使用者自由輸入（只 trim 過，什麼都可能出現）。
+// 輸入有兩條路：搜尋結果點選（本地名錄是純代碼；Yahoo 搜尋補進來的台股帶 .TW／.TWO）
+// 與使用者自由輸入（只 trim 過，什麼都可能出現）。
 // 主要防的回歸：把閘門裡的 isTwCode 換成 isTwStock。兩者只差在後綴——閘門只剝一層 .TW/.TWO，
 // 「2330.TW.TW」剝完是「2330.TW」：isTwStock 會放行，FinMind 拿到帶後綴的 data_id 只會報錯；
 // isTwCode 擋下，使用者看到的是「僅支援台股」提示。
@@ -10,14 +11,14 @@ import { describe, it, expect } from 'vitest';
 import { toTwCode } from './FundamentalsPanel.js';
 
 describe('toTwCode — 基本面分頁搜尋閘門', () => {
-  it('台股純代碼原樣放行（名錄點選路徑）', () => {
+  it('台股純代碼原樣放行（本地名錄點選）', () => {
     expect(toTwCode('2330')).toBe('2330');
     expect(toTwCode('0050')).toBe('0050');
     expect(toTwCode('00631L')).toBe('00631L');
     expect(toTwCode('00981A')).toBe('00981A');
   });
 
-  it('剝一層 .TW／.TWO，並統一大寫、去前後空白（自由輸入路徑）', () => {
+  it('剝一層 .TW／.TWO，並統一大寫、去前後空白（Yahoo 搜尋結果、自由輸入）', () => {
     expect(toTwCode('2330.TW')).toBe('2330');
     expect(toTwCode('6488.TWO')).toBe('6488');
     expect(toTwCode(' 2330.tw ')).toBe('2330');

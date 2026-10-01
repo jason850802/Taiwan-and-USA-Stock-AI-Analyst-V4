@@ -68,9 +68,10 @@ describe('isTwCode（純代碼，不含後綴）', () => {
   });
 
   it('帶 .TW／.TWO 後綴回 false——這是與 isTwStock 唯一的差別', () => {
-    for (const [symbol] of TRUTH_TABLE) {
+    // 期望值取真值表、不取 isTwStock：isTwStock 委派本函式，拿它當答案等於自己驗自己
+    for (const [symbol, expected] of TRUTH_TABLE) {
       const hasSuffix = /\.TWO?$/i.test(symbol);
-      expect(isTwCode(symbol)).toBe(hasSuffix ? false : isTwStock(symbol));
+      expect(isTwCode(symbol)).toBe(!hasSuffix && expected === 'TW');
     }
     // 只剝一層後綴的呼叫端（基本面分頁）靠這條擋下「2330.TW.TW」
     expect(isTwCode('2330.TW')).toBe(false);
