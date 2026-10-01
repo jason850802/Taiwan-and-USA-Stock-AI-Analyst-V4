@@ -269,6 +269,9 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
     return json;
 };
 
+/** 來源明說「查無」（後端 404／回應無資料）才算；限流、後端沒開、取消都不算。 */
+const isNotFound = (e: unknown): boolean => e instanceof DataFetchError && e.kind === 'NOT_FOUND';
+
 const fetchRawData = async (symbol: string, interval: string, range: string, signal?: AbortSignal) => {
   const clean = symbol.trim().toUpperCase();
   const performQuery = async (s: string) => queryYahoo(s, interval, range, signal);
@@ -286,37 +289,25 @@ const fetchRawData = async (symbol: string, interval: string, range: string, sig
 
       // 1.5 名錄 .TW/.TWO 後綴預解析：上櫃股（如 6488）名錄命中即後綴直達，
       // 消滅整輪 .TW 失敗握手（冷抓 12 秒的大宗）。名錄有 memCache＋localStorage，常態 0ms。
+      let listedSuffix: '.TW' | '.TWO' | null = null;
       try {
-          const dir = await ensureTaiwanDirectory();
-          const suffix = resolveTaiwanSuffix(coreCode, dir);
-          if (suffix) {
-              try {
-                  return await performQuery(coreCode + suffix);
-              } catch (e: any) {
-                  // H-1：使用者主動取消不是「名錄不一致」，直接上拋、不得 fall through 重試
-                  if (e?.name === 'AbortError') throw e;
-                  // 名錄與 Yahoo 不一致的極罕見情境：fall through 回既有 try-chain，
-                  // 行為不劣於今日（planner_rulings #6）
-              }
-          }
-      } catch (e: any) {
-          if (e?.name === 'AbortError') throw e; // H-1
-          /* 名錄載入失敗即跳過預解析，走既有 try-fallback */
-      }
+          listedSuffix = resolveTaiwanSuffix(coreCode, await ensureTaiwanDirectory());
+      } catch { /* 名錄載入失敗即跳過預解析，照 .TW → .TWO 試 */ }
 
-      // Implicit Code "2330" / "00981A" -> Try .TW then .TWO
-      try {
-          return await performQuery(`${coreCode}.TW`);
-      } catch (e: any) {
-          if (e?.name === 'AbortError') throw e; // H-1：取消不得觸發 .TWO 重試
+      // 試探鏈：名錄給得出後綴就先試它、再試另一個（名錄與 Yahoo 不一致的極罕見情境，planner_rulings #6）；
+      // 名錄解析不出後綴（如 "2330"、"00981A" 時名錄沒載到）就先 .TW 再 .TWO。
+      // 只有 NOT_FOUND（這個後綴查無）才換下一個後綴：限流、後端沒開、使用者取消（H-1）等其他失敗
+      // 都代表「查不出來」，原樣上拋、保留種類與後端原文，也不再多打請求。每個後綴都查無才算查無此代號
+      // （2026-10-01 拍板；行為鎖：services/yahoo.twSuffixChain.test.ts）。
+      const suffixes = listedSuffix === '.TWO' ? ['.TWO', '.TW'] : ['.TW', '.TWO'];
+      for (const suffix of suffixes) {
           try {
-              // Fallback to OTC (TWO)
-              return await performQuery(`${coreCode}.TWO`);
-          } catch (e2: any) {
-             if (e2?.name === 'AbortError') throw e2; // H-1
-             throw new DataFetchError('NOT_FOUND', `找不到台股代號: ${coreCode}`);
+              return await performQuery(coreCode + suffix);
+          } catch (e) {
+              if (!isNotFound(e)) throw e;
           }
       }
+      throw new DataFetchError('NOT_FOUND', `找不到台股代號: ${coreCode}`);
   }
 
   // 2. US Stocks or others
@@ -917,6 +908,9 @@ const fetchStockDataUncached = async (
               };
           } catch (finErr) {
               // If FinMind also fails, revert to original error
+              // 例外：Yahoo 說查無、FinMind 卻是限流／後端沒開等其他失敗——這檔有沒有資料其實還不知道，
+              // 改丟 FinMind 的錯誤讓呼叫端照常重試；兩邊都查無才是 NOT_FOUND（2026-10-01 拍板）。
+              if (isNotFound(err) && !isNotFound(finErr)) throw finErr;
               if (err instanceof DataFetchError) throw err;   // T3：原樣重丟保 kind 穿透到 UI
               throw new DataFetchError('UNKNOWN', `Data Fetch Failed: ${err.message}`);
           }

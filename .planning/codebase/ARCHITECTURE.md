@@ -386,19 +386,17 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 **方向：** 兩份輸出都被 snapshot 鎖住（`utils/geminiRules.test.ts`、`utils/geminiPrompts.test.ts`）；合併時須證明輸出
 逐位元組不變，否則等於讓所有使用者的 AI 快取失效一輪。
 
-### 台股試探鏈把任何失敗都改寫成 `NOT_FOUND`，`NOT_FOUND` 還不能拿來決定處置
+### `NOT_FOUND` 已可信，下游還沒用它決定處置
 
-**現況：** `services/yahoo.ts` 的 `fetchRawData` 收到裸台股代號時，名錄給的後綴抓不到、或名錄解析不出後綴，就依序試
-`.TW`、`.TWO`；兩層 catch 只放行 `AbortError`，兩個都失敗就統一丟 `NOT_FOUND`（「找不到台股代號」），限流（429）、
-後端沒開（500）也算在內。`getLatestPrice` 不先換碼，庫存的裸碼任何失敗都是 `NOT_FOUND`（目前沒有 UI 讀它的種類）；
-`getStockData` 先用名錄把裸碼換成帶後綴的代號，名錄命中就不經過這條鏈、種類照實上拋，只有名錄解析不出後綴時
-（名錄沒載到，或代號不是上市／上櫃）才會被改寫。另外，歷史回推退避期間的文案（`PnlHistorySection` 的
-`progressLabel`）只分「後端無回應中」與其他一律「限流中」，`NOT_FOUND`（例如下市的美股代號）會顯示成「限流中」。
-**問題：** 這條路徑上的 `NOT_FOUND` 不保證是查無代號，所以 `NOT_FOUND` 還不能加專屬處置文案（例如「可能已下市」），
-也不能拿來跳過重試（查無代號的標的現在仍會重試兩輪、各等 45 秒）。
-**方向：** 試探鏈保留非 `NOT_FOUND` 的種類往上丟，兩個後綴都是 `NOT_FOUND` 才算查無代號；之後再給 `NOT_FOUND`
-專屬文案、退避文案補中性分支、查無代號免重試。
-- 對證：``git grep -n "找不到台股代號" -- services/ ':!*.test.ts'``；``git grep -n "後端無回應中" -- components/``。
+**現況：** 台股試探鏈原本把任何失敗（含限流、後端沒開）都改寫成 `NOT_FOUND`；2026-10-01 起 `services/yahoo.ts` 的
+`fetchRawData` 只有 `NOT_FOUND` 才換下一個後綴、其他失敗原樣上拋，`fetchStockDataUncached` 的台股 FinMind 備援也改成
+兩邊都查無才丟 `NOT_FOUND`（行為鎖：`services/yahoo.twSuffixChain.test.ts`）。但下游三處還沒用它：健檢的
+`quoteFailMarkdown` 對 `NOT_FOUND` 只給通用「請稍後再試」；歷史回推退避期間的文案（`PnlHistorySection` 的
+`progressLabel`）只分「後端無回應中」與其他一律「限流中」，`NOT_FOUND`（例如下市的美股代號）會顯示成「限流中」；
+`utils/backfillPipeline.ts` 對所有失敗一律重試兩輪、各等 45 秒。
+**問題：** 查無代號的標的在回推時白等 90 秒，退避期間還顯示成「限流中」；健檢也說不出「查無此代號」。
+**方向：** 給 `NOT_FOUND` 專屬文案、退避文案補中性分支、查無代號免重試（措辭與政策待使用者拍板）。
+- 對證：``git grep -n "isNotFound" -- services/yahoo.ts``；``git grep -n "後端無回應中" -- components/``。
 
 ### 展示層直接呼叫低階資料函式，除權息抓取寫了兩份
 
@@ -453,7 +451,10 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
   其餘 → `UNKNOWN`。接線鎖：`services/fetchError.wiring.test.ts`。`queryYahoo` 另有 `chart.error` 分支（`Not Found` →
   `NOT_FOUND`、其他 → `PARSE`），但現行後端已把 `chart.error` 轉成 404／502、不會回 200 帶錯誤，這個分支實際走不到；
   回應沒有資料時則丟 `NOT_FOUND`。`fetchFinMindRows` 另把 HTTP status 掛在錯誤物件上（基本面的 429 重試讀它）。
-- 裸台股代號在 `.TW`、`.TWO` 都查不到時，`fetchRawData` 統一改丟 `NOT_FOUND`（「找不到台股代號」），不論失敗原因（見反模式）。
+- 裸台股代號的試探鏈（`fetchRawData`）只有 `NOT_FOUND` 才換下一個後綴；限流、後端沒開等其他失敗原樣上拋（保留種類與
+  後端原文），每個後綴都查無才丟 `NOT_FOUND`（「找不到台股代號」）。`fetchStockDataUncached` 的台股 FinMind 備援也失敗時
+  重丟 Yahoo 的錯誤，例外是 Yahoo 說查無、FinMind 卻是其他失敗——改丟 FinMind 的，兩邊都查無才是 `NOT_FOUND`。
+  行為鎖：`services/yahoo.twSuffixChain.test.ts`。
 - `classifyCaught` 把任意例外歸類：`DataFetchError` 照用、`status` 為 429／5xx、`TypeError` 或 failed to fetch →
   `NETWORK`，認不出就 `UNKNOWN`。
 - 串流收尾（`callGeminiApiStream`）：收到 `done` → 回全文並寫快取；只有部分 `delta` → 回部分內容並附「報告生成

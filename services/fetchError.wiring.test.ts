@@ -6,8 +6,9 @@
 // 例如下市的美股）也被當成後端沒回應，健檢與歷史回推就叫使用者去檢查後端。
 // 規則本身的逐碼測試在 utils/fetchError.test.ts；這裡只證明每個出口真的接上它。
 //
-// 另附台股 .TW → .TWO 試探鏈的回歸鎖：鏈的 catch 不看 kind，404 改分類成 NOT_FOUND 後
-// 仍要照樣往下試 .TWO，兩個後綴都查不到才丟「找不到台股代號」。
+// 另附台股 .TW → .TWO 試探鏈的回歸鎖：404 改分類成 NOT_FOUND 後，鏈仍要照樣往下試 .TWO，
+// 兩個後綴都查不到才丟「找不到台股代號」。2026-10-01 起鏈只有 NOT_FOUND 才換後綴、其他種類原樣上拋，
+// 完整語意鎖在 services/yahoo.twSuffixChain.test.ts。
 //
 // vi.resetModules 之後 DataFetchError 是新的 class 身分，所以錯誤一律攤成純欄位比對、不用 instanceof。
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -80,7 +81,7 @@ describe('queryYahoo（/api/yahoo/chart）', () => {
   });
 });
 
-describe('台股裸代號的 .TW → .TWO 試探鏈（回歸鎖：鏈不看 kind）', () => {
+describe('台股裸代號的 .TW → .TWO 試探鏈（回歸鎖：查無照樣換試下一個後綴）', () => {
   const onlyTwoListed = (url: URL) => (url.searchParams.get('symbol') === '9999.TWO'
     ? json(chart('9999.TWO', 88))
     : yahooNotFound());

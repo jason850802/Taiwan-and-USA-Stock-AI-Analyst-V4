@@ -80,7 +80,7 @@ Serverless 函式代打。
 - **錯誤分類**：`BAD_REQUEST` 400、`UPSTREAM_UNAUTHORIZED` 502、`RATE_LIMITED` 429、`UPSTREAM_ERROR` 502、
   `NOT_FOUND` 404。兩支 `maxDuration = 30`，只接受 GET。
 - **前端**：`services/yahoo.ts` 的 `queryYahoo`→`fetchRawData`（裸台股代號先查名錄決定 `.TW`／`.TWO`，
-  不行再依序試）；搜尋在 `services/stockDirectory.ts`。行情快取在 `services/quoteCache.ts`（sessionStorage）。
+  查無才改試另一個後綴，其他失敗原樣上拋）；搜尋在 `services/stockDirectory.ts`。行情快取在 `services/quoteCache.ts`（sessionStorage）。
 - **限流**：`marketPerMin`（每 IP 60 次／分，與 FinMind 共用同一組計數）。
 
 ## FinMind（台股資料）

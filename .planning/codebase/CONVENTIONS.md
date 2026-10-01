@@ -159,10 +159,11 @@ consistency.
   - `services/yahoo.ts` 的 `queryYahoo` 打後端 `/api/yahoo/chart`：非 2xx 丟 `DataFetchError`（種類照
     `classifyHttpStatus`，後端回 404「找不到該股票代號」→`NOT_FOUND`）；回應帶 `chart.error` 時
     `Not Found`→`NOT_FOUND`、其餘→`PARSE`。
-  - 同檔 `fetchRawData`：裸台股代號先查名錄決定 `.TW`／`.TWO`；名錄沒有、或名錄給的後綴抓不到時，
-    依序試 `.TW`、`.TWO`，都失敗丟 `NOT_FOUND`。
+  - 同檔 `fetchRawData`：裸台股代號先查名錄決定先試 `.TW` 還是 `.TWO`（名錄沒有就先 `.TW`）；只有
+    `NOT_FOUND` 才改試另一個後綴，其他失敗原樣上拋，兩個後綴都查無才丟 `NOT_FOUND`（「找不到台股代號」）。
   - 同檔 `fetchStockDataUncached`（`getStockData` 的無快取本體）：台股日線 Yahoo 失敗時改抓 FinMind
-    （`fetchFinMindDailyData`）；使用者主動取消（`AbortError`）直接上拋、不觸發這條備援。
+    （`fetchFinMindDailyData`）；使用者主動取消（`AbortError`）直接上拋、不觸發這條備援。FinMind 也失敗時
+    重丟 Yahoo 的錯誤，但 Yahoo 查無、FinMind 是其他失敗時丟 FinMind 的（兩邊都查無才算查無）。
   - `services/stockDirectory.ts` 的非關鍵路徑用 `catch { /* ignore */ }`。
   - 舊版寫的「proxy rotation in `queryYahoo`」（公共 CORS proxy 輪替）已隨 proxy 移除（2026-07-05
     `e7da3c7`）。Yahoo 的 cookie／crumb 握手與遇 401／429 重試一次，現在在後端 `api/_lib/yahoo.ts` 的
