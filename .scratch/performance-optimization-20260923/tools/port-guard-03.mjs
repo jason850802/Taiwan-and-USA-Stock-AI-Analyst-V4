@@ -187,7 +187,7 @@ export async function terminateVerifiedTree(records, { readTable = processTable,
       for (const item of launcherTree(table, root.pid)) known.set(`${item.pid}|${item.creationDate}`, item);
     }
     const item = alive(table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
-    if (!item) return { killed, stillAlive: alive(table).map(row => row.pid) };
+    if (!item) return { killed, stillAlive: alive(table).map(row => row.pid), known: [...known.values()] };
     attempted.add(`${item.pid}|${item.creationDate}`);
     const result = await terminate(item);
     killed.push({ pid: item.pid, name: item.name ?? null, creationDate: item.creationDate, status: result.status });
