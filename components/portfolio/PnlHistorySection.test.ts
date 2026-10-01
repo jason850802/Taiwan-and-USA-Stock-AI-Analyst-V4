@@ -10,7 +10,9 @@
 // 放置決策同 docs/adr/0002-api-lib-test-colocation.md：測試與受測碼放一起。
 import { describe, it, expect } from 'vitest';
 import type { DailyPnlSnapshot } from '../../types';
-import { backfillFailMessage, notFoundGapNote, progressLabel, twdGapDays } from './PnlHistorySection';
+import {
+  applyBackfillProgress, backfillFailMessage, notFoundGapNote, progressLabel, twdGapDays,
+} from './PnlHistorySection';
 
 type Kind = Parameters<typeof progressLabel>[0]['kind'];
 
@@ -33,6 +35,32 @@ describe('progressLabel｜退避等待期間的成因', () => {
   it('不在等待時沿用原文字', () => {
     expect(progressLabel({ running: true, done: 1, total: 3, error: null, retrying: 2, waitSec: 0 })).toBe('重試 2 檔…');
     expect(progressLabel({ running: true, done: 1, total: 3, error: null })).toBe('回推中 1/3 檔…');
+  });
+});
+
+// 管線的進度回報 → 畫面 state。順序照 runBackfillPipeline：退避通知（waitSec 45、帶成因）→
+// 等完（waitSec 0）→ 該輪逐檔進度（只帶 done／total）。
+describe('applyBackfillProgress｜進度回報映射', () => {
+  const start = { running: true, done: 0, total: 3, error: null };
+  const replay = (...ps: Parameters<typeof applyBackfillProgress>[1][]) => ps.reduce(applyBackfillProgress, start);
+
+  it('退避輪的 retrying 延續到該輪的逐檔進度（文字維持「重試 N 檔…」）', () => {
+    const st = replay(
+      { done: 2, total: 3, retrying: 1, waitSec: 45, kind: 'RATE_LIMIT' },
+      { done: 2, total: 3, retrying: 1, waitSec: 0 },
+      { done: 3, total: 3 },
+    );
+    expect(progressLabel(st)).toBe('重試 1 檔…');
+  });
+
+  it('先限流、下一輪改成認不出的錯誤：等待文字不再沿用「限流中」', () => {
+    const st = replay(
+      { done: 2, total: 3, retrying: 1, waitSec: 45, kind: 'RATE_LIMIT' },
+      { done: 2, total: 3, retrying: 1, waitSec: 0 },
+      { done: 3, total: 3 },
+      { done: 3, total: 3, retrying: 1, waitSec: 45, kind: undefined },
+    );
+    expect(progressLabel(st)).toBe('45 秒後重試 1 檔…');
   });
 });
 

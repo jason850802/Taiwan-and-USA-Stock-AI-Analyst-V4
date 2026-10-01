@@ -7,7 +7,7 @@ import { isTwStock } from '../../utils/portfolioFees';
 import { buildChartSeries, upsertSnapshots } from '../../utils/portfolioHistory';
 import { loadSnapshots, saveSnapshots } from '../../utils/portfolioHistoryStore';
 import { loadTxns, saveTxns, appendTxns } from '../../utils/txnStore';
-import { runBackfillPipeline } from '../../utils/backfillPipeline';
+import { runBackfillPipeline, type BackfillProgress } from '../../utils/backfillPipeline';
 import { runWithConcurrency } from '../../utils/workerPool';
 import { fetchFinMindRows } from '../../services/finmind';
 import { type FetchErrorKind } from '../../services/fetchError';
@@ -50,6 +50,19 @@ export const progressLabel = (st: BackfillState): string => {
   }
   return st.retrying ? `重試 ${st.retrying} 檔…` : `回推中 ${st.done}/${st.total} 檔…`;
 };
+
+/**
+ * 管線的進度回報 → 畫面 state：只覆寫有帶的欄位——退避輪設定的 retrying 要延續到該輪的逐檔進度，
+ * 進度文字才會維持「重試 N 檔…」而不是跳回「回推中 x/y 檔…」。
+ * 例外是成因：每則退避通知（waitSec > 0）都照實覆寫，認不出的 undefined 也一樣，
+ * 否則下一輪會沿用上一輪的「限流中」（只有限流才說限流中，2026-10-01 拍板）。
+ */
+export const applyBackfillProgress = (prev: BackfillState, p: BackfillProgress): BackfillState => ({
+  ...prev, done: p.done, total: p.total,
+  ...(p.retrying !== undefined ? { retrying: p.retrying } : {}),
+  ...(p.waitSec !== undefined ? { waitSec: p.waitSec } : {}),
+  ...(p.waitSec ? { kind: p.kind } : {}),
+});
 
 const RATE_LIMIT_HINT = '（被行情來源限流）請等幾分鐘再按一次重算';
 const BACKEND_DOWN_HINT = '（行情服務目前無回應，多半是本機後端未啟動或已中斷）請確認後端服務正常後再重算';
@@ -195,17 +208,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
       txns: allTxns,
       realizedTrades,
       usdTwdRate,
-      onProgress: p => setBfState(s => ({
-        ...s,
-        [market]: {
-          ...s[market], done: p.done, total: p.total,
-          // 只覆寫有帶的欄位——退避輪設定的 retrying 要延續到該輪的逐檔進度，
-          // 進度文字才會維持「重試 N 檔…」而不是跳回「回推中 x/y 檔…」
-          ...(p.retrying !== undefined ? { retrying: p.retrying } : {}),
-          ...(p.waitSec !== undefined ? { waitSec: p.waitSec } : {}),
-          ...(p.kind !== undefined ? { kind: p.kind } : {}),
-        },
-      })),
+      onProgress: p => setBfState(s => ({ ...s, [market]: applyBackfillProgress(s[market], p) })),
     });
 
     // 用 === false 而非 !result.ok：本專案 tsconfig 非 strict，後者不會把型別收窄成失敗分支
@@ -317,6 +320,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                   這 {twdGap} 天的快照缺當日匯率或買入匯率，畫不出台幣曲線
                   （USD 曲線可正常顯示）。按下方重算會一併抓取歷史匯率。
                 </p>
+                {gapNote && <p className="text-sm text-amber-300/80">{gapNote}</p>}
                 <button onClick={() => runBackfill(market)} disabled={st.running}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-ctl bg-accent text-white text-sm font-bold hover:bg-accent/80 transition-colors disabled:opacity-50">
                   {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}

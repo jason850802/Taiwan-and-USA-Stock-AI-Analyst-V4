@@ -442,7 +442,8 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
   `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案（查無代號有專屬文案、請使用者確認代號）；歷史回推 →
   查無代號的標的不重試、只剩查無時照建曲線並把缺價日標出、圖下持久提示（整輪失敗時查無的標的在訊息裡單獨列出），
   其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說「限流中」（`progressLabel`、
-  `backfillFailMessage`、`notFoundGapNote` 有行為鎖：`components/portfolio/PnlHistorySection.test.ts`）；
+  `applyBackfillProgress`、`backfillFailMessage`、`notFoundGapNote` 有行為鎖：
+  `components/portfolio/PnlHistorySection.test.ts`）；
   基本面 → `Banner`＋強制重抓。
 
 **降級：**
