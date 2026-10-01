@@ -415,18 +415,17 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 的種類分流。
 - 對證：`git grep -n -i -E "API Key|Gemini 3|\(Flash\)|\(Pro\)" -- App.tsx components/ ':!*.test.ts'`。
 
-### 型別與分類規則的零星重複
+### 型別的零星重複與死型別
 
 **現況：**
 - `AppView` 在 `App.tsx:54` 與 `components/Sidebar.tsx:4` 各宣告一次。
 - `types.ts` 的 `TechnicalIndicators`、`AIAnalysisResult` 與 `StockDataPoint.dealerBuySell` 沒有任何使用處
   （`git grep -n -E "\bTechnicalIndicators\b|\bAIAnalysisResult\b|\bdealerBuySell\b" -- '*.ts' '*.tsx'` 只命中 `types.ts`）。
-- `components/FundamentalsPanel.tsx:22` 自寫 `isTwCode`，沒走市場分類唯一權威 `utils/market.ts`（`CONCERNS.md` 的
-  Duplicated constants 已記）。
 
-**問題：** 改分頁或分類規則時要記得多處；`AIAnalysisResult` 容易讓人誤以為 AI 回傳結構化結果，實際上報告是
-Markdown 文字。
-**方向：** 共用 `AppView`、刪掉死型別、`isTwCode` 改用 `utils/market.ts`。
+**問題：** 改分頁時要記得兩處；`AIAnalysisResult` 容易讓人誤以為 AI 回傳結構化結果，實際上報告是 Markdown 文字。
+**方向：** 共用 `AppView`、刪掉死型別。
+- 已解決：本節原列的 `components/FundamentalsPanel.tsx` 自寫 `isTwCode`，2026-10-01 改用 `utils/market.ts` 的
+  `isTwCode`（純代碼版，`isTwStock` 委派它），見 `CONCERNS.md` 的 Duplicated constants。
 
 ## 錯誤處理
 
