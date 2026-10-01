@@ -95,7 +95,9 @@
 - **現況（2026-10-01 核對）：** 原列三項大多已收斂——
   - `PROXIES`：已隨公共 CORS proxy 移除（2026-07-05 `e7da3c7`），見文末「已解決」。
   - FinMind base URL：前端的 `FINMIND_BASE`／`FINMIND` 已不存在，網址只剩後端一處（`api/finmind.ts:48`；`git grep -n finmindtrade -- '*.ts' '*.tsx' ':!*.test.ts'`）。
-  - 台股判斷：已集中到 `utils/market.ts` 的 `isTwStock`（2026-07-23 `c6887ad`，Phase 12 T1；檔頭列出刻意不收斂的「代碼抽取」regex）。剩 `components/FundamentalsPanel.tsx:22` 的本地 `isTwCode`（同一條 `/^\d{3,6}[A-Z]?$/`、不含 `.TW` 後綴判斷），它在 2026-07-12 就已存在、沒收進 `market.ts`。
+  - 台股判斷：已全數集中到 `utils/market.ts`——`isTwStock`（2026-07-23 `c6887ad`，Phase 12 T1）＋純代碼版 `isTwCode`（2026-10-01；`isTwStock` 委派它，regex 只剩一份）。T1 漏收的 `components/FundamentalsPanel.tsx` 本地 `isTwCode`（2026-07-12 就存在）已改用 `market.ts` 版。該處不能直接換成 `isTwStock`：搜尋閘門只剝一層 `.TW/.TWO`，`isTwStock` 會放行「2330.TW.TW」剝剩的「2330.TW」——由 `components/FundamentalsPanel.test.ts` 鎖住。原始碼其餘 4 處含 `\d{3,6}` 的 regex 都在 `market.ts` 檔頭的例外清單（代碼抽取、canonical key、後端白名單）：`git grep -nF 'd{3,6}' -- '*.ts' '*.tsx' ':!*.test.ts'`。
+  - 去 `.TW/.TWO` 後綴的 `replace(/\.TWO?$/i, '')` 共 10 處（`services/yahoo.ts` 7、`services/stockDirectory.ts`／`App.tsx`／`components/FundamentalsPanel.tsx` 各 1）屬正規化、不是分類，未收斂：`git grep -nF ".TWO?$/i, '')" -- '*.ts' '*.tsx'`。
+  - 待使用者決定（行為變更，未動）：`App.tsx` 的 `fundamentalsInitialSymbol` 同樣「剝一層後綴再判斷」，用的卻是 `isTwStock`。依程式碼推論（未實機重現）：儀表板查詢失敗後 `info` 為 null、改用搜尋框原文；原文若是「2330.TW.TW」，基本面分頁會以「2330.TW」起始並在 FinMind 報錯，改用 `isTwCode` 則落回預設 2330。
   - 原 Fix approach 建議新建的 `constants.ts` 不必再建；台股判斷用 `utils/market.ts`。
 - 原文（2026-05-31）：
   - **Issue:** `PROXIES`, the FinMind base URL, and `.TW/.TWO` detection logic are redefined independently.
