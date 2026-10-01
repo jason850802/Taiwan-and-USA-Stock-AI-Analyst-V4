@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../types';
 import { getStockData } from '../services/yahoo';
+import { classifyCaught } from '../services/fetchError';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
 import { lotCostTwd, hasBuyRate } from '../utils/fx';
@@ -24,6 +25,7 @@ import { usePortfolioForm } from './portfolio/usePortfolioForm';
 import { useHealthCheck } from './portfolio/useHealthCheck';
 import { useLotDividendUpdate } from './portfolio/useLotDividendUpdate';
 import { usePortfolioBackup } from './portfolio/usePortfolioBackup';
+import { tradeFailMarkdown } from './portfolio/tradeFailMarkdown';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -108,8 +110,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         recentData
       );
       setTradeResult(result);
-    } catch {
-      setTradeResult('**AI 分析失敗**\n\n請稍後再試，或檢查 API Key 是否設定正確。');
+    } catch (e) {
+      setTradeResult(tradeFailMarkdown(classifyCaught(e)));
     } finally {
       setTradeAnalyzing(false);
       setShowTradeResult(true);
@@ -611,7 +613,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <Skeleton variant="lines" lines={4} />
           <div className="text-center">
             <p className="text-slate-400 text-sm">正在評估您的買入決策，請稍候…</p>
-            <p className="text-slate-500 text-xs mt-1">使用 Gemini 3.1 Pro 思考模式</p>
+            {/* 對應 analyzeTradeDecision 送出的 mode: 'fast'，改 mode 要一起改這句；型號只在後端決定，這裡不寫型號名 */}
+            <p className="text-slate-500 text-xs mt-1">使用快捷模式</p>
           </div>
         </div>
       </Modal>

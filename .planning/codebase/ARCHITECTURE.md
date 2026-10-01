@@ -404,17 +404,6 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 **問題：** 抓取政策（併發數、起始日、失敗處理）改一處容易漏另一處；FinMind 的 dataset 名稱散進元件。
 **方向：** 在 `services/finmind.ts` 提供取除權息公告的函式，兩處共用。
 
-### 前端文案寫死型號名與「API Key」
-
-**現況：** `components/Portfolio.tsx:614` 的載入提示寫「使用 Gemini 3.1 Pro 思考模式」，但 `analyzeTradeDecision` 固定送
-`mode: 'fast'`（後端預設型號 `gemini-3.5-flash`；設 `LLM_PROVIDER=claude-cli` 時根本不是 Gemini）；
-`components/Portfolio.tsx:112` 的失敗訊息要使用者「檢查 API Key 是否設定正確」，但前端從 2026-07-05 起就沒有金鑰。
-`App.tsx:392`、`:404` 的模式按鈕也標著型號家族名「(Flash)」「(Pro)」。
-**問題：** 型號只在後端是紅線設計，寫死在 UI 的型號名會跟實際設定脫節；失敗訊息把使用者指向不存在的設定。
-**方向：** 文案改成不含型號名的模式描述；失敗訊息比照 `useHealthCheck` 的 `analysisFailMarkdown`，依 `DataFetchError`
-的種類分流。
-- 對證：`git grep -n -i -E "API Key|Gemini 3|\(Flash\)|\(Pro\)" -- App.tsx components/ ':!*.test.ts'`。
-
 ### 型別的零星重複與死型別
 
 **現況：**
@@ -534,9 +523,11 @@ Yahoo／FinMind 的回應沒有 schema 驗證（`CONCERNS.md`）。
   對證：`git grep -c 'process.env.API_KEY' -- services/ components/ App.tsx` 無命中。
 - **Public CORS proxy dependency**（2026-07-05／07-09 解決）：`e7da3c7` 讓 Yahoo 改經 `/api/yahoo/*`、`07ec1f7` 讓
   FinMind 改經 `/api/finmind`。對證：`git grep -n -E 'PROXIES|corsproxy|allorigins' -- services/ components/ App.tsx utils/ api/` 無命中。
-- **Inconsistent fast/thinking model handling**（2026-06-12／07-05 解決）：`1a7dd92` 移除引用不存在變數
-  `REACT_APP_GEMINI_API_KEY` 的錯誤訊息；`0d2800e` 把型號選擇移到後端的 `getModelForMode`。對證：
-  `git grep -n -E 'gemini-[0-9]' -- App.tsx components/ services/ utils/ ':!*.test.ts'` 無命中（UI 文案仍有型號名，見反模式）。
+- **Inconsistent fast/thinking model handling**（2026-06-12／07-05／10-01 解決）：`1a7dd92` 移除引用不存在變數
+  `REACT_APP_GEMINI_API_KEY` 的錯誤訊息；`0d2800e` 把型號選擇移到後端的 `getModelForMode`；2026-10-01 再拿掉 UI 文案
+  殘留的型號名與「檢查 API Key」提示（「新增並 AI 分析」的失敗訊息改由 `components/portfolio/tradeFailMarkdown.ts`
+  依 `DataFetchError` 種類分流）。對證：`git grep -n -E 'gemini-[0-9]' -- App.tsx components/ services/ utils/ ':!*.test.ts'`
+  與 `git grep -n -i -E "API Key|Gemini 3|\(Flash\)|\(Pro\)" -- App.tsx components/ ':!*.test.ts'` 皆無命中。
 - **Duplicated prompt-formatting logic**（部分解決）：`7bc35f1`（2026-07-12）刪掉 `formatPromptData`；剩下的兩份見反模式。
 - **Monolithic state container**（部分解決）：庫存的畫面狀態已拆進 `components/portfolio/use*.ts`（Phase 12 起）；App 仍
   兼任庫存寫入中樞，見反模式。
