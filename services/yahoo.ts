@@ -2,7 +2,7 @@ import { StockDataPoint, TimeInterval, StockInfo } from '../types';
 import { calculateSMA, calculateRSI, calculateMACD, calculateKDJ, calculateBollingerBands } from '../utils/math';
 import { isTwStock } from '../utils/market';
 import { proxyHeaders } from './_shared/apiClient';
-import { DataFetchError } from './fetchError';
+import { DataFetchError, classifyHttpStatus } from './fetchError';
 import { fetchFinMindRows } from './finmind';
 import { ensureTaiwanDirectory, resolveTaiwanSuffix } from './stockDirectory';
 import {
@@ -249,7 +249,7 @@ const queryYahoo = async (symbol: string, interval: string, range: string, signa
 
     if (!res.ok) {
         const parsed = await res.json().catch(() => ({})) as { message?: string };
-        throw new DataFetchError(res.status === 429 ? 'RATE_LIMIT' : 'BACKEND_DOWN', parsed.message || `Fetch error (${res.status})`);
+        throw new DataFetchError(classifyHttpStatus(res.status), parsed.message || `Fetch error (${res.status})`);
     }
 
     const json = await res.json() as YahooChartResponse;

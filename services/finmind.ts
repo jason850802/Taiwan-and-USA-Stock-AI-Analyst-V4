@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { proxyHeaders } from './_shared/apiClient';
 import { createBoundedSessionStore } from './_shared/boundedSession';
-import { DataFetchError } from './fetchError';
+import { DataFetchError, classifyHttpStatus } from './fetchError';
 
 export type FinMindDataset =
   | 'TaiwanStockInstitutionalInvestorsBuySell'
@@ -40,8 +40,7 @@ export const fetchFinMindRows = async (
   });
   if (!res.ok) {
     const parsed = await res.json().catch(() => ({})) as { message?: string };
-    const kind = res.status === 429 ? 'RATE_LIMIT' : res.status >= 500 ? 'BACKEND_DOWN' : 'UNKNOWN';
-    const error = new DataFetchError(kind, parsed.message || `FinMind fetch error (${res.status})`) as DataFetchError & { status?: number };
+    const error = new DataFetchError(classifyHttpStatus(res.status), parsed.message || `FinMind fetch error (${res.status})`) as DataFetchError & { status?: number };
     error.status = res.status;   // 既有掛載保留：getTwFundamentals 的 429 退避仍讀這個
     throw error;
   }

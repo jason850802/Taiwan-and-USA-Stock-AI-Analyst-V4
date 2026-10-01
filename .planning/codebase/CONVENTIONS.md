@@ -148,15 +148,17 @@ consistency.
   `callGeminiApiStream` 打 `/api/gemini`、`/api/gemini-stream`；後端預設的 Gemini API 路徑
   （`api/_lib/llm.ts` 的 `callGeminiApiProvider`）讀不到金鑰就丟 `ClassifiedError('MISSING_KEY')`，
   handler 回 500 與中文訊息（`api/_lib/http.ts` 的 `errorMessages`）。前端收到非 2xx 回應時丟
-  `DataFetchError`（`services/fetchError.ts`；429→`RATE_LIMIT`、5xx→`BACKEND_DOWN`、其餘→`UNKNOWN`），
-  訊息沿用後端回的 `message`。
+  `DataFetchError`，種類一律交給 `services/fetchError.ts` 的 `classifyHttpStatus`（429→`RATE_LIMIT`、
+  404→`NOT_FOUND`、5xx→`BACKEND_DOWN`、其餘→`UNKNOWN`），訊息沿用後端回的 `message`。新的 fetch 出口
+  也要用它，不要自己再寫一份對應。
   - 對證：`git grep -c 'process.env.API_KEY' -- services/ components/ App.tsx` 沒有任何命中；
     `git grep -n 'MISSING_KEY' -- api/ ':!*.test.ts'`。
 - Network/parse failures are caught and logged with `console.warn` /
   `console.error`, then either return a safe fallback (`[]`, `null`) or rethrow
   a normalized error（本點 2026-10-01 核對）。例子都在前端：
-  - `services/yahoo.ts` 的 `queryYahoo` 打後端 `/api/yahoo/chart`：非 2xx 丟 `DataFetchError`（429→
-    `RATE_LIMIT`、其餘→`BACKEND_DOWN`）；回應帶 `chart.error` 時 `Not Found`→`NOT_FOUND`、其餘→`PARSE`。
+  - `services/yahoo.ts` 的 `queryYahoo` 打後端 `/api/yahoo/chart`：非 2xx 丟 `DataFetchError`（種類照
+    `classifyHttpStatus`，後端回 404「找不到該股票代號」→`NOT_FOUND`）；回應帶 `chart.error` 時
+    `Not Found`→`NOT_FOUND`、其餘→`PARSE`。
   - 同檔 `fetchRawData`：裸台股代號先查名錄決定 `.TW`／`.TWO`；名錄沒有、或名錄給的後綴抓不到時，
     依序試 `.TW`、`.TWO`，都失敗丟 `NOT_FOUND`。
   - 同檔 `fetchStockDataUncached`（`getStockData` 的無快取本體）：台股日線 Yahoo 失敗時改抓 FinMind
