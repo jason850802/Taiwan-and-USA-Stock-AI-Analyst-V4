@@ -1,6 +1,6 @@
 // utils/quoteGaps.test.ts — 報價不齊判定的行為鎖（2026-10-01 使用者拍板：報價不齊 → 加總顯示「—」）
 import { describe, it, expect } from 'vitest';
-import { isUsableQuote, findQuoteGaps, describeQuoteGaps } from './quoteGaps';
+import { isUsableQuote, findQuoteGaps, describeQuoteGaps, summarizeQuoteGaps } from './quoteGaps';
 
 const ok = (price: number) => ({ price, loading: false, error: false });
 
@@ -54,5 +54,18 @@ describe('describeQuoteGaps：卡片底下列出缺哪幾檔', () => {
     expect(describeQuoteGaps({ loading: [], failed: ['1234', '5678'] })).toBe('讀取失敗：1234、5678');
     expect(describeQuoteGaps({ loading: ['2330', 'AAPL'], failed: [] })).toBe('2 檔報價載入中');
     expect(describeQuoteGaps({ loading: ['2330', 'AAPL'], failed: ['1234'] })).toBe('讀取失敗：1234；2 檔報價載入中');
+  });
+});
+
+describe('summarizeQuoteGaps：齊不齊由缺報價清單判斷，說明文字只負責顯示', () => {
+  it('報價齊全 → complete 為 true、沒有說明', () => {
+    expect(summarizeQuoteGaps(['2330', 'AAPL'], { '2330': ok(600), AAPL: ok(150) }))
+      .toEqual({ complete: true, note: null });
+  });
+
+  it('有缺 → complete 為 false，附上說明', () => {
+    expect(summarizeQuoteGaps(['2330', '1234'], { '2330': ok(600), '1234': ok(NaN) }))
+      .toEqual({ complete: false, note: '讀取失敗：1234' });
+    expect(summarizeQuoteGaps(['2330'], {})).toEqual({ complete: false, note: '1 檔報價載入中' });
   });
 });

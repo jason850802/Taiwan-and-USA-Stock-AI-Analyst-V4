@@ -7,6 +7,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
 import type { PortfolioItem } from '../../types';
 import type { PriceData } from './useHoldingPrices';
+import Portfolio from '../Portfolio';
+import HoldingsTable from './HoldingsTable';
 
 const state = vi.hoisted(() => ({ prices: {} as Record<string, PriceData>, rate: 0 }));
 vi.mock('./useHoldingPrices', () => ({
@@ -17,9 +19,6 @@ vi.mock('./useHoldingPrices', () => ({
 }));
 vi.mock('./useDailySnapshot', () => ({ useDailySnapshot: () => ({ historyTick: 0 }) }));
 vi.mock('./PnlHistorySection', () => ({ default: () => null }));
-
-import Portfolio from '../Portfolio';
-import HoldingsTable from './HoldingsTable';
 
 const twLot = (id: string, symbol: string, avg: number, shares: number): PortfolioItem => ({
   id, symbol, avgCostPrice: avg, totalShares: shares, totalCost: avg * shares,
@@ -56,10 +55,10 @@ const renderTable = (market: 'TW' | 'US', items: PortfolioItem[], prices: Record
       onUpdateMeta={noop} onSellClick={noop} healthResults={{}} onHealthCheck={noop} onShowDetail={noop} />,
   );
 
-/** StatCard 的「數值｜小字」；沒有小字只回數值 */
+/** StatCard 的「數值｜小字」；沒有小字只回數值。以卡片標題定位（標題、數值、小字三個相鄰的 <p>），不依賴樣式 class */
 const stat = (html: string, label: string) => {
   const esc = label.replace(/[()]/g, '\\$&');
-  const m = html.match(new RegExp(`${esc}</p><p class="[^"]*">([^<]*)</p>(?:<p class="text-xs text-slate-400 mt-1">([^<]*)</p>)?`));
+  const m = html.match(new RegExp(`${esc}</p><p[^>]*>([^<]*)</p>(?:<p[^>]*>([^<]*)</p>)?`));
   if (!m) throw new Error(`找不到卡片：${label}`);
   return m[2] ? `${m[1]}｜${m[2]}` : m[1];
 };

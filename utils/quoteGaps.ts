@@ -16,7 +16,7 @@ export interface QuoteGaps {
   failed: string[];
 }
 
-/** 可用報價：已到貨、非錯誤、價格為正的有限數（undefined／NaN 等無效價不算） */
+/** 可用報價：已到貨、非錯誤、價格為正的有限數（undefined／NaN 等無效價不算）。加總只計可用報價 */
 export const isUsableQuote = (p: QuoteLike | undefined): boolean =>
   !!p && !p.loading && !p.error && Number.isFinite(p.price) && p.price > 0;
 
@@ -38,4 +38,13 @@ export const describeQuoteGaps = (gaps: QuoteGaps): string | null => {
   if (gaps.failed.length > 0) parts.push(`讀取失敗：${gaps.failed.join('、')}`);
   if (gaps.loading.length > 0) parts.push(`${gaps.loading.length} 檔報價載入中`);
   return parts.length > 0 ? parts.join('；') : null;
+};
+
+/** 一組持股的報價狀態：complete 決定加總出不出數字（看清單、不看文字），note 是卡片底下的說明 */
+export const summarizeQuoteGaps = (
+  symbols: string[],
+  prices: Record<string, QuoteLike | undefined>,
+): { complete: boolean; note: string | null } => {
+  const gaps = findQuoteGaps(symbols, prices);
+  return { complete: gaps.loading.length === 0 && gaps.failed.length === 0, note: describeQuoteGaps(gaps) };
 };
