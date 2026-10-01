@@ -224,6 +224,51 @@ describe('buildBackfillRows（逐日手算情境）', () => {
   });
 });
 
+// 缺價日（2026-10-01 使用者拍板）：查無行情（NOT_FOUND）的標的沒有收盤序列，持有它的日子
+// 照樣出列（數字只算查得到的）並標出缺哪幾檔，由圖表決定不畫。lots 模式的批次都是現存持股。
+describe('buildBackfillRows｜缺價日', () => {
+  const closeSeries = {
+    '2330.TW': [
+      { date: '2026-07-01', close: 100 },
+      { date: '2026-07-02', close: 110 },
+      { date: '2026-07-03', close: 120 },
+    ],
+  };
+  const LX = { id: 'LX', symbol: '2330.TW', buyDate: '2026-07-01', shares: 1000, cost: 100_000, cashDiv: 0 };
+
+  it('持有查無標的的日子標出缺哪檔、數字只算查得到的', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-02', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({
+      market: 'TW', lots: [LX, LQ], closeSeries, trades: [], notFoundSymbols: ['XYZ'], capturedAt: T,
+    });
+    expect(rows.map(r => [r.date, r.marketValue, r.totalCost, r.symbolCount, r.notFoundSymbols])).toEqual([
+      ['2026-07-01', 100_000, 100_000, 1, undefined],
+      ['2026-07-02', 110_000, 100_000, 1, ['XYZ']],
+      ['2026-07-03', 120_000, 100_000, 1, ['XYZ']],
+    ]);
+  });
+
+  it('只持有查無標的的日子也出列（數字為 0）', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-01', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({
+      market: 'TW', lots: [{ ...LX, buyDate: '2026-07-02' }, LQ], closeSeries, trades: [],
+      notFoundSymbols: ['XYZ'], capturedAt: T,
+    });
+    expect(rows.map(r => [r.date, r.marketValue, r.symbolCount, r.notFoundSymbols])).toEqual([
+      ['2026-07-01', 0, 0, ['XYZ']],
+      ['2026-07-02', 110_000, 1, ['XYZ']],
+      ['2026-07-03', 120_000, 1, ['XYZ']],
+    ]);
+  });
+
+  it('沒列進 notFoundSymbols 的缺序列批次照舊：不計也不標', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-02', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({ market: 'TW', lots: [LX, LQ], closeSeries, trades: [], capturedAt: T });
+    expect(rows.map(r => r.marketValue)).toEqual([100_000, 110_000, 120_000]);
+    expect(rows.every(r => r.notFoundSymbols === undefined)).toBe(true);
+  });
+});
+
 // ── buildChartSeries ────────────────────────────────────────────────────────
 
 describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () => {
@@ -273,6 +318,35 @@ describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () 
   it('無帳本：realizedCum 全 0（D-11 已實現線由 UI disabled）', () => {
     const pts = buildChartSeries(rows, [], 'TW', false);
     expect(pts.every(p => p.realizedCum === 0)).toBe(true);
+  });
+});
+
+// 缺價日不畫（2026-10-01 使用者拍板）：那天的數字缺了查無標的，畫出來會系統性偏差（寧缺勿錯）
+describe('buildChartSeries｜缺價日不畫', () => {
+  it('標了查無標的的列不畫；那幾天的賣出與配息照樣累計，下一個點接得上', () => {
+    const rows: DailyPnlSnapshot[] = [
+      row({ date: '2026-07-01', source: 'backfill', marketValue: 1100, totalCost: 1000, estSellCosts: 10 }),
+      row({ date: '2026-07-02', source: 'backfill', marketValue: 1200, totalCost: 1000, estSellCosts: 12,
+            notFoundSymbols: ['XYZ'] }),
+      row({ date: '2026-07-03', source: 'backfill', marketValue: 1300, totalCost: 1000, estSellCosts: 13 }),
+    ];
+    const trades = [{ market: 'TW', sellDate: '2026-07-02', realizedPnl: 100, divCarried: 0 } as RealizedTrade];
+    const divs = [{ date: '2026-07-02', amount: 30 }];
+    const pts = buildChartSeries(rows, trades, 'TW', true, divs);
+    expect(pts.map(p => p.date)).toEqual(['2026-07-01', '2026-07-03']);
+    // 7/03：未實現 1300−1000−13＝287；已實現＝缺價日那天的賣出 100＋配息 30
+    expect(pts[1]).toEqual({ date: '2026-07-03', unrealized: 287, realizedCum: 130, total: 417, source: 'backfill' });
+  });
+
+  it('美股兩種口徑都不畫（台幣口徑即使匯率與台幣成本齊全也一樣）', () => {
+    const us: DailyPnlSnapshot[] = [
+      row({ market: 'US', date: '2026-07-01', marketValue: 1100, totalCost: 1000, estSellCosts: 10,
+            fxRate: 31, totalCostTwd: 31000, notFoundSymbols: ['XYZ'] }),
+      row({ market: 'US', date: '2026-07-02', marketValue: 1100, totalCost: 1000, estSellCosts: 10,
+            fxRate: 32, totalCostTwd: 31000 }),
+    ];
+    expect(buildChartSeries(us, [], 'US', false, undefined, 'USD').map(p => p.date)).toEqual(['2026-07-02']);
+    expect(buildChartSeries(us, [], 'US', false, undefined, 'TWD').map(p => p.date)).toEqual(['2026-07-02']);
   });
 });
 

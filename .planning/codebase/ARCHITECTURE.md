@@ -89,7 +89,7 @@ Vercel Serverless：api/（零設定，5 支 handler）
 | finmind | `fetchFinMindRows`（打 `/api/finmind`）、`getTwFundamentals`（基本面整備＋快取） | `services/finmind.ts` |
 | stockDirectory | 台股名錄載入、`.TW`／`.TWO` 後綴預解析、整合搜尋 `searchStocks` | `services/stockDirectory.ts` |
 | gemini | 五本規則書（system instruction）、四支分析函式、`callGeminiApi`／`callGeminiApiStream` | `services/gemini.ts` |
-| fetchError | 前端錯誤分類 `DataFetchError`、`classifyCaught` | `services/fetchError.ts` |
+| fetchError | 前端錯誤分類 `DataFetchError`、`classifyHttpStatus`、`classifyCaught` | `services/fetchError.ts` |
 | _shared | `apiClient`（共享密鑰 header）、`geminiCache`（AI 快取）、`boundedSession`（有上限的 sessionStorage 命名空間）、`healthDecision`（健檢回應解析） | `services/_shared/` |
 | 指標與判定 | `math`（指標）、`entryFilter`（六六大順濾網）、`volume`（盤中全日量預估）、`market`（市場分類唯一權威） | `utils/` |
 | 庫存帳務 | `portfolioFees`＋`config/twFeeRates.ts`（費稅）、`portfolioLedger`（賣出引擎、當沖判定）、`fx`（匯率口徑）、`shareUnits`、`portfolioGrouping` | `utils/`、`config/` |
@@ -208,8 +208,10 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
 4. **歷史損益曲線**（`PnlHistorySection`）：依 `historyTick` 從 storage 重讀快照，`buildChartSeries` 組合已實現帳本與
    配息流水後交給 `PnlHistoryChart`（台股 TWD；美股可切 USD／TWD）。「建立／重算歷史回推」→ `runBackfillPipeline`：
    先查收盤價快取，缺的以 `getStockData(sym, '1d')` 抓（首輪 3 條並行，失敗者最多再重試 2 輪、每輪 1 條、間隔
-   45 秒；仍有標的失敗則整輪不寫入）；有交易流水時以流水重播（含已清倉部位），沒有才從現存持股逆推；只填第一筆
-   live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
+   45 秒，查無代號（`NOT_FOUND`）不重試；還有其他失敗或全部標的都查無則整輪不寫入）；有交易流水時以流水重播
+   （含已清倉部位），沒有才從現存持股逆推；只填第一筆 live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
+   查無的標的不擋整輪：持有它的日子是**缺價日**（`CONTEXT.md`），照樣出列但數字只算查得到的、以 `notFoundSymbols`
+   標出，`buildChartSeries` 不畫這些點（期間的賣出與配息照樣累計），圖下以 `notFoundGapNote` 持久提示。
 5. **賣出**（`SellModal` → `App.handlePortfolioSell`）：預覽與入帳都走 `utils/portfolioLedger.ts` 的 `buildSellResult`；
    產出 `RealizedTrade`（含當沖旗標，ADR-0003），追加手動賣出流水，批次扣減或移除。
 6. **對帳單匯入**（`ImportStatementModal` → `App.handleStatementImport`）：`parseStatementFile` 依內容判別格式（xlsx
@@ -273,7 +275,8 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
   一個函式後面；儀表板、健檢、交易決策、歷史回推共用。庫存報價另走 `getLatestPrice`（報價快取的鍵加 `latest|`
   前綴，與 K 線快取的命名空間互斥）。
 - **`DataFetchError`／`FetchErrorKind`**（`services/fetchError.ts`）：前端錯誤種類（`RATE_LIMIT`、`BACKEND_DOWN`、
-  `NOT_FOUND`、`PARSE`、`NETWORK`、`UNKNOWN`），讓 UI 依種類給不同處置；`classifyCaught` 認不出就回 `UNKNOWN`，不猜。
+  `NOT_FOUND`、`PARSE`、`NETWORK`、`UNKNOWN`），讓 UI 依種類給不同處置；非 2xx 回應一律由 `classifyHttpStatus` 分類
+  （四個 fetch 出口共用），`classifyCaught` 認不出就回 `UNKNOWN`，不猜。
 - **`ClassifiedError`**（`api/_lib/http.ts`）與 `YahooClassifiedError`、`FinMindClassifiedError`：後端錯誤代碼＋中文
   訊息，handler 以各自的 `statusByCode` 轉成 HTTP 狀態。
 - **`applyGuards`**（`api/_lib/guard.ts`）：每支 handler 的把關入口，檢查順序固定（`CONTEXT.md` 的「守門序」）。
@@ -385,17 +388,6 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
 **方向：** 兩份輸出都被 snapshot 鎖住（`utils/geminiRules.test.ts`、`utils/geminiPrompts.test.ts`）；合併時須證明輸出
 逐位元組不變，否則等於讓所有使用者的 AI 快取失效一輪。
 
-### HTTP 狀態到錯誤種類的對應寫了四份，Yahoo 那份把 404 當成後端沒回應
-
-**現況：** 「HTTP 狀態 → `FetchErrorKind`」的對應分別寫在 `services/finmind.ts` 的 `fetchFinMindRows`、`services/gemini.ts`
-的 `callGeminiApi` 與 `callGeminiApiStream`、`services/yahoo.ts` 的 `queryYahoo`。前三份是 429／5xx／其餘三分；
-`queryYahoo` 只分 429 與其餘，所以後端回的 404（`NOT_FOUND`，例如下市的美股代號）與 400 都變成 `BACKEND_DOWN`。
-**問題：** 依種類給處置的地方會把使用者指錯方向——健檢的 `quoteFailMarkdown` 會寫「行情後端目前無回應」，歷史回推的
-`diagnose` 會提示「多半是本機後端未啟動」，但其實是代號查無資料（畫面上的錯誤訊息本身仍是後端回的「找不到該股票
-代號」）。
-**方向：** 把對應收斂成 `services/fetchError.ts` 的一支函式，四處共用，並讓 404 對到 `NOT_FOUND`。
-- 對證：``git grep -n -E "=== 429 \? 'RATE_LIMIT'" -- services/ ':!*.test.ts'``。
-
 ### 展示層直接呼叫低階資料函式，除權息抓取寫了兩份
 
 **現況：** `PnlHistorySection` 的 `runDividendEstimate` 與 `useLotDividendUpdate` 的 `runLotDividendUpdate` 各自以
@@ -432,19 +424,26 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
   → 不寫任何內容，只 `res.end()`。
 
 **前端：**
-- 服務層遇非 2xx 一律丟 `DataFetchError`，訊息沿用後端回的中文 `message`。種類對應有兩種寫法：`fetchFinMindRows`、
-  `callGeminiApi`、`callGeminiApiStream` 是 429 → `RATE_LIMIT`、5xx → `BACKEND_DOWN`、其餘 → `UNKNOWN`；
-  `queryYahoo`（`services/yahoo.ts`）是 429 → `RATE_LIMIT`、其餘一律 → `BACKEND_DOWN`，連後端回的 404「找不到該股票
-  代號」也算在內（見反模式）。`queryYahoo` 另有 `chart.error` 分支（`Not Found` → `NOT_FOUND`、其他 → `PARSE`），
-  但現行後端已把 `chart.error` 轉成 404／502、不會回 200 帶錯誤，這個分支實際走不到；回應沒有資料時則丟
-  `NOT_FOUND`。`fetchFinMindRows` 另把 HTTP status 掛在錯誤物件上（基本面的 429 重試讀它）。
-- 裸台股代號在 `.TW`、`.TWO` 都查不到時，`fetchRawData` 統一改丟 `NOT_FOUND`（「找不到台股代號」）。
+- 服務層遇非 2xx 一律丟 `DataFetchError`，訊息沿用後端回的中文 `message`。種類由 `services/fetchError.ts` 的
+  `classifyHttpStatus` 決定，`queryYahoo`、`fetchFinMindRows`、`callGeminiApi`、`callGeminiApiStream` 四個出口共用：
+  429 → `RATE_LIMIT`、404 → `NOT_FOUND`（Yahoo＝查無代號，Gemini＝設定的模型不存在）、5xx → `BACKEND_DOWN`、
+  其餘 → `UNKNOWN`。接線鎖：`services/fetchError.wiring.test.ts`。`queryYahoo` 另有 `chart.error` 分支（`Not Found` →
+  `NOT_FOUND`、其他 → `PARSE`），但現行後端已把 `chart.error` 轉成 404／502、不會回 200 帶錯誤，這個分支實際走不到；
+  回應沒有資料時則丟 `NOT_FOUND`。`fetchFinMindRows` 另把 HTTP status 掛在錯誤物件上（基本面的 429 重試讀它）。
+- 裸台股代號的試探鏈（`fetchRawData`）只有 `NOT_FOUND` 才換下一個後綴；限流、後端沒開等其他失敗原樣上拋（保留種類與
+  後端原文），每個後綴都查無才丟 `NOT_FOUND`（「找不到台股代號」）。`fetchStockDataUncached` 的台股 FinMind 備援也失敗時
+  重丟 Yahoo 的錯誤，例外是 Yahoo 說查無、FinMind 卻是其他失敗——改丟 FinMind 的，兩邊都查無才是 `NOT_FOUND`。
+  行為鎖：`services/yahoo.twSuffixChain.test.ts`。
 - `classifyCaught` 把任意例外歸類：`DataFetchError` 照用、`status` 為 429／5xx、`TypeError` 或 failed to fetch →
   `NETWORK`，認不出就 `UNKNOWN`。
 - 串流收尾（`callGeminiApiStream`）：收到 `done` → 回全文並寫快取；只有部分 `delta` → 回部分內容並附「報告生成
   中斷」提示、不寫快取；什麼都沒有 → 丟錯。
 - 消費端：儀表板抓資料失敗 → 可重試的 `Banner`；進場分析失敗 → 錯誤訊息直接顯示在報告區；健檢 →
-  `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案；歷史回推 → `diagnose` 依種類（認不出再比對訊息）；
+  `quoteFailMarkdown`／`analysisFailMarkdown` 依種類分流文案（查無代號有專屬文案、請使用者確認代號）；歷史回推 →
+  查無代號的標的不重試、只剩查無時照建曲線並把缺價日標出、圖下持久提示（整輪失敗時查無的標的在訊息裡單獨列出），
+  其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說「限流中」（`progressLabel`、
+  `applyBackfillProgress`、`backfillFailMessage`、`notFoundGapNote` 有行為鎖：
+  `components/portfolio/PnlHistorySection.test.ts`）；
   基本面 → `Banner`＋強制重抓。
 
 **降級：**
