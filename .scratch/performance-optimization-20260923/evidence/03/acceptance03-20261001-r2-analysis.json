@@ -1,0 +1,89 @@
+{
+  "createdAt": "2026-10-01T00:39:03.974Z",
+  "head": "4d2b2ba51fa2a6ba12a5f86915c6ca8be8d85a50",
+  "rawSha256": "20af7292556a0e71e2eb4553d630cc039d52d1a272c5427183e479de6ab2864a",
+  "summarySha256": "576713e0cdd896eafe1045d54daaf081796807b16918071927189aef9470f1c1",
+  "accepted": 28,
+  "total": 28,
+  "frozenAtStep": 22,
+  "frozenFinal": 21,
+  "screens": 28,
+  "screensVerified": true,
+  "browserApiRequests": 50,
+  "requestKinds": [
+    {
+      "viewport": "desktop",
+      "成功": 22,
+      "瀏覽器自發・已取消": 2,
+      "串流完整送達後的傳輸層取消": 1
+    },
+    {
+      "viewport": "narrow",
+      "成功": 21,
+      "瀏覽器自發・已取消": 2,
+      "串流完整送達後的傳輸層取消": 2
+    }
+  ],
+  "fakeCli": {
+    "spawn": 4,
+    "delta": 20,
+    "done": 4,
+    "kill": 0
+  },
+  "fetchKinds": {
+    "yahoo-cookie": 2,
+    "yahoo-crumb": 2,
+    "yahoo-chart": 22,
+    "finmind": 18,
+    "yahoo-search": 2
+  },
+  "blocked": {
+    "net": 0,
+    "fetch": 0,
+    "ai": 0
+  },
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 607,
+    "foreign": 0
+  },
+  "tree": {
+    "recorded": 17,
+    "aliveAfterStop": []
+  },
+  "stopCheck": {
+    "stateRemoved": true,
+    "supervisorExited": true,
+    "listeners": {
+      "3000": [],
+      "3001": []
+    },
+    "aliveOwned": [],
+    "aliveTree": []
+  },
+  "profiles": [
+    {
+      "name": "desktop",
+      "closedCleanly": true,
+      "profileRemoved": true,
+      "requestReconciliation": "視窗關閉前同筆最新事件；requestsAtStep 保留操作快照"
+    },
+    {
+      "name": "narrow",
+      "closedCleanly": true,
+      "profileRemoved": true,
+      "requestReconciliation": "視窗關閉前同筆最新事件；requestsAtStep 保留操作快照"
+    }
+  ],
+  "lateChanges": [
+    {
+      "viewport": "narrow",
+      "op": "add-tw-2330",
+      "snapshotFrozen": true,
+      "finalFrozen": false
+    }
+  ]
+}

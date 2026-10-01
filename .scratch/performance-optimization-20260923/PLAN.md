@@ -1,6 +1,6 @@
 # 第二輪：降低實際等待時間的效能優化 PLAN
 
-建立：2026-09-23。狀態：**已採用（2026-09-23）。01 resolved：B1 判紅、選路＝驗證長駐分支。02 resolved：同 handler 長駐原型通過固定低成本與當時的 API 對等。03 OPEN（2026-09-25 第二輪）：新來源 API 對等 59/59、原 `localhost:3000` 候選 App 桌面＋窄版 28/28（逐步五鍵與截圖）、依賴刪除／恢復重載、兩次啟停／埠衝突／崩潰恢復與部署路徑靜態核對均已有原始證據；監督程序或 vercel 崩潰時內部開發伺服器成為孤兒的缺陷已修正（看門程序＋程序樹，紅燈→綠燈重驗生命週期 8/8、App 28/28），正式平台 API／取消未實測。本輪增量已獨立雙軸覆核（Standards PASS；Spec 本輪增量 PASS、整張票 FAIL），4 條應修待處置、交 Codex，其中 App 28/28 依本輪新增的請求分類，只依凍結 §4 為 22/28，待使用者裁定。04 暫不解鎖，全案 OPEN。** 最新結果見 [03 第二輪補證](evidence/03/ACCEPTANCE-20260925.md)、[03 第二輪覆核](evidence/03/REVIEW-20260925.md)與 [03 重驗](evidence/03/RETEST-20260925.md)；原 [HANDOFF](HANDOFF.md) 是覆核前快照。
+建立：2026-09-23。狀態：**已採用。01、02 resolved；03 覆核處置及授權固定資料驗收完成（2026-10-01）：新 Preview 18/18、終端回復3/3、最終App接受28/28／快照22/28／凍結終態21/28、守衛37/37、完整gate838/838；獨立雙軸在授權mock範圍通過。依使用者指示03保持OPEN、04不自動解鎖，全案效能與真上游目標仍OPEN。** 最新固定點、逐條已修／不收、證據與限制見 [03續驗交接](evidence/03/REVIEW-ADDENDUM-20261001-r1.md)、[雙軸覆核](evidence/03/REVIEW-INCREMENT-20261001-r1.md)及 [03票](issues/03-daily-dev-entry.md)。既有HANDOFF／早期增補保留為歷史快照，不追認紅燈。
 
 起點：`E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`，分支 `codex/reacceptance-fixes-p1-s1`，核對 HEAD `30dfdb2`。產品基線含 `e9fa1a2`、`2bd91f4`、`6eee87e`，全部保留。
 

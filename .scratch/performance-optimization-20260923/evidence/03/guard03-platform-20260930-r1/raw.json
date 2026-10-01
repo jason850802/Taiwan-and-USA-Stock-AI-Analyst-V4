@@ -1,0 +1,116 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "保留串流 200 秒",
+      "pass": true
+    },
+    {
+      "name": "保留非串流 120 秒",
+      "pass": true
+    },
+    {
+      "name": "無時限常數時不猜新值",
+      "pass": true
+    },
+    {
+      "name": "缺旗標拒絕",
+      "pass": true
+    },
+    {
+      "name": "旗標關閉拒絕",
+      "pass": true
+    },
+    {
+      "name": "未核准覆蓋值拒絕",
+      "pass": true
+    },
+    {
+      "name": "動態時限拒絕",
+      "pass": true
+    },
+    {
+      "name": "同筆取消成功",
+      "pass": true
+    },
+    {
+      "name": "只取消客戶端不足",
+      "pass": true
+    },
+    {
+      "name": "沒有上游啟動不能宣稱 kill 成功",
+      "pass": true
+    },
+    {
+      "name": "沒有中止訊號不足",
+      "pass": true
+    },
+    {
+      "name": "其他請求 kill 不得誤收",
+      "pass": true
+    },
+    {
+      "name": "done 與 kill 同在拒絕",
+      "pass": true
+    },
+    {
+      "name": "完成回應後 kill 拒絕",
+      "pass": true
+    },
+    {
+      "name": "沒有客戶端取消拒絕",
+      "pass": true
+    },
+    {
+      "name": "同部署事件去重",
+      "pass": true
+    },
+    {
+      "name": "別的部署不能充當證據",
+      "pass": true
+    },
+    {
+      "name": "缺 trace 不推定",
+      "pass": true
+    },
+    {
+      "name": "只接受綁定包的同網址 Preview",
+      "pass": true
+    },
+    {
+      "name": "錯網址在網路前拒絕",
+      "pass": true
+    },
+    {
+      "name": "正式部署拒絕",
+      "pass": true
+    },
+    {
+      "name": "其他包雜湊拒絕",
+      "pass": true
+    },
+    {
+      "name": "AI 空文字 200 不能通過",
+      "pass": true
+    },
+    {
+      "name": "錯股票 200 不能通過",
+      "pass": true
+    },
+    {
+      "name": "429 錯 code 不能通過",
+      "pass": true
+    },
+    {
+      "name": "FinMind 期望不依 shell 的 App 開關",
+      "pass": true
+    }
+  ],
+  "realNetworkCalls": 0,
+  "realProcessKills": 0,
+  "runId": "guard03-platform-20260930-r1",
+  "tools": {
+    "guard-platform-03.mjs": "a9f0cc14e9e07a9e7cc6b27ad6550586392c6bc52038fd378c360b3c6958720b",
+    "platform-03.mjs": "9c00ae81d2a79d9e4fccb69bd28cc2ba5697ad57ebd8d204bddaa52ddea7f303"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "createdAt": "2026-09-30T16:20:19.432Z",
+  "rawSha256": "15b33cd177bee34cf8ba37c2a816d05a64b37bbfdc4e255a6030afd0f7b95276",
+  "app": {
+    "accepted": 28,
+    "total": 28,
+    "frozen": 22,
+    "sourceHead": "e6b6770883379cd3a22779588f08e9dbc0249fee",
+    "screens": 28,
+    "screensVerified": true,
+    "fakeCli": {
+      "spawn": 4,
+      "delta": 20,
+      "done": 4,
+      "kill": 0
+    },
+    "fetchKinds": {
+      "finmind": 18,
+      "yahoo-cookie": 2,
+      "yahoo-crumb": 2,
+      "yahoo-chart": 22,
+      "yahoo-search": 2
+    },
+    "blocked": {
+      "net": 0,
+      "fetch": 0,
+      "ai": 0
+    },
+    "stopCheck": {
+      "stateRemoved": true,
+      "supervisorExited": true,
+      "listeners": {
+        "3000": [],
+        "3001": []
+      },
+      "aliveOwned": [],
+      "aliveTree": []
+    }
+  },
+  "platform": {
+    "summarySha256": "f4a5eb30c268bf145f34674f2080ae56f4fd0ae7c5b3221d1c517294e6ba5e90",
+    "requests": 18,
+    "pass": true,
+    "events": 117,
+    "spawns": 5,
+    "deltas": 11,
+    "dones": 3,
+    "kills": 2,
+    "cancels": [
+      {
+        "trace": "platform03-accept-20261001-r1-14",
+        "scenario": "cancel-first-delta",
+        "pass": true,
+        "emitted": 1,
+        "killAfterCloseMs": 0.6101820000039879,
+        "killAfterFirstDeltaMs": 252.41990900000383,
+        "done": false,
+        "finish": false
+      },
+      {
+        "trace": "platform03-accept-20261001-r1-15",
+        "scenario": "cancel-early",
+        "pass": true,
+        "emitted": 0,
+        "killAfterCloseMs": 0.6518419999999878,
+        "killAfterFirstDeltaMs": null,
+        "done": false,
+        "finish": true
+      }
+    ],
+    "limits": [
+      "Preview，非正式網域",
+      "無真 AI／真行情；Node22 與測試注入明列",
+      "origin／secret／Redis 使用固定後端測試值，真服務配置與可用性未驗",
+      "取消通知可能延後至下次寫出；延遲逐筆觀察，非 SLA"
+    ]
+  }
+}

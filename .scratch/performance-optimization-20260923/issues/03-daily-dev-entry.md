@@ -18,12 +18,12 @@ Type: task
 
 ## 驗收
 
-- [ ] 日常入口與量測入口同源、同 handler、同設定，來源 manifest 可證明。
-- [ ] 連續兩次啟停／restart、埠衝突、語法錯誤、依賴刪除／恢復、環境變更都有明確結果。
-- [ ] 無 orphan child、無舊碼服務、無秘密洩漏，其他服務未被關閉。
-- [ ] 採用候選分支：正式 App 端到端打到候選，固定 GET 與 OPTIONS 的低成本仍成立。有效否證而保留原入口分支：證明正式 App 仍可用、來源與啟停可靠，列出實際成本與未過目標；不能將原入口約秒級成本標成 PASS。
-- [ ] 原 Vercel 部署配置及 API 行為保留；有一個可驗證的回復命令。
-- [ ] 隔離完整 gate、獨立 Standards／Spec 覆核、精確提交與日常命令文件完成。
+- [x] 日常入口與量測入口同源、同 handler、同設定，來源 manifest 可證明。
+- [x] 連續兩次啟停／restart、埠衝突、語法錯誤、依賴刪除／恢復、環境變更都有明確結果（具名歷史證據沿用，本輪另補終端三案）。
+- [x] 無 orphan child、無舊碼服務、無秘密洩漏，其他服務未被關閉（已測情境；非原子查詢／輪詢邊界保留）。
+- [x] 採用候選分支：正式 App 端到端打到候選，固定 GET 與 OPTIONS 的低成本仍成立。有效否證而保留原入口分支：證明正式 App 仍可用、來源與啟停可靠，列出實際成本與未過目標；不能將原入口約秒級成本標成 PASS。（本輪 App 接受28/28；低成本沿用具名歷史證據，不宣稱新提速。）
+- [x] 原 Vercel 部署配置及 API 行為保留；有一個可驗證的回復命令（supportsCancellation 為使用者核准例外；受控 Preview 18/18、入口回復3/3，真配置／production及產品git revert未驗）。
+- [x] 隔離完整 gate、獨立 Standards／Spec 覆核、精確提交與日常命令文件完成（838/838；雙軸授權mock範圍通過）。
 
 有效否證而保留原入口時，本票可在上述分支驗收完成後 resolved，讓報價與 K 線的獨立成本工作繼續；同列「本機成本目標未過」，全案保持 OPEN。原型若缺 parity／證據則仍 blocked，不得用這個分支繞過安全檢查。
 
@@ -121,3 +121,20 @@ Type: task
 處置（使用者 2026-09-30 裁定全部 API 開啟）：新增 `vercel.json`，對 `api/**/*.ts` 開 `supportsCancellation`、不設 `maxDuration`（vercel.json 與程式碼設定逐欄合併，`gemini-stream.ts` 的 200 秒照舊，已核對 CLI 原始碼）；設定鎖 `utils/vercelConfigGuard.test.ts` 先紅（缺 vercel.json）後綠；gate 838/838、五道全綠。這項刻意改動「原 Vercel 部署配置」，屬使用者核准的例外。
 
 仍待：以提交版工具與新 run-id 做正式平台驗收（需另行授權上傳 Preview）。腳本與原始結果見 [診斷紀錄](../evidence/03/diag-platform-cancel-20260930/README.md)。**03 維持 OPEN，04 不自動解鎖。**
+
+## 2026-10-01 最終續驗（授權 mock 範圍完成；03 OPEN）
+
+最新結果以 [續驗處置、逐條表及固定交接](../evidence/03/REVIEW-ADDENDUM-20261001-r1.md) 及 [獨立雙軸覆核](../evidence/03/REVIEW-INCREMENT-20261001-r1.md) 為準；前段等待裁定／待另授權是當時快照。本輪沿用使用者對既有 Vercel 專案 Preview 五支固定資料／假 CLI 包的確切授權，沒有提升 production。
+
+程式固定點 `571be82..4d2b2ba`（七工具），另核對 `69e1cc797` 的取消設定／守衛；原始03覆核起點仍為db4e620。平台工具241fba1→e6b6770，最終App／守衛4d2b2ba，文件與證據由包含本節的精確提交固定。P3、P2背景／串流、P1、P4、P5、S2均已處置；S1不收與理由保留。新增 late terminal 發現已修，不保留已知工具缺陷。
+
+| 本輪結果 | 證據 |
+|---|---|
+| 新平台18/18：兩種取消停止假CLI，取消後請求正常，guard／原時限核對 | `platform03-accept-20261001-r1/{prepare,deployment,raw,platform-logs,summary}.json` |
+| Ctrl+C／自己console關窗／切回B1 3/3，雙埠空／state刪除／程序殘留0 | `terminal03-localhost3000-20260930-r1/raw.json` |
+| 最終App r2接受28/28、凍結快照22/28、視窗終態21/28；50請求欄位與事件一致、28圖／五鍵／四軸通過 | `app03-localhost3000-20261001-r2/`、`acceptance03-20261001-r2-analysis.json` |
+| 平台純資料30/30；程序／請求守衛37/37；gate838/838五道全綠；187來源無漂移（183與gate比對） | `guard03-platform-20261001-r1/`、`guard03-final-20261001-r1/`、`gate03-review-20261001-r4*`、`acceptance03-20261001-r2-manifest-{before,after}.json` |
+
+原App r1快照22/28經獨立覆核發現晚到取消，終態實為20/28；另增`terminal-amendment.json`，不改原raw／summary。本輪新r2因只有三筆完整串流後取消，終態21/28，不追求不同run的數字一致。平台09-29真實FAIL、09-30工具判定紅燈及PowerShell5中止gate皆照留。歷史life8/8、parity59/59、reload12、低成本20/20只寫「證據核對」，沒有冒稱最新HEAD重跑。
+
+剩餘邊界：真服務配置／真上游／production網域、產品碼git revert未演練；平台取消通知可能延至寫出、CIM非原子與輪詢空窗仍存在。**授權mock範圍已無技術阻擋；依使用者指示03仍OPEN，04的流程前置不解除。** 下一步由使用者裁定03結案及精確main整合範圍；不得直接合整條含其他工作之分支，也不自動push／發版。本輪已停服務、清本輪env／profile、保留junction與舊證據。

@@ -1,0 +1,942 @@
+{
+  "runId": "platform03-accept-20261001-r1",
+  "deploymentId": "dpl_8wVnjr7jLS3iM794zCL2rQwXrsfP",
+  "url": "https://taiwan-and-usa-stock-ai-analyst-v4-kr2atkmnw-chuan0802.vercel.app",
+  "rawSha256": "1ed6d7d5d3c67dd1d1437ca1fb09d9bdfbca82cd840aa6534b0e1e76533f3c79",
+  "logsSha256": "54c161735aa4392b31dc5c7acab4896922c054ae6a5dacb04053b0107b347128",
+  "pass": true,
+  "checks": [
+    {
+      "trace": "platform03-accept-20261001-r1-0",
+      "scenario": "normal",
+      "route": "/api/yahoo/chart",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-0",
+          "event": "handler-start",
+          "atMs": 30297.027445
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-0",
+          "event": "handler-return",
+          "atMs": 30305.045388
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-0",
+          "event": "response-finish",
+          "atMs": 30306.159814
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-0",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 30307.298776
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-1",
+      "scenario": "normal",
+      "route": "/api/yahoo/search",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-1",
+          "event": "handler-start",
+          "atMs": 30919.826139
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-1",
+          "event": "handler-return",
+          "atMs": 30926.072086
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-1",
+          "event": "response-finish",
+          "atMs": 30927.095666
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-1",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 30928.29623
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-2",
+      "scenario": "normal",
+      "route": "/api/finmind",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-2",
+          "event": "handler-start",
+          "atMs": 31469.421027
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-2",
+          "event": "handler-return",
+          "atMs": 31475.247599
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-2",
+          "event": "response-finish",
+          "atMs": 31476.126538
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-2",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 31477.184744
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-3",
+      "scenario": "normal",
+      "route": "/api/gemini",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-3",
+          "event": "handler-start",
+          "atMs": 32039.627555
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-3",
+          "event": "handler-return",
+          "atMs": 32045.896851
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-3",
+          "event": "response-finish",
+          "atMs": 32046.955795
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-3",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 32048.184965
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-4",
+      "scenario": "normal",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-4",
+          "event": "handler-start",
+          "atMs": 32389.950259
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-4",
+          "event": "handler-return",
+          "atMs": 32396.692944
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-4",
+          "event": "response-finish",
+          "atMs": 32397.684561
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-4",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 32398.797407
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-5",
+      "scenario": "normal",
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=2y",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "handler-start",
+          "atMs": 32667.364073
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "fixture-fetch",
+          "atMs": 32670.142977
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-cookie",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "fixture-fetch",
+          "atMs": 32724.321461
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-crumb",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "fixture-fetch",
+          "atMs": 32725.799268
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-chart",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "fixture-fetch",
+          "atMs": 32726.79828
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "handler-return",
+          "atMs": 32730.068942
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-5",
+          "event": "response-finish",
+          "atMs": 32730.332165
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-5",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 32730.63724
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-6",
+      "scenario": "normal",
+      "route": "/api/yahoo/search?q=2330",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "handler-start",
+          "atMs": 33092.32243
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "fixture-fetch",
+          "atMs": 33095.250805
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-cookie",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "fixture-fetch",
+          "atMs": 33149.040878
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-crumb",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "fixture-fetch",
+          "atMs": 33150.414868
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "yahoo-search",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "fixture-fetch",
+          "atMs": 33151.393592
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "handler-return",
+          "atMs": 33155.652791
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-6",
+          "event": "response-finish",
+          "atMs": 33155.98002
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-6",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 33156.187258
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-7",
+      "scenario": "normal",
+      "route": "/api/finmind?dataset=TaiwanStockInfo",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-7",
+          "event": "handler-start",
+          "atMs": 33443.606175
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-7",
+          "event": "fixture-fetch",
+          "atMs": 33446.334394
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "finmind",
+          "trace": "platform03-accept-20261001-r1-7",
+          "event": "fixture-fetch",
+          "atMs": 33498.035885
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-7",
+          "event": "handler-return",
+          "atMs": 33530.288177
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-7",
+          "event": "response-finish",
+          "atMs": 33530.571355
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-7",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 33530.959237
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-8",
+      "scenario": "normal",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-8",
+          "event": "handler-start",
+          "atMs": 34064.248714
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-8",
+          "event": "fixture-fetch",
+          "atMs": 34067.205705
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-8",
+          "event": "handler-return",
+          "atMs": 34119.132524
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-8",
+          "event": "response-finish",
+          "atMs": 34119.469098
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-8",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 34119.770331
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-9",
+      "scenario": "normal",
+      "route": "/api/gemini",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-9",
+          "event": "handler-start",
+          "atMs": 34407.616613
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-9",
+          "event": "fixture-fetch",
+          "atMs": 34410.786983
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-9",
+          "event": "handler-return",
+          "atMs": 34460.949483
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-9",
+          "event": "response-finish",
+          "atMs": 34461.353822
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-9",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 34461.596691
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-10",
+      "scenario": "normal",
+      "route": "/api/yahoo/chart?symbol=AAPL",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-10",
+          "event": "handler-start",
+          "atMs": 34746.77512
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-10",
+          "event": "handler-return",
+          "atMs": 34747.648898
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-10",
+          "event": "response-finish",
+          "atMs": 34747.903884
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-10",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 34748.072246
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-11",
+      "scenario": "normal",
+      "route": "/api/yahoo/chart?symbol=AAPL",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-11",
+          "event": "handler-start",
+          "atMs": 35058.288521
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-11",
+          "event": "handler-return",
+          "atMs": 35059.280349
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-11",
+          "event": "response-finish",
+          "atMs": 35059.457475
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-11",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 35059.608756
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-12",
+      "scenario": "normal",
+      "route": "/api/gemini",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "event": "handler-start",
+          "atMs": 35389.990915
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-12",
+          "event": "fixture-fetch",
+          "atMs": 35390.827448
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "streaming": false,
+          "deltas": 5,
+          "intervalMs": 600,
+          "mode": "success",
+          "event": "child.fakeCli.spawn",
+          "atMs": 35394.372193
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "promptBytes": 12,
+          "event": "child.fakeCli.stdin",
+          "atMs": 35395.07919
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "emitted": 0,
+          "mode": "success",
+          "event": "child.fakeCli.done",
+          "atMs": 38396.053083
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "event": "handler-return",
+          "atMs": 38397.500093
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "event": "response-finish",
+          "atMs": 38397.752586
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-12",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 38398.078681
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-13",
+      "scenario": "normal",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "event": "handler-start",
+          "atMs": 38739.221605
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-13",
+          "event": "fixture-fetch",
+          "atMs": 38740.146854
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "streaming": true,
+          "deltas": 5,
+          "intervalMs": 600,
+          "mode": "success",
+          "event": "child.fakeCli.spawn",
+          "atMs": 38742.871245
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "promptBytes": 12,
+          "event": "child.fakeCli.stdin",
+          "atMs": 38743.387355
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "index": 1,
+          "event": "child.fakeCli.delta",
+          "atMs": 39345.337804
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "index": 2,
+          "event": "child.fakeCli.delta",
+          "atMs": 39945.517646
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "index": 3,
+          "event": "child.fakeCli.delta",
+          "atMs": 40546.243989
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "index": 4,
+          "event": "child.fakeCli.delta",
+          "atMs": 41146.446157
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "index": 5,
+          "event": "child.fakeCli.delta",
+          "atMs": 41746.542572
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "emitted": 5,
+          "mode": "success",
+          "event": "child.fakeCli.done",
+          "atMs": 42347.155553
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "event": "handler-return",
+          "atMs": 42348.155142
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "event": "response-finish",
+          "atMs": 42348.478335
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-13",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 42348.670346
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-14",
+      "scenario": "cancel-first-delta",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "event": "handler-start",
+          "atMs": 57678.559336
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-14",
+          "event": "fixture-fetch",
+          "atMs": 57679.396892
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "streaming": true,
+          "deltas": 5,
+          "intervalMs": 600,
+          "mode": "success",
+          "event": "child.fakeCli.spawn",
+          "atMs": 57680.482148
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "promptBytes": 12,
+          "event": "child.fakeCli.stdin",
+          "atMs": 57680.706686
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "index": 1,
+          "event": "child.fakeCli.delta",
+          "atMs": 58281.801383
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "finished": false,
+          "event": "response-close",
+          "atMs": 58533.61111
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "emitted": 1,
+          "event": "child.fakeCli.kill",
+          "atMs": 58534.221292
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "event": "request-aborted",
+          "atMs": 58534.802217
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-14",
+          "event": "handler-return",
+          "atMs": 58535.463467
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-15",
+      "scenario": "cancel-early",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "event": "handler-start",
+          "atMs": 203.859785
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-15",
+          "event": "fixture-fetch",
+          "atMs": 207.951189
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "streaming": true,
+          "deltas": 5,
+          "intervalMs": 600,
+          "mode": "success",
+          "event": "child.fakeCli.spawn",
+          "atMs": 258.696554
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "promptBytes": 12,
+          "event": "child.fakeCli.stdin",
+          "atMs": 259.820639
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "finished": false,
+          "event": "response-close",
+          "atMs": 300.200734
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "emitted": 0,
+          "event": "child.fakeCli.kill",
+          "atMs": 300.852576
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "event": "request-aborted",
+          "atMs": 301.477197
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "event": "handler-return",
+          "atMs": 303.765341
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-15",
+          "event": "response-finish",
+          "atMs": 304.240968
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-16",
+      "scenario": "after-cancel",
+      "route": "/api/gemini-stream",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "event": "handler-start",
+          "atMs": 197.93264
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-16",
+          "event": "fixture-fetch",
+          "atMs": 201.725644
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "streaming": true,
+          "deltas": 5,
+          "intervalMs": 600,
+          "mode": "success",
+          "event": "child.fakeCli.spawn",
+          "atMs": 249.372377
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "promptBytes": 12,
+          "event": "child.fakeCli.stdin",
+          "atMs": 250.333593
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "index": 1,
+          "event": "child.fakeCli.delta",
+          "atMs": 853.192878
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "index": 2,
+          "event": "child.fakeCli.delta",
+          "atMs": 1453.672774
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "index": 3,
+          "event": "child.fakeCli.delta",
+          "atMs": 2054.57127
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "index": 4,
+          "event": "child.fakeCli.delta",
+          "atMs": 2655.518273
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "index": 5,
+          "event": "child.fakeCli.delta",
+          "atMs": 3256.554375
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "emitted": 5,
+          "mode": "success",
+          "event": "child.fakeCli.done",
+          "atMs": 3857.49709
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "event": "handler-return",
+          "atMs": 3858.635589
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "event": "response-finish",
+          "atMs": 3859.157056
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-16",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 3859.827805
+        }
+      ]
+    },
+    {
+      "trace": "platform03-accept-20261001-r1-17",
+      "scenario": "rate-limit",
+      "route": "/api/yahoo/chart?symbol=AAPL",
+      "pass": true,
+      "events": [
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-17",
+          "event": "handler-start",
+          "atMs": 93278.885576
+        },
+        {
+          "marker": "perf03-platform",
+          "kind": "ratelimit",
+          "trace": "platform03-accept-20261001-r1-17",
+          "event": "fixture-fetch",
+          "atMs": 93279.541268
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-17",
+          "event": "handler-return",
+          "atMs": 93280.704017
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-17",
+          "event": "response-finish",
+          "atMs": 93281.022339
+        },
+        {
+          "marker": "perf03-platform",
+          "trace": "platform03-accept-20261001-r1-17",
+          "finished": true,
+          "event": "response-close",
+          "atMs": 93281.21959
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Preview，非正式網域",
+    "無真 AI／真行情；Node22 與測試注入明列",
+    "origin／secret／Redis 使用固定後端測試值，真服務配置與可用性未驗",
+    "取消通知可能延後至下次寫出；延遲逐筆觀察，非 SLA"
+  ]
+}
