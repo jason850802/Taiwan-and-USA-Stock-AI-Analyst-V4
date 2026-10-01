@@ -5,6 +5,7 @@
 .agents
 .planning
 .codex
+.scratch
 node_modules
 
 # api/ 底下的 vitest 測試檔：Vercel 零設定會把 api/ 內非 _／. 開頭的 .ts 都部署成函式，

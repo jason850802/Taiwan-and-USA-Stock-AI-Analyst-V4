@@ -87,6 +87,8 @@ interface CrumbGeneration {
   credentials?: YahooCredentials;
   fetchedAt?: number;
   pending?: Promise<YahooCredentials>;
+  pendingController?: AbortController;
+  waiters?: number;
 }
 
 // 一組配對與其在途工作共用身分；失效只作用於實際使用的世代。
@@ -108,11 +110,17 @@ function clearCrumbCache(generation: CrumbGeneration): void {
   if (crumbGeneration === generation) crumbGeneration = {};
 }
 
-async function fetchCookie(): Promise<string> {
+function upstreamSignal(signal?: AbortSignal): AbortSignal {
+  const timeout = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
+async function fetchCookie(signal?: AbortSignal): Promise<string> {
   const response = await fetch('https://fc.yahoo.com', {
     headers: BROWSER_HEADERS,
-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+    signal: upstreamSignal(signal),
   });
+  signal?.throwIfAborted();
 
   const cookieHeaders = response.headers as Headers & {
     getSetCookie?: () => string[];
@@ -133,7 +141,7 @@ async function fetchCookie(): Promise<string> {
   return cookie;
 }
 
-async function fetchCrumb(cookie: string): Promise<string> {
+async function fetchCrumb(cookie: string, signal?: AbortSignal): Promise<string> {
   const response = await fetch(
     'https://query2.finance.yahoo.com/v1/test/getcrumb',
     {
@@ -141,15 +149,17 @@ async function fetchCrumb(cookie: string): Promise<string> {
         ...BROWSER_HEADERS,
         Cookie: cookie,
       },
-      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+      signal: upstreamSignal(signal),
     },
   );
+  signal?.throwIfAborted();
 
   if (!response.ok) {
     throw classifyStatus(response.status);
   }
 
   const crumb = (await response.text()).trim();
+  signal?.throwIfAborted();
   if (!crumb) {
     throw new YahooClassifiedError('UPSTREAM_UNAUTHORIZED');
   }
@@ -164,41 +174,73 @@ function currentCrumbGeneration(): CrumbGeneration {
   return crumbGeneration;
 }
 
-async function ensureCrumb(generation: CrumbGeneration): Promise<YahooCredentials> {
+async function ensureCrumb(generation: CrumbGeneration, signal?: AbortSignal): Promise<YahooCredentials> {
+  signal?.throwIfAborted();
   if (generation.credentials) return generation.credentials;
-  if (generation.pending) return generation.pending;
-  const pending = (async () => {
-    const cookie = await fetchCookie();
-    const crumb = await fetchCrumb(cookie);
-    return { cookie, crumb };
-  })();
-  generation.pending = pending;
+  if (!generation.pending) {
+    const controller = new AbortController();
+    const pending = (async () => {
+      const cookie = await fetchCookie(controller.signal);
+      const crumb = await fetchCrumb(cookie, controller.signal);
+      return { cookie, crumb };
+    })();
+    generation.pending = pending;
+    generation.pendingController = controller;
+    pending.then(credentials => {
+      if (generation.pending !== pending) return;
+      if (crumbGeneration === generation) {
+        generation.credentials = credentials;
+        generation.fetchedAt = Date.now();
+      }
+      generation.pending = undefined;
+      generation.pendingController = undefined;
+    }, () => {
+      if (generation.pending !== pending) return;
+      generation.pending = undefined;
+      generation.pendingController = undefined;
+    });
+  }
+  const pending = generation.pending;
+  generation.waiters = (generation.waiters ?? 0) + 1;
   try {
-    const credentials = await pending;
-    // 舊工作仍能回覆原本的等待者，但不能重新成為全域的有效憑證。
-    if (crumbGeneration === generation) {
-      generation.credentials = credentials;
-      generation.fetchedAt = Date.now();
-    }
-    return credentials;
+    if (!signal) return await pending;
+    return await new Promise<YahooCredentials>((resolve, reject) => {
+      const cancel = () => reject(signal.reason);
+      signal.addEventListener('abort', cancel, { once: true });
+      pending.then(
+        value => { signal.removeEventListener('abort', cancel); resolve(value); },
+        error => { signal.removeEventListener('abort', cancel); reject(error); },
+      );
+      if (signal.aborted) cancel();
+    });
   } finally {
-    if (generation.pending === pending) generation.pending = undefined;
+    generation.waiters -= 1;
+    if (generation.waiters === 0 && generation.pending === pending) {
+      // 最後一位等待者離開才取消共用握手；其他請求仍在時不得斷掉它們的世代。
+      generation.pending = undefined;
+      generation.pendingController?.abort();
+      generation.pendingController = undefined;
+      clearCrumbCache(generation);
+    }
   }
 }
 
 export async function fetchYahooWithHandshake(
   buildUrl: (params: { cookie: string; crumb: string }) => string,
+  signal?: AbortSignal,
 ): Promise<Response> {
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    signal?.throwIfAborted();
     const generation = currentCrumbGeneration();
     try {
-      const { cookie, crumb } = await ensureCrumb(generation);
+      const { cookie, crumb } = await ensureCrumb(generation, signal);
+      signal?.throwIfAborted();
       const response = await fetch(buildUrl({ cookie, crumb }), {
         headers: {
           ...BROWSER_HEADERS,
           Cookie: cookie,
         },
-        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+        signal: upstreamSignal(signal),
       });
 
       if (response.status === 401 || response.status === 429) {
@@ -207,6 +249,7 @@ export async function fetchYahooWithHandshake(
 
       return response;
     } catch (error) {
+      if (signal?.aborted) throw error;
       const classifiedError = classifyYahooError(error);
       const canRetry = attempt === 0
         && (classifiedError.code === 'UPSTREAM_UNAUTHORIZED'

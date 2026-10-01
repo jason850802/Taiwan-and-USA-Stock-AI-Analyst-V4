@@ -45,11 +45,15 @@ export async function callGeminiWithTimeout(params: {
   contents: unknown;
   config: unknown;
   timeoutMs?: number;
+  signal?: AbortSignal;
 }): Promise<{ text: string }> {
-  const { apiKey, model, contents, config, timeoutMs = 100000 } = params;
+  const { apiKey, model, contents, config, timeoutMs = 100000, signal } = params;
   const ai = new GoogleGenAI({ apiKey });
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const cancel = () => controller.abort();
+  signal?.addEventListener('abort', cancel, { once: true });
+  if (signal?.aborted) cancel();
   const requestConfig = {
     ...(config && typeof config === 'object' ? config : {}),
     abortSignal: controller.signal,
@@ -65,6 +69,7 @@ export async function callGeminiWithTimeout(params: {
     return { text: response.text || '' };
   } finally {
     clearTimeout(timeoutId);
+    signal?.removeEventListener('abort', cancel);
   }
 }
 
