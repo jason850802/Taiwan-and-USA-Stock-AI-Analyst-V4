@@ -1,6 +1,6 @@
 # 第二輪：降低實際等待時間的效能優化 PLAN
 
-建立：2026-09-23。狀態：**已採用。01、02 resolved；03 覆核處置及授權固定資料驗收完成（2026-10-01）：新 Preview 18/18、終端回復3/3、最終App接受28/28／快照22/28／凍結終態21/28、守衛37/37、完整gate838/838；獨立雙軸在授權mock範圍通過。依使用者指示03保持OPEN、04不自動解鎖，全案效能與真上游目標仍OPEN。** 最新固定點、逐條已修／不收、證據與限制見 [03續驗交接](evidence/03/REVIEW-ADDENDUM-20261001-r1.md)、[雙軸覆核](evidence/03/REVIEW-INCREMENT-20261001-r1.md)及 [03票](issues/03-daily-dev-entry.md)。既有HANDOFF／早期增補保留為歷史快照，不追認紅燈。
+建立：2026-09-23。狀態：**已採用。01、02、03 resolved（03於2026-10-01依最新指示完成結案）：原票六項驗收及雙軸通過；另完成隔離Git回復與再恢復、精確45檔main候選及新gate831/831。原分支App／Preview／gate證據沿用具名結果，不套到main候選。04技術前置已滿足，但本輪未授權開工；全案效能與真上游目標仍OPEN。** 最新原因分類、分工、固定點與交接見 [03結案](evidence/03/CLOSURE-20261001-r1.md)及 [03票](issues/03-daily-dev-entry.md)。[前輪驗收](evidence/03/REVIEW-ADDENDUM-20261001-r1.md)、HANDOFF／早期增補保留為歷史快照，不追認紅燈。
 
 起點：`E:\My Project\Taiwan-and-USA-Stock-AI-Analyst-V4`，分支 `codex/reacceptance-fixes-p1-s1`，核對 HEAD `30dfdb2`。產品基線含 `e9fa1a2`、`2bd91f4`、`6eee87e`，全部保留。
 

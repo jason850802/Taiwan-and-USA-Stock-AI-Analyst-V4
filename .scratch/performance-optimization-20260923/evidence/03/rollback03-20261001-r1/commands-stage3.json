@@ -1,0 +1,108 @@
+[
+  {
+    "at": "2026-10-01T02:09:00.120Z",
+    "args": [
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit": 0,
+    "stdout": "f4b8a2c2eff8b47b88c69a27a4b4a2f901be2ee0\n",
+    "stderr": ""
+  },
+  {
+    "at": "2026-10-01T02:09:00.154Z",
+    "args": [
+      "rev-parse",
+      "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de^{tree}"
+    ],
+    "exit": 0,
+    "stdout": "f4b8a2c2eff8b47b88c69a27a4b4a2f901be2ee0\n",
+    "stderr": ""
+  },
+  {
+    "at": "2026-10-01T02:09:00.274Z",
+    "args": [
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "warning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\n"
+  },
+  {
+    "at": "2026-10-01T02:09:00.305Z",
+    "args": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "9938a0c6604adb9e37025c66d8f2cf9188f9d83b\n",
+    "stderr": ""
+  },
+  {
+    "at": "2026-10-01T02:09:01.054Z",
+    "args": [
+      "revert",
+      "--no-edit",
+      "69e1cc797c8c6cf1d1819fa043bce150c70b2828"
+    ],
+    "exit": 0,
+    "stdout": "[detached HEAD 300301b] Revert \"Vercel 函式開啟請求取消，使用者離開時後端停止呼叫 AI 與行情\"\n Date: Thu Oct 1 10:09:00 2026 +0800\n 2 files changed, 76 deletions(-)\n delete mode 100644 utils/vercelConfigGuard.test.ts\n delete mode 100644 vercel.json\n",
+    "stderr": "warning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\n"
+  },
+  {
+    "at": "2026-10-01T02:09:01.084Z",
+    "args": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "300301bab2ba81f8b13987e97cce41551d40fd2e\n",
+    "stderr": ""
+  },
+  {
+    "at": "2026-10-01T02:09:01.961Z",
+    "args": [
+      "apply",
+      "--reverse",
+      "--3way",
+      "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-optimization-20260923\\evidence\\03\\rollback03-20261001-r1\\product-original.patch"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "Applied patch to 'vite.config.ts' cleanly.\nApplied patch to 'api/yahoo/search.ts' cleanly.\nApplied patch to 'api/yahoo/chart.ts' cleanly.\nApplied patch to 'api/gemini.ts' cleanly.\nApplied patch to 'api/gemini-stream.ts' cleanly.\nApplied patch to 'api/gemini-stream.test.ts' cleanly.\nApplied patch to 'api/finmind.ts' cleanly.\nApplied patch to 'api/_lib/yahoo.ts' cleanly.\nApplied patch to 'api/_lib/yahoo.handshake.test.ts' cleanly.\nApplied patch to 'api/_lib/llm.ts' cleanly.\nApplied patch to 'api/_lib/http.ts' cleanly.\nFalling back to direct application...\nFalling back to direct application...\n"
+  },
+  {
+    "at": "2026-10-01T02:09:02.773Z",
+    "args": [
+      "commit",
+      "-m",
+      "演練：平台取消設定與 03 初始產品取消一併撤回"
+    ],
+    "exit": 0,
+    "stdout": "[detached HEAD a66ca0e] 演練：平台取消設定與 03 初始產品取消一併撤回\n 13 files changed, 127 insertions(+), 482 deletions(-)\n delete mode 100644 api/_lib/clientAbort.ts\n delete mode 100644 api/_lib/http.cancel.test.ts\n",
+    "stderr": "warning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\n"
+  },
+  {
+    "at": "2026-10-01T02:09:02.802Z",
+    "args": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout": "a66ca0e321d89ee4b0363befba58949ea51e464f\n",
+    "stderr": ""
+  },
+  {
+    "at": "2026-10-01T02:09:02.838Z",
+    "args": [
+      "diff",
+      "--name-only",
+      "9938a0c6604adb9e37025c66d8f2cf9188f9d83b",
+      "a66ca0e321d89ee4b0363befba58949ea51e464f"
+    ],
+    "exit": 0,
+    "stdout": "api/_lib/clientAbort.ts\napi/_lib/http.cancel.test.ts\napi/_lib/http.ts\napi/_lib/llm.ts\napi/_lib/yahoo.handshake.test.ts\napi/_lib/yahoo.ts\napi/finmind.ts\napi/gemini-stream.test.ts\napi/gemini-stream.ts\napi/gemini.ts\napi/yahoo/chart.ts\napi/yahoo/search.ts\nutils/vercelConfigGuard.test.ts\nvercel.json\nvite.config.ts\n",
+    "stderr": ""
+  }
+]

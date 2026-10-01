@@ -1,0 +1,868 @@
+diff --git a/.scratch/performance-optimization-20260923/tools/app-03.mjs b/.scratch/performance-optimization-20260923/tools/app-03.mjs
+index a5a6d17..c7819ea 100644
+--- a/.scratch/performance-optimization-20260923/tools/app-03.mjs
++++ b/.scratch/performance-optimization-20260923/tools/app-03.mjs
+@@ -258,37 +258,6 @@ export function classifyRequest(request, requests, streamComplete, history = req
+   return { kind: '200 之後被取消', ok: false };
+ }
+ 
+-// 每步快照保留原樣；視窗完成時依同筆最新事件重算，避免晚到的取消留在共享陣列而漏算。
+-export function reconcileRequests(ops, history) {
+-  const byId = new Map(history.map(entry => [entry.requestId, entry]));
+-  for (const op of ops) {
+-    op.verdict ??= { ui: false, keys: false, console: false, requests: false };
+-    op.requestsAtStep = structuredClone(op.requests ?? []);
+-    op.requests = op.requestsAtStep.map(snapshot => {
+-      const entry = byId.get(snapshot.requestId);
+-      if (!entry) return { ...snapshot, frozenOk: false, ok: false, kind: '缺請求終態' };
+-      return structuredClone({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
+-        method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
+-        finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents,
+-        streamCapture: entry.streamCapture ?? null, initiator: entry.initiator });
+-    });
+-    op.designedAborts = op.requests.map(request => designedAbortOf(request, op.requests)).filter(Boolean);
+-    for (const request of op.requests) {
+-      if (request.kind === '缺請求終態') continue;
+-      request.frozenOk = Boolean(designedAbortOf(request, op.requests)) || ([200, 204].includes(request.status) && !request.failed);
+-      Object.assign(request, classifyRequest(request, op.requests, op.streamCompleteAtStep === true, history));
+-      // 標頭成功但視窗結束仍無完成／取消事件，不當成成功請求。
+-      if (!request.failed && !Number.isFinite(request.finishedAtMs)) {
+-        Object.assign(request, { frozenOk: false, ok: false, kind: '請求尚未完成' });
+-      }
+-      delete request.url;
+-    }
+-    op.badRequests = op.requests.filter(request => !request.ok).map(request => request.route);
+-    op.verdict.requests = op.badRequests.length === 0;
+-    op.pass = Object.values(op.verdict).every(Boolean);
+-  }
+-}
+-
+ // ── 最小 CDP 用戶端（Node 內建 WebSocket）──
+ class Cdp {
+   static async connect(url) {
+@@ -977,11 +946,10 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
+         .filter(entry => entry.at >= opStart && new URL(entry.url).pathname.startsWith('/api/'))
+         .map(entry => ({ requestId: entry.requestId, url: entry.url, startedAtMs: entry.startedAtMs,
+           method: entry.method, route: entry.route, status: entry.status, failed: entry.failed,
+-          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: structuredClone(entry.terminalEvents),
+-          streamCapture: structuredClone(entry.streamCapture ?? null), initiator: entry.initiator }));
++          finishedAtMs: entry.finishedAtMs, failedAtMs: entry.failedAtMs, terminalEvents: entry.terminalEvents,
++          streamCapture: entry.streamCapture ?? null, initiator: entry.initiator }));
+       opRecord.designedAborts = opRecord.requests.map(request => designedAbortOf(request, opRecord.requests)).filter(Boolean);
+       const streamComplete = Boolean(op.streamEvidence && !opRecord.error && op.streamEvidence(opRecord.facts ?? {}));
+-      opRecord.streamCompleteAtStep = streamComplete;
+       for (const request of opRecord.requests) {
+         request.frozenOk = Boolean(designedAbortOf(request, opRecord.requests)) || ([200, 204].includes(request.status) && !request.failed);
+         Object.assign(request, classifyRequest(request, opRecord.requests, streamComplete, history));
+@@ -1023,33 +991,15 @@ async function runViewport({ name, viewport, runtimeDir, evidenceDir, chromePids
+     record.externalHosts = [...externalHosts].sort();
+     record.allConsole = consoleEvents.map(({ kind, text }) => ({ kind, text }));
+   } finally {
++    cdp.close();
++    record.closedCleanly = await closeChrome(chrome);
++    await sleep(500);
+     try {
+-      await Promise.all(streamCaptures);
+-      const history = [...network.values()].map(entry => ({ ...entry, route: routeOf(entry.url) }));
+-      reconcileRequests(record.ops, history);
+-      record.requestReconciliation = '視窗關閉前同筆最新事件；requestsAtStep 保留操作快照';
++      fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
++      record.profileRemoved = !fs.existsSync(profileDir);
+     } catch (error) {
+-      record.requestReconciliationError = error.message;
+-      for (const op of record.ops) {
+-        op.verdict = { ...op.verdict, requests: false };
+-        op.pass = false;
+-      }
+-    } finally {
+-      try {
+-        try { cdp.close(); } finally { record.closedCleanly = await closeChrome(chrome); }
+-      } catch (error) {
+-        record.closedCleanly = false;
+-        record.chromeCloseError = error.message;
+-      } finally {
+-        await sleep(500);
+-        try {
+-          fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+-          record.profileRemoved = !fs.existsSync(profileDir);
+-        } catch (error) {
+-          record.profileRemoved = false;
+-          record.profileRemoveError = error.message;
+-        }
+-      }
++      record.profileRemoved = false;
++      record.profileRemoveError = error.message;
+     }
+   }
+   return record;
+@@ -1237,7 +1187,6 @@ async function main() {
+   if (!trace || trace.blocked.net || trace.blocked.fetch || trace.blocked.ai) problems.push('後端探針有非預期 outbound 或 AI 被擋');
+   if (trace && Object.keys(trace.fetchKinds).some(kind => !FIXTURE_KINDS.includes(kind))) problems.push('後端出現非固定上游的 outbound 類別');
+   for (const viewport of raw.viewports) {
+-    if (viewport.requestReconciliationError) problems.push(`${viewport.name} 請求終態重算失敗：${viewport.requestReconciliationError}`);
+     if (!viewport.closedCleanly) problems.push(`${viewport.name} Chrome 未正常關閉`);
+     if (!viewport.profileRemoved) problems.push(`${viewport.name} 隔離資料目錄未刪除`);
+   }
+@@ -1249,8 +1198,6 @@ async function main() {
+   const summary = {
+     runId, formal: raw.formal, origin: raw.origin, problems, failedOps, incompleteViewports: incomplete,
+     viewports: raw.viewports.map(viewport => ({ name: viewport.name, ops: viewport.ops.map(op => `${op.id}:${op.pass ? 'PASS' : 'FAIL'}`),
+-      frozenAtStep: viewport.ops.filter(op => op.verdict.ui && op.verdict.keys && op.verdict.console && op.requestsAtStep.every(request => request.frozenOk)).length,
+-      frozenFinal: viewport.ops.filter(op => op.verdict.ui && op.verdict.keys && op.verdict.console && op.requests.every(request => request.frozenOk)).length,
+       externalHosts: viewport.externalHosts ?? null, unexpectedConsole: viewport.ops.reduce((sum, op) => sum + op.console.length, 0),
+       expectedConsole: viewport.ops.reduce((sum, op) => sum + op.expectedConsole.length, 0),
+       designedAborts: viewport.ops.flatMap(op => (op.designedAborts ?? []).map(item => `${op.id}：${item.aborted}`)),
+diff --git a/.scratch/performance-optimization-20260923/tools/console-control-03.py b/.scratch/performance-optimization-20260923/tools/console-control-03.py
+deleted file mode 100644
+index 58b289d..0000000
+--- a/.scratch/performance-optimization-20260923/tools/console-control-03.py
++++ /dev/null
+@@ -1,69 +0,0 @@
+-"""03 專用隱藏主控台：只向此 helper 建立、且建立時間吻合的 console 發送事件。"""
+-import ctypes
+-import json
+-import os
+-import subprocess
+-import sys
+-import time
+-from ctypes import wintypes
+-
+-kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+-user = ctypes.WinDLL('user32', use_last_error=True)
+-kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+-kernel.OpenProcess.restype = wintypes.HANDLE
+-kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+-kernel.GetProcessTimes.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+-kernel.GetConsoleWindow.restype = wintypes.HWND
+-user.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+-
+-
+-def creation(pid):
+-  handle = kernel.OpenProcess(0x1000, False, pid)
+-  if not handle:
+-    raise ctypes.WinError(ctypes.get_last_error())
+-  try:
+-    times = [wintypes.FILETIME() for _ in range(4)]
+-    if not kernel.GetProcessTimes(handle, *(ctypes.byref(item) for item in times)):
+-      raise ctypes.WinError(ctypes.get_last_error())
+-    return str((times[0].dwHighDateTime << 32) | times[0].dwLowDateTime)
+-  finally:
+-    kernel.CloseHandle(handle)
+-
+-
+-mode = sys.argv[1]
+-if mode == 'launch':
+-  log, cwd, executable, *args = sys.argv[2:]
+-  startup = subprocess.STARTUPINFO()
+-  startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
+-  startup.wShowWindow = 0
+-  with open(log, 'xb', buffering=0) as output:
+-    child = subprocess.Popen([executable, *args], cwd=cwd, stdin=subprocess.DEVNULL,
+-      stdout=output, stderr=output, startupinfo=startup, creationflags=subprocess.CREATE_NEW_CONSOLE)
+-  print(json.dumps({'pid': child.pid, 'creationFileTime': creation(child.pid)}))
+-elif mode in ('verify', 'ctrl-c', 'close-window'):
+-  pid = int(sys.argv[2])
+-  expected = sys.argv[3]
+-  if creation(pid) != expected:
+-    raise RuntimeError('PID 建立時間不符；拒絕發送主控台事件')
+-  if mode == 'verify':
+-    print(json.dumps({'pid': pid, 'creationVerified': True}))
+-    sys.exit(0)
+-  kernel.FreeConsole()
+-  if not kernel.AttachConsole(pid):
+-    raise ctypes.WinError(ctypes.get_last_error())
+-  try:
+-    if mode == 'ctrl-c':
+-      # helper 自己忽略 Ctrl+C；此 console 是 CREATE_NEW_CONSOLE 建立，與使用者 console 隔離。
+-      kernel.SetConsoleCtrlHandler(None, True)
+-      if not kernel.GenerateConsoleCtrlEvent(0, 0):
+-        raise ctypes.WinError(ctypes.get_last_error())
+-      time.sleep(0.3)
+-    else:
+-      window = kernel.GetConsoleWindow()
+-      if not window or not user.PostMessageW(window, 0x0010, 0, 0):
+-        raise RuntimeError('此測試 console 沒有可關閉的視窗')
+-    print(json.dumps({'event': mode, 'pid': pid, 'creationVerified': True, 'posted': True}))
+-  finally:
+-    kernel.FreeConsole()
+-else:
+-  raise RuntimeError('未知主控台操作')
+diff --git a/.scratch/performance-optimization-20260923/tools/guard-platform-03.mjs b/.scratch/performance-optimization-20260923/tools/guard-platform-03.mjs
+deleted file mode 100644
+index d1f8466..0000000
+--- a/.scratch/performance-optimization-20260923/tools/guard-platform-03.mjs
++++ /dev/null
+@@ -1,73 +0,0 @@
+-// 平台判定守衛：只用假事件與本機來源，不部署、不開服務、不殺程序。
+-import assert from 'node:assert/strict';
+-import fs from 'node:fs';
+-import path from 'node:path';
+-import { fileURLToPath } from 'node:url';
+-import { claimRun, fileSha } from './service-kit.mjs';
+-import { deploymentSettings, platformEvents, canceledWorkStopped, verifiedDeployment, validPayload } from './platform-03.mjs';
+-const config = { functions: { 'api/**/*.ts': { supportsCancellation: true } } };
+-const trace = 'platform03-guard-1';
+-const client = { trace, canceled: true };
+-const event = name => ({ trace, event: name });
+-const green = [event('child.fakeCli.spawn'), event('child.fakeCli.kill'), event('request-aborted')];
+-const checks = [];
+-const check = (name, fn) => { try { fn(); checks.push({ name, pass: true }); } catch (error) { checks.push({ name, pass: false, error: error.message }); } };
+-check('保留串流 200 秒', () => assert.deepEqual(deploymentSettings(config, 'export const maxDuration = 200;'), { supportsCancellation: true, maxDuration: 200 }));
+-check('保留非串流 120 秒', () => assert.equal(deploymentSettings(config, 'export const maxDuration = 120;').maxDuration, 120));
+-check('無時限常數時不猜新值', () => assert.deepEqual(deploymentSettings(config, 'export default function handler() {}'), { supportsCancellation: true }));
+-check('缺旗標拒絕', () => assert.throws(() => deploymentSettings({}, '')));
+-check('旗標關閉拒絕', () => assert.throws(() => deploymentSettings({ functions: { 'api/**/*.ts': { supportsCancellation: false } } }, '')));
+-check('未核准覆蓋值拒絕', () => assert.throws(() => deploymentSettings({ functions: { 'api/**/*.ts': { supportsCancellation: true, maxDuration: 30 } } }, '')));
+-check('動態時限拒絕', () => assert.throws(() => deploymentSettings(config, 'export const maxDuration = getDuration();')));
+-check('同筆取消成功', () => assert.equal(canceledWorkStopped(client, green), true));
+-check('只取消客戶端不足', () => assert.equal(canceledWorkStopped(client, []), false));
+-check('沒有上游啟動不能宣稱 kill 成功', () => assert.equal(canceledWorkStopped(client, green.slice(1)), false));
+-check('沒有中止訊號不足', () => assert.equal(canceledWorkStopped(client, green.slice(0, 2)), false));
+-check('其他請求 kill 不得誤收', () => assert.equal(canceledWorkStopped(client, green.map(item => ({ ...item, trace: 'other' }))), false));
+-check('done 與 kill 同在拒絕', () => assert.equal(canceledWorkStopped(client, [...green, event('child.fakeCli.done')]), false));
+-check('完成回應後 kill 拒絕', () => assert.equal(canceledWorkStopped(client, [...green, event('response-finish')]), false));
+-const quietEnd = [
+-  { ...event('child.fakeCli.spawn'), atMs: 1 },
+-  { ...event('response-close'), finished: false, atMs: 2 },
+-  { ...event('child.fakeCli.kill'), atMs: 3 },
+-  { ...event('response-finish'), atMs: 4 },
+-];
+-check('斷線且 kill 後靜默收尾可通過', () => assert.equal(canceledWorkStopped(client, quietEnd), true));
+-check('收尾早於 kill 拒絕', () => assert.equal(canceledWorkStopped(client, quietEnd.map(item => item.event === 'response-finish' ? { ...item, atMs: 2.5 } : item)), false));
+-check('kill 後仍出字拒絕', () => assert.equal(canceledWorkStopped(client, [...quietEnd, { ...event('child.fakeCli.delta'), atMs: 3.5 }]), false));
+-check('靜默收尾缺斷線時間拒絕', () => assert.equal(canceledWorkStopped(client, quietEnd.map(item => item.event === 'response-close' ? { ...item, atMs: undefined } : item)), false));
+-check('沒有客戶端取消拒絕', () => assert.equal(canceledWorkStopped({ ...client, canceled: false }, green), false));
+-const message = JSON.stringify({ marker: 'perf03-platform', trace, event: 'request-aborted', atMs: 1 });
+-check('同部署事件去重', () => assert.equal(platformEvents([{ deploymentId: 'dpl1', message, logs: [{ message }] }], 'dpl1', 'platform03-guard').length, 1));
+-check('別的部署不能充當證據', () => assert.equal(platformEvents([{ deploymentId: 'other', message }], 'dpl1', 'platform03-guard').length, 0));
+-check('缺 trace 不推定', () => assert.equal(platformEvents([{ deploymentId: 'dpl1', message: JSON.stringify({ marker: 'perf03-platform', event: 'request-aborted' }) }], 'dpl1', 'platform03-guard').length, 0));
+-const deployment = { prepareSha256: 'hash1', deployment: { id: 'dpl_test1', url: 'https://fixture.vercel.app', target: null } };
+-check('只接受綁定包的同網址 Preview', () => assert.equal(verifiedDeployment(deployment, 'hash1', 'https://fixture.vercel.app'), 'dpl_test1'));
+-check('錯網址在網路前拒絕', () => assert.throws(() => verifiedDeployment(deployment, 'hash1', 'https://other.vercel.app')));
+-check('正式部署拒絕', () => assert.throws(() => verifiedDeployment({ ...deployment, deployment: { ...deployment.deployment, target: 'production' } }, 'hash1', 'https://fixture.vercel.app')));
+-check('其他包雜湊拒絕', () => assert.throws(() => verifiedDeployment(deployment, 'other', 'https://fixture.vercel.app')));
+-check('AI 空文字 200 不能通過', () => assert.equal(validPayload({ route: '/api/gemini', status: 200, text: '{"text":""}' }), false));
+-check('錯股票 200 不能通過', () => assert.equal(validPayload({ route: '/api/yahoo/chart?symbol=AAPL', status: 200, text: '{"chart":{}}' }), false));
+-check('429 錯 code 不能通過', () => assert.equal(validPayload({ route: '/api/yahoo/chart', status: 429, text: '{"code":"BAD_REQUEST","message":"固定"}' }), false));
+-check('FinMind 期望不依 shell 的 App 開關', () => {
+-  const previous = process.env.PERF03_TEST_APP;
+-  try {
+-    delete process.env.PERF03_TEST_APP;
+-    const text = JSON.stringify({ msg: 'success', status: 200, data: [
+-      { stock_id: '2330', stock_name: '固定資料台積電', industry_category: '半導體業', type: 'twse' },
+-      { stock_id: '0050', stock_name: '固定資料元大台灣50', industry_category: 'ETF', type: 'twse' },
+-      { stock_id: '2317', stock_name: '固定資料鴻海', industry_category: '其他電子業', type: 'twse' },
+-    ] });
+-    assert.equal(validPayload({ route: '/api/finmind?dataset=TaiwanStockInfo', status: 200, text }), true);
+-  } finally { if (previous === undefined) delete process.env.PERF03_TEST_APP; else process.env.PERF03_TEST_APP = previous; }
+-});
+-const summary = { pass: checks.every(item => item.pass), checks, realNetworkCalls: 0, realProcessKills: 0 };
+-if (process.argv[2] !== '--check') {
+-  const runId = process.argv[2];
+-  const { evidenceDir } = claimRun({ ticket: '03', runId });
+-  const directory = path.dirname(fileURLToPath(import.meta.url));
+-  Object.assign(summary, { runId, tools: Object.fromEntries(['guard-platform-03.mjs', 'platform-03.mjs'].map(file => [file, fileSha(path.join(directory, file))])) });
+-  fs.writeFileSync(path.join(evidenceDir, 'raw.json'), JSON.stringify(summary, null, 2) + '\n', { flag: 'wx' });
+-}
+-console.log(JSON.stringify({ pass: summary.pass, checks: checks.length, failed: checks.filter(item => !item.pass) }));
+-process.exitCode = summary.pass ? 0 : 1;
+diff --git a/.scratch/performance-optimization-20260923/tools/guard-review-03.mjs b/.scratch/performance-optimization-20260923/tools/guard-review-03.mjs
+index e5d9952..894b68e 100644
+--- a/.scratch/performance-optimization-20260923/tools/guard-review-03.mjs
++++ b/.scratch/performance-optimization-20260923/tools/guard-review-03.mjs
+@@ -6,7 +6,7 @@ import path from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ import { descendantsOf, killTree } from './daily-dev.mjs';
+ import { descendantTree, identityFields, terminateVerifiedTree } from './port-guard-03.mjs';
+-import { classifyRequest, reconcileRequests } from './app-03.mjs';
++import { classifyRequest } from './app-03.mjs';
+ import { claimRun, fileSha } from './service-kit.mjs';
+ 
+ const { evidenceDir } = claimRun({ ticket: '03', runId: process.argv[2] });
+@@ -126,34 +126,6 @@ for (const [label, request, visible, accepted] of [
+     return result;
+   });
+ }
+-for (const [label, latest, prior, accepted] of [
+-  ['晚到腳本取消改判失敗', { failed: { error: 'net::ERR_ABORTED', canceled: true }, failedAtMs: 30 }, [], false],
+-  ['晚到背景取消有先前腳本200可收', { initiator: { type: 'other' }, failed: { error: 'net::ERR_ABORTED', canceled: true }, failedAtMs: 30 },
+-    [{ requestId: 'prior', url: 'http://localhost:3000/api/test', method: 'GET', route: '/api/test', status: 200, failed: null, finishedAtMs: 5, initiator: { type: 'script' } }], true],
+-  ['只有200標頭但沒有終態不能通過', { finishedAtMs: null }, [], false],
+-]) {
+-  await check(`P2 終態：${label}`, () => {
+-    const snapshot = { requestId: 'late', route: '/api/test', method: 'GET', startedAtMs: 10, status: 200, failed: null,
+-      frozenOk: true, ok: true, terminalEvents: [], finishedAtMs: 20, initiator: { type: 'script' } };
+-    const op = { requests: [snapshot], streamCompleteAtStep: false, verdict: { ui: true, keys: true, console: true, requests: true }, pass: true };
+-    const entry = { ...snapshot, url: 'http://localhost:3000/api/test', ...latest };
+-    reconcileRequests([op], [...prior, entry]);
+-    assert.equal(op.pass, accepted);
+-    assert.equal(op.requests[0].frozenOk, false);
+-    assert.equal(op.requestsAtStep[0].failed, null);
+-    entry.terminalEvents.push({ event: 'late mutation' });
+-    assert.equal(op.requestsAtStep[0].terminalEvents.length, 0);
+-    assert.equal(op.requests[0].terminalEvents.length, 0);
+-    return { snapshot: op.requestsAtStep[0], final: op.requests[0], pass: op.pass };
+-  });
+-}
+-await check('P2 終態：未完成步驟沒有 verdict 時判失敗且不拋錯', () => {
+-  const op = { requests: [] };
+-  reconcileRequests([op], []);
+-  assert.equal(op.pass, false);
+-  assert.equal(op.verdict.ui, false);
+-  return op;
+-});
+ const tools = Object.fromEntries(['guard-review-03.mjs', 'daily-dev.mjs', 'port-guard-03.mjs', 'app-03.mjs']
+   .map(file => [file, fileSha(path.join(path.dirname(fileURLToPath(import.meta.url)), file))]));
+ const raw = { runId: process.argv[2], at: new Date().toISOString(), kind: '純假資料守衛檢查', realProcessKills: 0,
+diff --git a/.scratch/performance-optimization-20260923/tools/platform-03.mjs b/.scratch/performance-optimization-20260923/tools/platform-03.mjs
+index bdc87ef..6eced8b 100644
+--- a/.scratch/performance-optimization-20260923/tools/platform-03.mjs
++++ b/.scratch/performance-optimization-20260923/tools/platform-03.mjs
+@@ -1,259 +1,114 @@
+ #!/usr/bin/env node
+-// 03 平台受控驗收：提交後 prepare → Preview 部署 → probe → logs；每步證據不可覆寫。
++// Vercel Preview 固定資料平台探針：先 prepare，精確部署該 run 的 output，最後 probe 具名網址。
++// 不改正式網域、不上傳 .env、不啟動瀏覽器，不觸碰真帳本；五支原 handler 經 esbuild 打包。
+ import fs from 'node:fs';
+ import path from 'node:path';
+ import https from 'node:https';
+ import { createRequire } from 'node:module';
+ import { execFileSync } from 'node:child_process';
+ import { fileURLToPath } from 'node:url';
+-import { claimRun, fileSha, sha256, sleep } from './service-kit.mjs';
++import { claimRun, fileSha, sha256 } from './service-kit.mjs';
+ import { ROOT, scanSecrets } from './verify-b1-breakdown.mjs';
+ const require = createRequire(import.meta.url);
+ const { build } = require('esbuild');
+-const ts = require('typescript');
+-const fixture = require('./trace-preload.cjs');
+ const tools = path.dirname(fileURLToPath(import.meta.url));
++const [mode, runId, url] = process.argv.slice(2);
++const evidence = path.join(ROOT, '.scratch/performance-optimization-20260923/evidence/03', runId ?? '');
+ const routes = ['yahoo/chart', 'yahoo/search', 'finmind', 'gemini', 'gemini-stream'];
+-const toolFiles = ['platform-03.mjs', 'platform-fixture-03.cjs', 'trace-preload.cjs', 'service-kit.mjs', 'verify-b1-breakdown.mjs'];
+ const json = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
+ const git = args => execFileSync('git', args, { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+-
+-export function deploymentSettings(configuration, source) {
+-  const fn = configuration.functions?.['api/**/*.ts'];
+-  if (!fn || fn.supportsCancellation !== true || Object.keys(fn).some(key => key !== 'supportsCancellation')) {
+-    throw new Error('部署設定超出已核准 supportsCancellation 範圍');
+-  }
+-  const ast = ts.createSourceFile('handler.ts', source, ts.ScriptTarget.Latest, true);
+-  const durations = ast.statements.filter(ts.isVariableStatement)
+-    .filter(node => node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword))
+-    .flatMap(node => node.declarationList.declarations).filter(node => node.name.getText(ast) === 'maxDuration');
+-  if (durations.length > 1 || (durations.length && (!durations[0].initializer || !ts.isNumericLiteral(durations[0].initializer)))) {
+-    throw new Error('handler maxDuration 必須是唯一的數字常數');
+-  }
+-  return { supportsCancellation: true, ...(durations.length ? { maxDuration: Number(durations[0].initializer.text) } : {}) };
+-}
+-
+-// 依同部署及明綁 trace 去重；沒有 trace 的平台事件不推定歸屬。
+-export function platformEvents(rows, deploymentId, prefix) {
+-  const events = new Map();
+-  for (const row of rows) {
+-    if (row.deploymentId !== deploymentId) continue;
+-    for (const message of [row.message, ...(row.logs ?? []).map(item => item.message)]) {
+-      let event;
+-      try { event = JSON.parse(message); } catch { continue; }
+-      if (event.marker !== 'perf03-platform' || !event.trace?.startsWith(prefix + '-')) continue;
+-      events.set(`${event.trace}|${event.event}|${event.atMs}|${event.index ?? ''}`, event);
+-    }
+-  }
+-  return [...events.values()];
+-}
+-
+-export function canceledWorkStopped(client, events) {
+-  const own = events.filter(event => event.trace === client.trace);
+-  const kills = own.filter(event => event.event === 'child.fakeCli.kill');
+-  const disconnects = own.filter(event => event.event === 'request-aborted' || (event.event === 'response-close' && event.finished === false));
+-  // 斷線後 res.end() 也可能發 finish；只收已有斷線與 kill 的靜默收尾，不將 finish 當作 done。
+-  const quietFinish = own.filter(event => event.event === 'response-finish').every(finish =>
+-    Number.isFinite(finish.atMs)
+-      && kills.some(kill => Number.isFinite(kill.atMs) && kill.atMs < finish.atMs)
+-      && disconnects.some(disconnect => Number.isFinite(disconnect.atMs) && disconnect.atMs < finish.atMs));
+-  const noDeltaAfterKill = !own.some(event => event.event === 'child.fakeCli.delta'
+-    && kills.some(kill => Number.isFinite(kill.atMs) && Number.isFinite(event.atMs) && event.atMs >= kill.atMs));
+-  return client.canceled === true && own.some(event => event.event === 'child.fakeCli.spawn')
+-    && kills.length > 0 && disconnects.length > 0 && quietFinish && noDeltaAfterKill
+-    && !own.some(event => event.event === 'child.fakeCli.done');
+-}
+-
+-export function verifiedDeployment(deployed, preparedSha256, origin) {
+-  if (deployed.prepareSha256 !== preparedSha256 || deployed.deployment?.url !== origin
+-    || !/^dpl_[A-Za-z0-9]+$/.test(deployed.deployment?.id ?? '') || deployed.deployment?.target !== null) {
+-    throw new Error('需要與本 run 固定包綁定的 Preview 部署身分');
+-  }
+-  return deployed.deployment.id;
+-}
+-
+-export function validPayload(client) {
+-  if (client.status === 204) return client.text === '';
+-  let body;
+-  try { body = JSON.parse(client.text); } catch { return false; }
+-  if (client.status !== 200) return body.code === (client.status === 429 ? 'RATE_LIMITED' : 'BAD_REQUEST') && typeof body.message === 'string';
+-  if (client.route.startsWith('/api/yahoo/chart?')) return JSON.stringify(body) === JSON.stringify(fixture.fixtureChartBody('AAPL'));
+-  if (client.route.startsWith('/api/yahoo/search?')) return body.quotes?.length === 1 && body.quotes[0].symbol === '2330.TW' && body.quotes[0].shortname === 'FIXTURE 2330';
+-  if (client.route.startsWith('/api/finmind?')) return JSON.stringify(body) === JSON.stringify({ msg: 'success', status: 200, data: [
+-    { stock_id: '2330', stock_name: '固定資料台積電', industry_category: '半導體業', type: 'twse' },
+-    { stock_id: '0050', stock_name: '固定資料元大台灣50', industry_category: 'ETF', type: 'twse' },
+-    { stock_id: '2317', stock_name: '固定資料鴻海', industry_category: '其他電子業', type: 'twse' },
+-  ] });
+-  if (client.route === '/api/gemini') return body.text === Array.from({ length: 5 }, (_, i) => `假片段${i + 1}`).join('');
+-  return false;
+-}
+-
+-function exactTools(expected = null) {
++if (!/^platform03-[a-z0-9-]+$/.test(runId ?? '')) throw new Error('需要新的 platform03 run-id');
++if (mode === 'prepare') {
+   const head = git(['rev-parse', 'HEAD']).toString().trim();
++  const toolFiles = ['platform-03.mjs', 'platform-fixture-03.cjs', 'trace-preload.cjs', 'service-kit.mjs', 'verify-b1-breakdown.mjs'];
+   for (const file of toolFiles) {
+-    if (!git(['show', `${head}:.scratch/performance-optimization-20260923/tools/${file}`]).equals(fs.readFileSync(path.join(tools, file)))) {
+-      throw new Error(`工具未提交：${file}`);
+-    }
+-    if (expected && expected[file] !== fileSha(path.join(tools, file))) throw new Error(`工具漂移：${file}`);
++    const relative = '.scratch/performance-optimization-20260923/tools/' + file;
++    if (!git(['show', `${head}:${relative}`]).equals(fs.readFileSync(path.join(tools, file)))) throw new Error(`工具未提交：${file}`);
+   }
+-  return head;
+-}
+-
+-async function main() {
+-  const [mode, runId, url] = process.argv.slice(2);
+-  if (!/^platform03-[a-z0-9-]+$/.test(runId ?? '')) throw new Error('需要新的 platform03 run-id');
+-  const evidence = path.join(ROOT, '.scratch/performance-optimization-20260923/evidence/03', runId);
+-  if (mode === 'prepare') {
+-    const head = exactTools();
+-    const sources = new Map();
+-    const sourceIdentity = relative => {
++  const { evidenceDir, runtimeDir } = claimRun({ ticket: '03', runId });
++  const deployment = path.join(runtimeDir, 'preview');
++  const output = path.join(deployment, '.vercel/output');
++  fs.mkdirSync(output, { recursive: true });
++  fs.copyFileSync(path.join(ROOT, '.vercel/project.json'), path.join(deployment, '.vercel/project.json'));
++  json(path.join(output, 'config.json'), { version: 3 });
++  const staticDir = path.join(output, 'static');
++  fs.mkdirSync(staticDir);
++  fs.writeFileSync(path.join(staticDir, 'index.html'), '<!doctype html><meta charset="utf-8"><title>03 平台固定資料驗收</title><p>03 平台固定資料探針；不是日常 App。</p>');
++  const sources = new Map();
++  const artifacts = [];
++  for (const route of routes) {
++    const folder = path.join(output, 'functions/api', route + '.func');
++    fs.mkdirSync(folder, { recursive: true });
++    const result = await build({ stdin: { contents: `const fixture = require(${JSON.stringify(path.join(tools, 'platform-fixture-03.cjs'))}); const handler = require(${JSON.stringify(path.join(ROOT, 'api', route + '.ts'))}).default; module.exports = fixture.wrap(handler);`, resolveDir: ROOT },
++      bundle: true, platform: 'node', format: 'cjs', target: 'node22', outfile: path.join(folder, 'index.cjs'), metafile: true, logLevel: 'silent' });
++    for (const file of Object.keys(result.metafile.inputs)) {
++      if (file === '<stdin>' || file.includes('node_modules')) continue;
++      const absolute = path.resolve(ROOT, file);
++      const relative = path.relative(ROOT, absolute).replaceAll('\\', '/');
+       const committed = git(['show', `${head}:${relative}`]);
+-      const actual = fs.readFileSync(path.join(ROOT, relative));
++      const actual = fs.readFileSync(absolute);
+       const exact = committed.equals(actual);
+       const lineEndingsOnly = !exact && committed.toString('utf8').replaceAll('\r\n', '\n') === actual.toString('utf8').replaceAll('\r\n', '\n');
+       if (!exact && !lineEndingsOnly) throw new Error(`來源未提交：${relative}`);
+       sources.set(relative, { sha256: sha256(actual), committedSha256: sha256(committed), exact, lineEndingsOnly });
+-      return actual;
+-    };
+-    const configuration = JSON.parse(sourceIdentity('vercel.json'));
+-    const { evidenceDir, runtimeDir } = claimRun({ ticket: '03', runId });
+-    const deployment = path.join(runtimeDir, 'preview');
+-    const output = path.join(deployment, '.vercel/output');
+-    fs.mkdirSync(path.join(output, 'static'), { recursive: true });
+-    fs.copyFileSync(path.join(ROOT, '.vercel/project.json'), path.join(deployment, '.vercel/project.json'));
+-    json(path.join(output, 'config.json'), { version: 3 });
+-    fs.writeFileSync(path.join(output, 'static/index.html'), '<!doctype html><meta charset="utf-8"><title>03 平台固定資料驗收</title><p>03 受控 API 驗收</p>');
+-    const artifacts = [];
+-    for (const route of routes) {
+-      const settings = deploymentSettings(configuration, sourceIdentity(`api/${route}.ts`).toString('utf8'));
+-      const folder = path.join(output, 'functions/api', route + '.func');
+-      fs.mkdirSync(folder, { recursive: true });
+-      const result = await build({ stdin: { contents: `const fixture = require(${JSON.stringify(path.join(tools, 'platform-fixture-03.cjs'))}); const handler = require(${JSON.stringify(path.join(ROOT, 'api', route + '.ts'))}).default; module.exports = fixture.wrap(handler);`, resolveDir: ROOT },
+-        bundle: true, platform: 'node', format: 'cjs', target: 'node22', outfile: path.join(folder, 'index.cjs'), metafile: true, logLevel: 'silent' });
+-      for (const file of Object.keys(result.metafile.inputs)) {
+-        if (file === '<stdin>' || file.includes('node_modules')) continue;
+-        sourceIdentity(path.relative(ROOT, path.resolve(ROOT, file)).replaceAll('\\', '/'));
+-      }
+-      const vcConfig = { runtime: 'nodejs22.x', handler: 'index.cjs', launcherType: 'Nodejs', shouldAddHelpers: true,
+-        supportsResponseStreaming: true, ...settings };
+-      json(path.join(folder, '.vc-config.json'), vcConfig);
+-      artifacts.push({ route: '/api/' + route, sha256: fileSha(path.join(folder, 'index.cjs')),
+-        configurationSha256: fileSha(path.join(folder, '.vc-config.json')), configuration: vcConfig });
+-      const leaked = scanSecrets(folder).filter(({key}) => !['LLM_PROVIDER', 'GEMINI_MODEL_FAST', 'GEMINI_MODEL_THINKING', 'query-credential', 'cookie-field'].includes(key));
+-      if (leaked.length) throw new Error(`打包內容含環境值：${leaked.map(item => item.key).join(',')}`);
+     }
+-    json(path.join(evidenceDir, 'prepare.json'), { runId, head, createdAt: new Date().toISOString(), deployment,
+-      tools: Object.fromEntries(toolFiles.map(file => [file, fileSha(path.join(tools, file))])),
+-      sources: Object.fromEntries(sources), artifacts, runtime: 'nodejs22.x', kind: '原 handler／部署旗標及時限＋固定上游與假 CLI',
+-      limits: ['Preview，非正式網域', '無真 AI／真行情；Node22 與測試注入明列',
+-        'origin／secret／Redis 使用固定後端測試值，真服務配置與可用性未驗', '取消通知可能延後至下次寫出；延遲逐筆觀察，非 SLA'] });
+-    console.log(JSON.stringify({ runId, deployment, artifacts: artifacts.length }));
+-    return;
++    json(path.join(folder, '.vc-config.json'), { runtime: 'nodejs22.x', handler: 'index.cjs', launcherType: 'Nodejs',
++      shouldAddHelpers: true, supportsResponseStreaming: true, maxDuration: 30 });
++    artifacts.push({ route: '/api/' + route, sha256: fileSha(path.join(folder, 'index.cjs')) });
++    // 程式碼內的 cookie／token 字面欄位不是值洩漏；實際環境秘密值仍逐一檢查。
++    const leaked = scanSecrets(folder).filter(({key}) => !['LLM_PROVIDER', 'GEMINI_MODEL_FAST', 'GEMINI_MODEL_THINKING', 'query-credential', 'cookie-field'].includes(key));
++    if (leaked.length) throw new Error(`打包內容含環境值：${leaked.map(item => item.key).join(',')}`);
+   }
++  json(path.join(evidenceDir, 'prepare.json'), { runId, head, createdAt: new Date().toISOString(), deployment,
++    tools: Object.fromEntries(toolFiles.map(file => [file, fileSha(path.join(tools, file))])),
++    sources: Object.fromEntries(sources), artifacts, runtime: 'nodejs22.x', kind: 'Preview 原 handler＋固定上游／假 CLI 注入',
++    limits: ['不是正式網域部署', '無真上游、無真 AI', '測試注入另列，不能宣稱原部署包完全等價',
++      '清除 Upstash 與 shared secret：未驗真限流服務或正式密鑰配置', '本探針 maxDuration=30，原串流 handler 宣告 200，非設定等價驗收'] });
++  console.log(JSON.stringify({ runId, deployment, artifacts: artifacts.length }));
++} else if (mode === 'probe') {
+   const origin = new URL(url);
+   if (origin.protocol !== 'https:' || !origin.hostname.endsWith('.vercel.app') || origin.pathname !== '/') throw new Error('需要具名 Vercel Preview HTTPS origin');
+   const prepared = JSON.parse(fs.readFileSync(path.join(evidence, 'prepare.json')));
+-  exactTools(prepared.tools);
+-  const deployed = JSON.parse(fs.readFileSync(path.join(evidence, 'deployment.json')));
+-  verifiedDeployment(deployed, fileSha(path.join(evidence, 'prepare.json')), origin.origin);
+-  for (const artifact of prepared.artifacts) {
+-    const folder = path.join(prepared.deployment, '.vercel/output/functions', artifact.route.slice(1) + '.func');
+-    if (fileSha(path.join(folder, 'index.cjs')) !== artifact.sha256 || fileSha(path.join(folder, '.vc-config.json')) !== artifact.configurationSha256) {
+-      throw new Error('固定部署包漂移');
+-    }
+-  }
+-  if (mode === 'probe') {
+-    if (fs.existsSync(path.join(evidence, 'raw.json'))) throw new Error('證據不可覆寫');
+-    const results = [];
+-    const request = (route, method = 'GET', body = null, options = {}) => new Promise(resolve => {
+-      const trace = `${runId}-${results.length}`;
+-      const startedAt = new Date().toISOString();
+-      const startedMs = Date.now();
+-      let response = null, text = '', settled = false, timer;
+-      const finish = extra => { if (settled) return; settled = true; clearTimeout(timer); resolve({ route, method, trace, startedAt,
+-        scenario: options.scenario ?? 'normal', expectedStatus: options.expectedStatus ?? 200,
+-        status: response?.statusCode ?? null, text: text.slice(0, 10000), elapsedMs: Date.now() - startedMs, ...extra }); };
+-      const req = https.request(new URL(route, origin), { method, agent: false, headers: { 'x-perf03-trace': trace,
+-        'x-perf03-case': options.scenario ?? 'normal', 'x-proxy-secret': 'perf03-fixed-secret',
+-        'content-type': 'application/json', origin: origin.origin, ...options.headers }, timeout: 30000 }, res => {
+-        response = res;
+-        res.setEncoding('utf8');
+-        res.on('data', chunk => {
+-          text += chunk;
+-          if (options.cancelFirstDelta && text.includes('"t":"delta"')) {
+-            req.destroy();
+-            finish({ canceled: true, canceledAfterFirstDelta: true });
+-          }
+-        });
+-        res.on('end', () => finish({ completed: true }));
+-        res.on('error', error => finish({ error: error.message }));
++  if (prepared.tools['platform-03.mjs'] !== fileSha(fileURLToPath(import.meta.url))) throw new Error('工具雜湊不符');
++  if (fs.existsSync(path.join(evidence, 'raw.json'))) throw new Error('證據不可覆寫');
++  const results = [];
++  const request = (route, method = 'GET', body = null, cancel = false) => new Promise(resolve => {
++    const trace = `${runId}-${results.length}`;
++    const startedAt = new Date().toISOString();
++    let response = null, text = '', settled = false;
++    const finish = extra => { if (settled) return; settled = true; resolve({ route, method, trace, startedAt,
++      status: response?.statusCode ?? null, text: text.slice(0,10000), ...extra }); };
++    const req = https.request(new URL(route, origin), { method, headers: { 'x-perf03-trace': trace,
++      'content-type': 'application/json', origin: origin.origin }, timeout: 30000 }, res => {
++      response = res;
++      res.setEncoding('utf8');
++      res.on('data', chunk => {
++        text += chunk;
++        if (cancel && text.includes('"t":"delta"')) {
++          req.destroy();
++          finish({ canceledAfterFirstDelta: true });
++        }
+       });
+-      req.on('timeout', () => req.destroy(new Error('request timeout')));
+-      req.on('error', error => finish({ error: error.message }));
+-      if (options.cancelAfterMs) timer = setTimeout(() => { req.destroy(); finish({ canceled: true, canceledBeforeAnyByte: text === '' }); }, options.cancelAfterMs);
+-      req.end(body ? JSON.stringify(body) : undefined);
++      res.on('end', () => finish({ completed: true }));
++      res.on('error', error => finish({ error: error.message }));
+     });
+-    for (const route of routes) results.push(await request('/api/' + route, 'OPTIONS', null, { expectedStatus: 204 }));
+-    // 存取保護或平台錯誤擋住 OPTIONS 時停止，不繞過。
+-    if (results.every(item => item.status === 204)) {
+-      results.push(await request('/api/yahoo/chart?symbol=AAPL&interval=1d&range=2y'));
+-      results.push(await request('/api/yahoo/search?q=2330'));
+-      results.push(await request('/api/finmind?dataset=TaiwanStockInfo'));
+-      results.push(await request('/api/gemini-stream', 'POST', {}, { expectedStatus: 400 }));
+-      results.push(await request('/api/gemini', 'GET', null, { expectedStatus: 405 }));
+-      results.push(await request('/api/yahoo/chart?symbol=AAPL', 'GET', null, { expectedStatus: 403, headers: { origin: 'https://untrusted.invalid' } }));
+-      results.push(await request('/api/yahoo/chart?symbol=AAPL', 'GET', null, { expectedStatus: 403, headers: { 'x-proxy-secret': 'invalid' } }));
+-      const body = { prompt: '固定測試', systemInstruction: '固定測試', mode: 'fast' };
+-      results.push(await request('/api/gemini', 'POST', body));
+-      results.push(await request('/api/gemini-stream', 'POST', body));
+-      await sleep(15000);
+-      results.push(await request('/api/gemini-stream', 'POST', body, { scenario: 'cancel-first-delta', cancelFirstDelta: true }));
+-      await sleep(15000);
+-      results.push(await request('/api/gemini-stream', 'POST', body, { scenario: 'cancel-early', cancelAfterMs: 400 }));
+-      await sleep(15000);
+-      results.push(await request('/api/gemini-stream', 'POST', body, { scenario: 'after-cancel' }));
+-      results.push(await request('/api/yahoo/chart?symbol=AAPL', 'GET', null, { expectedStatus: 429, scenario: 'rate-limit' }));
+-    }
+-    json(path.join(evidence, 'raw.json'), { runId, url: origin.origin, createdAt: new Date().toISOString(), tools: prepared.tools, results });
+-    console.log(JSON.stringify({ runId, results: results.map(({ scenario, status, canceled, expectedStatus }) => ({ scenario, status, canceled, expectedStatus })) }));
+-    return;
+-  }
+-  if (mode !== 'logs') throw new Error('用法：platform-03.mjs prepare|probe|logs platform03-新代號 [Preview網址]');
+-  const raw = JSON.parse(fs.readFileSync(path.join(evidence, 'raw.json')));
+-  const vc = path.join(process.env.APPDATA, 'npm/node_modules/vercel/dist/vc.js');
+-  const text = execFileSync(process.execPath, [vc, 'logs', '--deployment', deployed.deployment.id, '--json', '--expand', '--no-follow',
+-    '--no-branch', '--since', prepared.createdAt, '--limit', '100', '--cwd', prepared.deployment], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
+-  const rows = text.split(/\r?\n/).filter(line => line.startsWith('{')).map(line => JSON.parse(line));
+-  json(path.join(evidence, 'platform-logs.json'), rows);
+-  const events = platformEvents(rows, deployed.deployment.id, runId);
+-  const expectedText = Array.from({ length: 5 }, (_, i) => `假片段${i + 1}`).join('');
+-  const checks = raw.results.map(client => {
+-    const own = events.filter(event => event.trace === client.trace);
+-    let pass;
+-    if (client.scenario.startsWith('cancel-')) pass = canceledWorkStopped(client, events);
+-    else {
+-      pass = client.completed === true && client.status === client.expectedStatus;
+-      if (!(client.route === '/api/gemini-stream' && client.status === 200)) pass &&= validPayload(client);
+-      if (client.status >= 400) pass &&= !own.some(event => event.event === 'child.fakeCli.spawn'
+-        || (event.event === 'fixture-fetch' && event.kind !== 'ratelimit'));
+-      if (client.route === '/api/gemini-stream' && client.status === 200) {
+-        let chunks = [];
+-        try { chunks = client.text.trim().split('\n').map(line => JSON.parse(line)); } catch { pass = false; }
+-        pass &&= chunks.length === 6 && chunks.slice(0, 5).every((chunk, i) => chunk.t === 'delta' && chunk.text === `假片段${i + 1}`)
+-          && chunks[5]?.t === 'done' && chunks[5]?.text === expectedText
+-          && own.some(event => event.event === 'child.fakeCli.done') && !own.some(event => event.event === 'child.fakeCli.kill');
+-      }
+-    }
+-    return { trace: client.trace, scenario: client.scenario, route: client.route, pass, events: own.sort((a, b) => a.atMs - b.atMs) };
++    req.on('timeout', () => req.destroy(new Error('request timeout')));
++    req.on('error', error => finish({ error: error.message }));
++    req.end(body ? JSON.stringify(body) : undefined);
+   });
+-  const pass = checks.length === 18 && checks.every(item => item.pass) && !events.some(event => event.event === 'blocked-fetch');
+-  json(path.join(evidence, 'summary.json'), { runId, deploymentId: deployed.deployment.id, url: origin.origin,
+-    rawSha256: fileSha(path.join(evidence, 'raw.json')), logsSha256: fileSha(path.join(evidence, 'platform-logs.json')),
+-    pass, checks, limits: prepared.limits });
+-  console.log(JSON.stringify({ runId, pass, checks: checks.map(({ scenario, pass }) => ({ scenario, pass })) }));
+-  process.exitCode = pass ? 0 : 1;
+-}
+-
+-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+-  main().catch(error => { console.error(error.message); process.exitCode = 1; });
+-}
++  for (const route of routes) results.push(await request('/api/' + route, 'OPTIONS'));
++  // 若 Preview 保護或平台失敗擋住 OPTIONS，停止，不繞過存取控制。
++  if (results.every(item => item.status === 204)) {
++    results.push(await request('/api/yahoo/chart?symbol=AAPL&interval=1d&range=2y'));
++    results.push(await request('/api/yahoo/search?q=2330'));
++    results.push(await request('/api/finmind?dataset=TaiwanStockInfo'));
++    results.push(await request('/api/gemini-stream', 'POST', {}));
++    const body = { prompt: '固定測試', systemInstruction: '固定測試', mode: 'fast' };
++    results.push(await request('/api/gemini', 'POST', body));
++    results.push(await request('/api/gemini-stream', 'POST', body));
++    results.push(await request('/api/gemini-stream', 'POST', body, true));
++  }
++  json(path.join(evidence, 'raw.json'), { runId, url: origin.origin, createdAt: new Date().toISOString(),
++    tools: prepared.tools, results, serverCancellation: '須另對帳平台 logs 的同 trace fakeCli.kill／response-close，不能由客戶端取消推定' });
++  console.log(JSON.stringify({ runId, results: results.map(({route,status,canceledAfterFirstDelta,error}) => ({route,status,canceledAfterFirstDelta,error})) }, null, 2));
++} else throw new Error('用法：platform-03.mjs prepare|probe platform03-新代號 [Preview網址]');
+diff --git a/.scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs b/.scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs
+index 471b288..0da60d0 100644
+--- a/.scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs
++++ b/.scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs
+@@ -7,17 +7,12 @@ const { performance } = require('node:perf_hooks');
+ const fixture = require('./trace-preload.cjs');
+ const context = new AsyncLocalStorage();
+ const record = (event, detail = {}) => console.log(JSON.stringify({ marker: 'perf03-platform',
+-  ...detail, trace: detail.trace ?? context.getStore()?.trace ?? null, event, atMs: performance.now() }));
++  ...detail, trace: context.getStore()?.trace ?? detail.trace ?? null, event, atMs: performance.now() }));
+ for (const key of ['GEMINI_API_KEY', 'FINMIND_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN',
+   'PROXY_SHARED_SECRET', 'ALLOWED_ORIGIN']) delete process.env[key];
+ process.env.LLM_PROVIDER = 'claude-cli';
+ process.env.CLAUDE_CLI_PATH = process.execPath;
+ process.env.PERF03_TEST_APP = '1';
+-// 固定測試值只供後端守門驗收，保留真守門與真限流器程式，所有 Redis 請求仍由固定回應接走。
+-process.env.ALLOWED_ORIGIN = 'https://perf03.invalid';
+-process.env.PROXY_SHARED_SECRET = 'perf03-fixed-secret';
+-process.env.UPSTASH_REDIS_REST_URL = 'https://perf03.upstash.invalid';
+-process.env.UPSTASH_REDIS_REST_TOKEN = 'perf03-fixed-token';
+ childProcess.spawn = (command, args) => {
+   if (!fixture.looksLikeClaude(command, args)) throw new Error('平台固定資料禁止啟動非假 CLI');
+   return fixture.createFakeCli({ args, ai: { intervalMs: 600, deltas: 5 }, record, trace: context.getStore()?.trace ?? null });
+@@ -32,19 +27,16 @@ globalThis.fetch = async (input, init) => {
+   }
+   record('fixture-fetch', { kind: kind.kind });
+   if (init?.signal?.aborted) throw init.signal.reason;
+-  const step = kind.kind === 'ratelimit' && context.getStore()?.scenario === 'rate-limit' ? { remaining: -1 } : null;
+-  return fixture.fixtureResponse(kind, step, { commands: kind.kind === 'ratelimit' ? fixture.countRedisCommands(init?.body) : null });
++  return fixture.fixtureResponse(kind, null, { commands: kind.kind === 'ratelimit' ? fixture.countRedisCommands(init?.body) : null });
+ };
+ module.exports.wrap = handler => async (req, res) => {
+   const header = req.headers['x-perf03-trace'];
+   const trace = typeof header === 'string' && /^[a-z0-9-]{1,90}$/.test(header) ? header : 'unlabelled';
+-  const scenario = req.headers['x-perf03-case'];
+-  return context.run({ trace, scenario }, async () => {
++  return context.run({ trace }, async () => {
+     record('handler-start');
+-    // 平台觸發事件可能沒有 AsyncLocalStorage，明綁此請求 trace，避免併行事件歸到其他請求。
+-    req.once('aborted', () => record('request-aborted', { trace }));
+-    res.once('close', () => record('response-close', { trace, finished: res.writableFinished }));
+-    res.once('finish', () => record('response-finish', { trace }));
++    req.once('aborted', () => record('request-aborted'));
++    res.once('close', () => record('response-close', { finished: res.writableFinished }));
++    res.once('finish', () => record('response-finish'));
+     try { await handler(req, res); }
+     finally { record('handler-return'); }
+   });
+diff --git a/.scratch/performance-optimization-20260923/tools/terminal-03.mjs b/.scratch/performance-optimization-20260923/tools/terminal-03.mjs
+deleted file mode 100644
+index 7cfc179..0000000
+--- a/.scratch/performance-optimization-20260923/tools/terminal-03.mjs
++++ /dev/null
+@@ -1,150 +0,0 @@
+-// 隱藏且獨立的 Windows console，驗 Ctrl+C、關窗與切回 B1；不操作使用者終端機。
+-import fs from 'node:fs';
+-import path from 'node:path';
+-import { execFileSync } from 'node:child_process';
+-import { fileURLToPath } from 'node:url';
+-import { claimRun, fileSha, sleep } from './service-kit.mjs';
+-import { ROOT, scanSecrets } from './verify-b1-breakdown.mjs';
+-import { launcherTree, listenerRows, processTable, terminateVerifiedTree, runSentinel, startForeignMonitor } from './port-guard-03.mjs';
+-const directory = path.dirname(fileURLToPath(import.meta.url));
+-const daily = path.join(directory, 'daily-dev.mjs');
+-const helper = path.join(directory, 'console-control-03.py');
+-const statePath = path.join(process.env.LOCALAPPDATA, 'Temp/perf-opt-20260923/daily/state.json');
+-const ports = [3000, 3001];
+-const recorded = [];
+-const allowedRoots = [process.pid];
+-const consoles = [];
+-let aborted = false;
+-const assertActive = () => { if (aborted) throw new Error('外部用戶端事件後停止後續起跑'); };
+-const env = { ...process.env };
+-for (const key of Object.keys(env)) if (key.toUpperCase() === 'NODE_OPTIONS' || /^PERF0[13]_/.test(key)) delete env[key];
+-const invoke = (executable, args) => execFileSync(executable, args, { cwd: ROOT, env, windowsHide: true, encoding: 'utf8', timeout: 15000 });
+-const launch = async (log, executable, args) => {
+-  assertActive();
+-  const child = JSON.parse(invoke('python', [helper, 'launch', log, ROOT, executable, ...args]));
+-  // 一取得出生身分即保存；後續 CIM／第二個啟動失敗仍有自己的 console 可安全關閉。
+-  consoles.push(child);
+-  allowedRoots.push(child.pid);
+-  await observe(child);
+-  assertActive();
+-  return child;
+-};
+-const observe = async child => {
+-  const { pid, creationFileTime } = child;
+-  const table = await processTable();
+-  const root = table.get(pid);
+-  if (!root) throw new Error('測試根程序已退出');
+-  const legacy = /^\/Date\((-?\d+)(?:[+-]\d{4})?\)\/$/.exec(String(root.CreationDate));
+-  const actualMs = legacy ? Number(legacy[1]) : Date.parse(root.CreationDate);
+-  const expectedMs = Number((BigInt(creationFileTime) - 116444736000000000n) / 10000n);
+-  if (actualMs !== expectedMs) throw new Error('CIM 根程序與啟動 FILETIME 不符，拒絕認領');
+-  invoke('python', [helper, 'verify', String(pid), creationFileTime]);
+-  const tree = [{ pid, parentPid: root.ParentProcessId, name: root.Name, creationDate: root.CreationDate }, ...launcherTree(table, pid)];
+-  recorded.push(...tree);
+-  return tree;
+-};
+-const clean = async tree => {
+-  const table = await processTable();
+-  return { stateRemoved: !fs.existsSync(statePath), ports: await Promise.all(ports.map(listenerRows)),
+-    alive: tree.filter(item => table.get(item.pid)?.CreationDate === item.creationDate).map(item => ({ pid: item.pid, name: item.name })) };
+-};
+-const isClean = value => value.stateRemoved && value.ports.every(rows => rows.length === 0) && value.alive.length === 0;
+-const waitClean = async tree => {
+-  let result;
+-  for (let i = 0; i < 20; i++) { result = await clean(tree); if (isClean(result)) return result; await sleep(500); }
+-  return result;
+-};
+-async function ready(log) {
+-  for (let i = 0; i < 240; i++) {
+-    assertActive();
+-    if (fs.readFileSync(log, 'utf8').includes('日常入口已就緒')) return true;
+-    await sleep(500);
+-  }
+-  return false;
+-}
+-async function http() {
+-  assertActive();
+-  const page = await fetch('http://localhost:3000/', { signal: AbortSignal.timeout(10000) });
+-  const html = await page.text();
+-  const options = await fetch('http://localhost:3000/api/yahoo/chart?symbol=AAPL', { method: 'OPTIONS', signal: AbortSignal.timeout(10000) });
+-  await options.arrayBuffer();
+-  return { page: page.status, hasRoot: html.includes('<div id="root"></div>'), options: options.status };
+-}
+-async function main() {
+-  const runId = process.argv[2];
+-  if (fs.existsSync(statePath) || (await Promise.all(ports.map(listenerRows))).some(rows => rows.length)) throw new Error('日常狀態或原埠已占用，拒絕測試');
+-  const { evidenceDir, runtimeDir } = claimRun({ ticket: '03', runId });
+-  const files = ['terminal-03.mjs', 'console-control-03.py', 'daily-dev.mjs', 'port-guard-03.mjs', 'service-kit.mjs'];
+-  const head = invoke('git', ['rev-parse', 'HEAD']).trim();
+-  for (const file of files) {
+-    const committed = execFileSync('git', ['show', `${head}:.scratch/performance-optimization-20260923/tools/${file}`], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+-    if (!committed.equals(fs.readFileSync(path.join(directory, file)))) throw new Error(`工具未提交：${file}`);
+-  }
+-  const raw = { runId, head, startedAt: new Date().toISOString(), tools: Object.fromEntries(files.map(file => [file, fileSha(path.join(directory, file))])),
+-    requests: '僅首頁 GET 與 OPTIONS，無 browser／帳本／行情／AI', scenarios: [], errors: [] };
+-  let monitor;
+-  let foreignCleanup;
+-  try {
+-    raw.sentinel = await runSentinel({ port: 3000, durationMs: 8000, holdMs: 3000 });
+-    if (raw.sentinel.events.length) throw new Error('仍有原埠分頁重連，停止驗收');
+-    monitor = startForeignMonitor({ port: 3000, allowedRoots: () => allowedRoots, onForeign: () => {
+-      aborted = true;
+-      raw.errors.push('原埠外部用戶端連入');
+-      foreignCleanup ??= terminateVerifiedTree([...recorded]).catch(error => { raw.errors.push(error.message); });
+-    } });
+-    for (const mode of ['ctrl-c', 'close-window']) {
+-      const log = path.join(runtimeDir, `${mode}.log`);
+-      const child = await launch(log, process.execPath, [daily, 'start']);
+-      const started = await ready(log);
+-      const tree = await observe(child);
+-      const checks = started ? await http() : null;
+-      const signal = JSON.parse(invoke('python', [helper, mode, String(child.pid), child.creationFileTime]));
+-      const final = await waitClean(tree);
+-      raw.scenarios.push({ mode, child, tree, http: checks, signal, final, pass: started && checks.page === 200 && checks.hasRoot && checks.options === 204 && isClean(final) });
+-      if (!isClean(final)) throw new Error(`${mode} 清理未完成`);
+-    }
+-    // 實際執行回復文件中的原 B1 service 命令；兩個 console 都是本工具新建。
+-    const b1 = [];
+-    for (const service of ['backend', 'frontend']) b1.push(await launch(path.join(runtimeDir, `b1-${service}.log`), 'powershell.exe',
+-      ['-NoProfile', '-ExecutionPolicy', 'RemoteSigned', '-File', path.join(ROOT, 'scripts/start-dev.ps1'), '-Service', service]));
+-    let checks;
+-    for (let i = 0; i < 120; i++) {
+-      assertActive();
+-      try { checks = await http(); if (checks.page === 200 && checks.options === 204) break; } catch { /* 等待 B1 啟動 */ }
+-      await sleep(500);
+-    }
+-    const tree = (await Promise.all(b1.map(child => observe(child)))).flat();
+-    // 正常停止這兩個測試 console，不按使用者服務的埠猜 PID。
+-    const signals = b1.map(child => JSON.parse(invoke('python', [helper, 'ctrl-c', String(child.pid), child.creationFileTime])));
+-    const final = await waitClean(tree);
+-    raw.scenarios.push({ mode: 'rollback-b1', command: 'powershell.exe -File scripts/start-dev.ps1 -Service backend/frontend',
+-      sourceSha256: fileSha(path.join(ROOT, 'scripts/start-dev.ps1')), b1, tree, http: checks, signals, final,
+-      pass: checks?.page === 200 && checks.hasRoot && checks.options === 204 && isClean(final) });
+-  } catch (error) { raw.errors.push(error.message); }
+-  finally {
+-    raw.monitor = monitor?.stop() ?? null;
+-    await foreignCleanup;
+-    if (fs.existsSync(statePath)) {
+-      try { invoke(process.execPath, [daily, 'stop']); } catch { try { invoke(process.execPath, [daily, 'recover']); } catch { /* 最後依已記錄身分清理 */ } }
+-    }
+-    const unique = [...new Map(recorded.map(item => [`${item.pid}|${item.creationDate}`, item])).values()];
+-    // 先以還存活的出生錨點擴展當下子孫；不可先關 console 而丟失祖先。
+-    raw.cleanup = await terminateVerifiedTree(unique);
+-    // CIM 初始觀察失敗等後備情境：再用精確 FILETIME 核對自己的 console。
+-    for (const child of consoles) {
+-      try {
+-        process.kill(child.pid, 0);
+-        invoke('python', [helper, 'close-window', String(child.pid), child.creationFileTime]);
+-      } catch { /* 已退出或 PID 重用；helper 的出生守衛會拒絕 */ }
+-    }
+-    raw.final = await clean(unique);
+-    raw.finishedAt = new Date().toISOString();
+-    raw.pass = raw.errors.length === 0 && !raw.monitor?.foreign.length && raw.scenarios.length === 3 && raw.scenarios.every(item => item.pass) && isClean(raw.final);
+-    fs.writeFileSync(path.join(evidenceDir, 'raw.json'), JSON.stringify(raw, null, 2) + '\n', { flag: 'wx' });
+-    const leaks = scanSecrets(evidenceDir);
+-    if (leaks.length) throw new Error('終端證據秘密掃描未過');
+-  }
+-  console.log(JSON.stringify({ runId, pass: raw.pass, scenarios: raw.scenarios.map(({ mode, pass }) => ({ mode, pass })), errors: raw.errors }));
+-  process.exitCode = raw.pass ? 0 : 1;
+-}
+-main().catch(error => { console.error(error.message); process.exitCode = 1; });

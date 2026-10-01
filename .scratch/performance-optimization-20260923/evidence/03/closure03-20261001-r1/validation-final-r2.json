@@ -1,0 +1,14 @@
+{
+  "runId": "closure03-20261001-r2-validation",
+  "oldSealedEvidenceUnchanged": 108,
+  "currentStatusDocsUpdated": 3,
+  "originalReviewAppendOnly": true,
+  "newFilesAndUpdatedDocsChecked": 59,
+  "actualSecretValuesCompared": 2,
+  "secretMatches": 0,
+  "unrelatedTrackedStatusCount": 878,
+  "unrelatedTrackedStatusUnchanged": true,
+  "mainUnchanged": true,
+  "stage1ValidationScope": "先前r1驗證時REVIEW尚未新增結案指向；本r2補核對新增指向且原內容保留",
+  "pass": true
+}

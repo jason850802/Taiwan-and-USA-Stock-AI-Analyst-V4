@@ -1,6 +1,6 @@
 # 第二輪效能優化規格
 
-Status: ready-for-agent — 已採用；01／02完成。03於2026-10-01完成授權mock範圍的覆核處置與固定驗收，仍依使用者指示OPEN，04不自動解鎖：Preview18/18、終端回復3/3、最終App接受28/28／快照22/28／凍結終態21/28、gate838/838、獨立雙軸通過。真配置／真上游／production網域等限制保留；全案效能仍OPEN，目標不變。最新來源、逐條處置及固定交接見 [03續驗](evidence/03/REVIEW-ADDENDUM-20261001-r1.md)與 [03票](issues/03-daily-dev-entry.md)。
+Status: ready-for-agent — 已採用；01／02／03完成。03於2026-10-01依最新指示resolved，原票六項及雙軸通過，另補隔離Git回復及精確main候選gate831/831；尚未合入main或對新候選執行runtime。04技術前置已滿足但本輪未授權開工。真配置／真上游／production網域等限制保留；全案效能仍OPEN，目標不變。最新原因分類、來源及固定交接見 [03結案](evidence/03/CLOSURE-20261001-r1.md)與 [03票](issues/03-daily-dev-entry.md)；舊驗收及OPEN結論保留為當時快照。
 
 ## 使用者問題
 

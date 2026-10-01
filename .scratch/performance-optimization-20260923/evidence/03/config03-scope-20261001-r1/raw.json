@@ -1,0 +1,165 @@
+{
+  "runId": "config03-scope-20261001-r1",
+  "head": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+  "kind": "既有正式Preview來源及配置範圍的只讀核對，非新部署或新runtime",
+  "prepareSha256": "b86ef8b6d353d7cf1dc4f39bd6f1e70946abc5c3b439f2ccf2c5ac34848b79f2",
+  "sourceRows": [
+    {
+      "path": "vercel.json",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/config.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/ratelimit.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/guard.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/finmind.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/finmind.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/gemini.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "preparedCommittedMatch": true,
+      "currentCommittedMatch": true,
+      "actualExact": true,
+      "actualNormalizedMatch": true
+    }
+  ],
+  "functions": [
+    {
+      "route": "/api/yahoo/chart",
+      "runtime": "nodejs22.x",
+      "maxDuration": 30,
+      "supportsCancellation": true
+    },
+    {
+      "route": "/api/yahoo/search",
+      "runtime": "nodejs22.x",
+      "maxDuration": 30,
+      "supportsCancellation": true
+    },
+    {
+      "route": "/api/finmind",
+      "runtime": "nodejs22.x",
+      "maxDuration": 30,
+      "supportsCancellation": true
+    },
+    {
+      "route": "/api/gemini",
+      "runtime": "nodejs22.x",
+      "maxDuration": 120,
+      "supportsCancellation": true
+    },
+    {
+      "route": "/api/gemini-stream",
+      "runtime": "nodejs22.x",
+      "maxDuration": 200,
+      "supportsCancellation": true
+    }
+  ],
+  "unchangedCommittedSources": 16,
+  "pass": true,
+  "verified": [
+    "正式Preview採用原handler及共用guard原始碼",
+    "五函式取消旗標開啟，時限30/120/200秒",
+    "既有18案含method/origin/secret/body/rate-limit拒絕與取消後正常請求"
+  ],
+  "notVerified": [
+    "真環境變數值與正式網域origin",
+    "真Redis或真Gemini/Claude/行情可用性",
+    "正式production完整站建置及部署"
+  ],
+  "externalActions": 0
+}

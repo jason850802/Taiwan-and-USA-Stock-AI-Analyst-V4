@@ -1,0 +1,199 @@
+{
+  "originalCommits": [
+    "4d2b2ba51fa2a6ba12a5f86915c6ca8be8d85a50",
+    "e6b6770883379cd3a22779588f08e9dbc0249fee",
+    "241fba1b4e6be8f74719afd7d8b7b2fa87a5d6f6"
+  ],
+  "paths": [
+    ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+    ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+    ".scratch/performance-optimization-20260923/tools/terminal-03.mjs"
+  ],
+  "reversals": [
+    "7403d25d87446d8c1209a7acdbf23d9eecf6d680",
+    "7448d59c3e8351d20be344408cdb169da8a6d7c0",
+    "bf9bb6184fd9b623757cf06667bafea99dcb506d"
+  ],
+  "before": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "exists": true,
+      "sha256": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "bytes": 76145
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "exists": true,
+      "sha256": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "bytes": 10039
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "exists": true,
+      "sha256": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "bytes": 7127
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "exists": true,
+      "sha256": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "bytes": 18054
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "exists": true,
+      "sha256": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "bytes": 2812
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "exists": true,
+      "sha256": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "bytes": 3172
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "exists": true,
+      "sha256": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "bytes": 9151
+    }
+  ],
+  "reverted": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "exists": true,
+      "sha256": "5f9d6ea707879c1093a983f7aea7faf023d8f821b7881d5bdd05b303337d2c4d",
+      "bytes": 72877
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "exists": true,
+      "sha256": "320b655060f806ae52c908388fdef3b327ad42834892724cfe2f6ce27cd4a650",
+      "bytes": 8211
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "exists": true,
+      "sha256": "39b655dadbfea535674dad01eb475799e472e90830a8c5f5ef4915ffd9940b77",
+      "bytes": 8447
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "exists": true,
+      "sha256": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+      "bytes": 2469
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    }
+  ],
+  "expected": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "exists": true,
+      "sha256": "5f9d6ea707879c1093a983f7aea7faf023d8f821b7881d5bdd05b303337d2c4d",
+      "bytes": 72877
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "exists": true,
+      "sha256": "320b655060f806ae52c908388fdef3b327ad42834892724cfe2f6ce27cd4a650",
+      "bytes": 8211
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "exists": true,
+      "sha256": "39b655dadbfea535674dad01eb475799e472e90830a8c5f5ef4915ffd9940b77",
+      "bytes": 8447
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "exists": true,
+      "sha256": "a41a9eea3a2d21defda901f457be99534f3f66e7ffd8fba90a2941aa5daccb2a",
+      "bytes": 2469
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    }
+  ],
+  "restored": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "exists": true,
+      "sha256": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "bytes": 76145
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "exists": true,
+      "sha256": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "bytes": 10039
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "exists": true,
+      "sha256": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "bytes": 7127
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "exists": true,
+      "sha256": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "bytes": 18054
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "exists": true,
+      "sha256": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "bytes": 2812
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "exists": true,
+      "sha256": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "bytes": 3172
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "exists": true,
+      "sha256": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "bytes": 9151
+    }
+  ],
+  "backTo571Content": true,
+  "fullTreeRestored": true
+}

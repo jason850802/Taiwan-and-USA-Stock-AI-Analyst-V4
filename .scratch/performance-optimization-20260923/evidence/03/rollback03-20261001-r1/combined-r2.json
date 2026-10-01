@@ -1,0 +1,330 @@
+{
+  "sourceHead": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+  "beforeRef": "0a69502146ba73407d06b078a228b7cff8ad23a2",
+  "beforeTree": "f4b8a2c2eff8b47b88c69a27a4b4a2f901be2ee0",
+  "configUndo": "a167e267e09312a60ebd5b4a768c52436b2ce0d5",
+  "revertedRef": "2a64c8049c6ee5a9043978df7592aa545115b14e",
+  "paths": [
+    "api/_lib/clientAbort.ts",
+    "api/_lib/http.cancel.test.ts",
+    "api/_lib/http.ts",
+    "api/_lib/llm.ts",
+    "api/_lib/yahoo.handshake.test.ts",
+    "api/_lib/yahoo.ts",
+    "api/finmind.ts",
+    "api/gemini-stream.test.ts",
+    "api/gemini-stream.ts",
+    "api/gemini.ts",
+    "api/yahoo/chart.ts",
+    "api/yahoo/search.ts",
+    "vite.config.ts",
+    "utils/vercelConfigGuard.test.ts",
+    "vercel.json"
+  ],
+  "changed": [
+    "api/_lib/clientAbort.ts",
+    "api/_lib/http.cancel.test.ts",
+    "api/_lib/http.ts",
+    "api/_lib/llm.ts",
+    "api/_lib/yahoo.handshake.test.ts",
+    "api/_lib/yahoo.ts",
+    "api/finmind.ts",
+    "api/gemini-stream.test.ts",
+    "api/gemini-stream.ts",
+    "api/gemini.ts",
+    "api/yahoo/chart.ts",
+    "api/yahoo/search.ts",
+    "utils/vercelConfigGuard.test.ts",
+    "vercel.json",
+    "vite.config.ts"
+  ],
+  "before": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388"
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2"
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203"
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sha256": "91ee027d822be744fc29805fbd79ef1398ca1e98cc4b5c2138ea1f1a51895500"
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba"
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815"
+    },
+    {
+      "path": "api/finmind.ts",
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d"
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147"
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966"
+    },
+    {
+      "path": "api/gemini.ts",
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536"
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4"
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "386ae882f7b78981b6482ae3203b4595603e42ca95c9b128e38c85ce078c6e3c"
+    },
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "sha256": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b"
+    }
+  ],
+  "reverted": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sha256": null
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sha256": null
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sha256": "b358e9931b5f65acf4e04eeaeea199a76b8486033deed223104c09e7e1261251"
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sha256": "1292feeb7ea9b212a5071f614344a379b183e03340b8929ac1fa6e69a84da7fb"
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sha256": "9e77c189bfa6e1a7dbed77b00a46b1cfe1df7150391328b4e2fbf67eb5bb4077"
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sha256": "69c91143887334fe38ed89d71245fa173d11bdf4af4f0dfa060b769d273d84fb"
+    },
+    {
+      "path": "api/finmind.ts",
+      "sha256": "a2f95053d0a99dff5ade605c66ad1e8a3e99705c394140812d6cb6a7e5d2c14a"
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sha256": "2d80699af49fc050a8fdfb152db05c405aa2ae2d0af1b8a26221e177b2bc14c5"
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sha256": "d64a9097502520cc27301e1647afa54a8fd6d26621610029e0beb9b7064168df"
+    },
+    {
+      "path": "api/gemini.ts",
+      "sha256": "e0830661abcf25e47abe94ed337bc8de553d91a9db71d11b4172f5202415c44d"
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sha256": "b499f3870a0c3ec811a6b7a1a6417c5aa32fc73357e259eac88111f467d1e449"
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sha256": "53d0bcecb138e6730dedc08cce122968ac11c67d0cc72dc6d16f8013cd268917"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "1c135a0f4e640b3f57f145f10630a3ded5e12c11e2d4e8f2c0d7b44576aeefe9"
+    },
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "sha256": null
+    },
+    {
+      "path": "vercel.json",
+      "sha256": null
+    }
+  ],
+  "restored": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388"
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2"
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203"
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sha256": "91ee027d822be744fc29805fbd79ef1398ca1e98cc4b5c2138ea1f1a51895500"
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba"
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815"
+    },
+    {
+      "path": "api/finmind.ts",
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d"
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147"
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966"
+    },
+    {
+      "path": "api/gemini.ts",
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536"
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4"
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "386ae882f7b78981b6482ae3203b4595603e42ca95c9b128e38c85ce078c6e3c"
+    },
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "sha256": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b"
+    }
+  ],
+  "fullTreeRestored": true,
+  "syntax": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "exists": false,
+      "skipReason": "03 新增檔隨原始反向補丁移除"
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "exists": false,
+      "skipReason": "03 新增檔隨原始反向補丁移除"
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "exists": true,
+      "sha256": "b358e9931b5f65acf4e04eeaeea199a76b8486033deed223104c09e7e1261251",
+      "parseErrors": []
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "exists": true,
+      "sha256": "1292feeb7ea9b212a5071f614344a379b183e03340b8929ac1fa6e69a84da7fb",
+      "parseErrors": []
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "exists": true,
+      "sha256": "9e77c189bfa6e1a7dbed77b00a46b1cfe1df7150391328b4e2fbf67eb5bb4077",
+      "parseErrors": []
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "exists": true,
+      "sha256": "69c91143887334fe38ed89d71245fa173d11bdf4af4f0dfa060b769d273d84fb",
+      "parseErrors": []
+    },
+    {
+      "path": "api/finmind.ts",
+      "exists": true,
+      "sha256": "a2f95053d0a99dff5ade605c66ad1e8a3e99705c394140812d6cb6a7e5d2c14a",
+      "parseErrors": []
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "exists": true,
+      "sha256": "2d80699af49fc050a8fdfb152db05c405aa2ae2d0af1b8a26221e177b2bc14c5",
+      "parseErrors": []
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "exists": true,
+      "sha256": "d64a9097502520cc27301e1647afa54a8fd6d26621610029e0beb9b7064168df",
+      "parseErrors": []
+    },
+    {
+      "path": "api/gemini.ts",
+      "exists": true,
+      "sha256": "e0830661abcf25e47abe94ed337bc8de553d91a9db71d11b4172f5202415c44d",
+      "parseErrors": []
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "exists": true,
+      "sha256": "b499f3870a0c3ec811a6b7a1a6417c5aa32fc73357e259eac88111f467d1e449",
+      "parseErrors": []
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "exists": true,
+      "sha256": "53d0bcecb138e6730dedc08cce122968ac11c67d0cc72dc6d16f8013cd268917",
+      "parseErrors": []
+    },
+    {
+      "path": "vite.config.ts",
+      "exists": true,
+      "sha256": "1c135a0f4e640b3f57f145f10630a3ded5e12c11e2d4e8f2c0d7b44576aeefe9",
+      "parseErrors": []
+    }
+  ],
+  "retained": [
+    {
+      "literal": "--strict-mcp-config",
+      "beforeCount": 1,
+      "afterCount": 1
+    },
+    {
+      "literal": "--mcp-config",
+      "beforeCount": 1,
+      "afterCount": 1
+    },
+    {
+      "literal": "--setting-sources",
+      "beforeCount": 1,
+      "afterCount": 1
+    },
+    {
+      "literal": "getClaudeCliEffort",
+      "beforeCount": 3,
+      "afterCount": 3
+    }
+  ],
+  "pass": true,
+  "noRuntime": true
+}

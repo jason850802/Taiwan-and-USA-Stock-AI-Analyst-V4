@@ -1,0 +1,23 @@
+diff --git a/.vercelignore b/.vercelignore
+index c598753..eaba9fd 100644
+--- a/.vercelignore
++++ b/.vercelignore
+@@ -5,4 +5,5 @@
+ .agents
+ .planning
+ .codex
++.scratch
+ node_modules
+diff --git a/vite.config.ts b/vite.config.ts
+index 933b418..0dfebee 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -22,7 +22,7 @@ export default defineConfig({
+     // .claude/（agent worktree、本機設定）不屬於 app 原始碼：不監看，
+     // 否則 worktree 內的檔案變動會觸發整頁 reload，鎖住的檔案更會讓 watcher EBUSY 崩潰
+     watch: {
+-      ignored: ['**/.claude/**'],
++      ignored: ['**/.claude/**', '**/.scratch/**'],
+     },
+     proxy: {
+       '/api': {

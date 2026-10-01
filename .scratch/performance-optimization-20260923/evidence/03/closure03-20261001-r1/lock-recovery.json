@@ -1,0 +1,11 @@
+{
+  "kind": "移除已核對的過期空白Git索引鎖",
+  "path": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.git\\index.lock",
+  "length": 0,
+  "lastWriteUtc": "2026-10-01T02:05:01.0000000Z",
+  "ageSeconds": 1489.0,
+  "activeGitProcesses": 0,
+  "removed": true,
+  "recursive": false,
+  "otherFilesTouched": false
+}

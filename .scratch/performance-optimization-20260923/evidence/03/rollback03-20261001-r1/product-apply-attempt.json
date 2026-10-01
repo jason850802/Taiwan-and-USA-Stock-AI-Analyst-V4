@@ -1,0 +1,22 @@
+{
+  "sourceHead": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+  "original": "5a44fd58f32b978d27228efc635d50f618092cbd",
+  "paths": [
+    "api/_lib/clientAbort.ts",
+    "api/_lib/http.cancel.test.ts",
+    "api/_lib/http.ts",
+    "api/_lib/llm.ts",
+    "api/_lib/yahoo.handshake.test.ts",
+    "api/_lib/yahoo.ts",
+    "api/finmind.ts",
+    "api/gemini-stream.test.ts",
+    "api/gemini-stream.ts",
+    "api/gemini.ts",
+    "api/yahoo/chart.ts",
+    "api/yahoo/search.ts",
+    "vite.config.ts"
+  ],
+  "patchSha256": "007a591ac2bb4848cd74e2803d82e408e61944790c95df43de5dd032a815166a",
+  "exit": 0,
+  "conflicts": []
+}

@@ -1,0 +1,1087 @@
+diff --git a/api/_lib/clientAbort.ts b/api/_lib/clientAbort.ts
+new file mode 100644
+index 0000000..991863a
+--- /dev/null
++++ b/api/_lib/clientAbort.ts
+@@ -0,0 +1,37 @@
++// 將用戶端斷線接到 handler 的工作訊號；請在 handler 的 finally 解除監聽。
++interface AbortRequest {
++  aborted?: boolean;
++  on?(event: 'aborted', listener: () => void): void;
++  off?(event: 'aborted', listener: () => void): void;
++}
++
++interface AbortResponse {
++  writableFinished?: boolean;
++  destroyed?: boolean;
++  on?(event: 'close', listener: () => void): void;
++  off?(event: 'close', listener: () => void): void;
++}
++
++export function connectClientAbort(req: AbortRequest, res: AbortResponse, onAbort?: () => void) {
++  const controller = new AbortController();
++  let disconnected = false;
++  const cancel = () => {
++    disconnected = true;
++    if (controller.signal.aborted) return;
++    controller.abort();
++    onAbort?.();
++  };
++  const onResponseClose = () => { if (!res.writableFinished) cancel(); };
++  req.on?.('aborted', cancel);
++  res.on?.('close', onResponseClose);
++  if (req.aborted || res.destroyed) cancel();
++  return {
++    controller,
++    signal: controller.signal,
++    get disconnected() { return disconnected; },
++    dispose() {
++      req.off?.('aborted', cancel);
++      res.off?.('close', onResponseClose);
++    },
++  };
++}
+diff --git a/api/_lib/http.cancel.test.ts b/api/_lib/http.cancel.test.ts
+new file mode 100644
+index 0000000..3abe66a
+--- /dev/null
++++ b/api/_lib/http.cancel.test.ts
+@@ -0,0 +1,61 @@
++import { describe, expect, it, vi } from 'vitest';
++
++const generateContent = vi.hoisted(() => vi.fn());
++vi.mock('@google/genai', () => ({
++  GoogleGenAI: class {
++    models = { generateContent };
++  },
++}));
++vi.mock('./config.js', () => ({
++  getGeminiApiKey: () => '測試用假值',
++  getModelForMode: () => '假模型',
++}));
++
++import { callGeminiWithTimeout } from './http.js';
++import { generateTextStream } from './llm.js';
++
++describe('Gemini API 取消訊號', () => {
++  it('用戶端中止會傳至 SDK 的 abortSignal，停止尚未完成的請求', async () => {
++    let sdkSignal: AbortSignal | undefined;
++    generateContent.mockImplementation(({ config }: { config: { abortSignal: AbortSignal } }) => {
++      sdkSignal = config.abortSignal;
++      return new Promise((_resolve, reject) => {
++        sdkSignal?.addEventListener('abort', () => reject(new DOMException('已取消', 'AbortError')), { once: true });
++      });
++    });
++    const controller = new AbortController();
++    const result = callGeminiWithTimeout({
++      apiKey: '測試用假值', model: '假模型', contents: [], config: {}, signal: controller.signal,
++    });
++    expect(sdkSignal?.aborted).toBe(false);
++    controller.abort();
++    await expect(result).rejects.toMatchObject({ name: 'AbortError' });
++    expect(sdkSignal?.aborted).toBe(true);
++    expect(generateContent).toHaveBeenCalledTimes(1);
++  });
++
++  it('串流入口的取消參照會中止 Gemini API 分支，並清除參照', async () => {
++    const before = process.env.LLM_PROVIDER;
++    process.env.LLM_PROVIDER = 'gemini-api';
++    try {
++      let sdkSignal: AbortSignal | undefined;
++      generateContent.mockImplementation(({ config }: { config: { abortSignal: AbortSignal } }) => {
++        sdkSignal = config.abortSignal;
++        return new Promise((_resolve, reject) => {
++          sdkSignal?.addEventListener('abort', () => reject(new DOMException('已取消', 'AbortError')), { once: true });
++        });
++      });
++      const cancelRef: { cancel?: () => void } = {};
++      const result = generateTextStream({ prompt: '假提示詞', systemInstruction: '假系統指令', mode: 'fast' },
++        vi.fn(), cancelRef);
++      expect(cancelRef.cancel).toBeTypeOf('function');
++      cancelRef.cancel?.();
++      await expect(result).rejects.toMatchObject({ name: 'AbortError' });
++      expect(sdkSignal?.aborted).toBe(true);
++      expect(cancelRef.cancel).toBeUndefined();
++    } finally {
++      if (before === undefined) delete process.env.LLM_PROVIDER;
++      else process.env.LLM_PROVIDER = before;
++    }
++  });
++});
+diff --git a/api/_lib/http.ts b/api/_lib/http.ts
+index f022b96..8f5b7d4 100644
+--- a/api/_lib/http.ts
++++ b/api/_lib/http.ts
+@@ -45,11 +45,15 @@ export async function callGeminiWithTimeout(params: {
+   contents: unknown;
+   config: unknown;
+   timeoutMs?: number;
++  signal?: AbortSignal;
+ }): Promise<{ text: string }> {
+-  const { apiKey, model, contents, config, timeoutMs = 100000 } = params;
++  const { apiKey, model, contents, config, timeoutMs = 100000, signal } = params;
+   const ai = new GoogleGenAI({ apiKey });
+   const controller = new AbortController();
+   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
++  const cancel = () => controller.abort();
++  signal?.addEventListener('abort', cancel, { once: true });
++  if (signal?.aborted) cancel();
+   const requestConfig = {
+     ...(config && typeof config === 'object' ? config : {}),
+     abortSignal: controller.signal,
+@@ -65,6 +69,7 @@ export async function callGeminiWithTimeout(params: {
+     return { text: response.text || '' };
+   } finally {
+     clearTimeout(timeoutId);
++    signal?.removeEventListener('abort', cancel);
+   }
+ }
+ 
+diff --git a/api/_lib/llm.ts b/api/_lib/llm.ts
+index 76edd48..85cd6d6 100644
+--- a/api/_lib/llm.ts
++++ b/api/_lib/llm.ts
+@@ -25,15 +25,15 @@ const CLAUDE_CLI_FIRST_CHUNK_TIMEOUT_MS = 45_000;
+  * - 'claude-cli'：橋接本機 Claude Code CLI（吃 Claude 訂閱，僅本機 vercel dev 用）。
+  * - 其他值：明確設定錯誤，不靜默 fallback。
+  */
+-export async function generateText(req: GeminiRequest): Promise<{ text: string }> {
++export async function generateText(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
+   const provider = (process.env.LLM_PROVIDER ?? '').trim();
+ 
+   switch (provider) {
+     case '':
+     case 'gemini-api':
+-      return callGeminiApiProvider(req);
++      return callGeminiApiProvider(req, signal);
+     case 'claude-cli':
+-      return callClaudeCli(req);
++      return callClaudeCli(req, signal);
+     // 未來擴充點（僅註記，不實作）：
+     // case 'codex-cli':   // OpenAI Codex CLI 橋接
+     // case 'gemini-cli':  // Google Gemini CLI 橋接
+@@ -55,7 +55,13 @@ export async function generateTextStream(
+   switch (provider) {
+     case '':
+     case 'gemini-api':
+-      return callGeminiApiProvider(req);
++      {
++        const controller = new AbortController();
++        cancelRef.cancel = () => controller.abort();
++        return callGeminiApiProvider(req, controller.signal).finally(() => {
++          cancelRef.cancel = undefined;
++        });
++      }
+     case 'claude-cli':
+       return callClaudeCliStream(req, onDelta, cancelRef);
+     default:
+@@ -70,7 +76,7 @@ export async function generateTextStream(
+  * 預設分支：既有 Gemini API 路徑，自 api/gemini.ts handler 原樣搬移。
+  * GEMINI_API_KEY 邏輯零觸碰（紅線）。
+  */
+-async function callGeminiApiProvider(req: GeminiRequest): Promise<{ text: string }> {
++async function callGeminiApiProvider(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
+   const { prompt, systemInstruction, mode, temperature, thinkingConfig } = req;
+   const apiKey = getGeminiApiKey();
+ 
+@@ -87,7 +93,7 @@ async function callGeminiApiProvider(req: GeminiRequest): Promise<{ text: string
+     ...(thinkingConfig ? { thinkingConfig } : {}),
+   };
+ 
+-  return callGeminiWithTimeout({ apiKey, model, contents, config });
++  return callGeminiWithTimeout({ apiKey, model, contents, config, signal });
+ }
+ 
+ // ---------------------------------------------------------------------------
+@@ -236,7 +242,8 @@ function buildChildEnv(): NodeJS.ProcessEnv {
+  * - 100s 逾時＋settled 旗標：任何出口（close/error/timeout）不遺留子程序、不重複 settle。
+  * - 紅線：禁用任何「跳過 OAuth 讀取」的 CLI 旗標，一律走已登入的訂閱憑證。
+  */
+-function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
++function callClaudeCli(req: GeminiRequest, signal?: AbortSignal): Promise<{ text: string }> {
++  signal?.throwIfAborted();
+   const exePath = findClaudeExecutable();
+   const model = getClaudeCliModel(req.mode);
+   const effort = getClaudeCliEffort(req.mode);
+@@ -254,6 +261,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
+ 
+   return new Promise<{ text: string }>((resolve, reject) => {
+     let settled = false;
++    let onAbort: (() => void) | undefined;
+     let stdout = '';
+     let stderr = '';
+ 
+@@ -287,6 +295,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
+     const timeoutId = setTimeout(() => {
+       if (settled) return;
+       settled = true;
++      if (onAbort) signal?.removeEventListener('abort', onAbort);
+       child.kill();
+       reject(new ClassifiedError(
+         'UPSTREAM_ERROR',
+@@ -300,6 +309,7 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
+       if (settled) return;
+       settled = true;
+       clearTimeout(timeoutId);
++      if (onAbort) signal?.removeEventListener('abort', onAbort);
+       fn();
+     };
+ 
+@@ -366,6 +376,14 @@ function callClaudeCli(req: GeminiRequest): Promise<{ text: string }> {
+         resolve({ text: String(json.result ?? '') });
+       });
+     });
++    onAbort = () => {
++      settle(() => {
++        child.kill();
++        reject(new ClassifiedError('CANCELLED'));
++      });
++    };
++    signal?.addEventListener('abort', onAbort, { once: true });
++    if (signal?.aborted) onAbort();
+   });
+ }
+ 
+diff --git a/api/_lib/yahoo.handshake.test.ts b/api/_lib/yahoo.handshake.test.ts
+index 6e5865d..21d2319 100644
+--- a/api/_lib/yahoo.handshake.test.ts
++++ b/api/_lib/yahoo.handshake.test.ts
+@@ -221,6 +221,63 @@ describe('Yahoo 握手共用與世代', () => {
+   });
+ });
+ 
++describe('Yahoo 共用握手的用戶端取消', () => {
++  it('兩位等待者中一位取消，不中止另一位正在使用的握手', async () => {
++    let finishCookie: ((response: Response) => void) | undefined;
++    let cookieSignal: AbortSignal | undefined;
++    let cookies = 0;
++    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
++      const url = String(input);
++      if (url === 'https://fc.yahoo.com') {
++        cookies += 1;
++        cookieSignal = init?.signal as AbortSignal;
++        return new Promise<Response>(resolve => { finishCookie = resolve; });
++      }
++      if (url.endsWith('/getcrumb')) return Promise.resolve(new Response('fixture-crumb'));
++      if (url.startsWith('https://fixture.invalid/quote')) return Promise.resolve(new Response('合成行情'));
++      throw new Error('不允許的測試網路');
++    }));
++    const { fetchYahooWithHandshake } = await import('./yahoo');
++    const first = new AbortController();
++    const second = new AbortController();
++    const cancelled = fetchYahooWithHandshake(quoteUrl, first.signal).catch(error => error);
++    const surviving = fetchYahooWithHandshake(quoteUrl, second.signal);
++    expect(cookies).toBe(1);
++    first.abort();
++    expect(await cancelled).toMatchObject({ name: 'AbortError' });
++    expect(cookieSignal?.aborted).toBe(false);
++    finishCookie?.(new Response('', { headers: { 'set-cookie': 'fixture=shared' } }));
++    expect((await surviving).status).toBe(200);
++    expect(cookies).toBe(1);
++  });
++
++  it('最後一位等待者取消會中止上游，下一支請求使用新世代', async () => {
++    const cookieSignals: AbortSignal[] = [];
++    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
++      const url = String(input);
++      if (url === 'https://fc.yahoo.com') {
++        const signal = init?.signal as AbortSignal;
++        cookieSignals.push(signal);
++        if (cookieSignals.length > 1) return Promise.resolve(new Response('', { headers: { 'set-cookie': 'fixture=fresh' } }));
++        return new Promise<Response>((_resolve, reject) => {
++          signal.addEventListener('abort', () => reject(signal.reason), { once: true });
++        });
++      }
++      if (url.endsWith('/getcrumb')) return Promise.resolve(new Response('fixture-crumb'));
++      if (url.startsWith('https://fixture.invalid/quote')) return Promise.resolve(new Response('合成行情'));
++      throw new Error('不允許的測試網路');
++    }));
++    const { fetchYahooWithHandshake } = await import('./yahoo');
++    const client = new AbortController();
++    const cancelled = fetchYahooWithHandshake(quoteUrl, client.signal).catch(error => error);
++    client.abort();
++    expect(await cancelled).toMatchObject({ name: 'AbortError' });
++    expect(cookieSignals[0].aborted).toBe(true);
++    expect((await fetchYahooWithHandshake(quoteUrl)).status).toBe(200);
++    expect(cookieSignals).toHaveLength(2);
++  });
++});
++
+ describe('Yahoo 真實 handler 的合成請求鏈', () => {
+   beforeEach(() => {
+     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
+diff --git a/api/_lib/yahoo.ts b/api/_lib/yahoo.ts
+index 4fbd774..411459f 100644
+--- a/api/_lib/yahoo.ts
++++ b/api/_lib/yahoo.ts
+@@ -87,6 +87,8 @@ interface CrumbGeneration {
+   credentials?: YahooCredentials;
+   fetchedAt?: number;
+   pending?: Promise<YahooCredentials>;
++  pendingController?: AbortController;
++  waiters?: number;
+ }
+ 
+ // 一組配對與其在途工作共用身分；失效只作用於實際使用的世代。
+@@ -108,11 +110,17 @@ function clearCrumbCache(generation: CrumbGeneration): void {
+   if (crumbGeneration === generation) crumbGeneration = {};
+ }
+ 
+-async function fetchCookie(): Promise<string> {
++function upstreamSignal(signal?: AbortSignal): AbortSignal {
++  const timeout = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
++  return signal ? AbortSignal.any([signal, timeout]) : timeout;
++}
++
++async function fetchCookie(signal?: AbortSignal): Promise<string> {
+   const response = await fetch('https://fc.yahoo.com', {
+     headers: BROWSER_HEADERS,
+-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
++    signal: upstreamSignal(signal),
+   });
++  signal?.throwIfAborted();
+ 
+   const cookieHeaders = response.headers as Headers & {
+     getSetCookie?: () => string[];
+@@ -133,7 +141,7 @@ async function fetchCookie(): Promise<string> {
+   return cookie;
+ }
+ 
+-async function fetchCrumb(cookie: string): Promise<string> {
++async function fetchCrumb(cookie: string, signal?: AbortSignal): Promise<string> {
+   const response = await fetch(
+     'https://query2.finance.yahoo.com/v1/test/getcrumb',
+     {
+@@ -141,15 +149,17 @@ async function fetchCrumb(cookie: string): Promise<string> {
+         ...BROWSER_HEADERS,
+         Cookie: cookie,
+       },
+-      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
++      signal: upstreamSignal(signal),
+     },
+   );
++  signal?.throwIfAborted();
+ 
+   if (!response.ok) {
+     throw classifyStatus(response.status);
+   }
+ 
+   const crumb = (await response.text()).trim();
++  signal?.throwIfAborted();
+   if (!crumb) {
+     throw new YahooClassifiedError('UPSTREAM_UNAUTHORIZED');
+   }
+@@ -164,41 +174,73 @@ function currentCrumbGeneration(): CrumbGeneration {
+   return crumbGeneration;
+ }
+ 
+-async function ensureCrumb(generation: CrumbGeneration): Promise<YahooCredentials> {
++async function ensureCrumb(generation: CrumbGeneration, signal?: AbortSignal): Promise<YahooCredentials> {
++  signal?.throwIfAborted();
+   if (generation.credentials) return generation.credentials;
+-  if (generation.pending) return generation.pending;
+-  const pending = (async () => {
+-    const cookie = await fetchCookie();
+-    const crumb = await fetchCrumb(cookie);
+-    return { cookie, crumb };
+-  })();
+-  generation.pending = pending;
++  if (!generation.pending) {
++    const controller = new AbortController();
++    const pending = (async () => {
++      const cookie = await fetchCookie(controller.signal);
++      const crumb = await fetchCrumb(cookie, controller.signal);
++      return { cookie, crumb };
++    })();
++    generation.pending = pending;
++    generation.pendingController = controller;
++    pending.then(credentials => {
++      if (generation.pending !== pending) return;
++      if (crumbGeneration === generation) {
++        generation.credentials = credentials;
++        generation.fetchedAt = Date.now();
++      }
++      generation.pending = undefined;
++      generation.pendingController = undefined;
++    }, () => {
++      if (generation.pending !== pending) return;
++      generation.pending = undefined;
++      generation.pendingController = undefined;
++    });
++  }
++  const pending = generation.pending;
++  generation.waiters = (generation.waiters ?? 0) + 1;
+   try {
+-    const credentials = await pending;
+-    // 舊工作仍能回覆原本的等待者，但不能重新成為全域的有效憑證。
+-    if (crumbGeneration === generation) {
+-      generation.credentials = credentials;
+-      generation.fetchedAt = Date.now();
+-    }
+-    return credentials;
++    if (!signal) return await pending;
++    return await new Promise<YahooCredentials>((resolve, reject) => {
++      const cancel = () => reject(signal.reason);
++      signal.addEventListener('abort', cancel, { once: true });
++      pending.then(
++        value => { signal.removeEventListener('abort', cancel); resolve(value); },
++        error => { signal.removeEventListener('abort', cancel); reject(error); },
++      );
++      if (signal.aborted) cancel();
++    });
+   } finally {
+-    if (generation.pending === pending) generation.pending = undefined;
++    generation.waiters -= 1;
++    if (generation.waiters === 0 && generation.pending === pending) {
++      // 最後一位等待者離開才取消共用握手；其他請求仍在時不得斷掉它們的世代。
++      generation.pending = undefined;
++      generation.pendingController?.abort();
++      generation.pendingController = undefined;
++      clearCrumbCache(generation);
++    }
+   }
+ }
+ 
+ export async function fetchYahooWithHandshake(
+   buildUrl: (params: { cookie: string; crumb: string }) => string,
++  signal?: AbortSignal,
+ ): Promise<Response> {
+   for (let attempt = 0; attempt < 2; attempt += 1) {
++    signal?.throwIfAborted();
+     const generation = currentCrumbGeneration();
+     try {
+-      const { cookie, crumb } = await ensureCrumb(generation);
++      const { cookie, crumb } = await ensureCrumb(generation, signal);
++      signal?.throwIfAborted();
+       const response = await fetch(buildUrl({ cookie, crumb }), {
+         headers: {
+           ...BROWSER_HEADERS,
+           Cookie: cookie,
+         },
+-        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
++        signal: upstreamSignal(signal),
+       });
+ 
+       if (response.status === 401 || response.status === 429) {
+@@ -207,6 +249,7 @@ export async function fetchYahooWithHandshake(
+ 
+       return response;
+     } catch (error) {
++      if (signal?.aborted) throw error;
+       const classifiedError = classifyYahooError(error);
+       const canRetry = attempt === 0
+         && (classifiedError.code === 'UPSTREAM_UNAUTHORIZED'
+diff --git a/api/finmind.ts b/api/finmind.ts
+index 2d77d90..ec70e78 100644
+--- a/api/finmind.ts
++++ b/api/finmind.ts
+@@ -7,11 +7,15 @@ import {
+   type FinMindErrorCode,
+ } from './_lib/finmind.js';
+ import { marketPerMin } from './_lib/ratelimit.js';
++import { connectClientAbort } from './_lib/clientAbort.js';
+ 
+ interface FinMindReq {
+   method?: string;
+   headers: Record<string, string | string[] | undefined>;
+   query: Record<string, string | string[] | undefined>;
++  aborted?: boolean;
++  on?(event: 'aborted', listener: () => void): void;
++  off?(event: 'aborted', listener: () => void): void;
+ }
+ 
+ interface FinMindRes {
+@@ -19,6 +23,10 @@ interface FinMindRes {
+   setHeader(name: string, value: string): void;
+   end(): void;
+   json(data: unknown): void;
++  writableFinished?: boolean;
++  destroyed?: boolean;
++  on?(event: 'close', listener: () => void): void;
++  off?(event: 'close', listener: () => void): void;
+ }
+ 
+ const statusByCode: Record<FinMindErrorCode, number> = {
+@@ -30,20 +38,22 @@ const statusByCode: Record<FinMindErrorCode, number> = {
+ export const maxDuration = 30;
+ 
+ export default async function handler(req: FinMindReq, res: FinMindRes) {
+-  if (!(await applyGuards(req, res, [marketPerMin]))) return;
+-
+-  if (req.method !== 'GET') {
+-    res.status(405).json({
+-      code: 'BAD_REQUEST',
+-      message: '僅支援 GET 請求。',
+-    });
+-    return;
+-  }
+-
+-  const controller = new AbortController();
+-  const timeoutId = setTimeout(() => controller.abort(), 15000);
++  const client = connectClientAbort(req, res);
++  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+ 
+   try {
++    if (client.signal.aborted) return;
++    if (!(await applyGuards(req, res, [marketPerMin])) || client.signal.aborted) return;
++
++    if (req.method !== 'GET') {
++      res.status(405).json({
++        code: 'BAD_REQUEST',
++        message: '僅支援 GET 請求。',
++      });
++      return;
++    }
++
++    timeoutId = setTimeout(() => client.controller.abort(), 15000);
+     const { dataset, dataId, startDate } = validateFinMindParams(req.query);
+     const upstreamUrl = new URL('https://api.finmindtrade.com/api/v4/data');
+     upstreamUrl.searchParams.set('dataset', dataset);
+@@ -62,12 +72,14 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
+     }
+ 
+     const upstreamResponse = await fetch(upstreamUrl, {
+-      signal: controller.signal,
++      signal: client.signal,
+     });
++    if (client.disconnected) return;
+     const json = await upstreamResponse.json() as {
+       status?: number;
+       msg?: string;
+     };
++    if (client.disconnected) return;
+ 
+     if (!upstreamResponse.ok) {
+       const message = typeof json.msg === 'string' ? json.msg : '';
+@@ -92,6 +104,7 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
+     );
+     res.status(200).json(json);
+   } catch (error) {
++    if (client.disconnected) return;
+     const classifiedError = error instanceof FinMindClassifiedError
+       ? error
+       : classifyFinMindError(error);
+@@ -102,6 +115,7 @@ export default async function handler(req: FinMindReq, res: FinMindRes) {
+       message: classifiedError.message,
+     });
+   } finally {
+-    clearTimeout(timeoutId);
++    if (timeoutId) clearTimeout(timeoutId);
++    client.dispose();
+   }
+ }
+diff --git a/api/gemini-stream.test.ts b/api/gemini-stream.test.ts
+index b000434..a031f64 100644
+--- a/api/gemini-stream.test.ts
++++ b/api/gemini-stream.test.ts
+@@ -42,6 +42,8 @@ type MockRes = {
+   write: ReturnType<typeof vi.fn>;
+   end: ReturnType<typeof vi.fn>;
+   json: ReturnType<typeof vi.fn>;
++  on: ReturnType<typeof vi.fn>;
++  writableFinished: boolean;
+ };
+ 
+ const makeRes = (): MockRes => {
+@@ -50,6 +52,8 @@ const makeRes = (): MockRes => {
+     write: vi.fn(() => true),
+     end: vi.fn(),
+     json: vi.fn(),
++    on: vi.fn(),
++    writableFinished: false,
+   };
+   res.status = vi.fn(() => res);
+   return res as MockRes;
+@@ -70,6 +74,54 @@ afterEach(() => {
+ });
+ 
+ describe('gemini-stream handler — 取消分類的靜默收尾', () => {
++  it('回應連線中斷時取消仍在執行的 provider', async () => {
++    let started = () => {};
++    const providerStarted = new Promise<void>(resolve => { started = resolve; });
++    let cancelCount = 0;
++    llmMock.generateTextStream.mockImplementation((_request, _onDelta, cancelRef) => new Promise((_resolve, reject) => {
++      cancelRef.cancel = () => {
++        cancelCount += 1;
++        reject(new ClassifiedError('CANCELLED'));
++      };
++      started();
++    }));
++    const req = makeReq();
++    const res = makeRes();
++    const done = handler(req as any, res as any);
++    await providerStarted;
++
++    const onClose = res.on.mock.calls.find(([event]) => event === 'close')?.[1] as (() => void) | undefined;
++    expect(onClose).toBeTypeOf('function');
++    onClose?.();
++    await done;
++
++    expect(cancelCount).toBe(1);
++    expect(res.write).not.toHaveBeenCalled();
++    expect(res.end).toHaveBeenCalledTimes(1);
++    expect(consoleErrorSpy).not.toHaveBeenCalled();
++  });
++
++  it('Gemini API 於斷線後以 AbortError 拒絕時不寫錯誤回應', async () => {
++    let started = () => {};
++    const providerStarted = new Promise<void>(resolve => { started = resolve; });
++    llmMock.generateTextStream.mockImplementation((_request, _onDelta, cancelRef) => new Promise((_resolve, reject) => {
++      cancelRef.cancel = () => reject(new DOMException('已取消', 'AbortError'));
++      started();
++    }));
++    const req = makeReq();
++    const res = makeRes();
++    const done = handler(req as any, res as any);
++    await providerStarted;
++    const onClose = res.on.mock.calls.find(([event]) => event === 'close')?.[1] as (() => void) | undefined;
++    onClose?.();
++    await done;
++    expect(res.write).not.toHaveBeenCalled();
++    expect(res.status).not.toHaveBeenCalled();
++    expect(res.json).not.toHaveBeenCalled();
++    expect(res.end).toHaveBeenCalledTimes(1);
++    expect(consoleErrorSpy).not.toHaveBeenCalled();
++  });
++
+   it('取消（尚未寫過任何內容）：零寫入、零 status/json、res.end 恰被呼叫一次、不進錯誤 log', async () => {
+     llmMock.generateTextStream.mockRejectedValue(new ClassifiedError('CANCELLED'));
+     const req = makeReq();
+diff --git a/api/gemini-stream.ts b/api/gemini-stream.ts
+index 36d6bff..77ed601 100644
+--- a/api/gemini-stream.ts
++++ b/api/gemini-stream.ts
+@@ -8,12 +8,14 @@ import {
+ import { generateTextStream } from './_lib/llm.js';
+ import { applyGuards } from './_lib/guard.js';
+ import { geminiPerDay, geminiPerMin } from './_lib/ratelimit.js';
++import { connectClientAbort } from './_lib/clientAbort.js';
+ 
+ interface GeminiStreamReq {
+   method?: string;
+   headers: Record<string, string | string[] | undefined>;
+   body?: any;
+-  on(event: 'close', listener: () => void): void;
++  aborted?: boolean;
++  on(event: 'aborted', listener: () => void): void;
+ }
+ 
+ interface GeminiStreamRes {
+@@ -22,6 +24,9 @@ interface GeminiStreamRes {
+   write(chunk: string): boolean;
+   end(): void;
+   json(data: unknown): void;
++  on(event: 'close', listener: () => void): void;
++  writableFinished?: boolean;
++  destroyed?: boolean;
+ }
+ 
+ const statusByCode: Record<GeminiErrorCode, number> = {
+@@ -36,68 +41,79 @@ const statusByCode: Record<GeminiErrorCode, number> = {
+ export const maxDuration = 200;
+ 
+ export default async function handler(req: GeminiStreamReq, res: GeminiStreamRes) {
+-  if (!(await applyGuards(req, res, [geminiPerMin, geminiPerDay]))) return;
+-
+-  if (req.method !== 'POST') {
+-    res.status(405).json({
+-      code: 'BAD_REQUEST',
+-      message: '僅支援 POST 請求。',
+-    });
+-    return;
+-  }
+-
+-  let hasWritten = false;
+   const cancelRef: { cancel?: () => void } = {};
+-  req.on('close', () => cancelRef.cancel?.());
+-
++  const client = connectClientAbort(req, res, () => cancelRef.cancel?.());
+   try {
+-    const request = validateGeminiRequest(req.body);
++    if (client.disconnected || !(await applyGuards(req, res, [geminiPerMin, geminiPerDay]))) return;
++    if (client.disconnected) return;
++
++    if (req.method !== 'POST') {
++      res.status(405).json({
++        code: 'BAD_REQUEST',
++        message: '僅支援 POST 請求。',
++      });
++      return;
++    }
+ 
+-    res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
+-    res.setHeader('Cache-Control', 'no-store');
++    let hasWritten = false;
++    try {
++      const request = validateGeminiRequest(req.body);
+ 
+-    const result = await generateTextStream(
+-      request,
+-      (text) => {
+-        res.write(`${JSON.stringify({ t: 'delta', text })}\n`);
+-        hasWritten = true;
+-      },
+-      cancelRef,
+-    );
++      res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
++      res.setHeader('Cache-Control', 'no-store');
+ 
+-    res.write(`${JSON.stringify({ t: 'done', text: result.text })}\n`);
+-    hasWritten = true;
+-    res.end();
+-  } catch (error) {
+-    const classifiedError = error instanceof ClassifiedError
+-      ? error
+-      : classifyGeminiError(error);
++      const result = await generateTextStream(
++        request,
++        (text) => {
++          if (client.disconnected) return;
++          res.write(`${JSON.stringify({ t: 'delta', text })}\n`);
++          hasWritten = true;
++        },
++        cancelRef,
++      );
+ 
+-    // 取消分類＝client 已斷線觸發（req 'close' → cancelRef.cancel）：靜默收尾——
+-    // 不對已斷線的 response 寫任何內容（error 行／status/json 都不寫），
+-    // 只 res.end() 讓 handler 的 async frame 確定結束（F-02/F-03 收口）。
+-    if (classifiedError.code === 'CANCELLED') {
++      if (client.disconnected) return;
++      res.write(`${JSON.stringify({ t: 'done', text: result.text })}\n`);
++      hasWritten = true;
+       res.end();
+-      return;
+-    }
++    } catch (error) {
++      // Gemini API 的 SDK 可能把用戶端取消回報成 AbortError；斷線後一律靜默收尾。
++      if (client.disconnected) {
++        res.end();
++        return;
++      }
++      const classifiedError = error instanceof ClassifiedError
++        ? error
++        : classifyGeminiError(error);
++
++      // 取消分類＝client 已斷線觸發（req 'aborted' 或未完成 res 'close' → cancelRef.cancel）：靜默收尾——
++      // 不對已斷線的 response 寫任何內容（error 行／status/json 都不寫），
++      // 只 res.end() 讓 handler 的 async frame 確定結束（F-02/F-03 收口）。
++      if (classifiedError.code === 'CANCELLED') {
++        res.end();
++        return;
++      }
++
++      console.error(
++        `[gemini-stream:${classifiedError.code}] ${sanitizeErrorForLog(error)}`,
++      );
+ 
+-    console.error(
+-      `[gemini-stream:${classifiedError.code}] ${sanitizeErrorForLog(error)}`,
+-    );
++      if (!hasWritten) {
++        res.status(statusByCode[classifiedError.code]).json({
++          code: classifiedError.code,
++          message: classifiedError.message,
++        });
++        return;
++      }
+ 
+-    if (!hasWritten) {
+-      res.status(statusByCode[classifiedError.code]).json({
++      res.write(`${JSON.stringify({
++        t: 'error',
+         code: classifiedError.code,
+         message: classifiedError.message,
+-      });
+-      return;
++      })}\n`);
++      res.end();
+     }
+-
+-    res.write(`${JSON.stringify({
+-      t: 'error',
+-      code: classifiedError.code,
+-      message: classifiedError.message,
+-    })}\n`);
+-    res.end();
++  } finally {
++    client.dispose();
+   }
+ }
+diff --git a/api/gemini.ts b/api/gemini.ts
+index 644629a..703530e 100644
+--- a/api/gemini.ts
++++ b/api/gemini.ts
+@@ -8,11 +8,15 @@ import {
+ import { generateText } from './_lib/llm.js';
+ import { applyGuards } from './_lib/guard.js';
+ import { geminiPerDay, geminiPerMin } from './_lib/ratelimit.js';
++import { connectClientAbort } from './_lib/clientAbort.js';
+ 
+ interface GeminiReq {
+   method?: string;
+   headers: Record<string, string | string[] | undefined>;
+   body?: any;
++  aborted?: boolean;
++  on?(event: 'aborted', listener: () => void): void;
++  off?(event: 'aborted', listener: () => void): void;
+ }
+ 
+ interface GeminiRes {
+@@ -20,6 +24,10 @@ interface GeminiRes {
+   setHeader(name: string, value: string): void;
+   end(): void;
+   json(data: unknown): void;
++  writableFinished?: boolean;
++  destroyed?: boolean;
++  on?(event: 'close', listener: () => void): void;
++  off?(event: 'close', listener: () => void): void;
+ }
+ 
+ const statusByCode: Record<GeminiErrorCode, number> = {
+@@ -34,22 +42,26 @@ const statusByCode: Record<GeminiErrorCode, number> = {
+ export const maxDuration = 120;
+ 
+ export default async function handler(req: GeminiReq, res: GeminiRes) {
+-  if (!(await applyGuards(req, res, [geminiPerMin, geminiPerDay]))) return;
++  const client = connectClientAbort(req, res);
++  try {
++    if (client.signal.aborted) return;
++    if (!(await applyGuards(req, res, [geminiPerMin, geminiPerDay])) || client.signal.aborted) return;
+ 
+-  if (req.method !== 'POST') {
+-    res.status(405).json({
+-      code: 'BAD_REQUEST',
+-      message: '僅支援 POST 請求。',
+-    });
+-    return;
+-  }
++    if (req.method !== 'POST') {
++      res.status(405).json({
++        code: 'BAD_REQUEST',
++        message: '僅支援 POST 請求。',
++      });
++      return;
++    }
+ 
+-  try {
+     const request = validateGeminiRequest(req.body);
+-    const result = await generateText(request);
++    const result = await generateText(request, client.signal);
++    if (client.signal.aborted) return;
+ 
+     res.status(200).json(result);
+   } catch (error) {
++    if (client.signal.aborted) return;
+     const classifiedError = error instanceof ClassifiedError
+       ? error
+       : classifyGeminiError(error);
+@@ -61,5 +73,7 @@ export default async function handler(req: GeminiReq, res: GeminiRes) {
+       code: classifiedError.code,
+       message: classifiedError.message,
+     });
++  } finally {
++    client.dispose();
+   }
+ }
+diff --git a/api/yahoo/chart.ts b/api/yahoo/chart.ts
+index 5d013f6..c7ba431 100644
+--- a/api/yahoo/chart.ts
++++ b/api/yahoo/chart.ts
+@@ -7,11 +7,15 @@ import {
+   type YahooErrorCode,
+ } from '../_lib/yahoo.js';
+ import { marketPerMin } from '../_lib/ratelimit.js';
++import { connectClientAbort } from '../_lib/clientAbort.js';
+ 
+ interface YahooReq {
+   method?: string;
+   headers: Record<string, string | string[] | undefined>;
+   query: Record<string, string | string[] | undefined>;
++  aborted?: boolean;
++  on?(event: 'aborted', listener: () => void): void;
++  off?(event: 'aborted', listener: () => void): void;
+ }
+ 
+ interface YahooRes {
+@@ -19,6 +23,10 @@ interface YahooRes {
+   setHeader(name: string, value: string): void;
+   end(): void;
+   json(data: unknown): void;
++  writableFinished?: boolean;
++  destroyed?: boolean;
++  on?(event: 'close', listener: () => void): void;
++  off?(event: 'close', listener: () => void): void;
+ }
+ 
+ const statusByCode: Record<YahooErrorCode, number> = {
+@@ -32,27 +40,31 @@ const statusByCode: Record<YahooErrorCode, number> = {
+ export const maxDuration = 30;
+ 
+ export default async function handler(req: YahooReq, res: YahooRes) {
+-  if (!(await applyGuards(req, res, [marketPerMin]))) return;
++  const client = connectClientAbort(req, res);
++  try {
++    if (client.signal.aborted) return;
++    if (!(await applyGuards(req, res, [marketPerMin])) || client.signal.aborted) return;
+ 
+-  if (req.method !== 'GET') {
+-    res.status(405).json({
+-      code: 'BAD_REQUEST',
+-      message: '僅支援 GET 請求。',
+-    });
+-    return;
+-  }
++    if (req.method !== 'GET') {
++      res.status(405).json({
++        code: 'BAD_REQUEST',
++        message: '僅支援 GET 請求。',
++      });
++      return;
++    }
+ 
+-  try {
+     const { symbol, interval, range } = validateChartParams(req.query);
+     const upstreamResponse = await fetchYahooWithHandshake(({ crumb }) => (
+       `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`
+       + `?interval=${interval}&range=${range}`
+       + '&includeAdjustedClose=true&includePrePost=false&lang=zh-Hant-TW&region=TW'
+       + `&crumb=${encodeURIComponent(crumb)}`
+-    ));
++    ), client.signal);
++    if (client.signal.aborted) return;
+     const json = await upstreamResponse.json() as {
+       chart?: { error?: { code?: string } | null };
+     };
++    if (client.signal.aborted) return;
+     const chartError = json.chart?.error;
+ 
+     if (chartError?.code === 'Not Found') {
+@@ -72,6 +84,7 @@ export default async function handler(req: YahooReq, res: YahooRes) {
+     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+     res.status(200).json(json);
+   } catch (error) {
++    if (client.signal.aborted) return;
+     const classifiedError = error instanceof YahooClassifiedError
+       ? error
+       : classifyYahooError(error);
+@@ -81,5 +94,7 @@ export default async function handler(req: YahooReq, res: YahooRes) {
+       code: classifiedError.code,
+       message: classifiedError.message,
+     });
++  } finally {
++    client.dispose();
+   }
+ }
+diff --git a/api/yahoo/search.ts b/api/yahoo/search.ts
+index 357ddcf..f570c58 100644
+--- a/api/yahoo/search.ts
++++ b/api/yahoo/search.ts
+@@ -7,11 +7,15 @@ import {
+   type YahooErrorCode,
+ } from '../_lib/yahoo.js';
+ import { marketPerMin } from '../_lib/ratelimit.js';
++import { connectClientAbort } from '../_lib/clientAbort.js';
+ 
+ interface YahooReq {
+   method?: string;
+   headers: Record<string, string | string[] | undefined>;
+   query: Record<string, string | string[] | undefined>;
++  aborted?: boolean;
++  on?(event: 'aborted', listener: () => void): void;
++  off?(event: 'aborted', listener: () => void): void;
+ }
+ 
+ interface YahooRes {
+@@ -19,6 +23,10 @@ interface YahooRes {
+   setHeader(name: string, value: string): void;
+   end(): void;
+   json(data: unknown): void;
++  writableFinished?: boolean;
++  destroyed?: boolean;
++  on?(event: 'close', listener: () => void): void;
++  off?(event: 'close', listener: () => void): void;
+ }
+ 
+ const statusByCode: Record<YahooErrorCode, number> = {
+@@ -32,28 +40,33 @@ const statusByCode: Record<YahooErrorCode, number> = {
+ export const maxDuration = 30;
+ 
+ export default async function handler(req: YahooReq, res: YahooRes) {
+-  if (!(await applyGuards(req, res, [marketPerMin]))) return;
++  const client = connectClientAbort(req, res);
++  try {
++    if (client.signal.aborted) return;
++    if (!(await applyGuards(req, res, [marketPerMin])) || client.signal.aborted) return;
+ 
+-  if (req.method !== 'GET') {
+-    res.status(405).json({
+-      code: 'BAD_REQUEST',
+-      message: '僅支援 GET 請求。',
+-    });
+-    return;
+-  }
++    if (req.method !== 'GET') {
++      res.status(405).json({
++        code: 'BAD_REQUEST',
++        message: '僅支援 GET 請求。',
++      });
++      return;
++    }
+ 
+-  try {
+     const { q, limit } = validateSearchParams(req.query);
+     const upstreamResponse = await fetchYahooWithHandshake(({ crumb }) => (
+       'https://query1.finance.yahoo.com/v1/finance/search'
+       + `?q=${encodeURIComponent(q)}&quotesCount=${limit}`
+       + '&newsCount=0&lang=zh-Hant-TW&region=TW'
+       + `&crumb=${encodeURIComponent(crumb)}`
+-    ));
++    ), client.signal);
++    if (client.signal.aborted) return;
+     const json = await upstreamResponse.json();
++    if (client.signal.aborted) return;
+ 
+     res.status(200).json(json);
+   } catch (error) {
++    if (client.signal.aborted) return;
+     const classifiedError = error instanceof YahooClassifiedError
+       ? error
+       : classifyYahooError(error);
+@@ -63,5 +76,7 @@ export default async function handler(req: YahooReq, res: YahooRes) {
+       code: classifiedError.code,
+       message: classifiedError.message,
+     });
++  } finally {
++    client.dispose();
+   }
+ }
+diff --git a/vite.config.ts b/vite.config.ts
+index 0dfebee..523dbf1 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -12,6 +12,8 @@ export default defineConfig({
+   // 立刻有資格進 bundle，因此由 utils/viteConfigGuard.test.ts 鎖住；要動請先讀那支測試。
+   // （`envPrefix: ''` 這種寫法 Vite 自己會 throw，不必本鎖擋——實測見該測試的說明。）
+   envPrefix: 'VITE_',
++  // 日常入口另給空白 envDir，避免前端程序讀入根目錄的後端 .env。
++  envDir: process.env.LOCAL_FRONTEND_ENV_DIR || undefined,
+   test: {
+     // agent worktree 內的測試複本不屬於本專案測試母體（曾致 32 案例被重複計成 64）
+     exclude: [...configDefaults.exclude, '**/.claude/**'],
+@@ -26,8 +28,14 @@ export default defineConfig({
+     },
+     proxy: {
+       '/api': {
+-        target: 'http://localhost:3001',
++        target: process.env.LOCAL_API_ORIGIN || 'http://127.0.0.1:3001',
+         changeOrigin: true,
++        configure(proxy) {
++          proxy.on('proxyReq', (proxyReq, req) => {
++            // Vercel dev 收到後端 Host 時，保留瀏覽器實際造訪的前端 Host 供同源驗證。
++            if (req.headers.host) proxyReq.setHeader('X-Forwarded-Host', req.headers.host);
++          });
++        },
+       },
+     },
+   },
