@@ -7,7 +7,7 @@ import { proxyHeaders } from './_shared/apiClient';
 export type Market = 'TW' | 'US';
 
 export interface StockDirEntry {
-  id: string;        // 代碼（台股純數字；美股代碼）
+  id: string;        // 代碼（台股名錄是純代碼如 2330、00631L；Yahoo 搜尋補進的台股帶 .TW／.TWO；美股為代碼）
   name: string;      // 公司名稱（台股中文）
   industry?: string; // 產業別（台股）/ 交易所（美股）
   type?: string;     // twse / tpex …

@@ -90,7 +90,7 @@
 - 沒有 linter：`package.json` 沒有 ESLint／Biome，也沒有進 git 的設定檔
   （`git ls-files | grep -i -E 'eslint|biome'` 為空）。
 - 原始碼裡有 5 處停用 `react-hooks/exhaustive-deps`（hook 依賴陣列完整性檢查）的註解，分在 4 個檔：
-  `components/FundamentalsPanel.tsx:103`、`components/portfolio/PnlHistorySection.tsx:110` 與 `:113`、
+  `components/FundamentalsPanel.tsx:111`、`components/portfolio/PnlHistorySection.tsx:110` 與 `:113`、
   `components/portfolio/useHoldingPrices.ts:138`（以上是 `eslint-disable-next-line`）、
   `components/portfolio/SellModal.tsx:63`（`eslint-disable-line`）。專案沒裝 ESLint，這些註解目前
   沒有工具會讀。對證：`git grep -n 'eslint-disable' -- '*.ts' '*.tsx'`。
