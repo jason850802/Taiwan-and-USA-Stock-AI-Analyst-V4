@@ -181,16 +181,23 @@ export async function terminateVerifiedTree(records, { readTable = processTable,
   const killed = [];
   const alive = table => [...known.values()].filter(item => Number.isFinite(creationMs(item.creationDate))
     && table.get(item.pid)?.CreationDate === item.creationDate);
-  while (true) {
-    const table = await readTable();
-    for (const root of alive(table)) {
-      for (const item of launcherTree(table, root.pid)) known.set(`${item.pid}|${item.creationDate}`, item);
+  try {
+    while (true) {
+      const table = await readTable();
+      for (const root of alive(table)) {
+        for (const item of launcherTree(table, root.pid)) known.set(`${item.pid}|${item.creationDate}`, item);
+      }
+      const item = alive(table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
+      if (!item) return { killed, stillAlive: alive(table).map(row => row.pid), known: [...known.values()] };
+      attempted.add(`${item.pid}|${item.creationDate}`);
+      const result = await terminate(item);
+      killed.push({ pid: item.pid, name: item.name ?? null, creationDate: item.creationDate, status: result.status });
     }
-    const item = alive(table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
-    if (!item) return { killed, stillAlive: alive(table).map(row => row.pid), known: [...known.values()] };
-    attempted.add(`${item.pid}|${item.creationDate}`);
-    const result = await terminate(item);
-    killed.push({ pid: item.pid, name: item.name ?? null, creationDate: item.creationDate, status: result.status });
+  } catch (error) {
+    // 查詢在清理途中失敗也必須交回新身分，否則父程序已退出後就再也找不到孤兒。
+    error.known = [...known.values()];
+    error.killed = killed;
+    throw error;
   }
 }
 

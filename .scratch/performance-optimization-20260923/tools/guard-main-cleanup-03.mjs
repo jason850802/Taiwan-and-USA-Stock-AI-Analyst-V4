@@ -12,25 +12,30 @@ const check = (name, pass, detail) => checks.push({ name, pass, detail });
 const original = { token: 'own', tree: [{ pid: 41, creationDate: '/Date(1000)/', name: 'node.exe' }] };
 const source = fs.readFileSync(path.join(dir, 'daily-dev.mjs'), 'utf8');
 const block = source.slice(source.indexOf('  const shutdown = async () => {'), source.indexOf("  process.on('SIGINT'"));
+const stopOwnedBlock = source.slice(source.indexOf('async function stopOwned('), source.indexOf('function commandArgs('));
 for (const [name, cleanup, state, expected] of [
   ['殘留程序保留復原身分', { left: original.tree, error: null }, original, 1],
   ['程序表失敗不可宣稱成功', { left: [], error: 'fixture CIM failure' }, original, 1],
   ['成功才能移除自己狀態', { left: [], error: null }, original, 0],
   ['失敗不得改別人的狀態', { left: original.tree, error: null }, { token: 'foreign' }, 1],
   ['第一輪清理新增孤兒必須重核', { left: [], error: null }, original, 1],
+  ['看門程序失敗不得成功', { left: [], error: null }, original, 1],
 ]) {
   let saved = structuredClone(state);
   let removed = false;
   const context = { stopping: false, process: { pid: 9, exitCode: null }, tree: original.tree,
-    records: [], watchdog: null, server: null, token: 'own', stateFile: 'memory-state',
+    records: name.startsWith('第一輪') ? [{ child: { pid: 41 }, name: 'fixture', script: 'fixture.js', identity: { CreationDate: '/Date(1000)/' } }] : [],
+    watchdog: null, server: null, token: 'own', stateFile: 'memory-state',
     processTable: () => new Map(), mergeTree: (...lists) => lists.flat(), descendantsOf: () => [],
-    stopOwned: async () => ({ known: name.startsWith('第一輪') ? [{ pid: 43, creationDate: '/Date(1800)/', name: 'node.exe' }] : [] }),
-    killTree: async tree => name.startsWith('第一輪') ? { left: tree.filter(item => item.pid === 43), error: null } : cleanup,
-    stopWatchdog: async () => null,
+    processIdentity: () => ({ CreationDate: '/Date(1000)/', CommandLine: 'fixture.js' }),
+    killTree: async tree => name.startsWith('第一輪') ? (tree.length === 1 ? {
+      known: [...tree, { pid: 43, creationDate: '/Date(1800)/', name: 'node.exe' }], left: [{ pid: 43, creationDate: '/Date(1800)/' }], error: null,
+    } : { left: tree.filter(item => item.pid === 43), error: null }) : cleanup,
+    stopWatchdog: async () => name.startsWith('看門') ? { left: [], error: 'fixture watchdog exit 1' } : null,
     readState: () => saved, cleanupState: daily.cleanupState,
     fs: { rmSync: () => { removed = true; saved = null; },
       writeFileSync: (_file, data) => { saved = JSON.parse(data); } }, console: { error: () => {} } };
-  await vm.runInNewContext(`${block}\nshutdown();`, context);
+  await vm.runInNewContext(`${stopOwnedBlock}\n${block}\nshutdown();`, context);
   const pass = context.process.exitCode === expected && (expected === 0 ? removed
     : !removed && (state.token === 'foreign' ? saved.token === 'foreign' : saved.cleanupError && saved.tree.length));
   check(name, Boolean(pass), { exitCode: context.process.exitCode, removed, state: saved });
@@ -51,7 +56,7 @@ if (service.stopService.length < 2 && !fs.readFileSync(path.join(dir, 'service-k
   check('PID 重用不可誤殺', calls.length === 0, { calls, stopped: svc.stopped });
   check('非 listener 孤兒不可假成功', !svc.stopped, { calls, stopped: svc.stopped });
 } else {
-  for (const mode of ['reused', 'orphan', 'late', 'query-error', 'missing-birth', 'foreign-listener']) {
+  for (const mode of ['reused', 'orphan', 'late', 'query-error', 'late-query-error', 'missing-birth', 'foreign-listener']) {
     let table = new Map([[41, row(41, 9, mode === 'reused' ? 2000 : 1000)], [42, row(42, 41, 1500)]]);
     if (mode === 'reused') table.delete(42);
     const calls = [];
@@ -59,7 +64,7 @@ if (service.stopService.length < 2 && !fs.readFileSync(path.join(dir, 'service-k
     let error = null;
     try {
       await service.stopService(svc, { readTable: async () => {
-        if (mode === 'query-error') throw new Error('fixture CIM failure');
+        if (mode === 'query-error' || (mode === 'late-query-error' && calls.length)) throw new Error('fixture CIM failure');
         return table;
       }, terminate: async item => {
         calls.push(item.pid);
@@ -70,7 +75,8 @@ if (service.stopService.length < 2 && !fs.readFileSync(path.join(dir, 'service-k
     } catch (caught) { error = caught.message; }
     const expectedSuccess = ['reused', 'late'].includes(mode);
     check(`service 清理 ${mode}`, expectedSuccess ? svc.stopped && !error && (mode !== 'reused' || !calls.length)
-      && (mode !== 'late' || calls.includes(43)) : !svc.stopped && Boolean(error), { calls, stopped: svc.stopped, error });
+      && (mode !== 'late' || calls.includes(43)) : !svc.stopped && Boolean(error)
+      && (mode !== 'late-query-error' || svc.tree.some(item => item.pid === 42)), { calls, stopped: svc.stopped, error, tree: svc.tree });
   }
 }
 console.log(JSON.stringify({ checks, passed: checks.filter(item => item.pass).length,

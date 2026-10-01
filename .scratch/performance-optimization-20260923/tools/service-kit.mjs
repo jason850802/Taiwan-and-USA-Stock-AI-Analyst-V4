@@ -365,6 +365,7 @@ export async function stopService(svc, { readTable = processTable, terminate,
       await sleep(250);
     }
   } catch (error) {
+    svc.tree = mergeServiceTree(svc.tree ?? [], error.known ?? []);
     svc.cleanupError = error.message;
     throw new Error(`${svc.name} 清理未完成：${error.message}`);
   }

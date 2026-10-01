@@ -434,14 +434,20 @@ async function main() {
   let watchdog = null;
   let watchdogRecord = null;
   let watchdogExited = false;
+  let watchdogExitCode = null;
+  let watchdogFailed = false;
   const stopWatchdog = async () => {
-    if (!watchdog || watchdogExited) return;
+    if (!watchdog) return;
+    const failedExit = () => watchdogFailed
+      ? { left: [], error: `看門程序清理失敗（exit ${watchdogExitCode}）` } : null;
+    if (watchdogExited) return failedExit();
     try { watchdog.stdin.end(`${JSON.stringify({ type: 'stop' })}\n`); } catch { /* 看門程序已結束 */ }
     const started = Date.now();
     while (!watchdogExited && Date.now() - started < 15_000) await delay(100);
     if (!watchdogExited && watchdogRecord && matchesIdentity(processIdentity(watchdog.pid), watchdogRecord)) {
       return killTree([watchdogRecord]);
     }
+    return failedExit();
   };
   const shutdown = async () => {
     if (stopping) return;
@@ -485,8 +491,8 @@ async function main() {
       cwd: root, detached: true, stdio: ['pipe', watchdogFd, watchdogFd], windowsHide: true,
     });
     fs.closeSync(watchdogFd);
-    watchdog.once('exit', () => { watchdogExited = true; });
-    watchdog.once('error', () => { watchdogExited = true; });
+    watchdog.once('exit', code => { watchdogExited = true; watchdogExitCode = code; watchdogFailed = code !== 0; });
+    watchdog.once('error', () => { watchdogExited = true; watchdogFailed = true; });
     watchdog.stdin.on('error', () => { /* 看門程序已結束時寫入失敗，由 exit 事件處理 */ });
     const watchdogIdentity = watchdog.pid ? processIdentity(watchdog.pid) : null;
     if (!watchdogIdentity?.CommandLine?.includes(WATCHDOG_MODE)) throw new Error('看門程序未能啟動，拒絕啟動日常入口。');
