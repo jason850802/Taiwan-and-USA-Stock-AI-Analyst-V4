@@ -1,0 +1,167 @@
+{
+  "runId": "main03-chart-20261001-r1",
+  "phase": "chart",
+  "pass": true,
+  "reachedTarget": true,
+  "firstAborted": true,
+  "secondStatus": 200,
+  "first": [
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-a",
+      "ev": "child.fetchError",
+      "kind": "yahoo-chart",
+      "name": "AbortError",
+      "layer": null
+    }
+  ],
+  "second": [
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "main03-chart-20261001-r1-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    }
+  ],
+  "errors": []
+}

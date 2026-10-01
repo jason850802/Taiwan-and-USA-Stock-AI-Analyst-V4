@@ -1,0 +1,91 @@
+{
+  "runId": "main03-cancel-20261001-r1",
+  "entry": "c",
+  "pass": true,
+  "response": {
+    "trace": "main03-cancel-20261001-r1-c-cancel",
+    "method": "POST",
+    "route": "/api/gemini-stream",
+    "totalMs": 2275.6,
+    "status": 200,
+    "headers": {
+      "cache-control": "no-store",
+      "server": "Vercel",
+      "x-vercel-id": "dev1::dev1::2olvo-1790841247839-9698ce32db67",
+      "x-vercel-cache": "MISS",
+      "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-max-age": "86400",
+      "connection": "close",
+      "content-type": "application/x-ndjson; charset=utf-8",
+      "date": "Thu, 01 Oct 2026 07:54:08 GMT",
+      "transfer-encoding": "chunked"
+    },
+    "ttfbMs": 2275,
+    "lines": [
+      {
+        "t": 2275.3,
+        "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+      }
+    ],
+    "aborted": true
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.spawn",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.stdin",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.writeHead",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.delta",
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.writeHead",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.kill",
+      "layer": null,
+      "emitted": 1
+    }
+  ],
+  "errors": []
+}

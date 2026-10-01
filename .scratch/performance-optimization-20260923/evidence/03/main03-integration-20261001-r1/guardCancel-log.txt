@@ -1,0 +1,41 @@
+{
+  "runId": "main03-guard-cancel-20261001-r1",
+  "pass": true,
+  "cases": [
+    {
+      "name": "chart",
+      "pass": true,
+      "reachedGuard": true,
+      "aborted": true,
+      "errors": []
+    },
+    {
+      "name": "search",
+      "pass": true,
+      "reachedGuard": true,
+      "aborted": true,
+      "errors": []
+    },
+    {
+      "name": "finmind",
+      "pass": true,
+      "reachedGuard": true,
+      "aborted": true,
+      "errors": []
+    },
+    {
+      "name": "gemini",
+      "pass": true,
+      "reachedGuard": true,
+      "aborted": true,
+      "errors": []
+    },
+    {
+      "name": "stream",
+      "pass": true,
+      "reachedGuard": true,
+      "aborted": true,
+      "errors": []
+    }
+  ]
+}

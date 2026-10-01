@@ -1,0 +1,9 @@
+合併 03 精確範圍到本機 main
+
+以 bf7599c 的現行 main 保留前端文案修改，只納入核准的 47 檔：13 檔產品取消與 Vite、兩檔平台設定與守衛、必要 ignore hunk、B1 回復入口、30 檔工具與操作界線。來源分支其他票、AI 型號／effort、金融語意與 package／lock 不納入。
+
+清理失敗保留完整程序身分並非 0 回報；共用服務以建立時間逐一清理，保存第一輪與中途失敗新增身分；歷史量測明列需完整證據 checkout。不新增 production，不 push 或發版。
+
+驗證：53 檔／838 案完整 gate 通過，原 3000／3001 生命週期 8/8、桌面與窄版 App 28/28（接受口徑；凍結步驟 22/28、終態 20/28），終端關閉與 B1 回復 3/3，五 API 取消與 guard 階段取消通過。程序／請求守衛 37/37、新增純假清理守衛 13/13；各輪來源無漂移，工具工作檔與提交 blob exact。隔離環境啟動失敗與 gate 型別解析失敗均保留，未修改舊 raw。
+
+Code-Review: Standards 採納並修復 stopOwned 第一輪身分遺失、terminateVerifiedTree 中途失敗身分遺失及看門失敗狀態，兩直接 caller 提早登記；Spec 採納並修復晚生孤兒假成功與 stream-compare 歷史依賴漏列。兩名獨立 reviewer 核對至 49654f3，剩餘 finding 0；47 檔無其他票／模型／金融語意範圍蔓延，詳 main03-integration-20261001-r1/REVIEW.md。

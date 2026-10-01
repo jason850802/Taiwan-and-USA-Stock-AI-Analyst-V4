@@ -1,0 +1,1 @@
+{"runId":"main03-terminal-20261001-r1","pass":true,"scenarios":[{"mode":"ctrl-c","pass":true},{"mode":"close-window","pass":true},{"mode":"rollback-b1","pass":true}],"errors":[]}

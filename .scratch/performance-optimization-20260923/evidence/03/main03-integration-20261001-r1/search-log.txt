@@ -1,0 +1,101 @@
+{
+  "runId": "main03-search-20261001-r1",
+  "routeKind": "search",
+  "pass": true,
+  "response": {
+    "trace": "main03-search-20261001-r1-cancel",
+    "method": "GET",
+    "route": "/api/yahoo/search?q=AAPL&quotesCount=5",
+    "totalMs": 2105.9,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchBody",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-search",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchError",
+      "kind": "yahoo-search",
+      "name": "AbortError",
+      "layer": null,
+      "emitted": null
+    }
+  ],
+  "errors": []
+}

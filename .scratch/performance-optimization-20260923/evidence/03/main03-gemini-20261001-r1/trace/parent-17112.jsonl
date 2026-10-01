@@ -1,0 +1,8 @@
+{"ev":"parent.boot","t":722.516,"pid":17112}
+{"ev":"parent.listenCall","t":2206.175,"pid":17112,"seq":1}
+{"ev":"parent.listening","t":2207.874,"pid":17112,"seq":1}
+{"ev":"parent.recv","t":2997.289,"pid":17112,"trace":"main03-gemini-20261001-r1-cancel","layer":"entry","method":"POST","route":"/api/gemini"}
+{"ev":"parent.fork","t":3096.782,"pid":17112,"trace":"main03-gemini-20261001-r1-cancel","childPid":37144,"forkCallMs":7.296}
+{"ev":"parent.childReady","t":4879.182,"pid":17112,"trace":"main03-gemini-20261001-r1-cancel","childPid":37144}
+{"ev":"parent.proxyReq","t":4881.593,"pid":17112,"trace":"main03-gemini-20261001-r1-cancel","port":"56454"}
+{"ev":"parent.aborted","t":5029.71,"pid":17112,"trace":"main03-gemini-20261001-r1-cancel","layer":"entry"}

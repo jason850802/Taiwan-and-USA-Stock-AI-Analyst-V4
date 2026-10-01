@@ -1,0 +1,7 @@
+
+=== [1/5] tsc --noEmit ===
+vite.config.ts(17,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'test' does not exist in type 'UserConfigExport'.
+
+✗ GATE 紅燈：tsc 段未通過（後續段落未執行）。

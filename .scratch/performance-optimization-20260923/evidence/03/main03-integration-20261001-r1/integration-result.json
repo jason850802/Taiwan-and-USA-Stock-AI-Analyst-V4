@@ -1,0 +1,245 @@
+{
+  "base": "bf7599c53b0dcee2a5a814f3e62133c67844309a",
+  "tested": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+  "commit": "1a9269fe781f4ae5e0d432d1c22b4c77d6cc3bcd",
+  "main": "1a9269fe781f4ae5e0d432d1c22b4c77d6cc3bcd",
+  "originalHead": "5c93216e74803c38a5602e995b384316621ed946",
+  "originalBranch": "codex/reacceptance-fixes-p1-s1",
+  "mergeTreeEqualsTestedTree": true,
+  "fileCount": 47,
+  "files": [
+    ".scratch/performance-optimization-20260923/tools/README-main-03.md",
+    ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+    ".scratch/performance-optimization-20260923/tools/b1-vite-proxy.config.mjs",
+    ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+    ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+    ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+    ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+    ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-main-cleanup-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/hmr-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+    ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+    ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+    ".scratch/performance-optimization-20260923/tools/stale-state-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+    ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+    ".vercelignore",
+    "api/_lib/clientAbort.ts",
+    "api/_lib/http.cancel.test.ts",
+    "api/_lib/http.ts",
+    "api/_lib/llm.ts",
+    "api/_lib/yahoo.handshake.test.ts",
+    "api/_lib/yahoo.ts",
+    "api/finmind.ts",
+    "api/gemini-stream.test.ts",
+    "api/gemini-stream.ts",
+    "api/gemini.ts",
+    "api/yahoo/chart.ts",
+    "api/yahoo/search.ts",
+    "scripts/start-dev.ps1",
+    "utils/vercelConfigGuard.test.ts",
+    "vercel.json",
+    "vite.config.ts"
+  ],
+  "tools": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/README-main-03.md",
+      "worktreeSha256": "457fb0888068677b9fdf39e9bc2dd8bd70e777e8b4c2becc9c116197c3fa48b7",
+      "blobSha256": "457fb0888068677b9fdf39e9bc2dd8bd70e777e8b4c2becc9c116197c3fa48b7",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "worktreeSha256": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "blobSha256": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+      "worktreeSha256": "feaeb922e792672580b092fea71ce1cdc2baec43feee0f7acb4f48f3bc7a472b",
+      "blobSha256": "feaeb922e792672580b092fea71ce1cdc2baec43feee0f7acb4f48f3bc7a472b",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-vite-proxy.config.mjs",
+      "worktreeSha256": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "blobSha256": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "worktreeSha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "blobSha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "worktreeSha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "blobSha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+      "worktreeSha256": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+      "blobSha256": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+      "worktreeSha256": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+      "blobSha256": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "worktreeSha256": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "blobSha256": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "worktreeSha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "blobSha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "worktreeSha256": "e1d543a2840cc3d8993fa9819c79c48a7f45b59e4b466a640585f142d2da8d4f",
+      "blobSha256": "e1d543a2840cc3d8993fa9819c79c48a7f45b59e4b466a640585f142d2da8d4f",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "worktreeSha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "blobSha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+      "worktreeSha256": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+      "blobSha256": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-main-cleanup-03.mjs",
+      "worktreeSha256": "823e50f0f68456cfd2db55d2a8dbb43afa7311b86b18d6206ab7caaab4fc8324",
+      "blobSha256": "823e50f0f68456cfd2db55d2a8dbb43afa7311b86b18d6206ab7caaab4fc8324",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "worktreeSha256": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "blobSha256": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "worktreeSha256": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "blobSha256": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/hmr-03.mjs",
+      "worktreeSha256": "9caba5d5f7aeb3b4bf4d0a381dbd93daf0ef16a7d11d8e4d084f23684510dff4",
+      "blobSha256": "9caba5d5f7aeb3b4bf4d0a381dbd93daf0ef16a7d11d8e4d084f23684510dff4",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "worktreeSha256": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "blobSha256": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "worktreeSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "blobSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "worktreeSha256": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "blobSha256": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "worktreeSha256": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "blobSha256": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "worktreeSha256": "a4a339ca071bbbccba6ec66b9819e09433f1999034fc585b0c23f68ad85b7742",
+      "blobSha256": "a4a339ca071bbbccba6ec66b9819e09433f1999034fc585b0c23f68ad85b7742",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "worktreeSha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "blobSha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+      "worktreeSha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+      "blobSha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "worktreeSha256": "a2df019a7b614ba7179cdd6f16b30a62f0cd44f9e5fb99ea67e57e5fcf46ca08",
+      "blobSha256": "a2df019a7b614ba7179cdd6f16b30a62f0cd44f9e5fb99ea67e57e5fcf46ca08",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stale-state-03.mjs",
+      "worktreeSha256": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+      "blobSha256": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+      "worktreeSha256": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "blobSha256": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "worktreeSha256": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "blobSha256": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "worktreeSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "blobSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "exact": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+      "worktreeSha256": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "blobSha256": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "exact": true
+    }
+  ],
+  "noPush": true,
+  "noDeployment": true,
+  "noRelease": true,
+  "pass": true
+}

@@ -1,0 +1,261 @@
+{
+  "checks": [
+    {
+      "name": "殘留程序保留復原身分",
+      "pass": true,
+      "detail": {
+        "exitCode": 1,
+        "removed": false,
+        "state": {
+          "token": "own",
+          "tree": [
+            {
+              "pid": 41,
+              "creationDate": "/Date(1000)/",
+              "name": "node.exe"
+            }
+          ],
+          "cleanupError": "仍有已核對的程序未結束"
+        }
+      }
+    },
+    {
+      "name": "程序表失敗不可宣稱成功",
+      "pass": true,
+      "detail": {
+        "exitCode": 1,
+        "removed": false,
+        "state": {
+          "token": "own",
+          "tree": [
+            {
+              "pid": 41,
+              "creationDate": "/Date(1000)/",
+              "name": "node.exe"
+            }
+          ],
+          "cleanupError": "fixture CIM failure"
+        }
+      }
+    },
+    {
+      "name": "成功才能移除自己狀態",
+      "pass": true,
+      "detail": {
+        "exitCode": 0,
+        "removed": true,
+        "state": null
+      }
+    },
+    {
+      "name": "失敗不得改別人的狀態",
+      "pass": true,
+      "detail": {
+        "exitCode": 1,
+        "removed": false,
+        "state": {
+          "token": "foreign"
+        }
+      }
+    },
+    {
+      "name": "第一輪清理新增孤兒必須重核",
+      "pass": true,
+      "detail": {
+        "exitCode": 1,
+        "removed": false,
+        "state": {
+          "token": "own",
+          "tree": [
+            {
+              "pid": 41,
+              "creationDate": "/Date(1000)/"
+            },
+            {
+              "pid": 43,
+              "creationDate": "/Date(1800)/",
+              "name": "node.exe"
+            }
+          ],
+          "cleanupError": "仍有已核對的程序未結束"
+        }
+      }
+    },
+    {
+      "name": "看門程序失敗不得成功",
+      "pass": true,
+      "detail": {
+        "exitCode": 1,
+        "removed": false,
+        "state": {
+          "token": "own",
+          "tree": [
+            {
+              "pid": 41,
+              "creationDate": "/Date(1000)/",
+              "name": "node.exe"
+            }
+          ],
+          "cleanupError": "fixture watchdog exit 1"
+        }
+      }
+    },
+    {
+      "name": "service 清理 reused",
+      "pass": true,
+      "detail": {
+        "calls": [],
+        "stopped": true,
+        "error": null,
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          }
+        ]
+      }
+    },
+    {
+      "name": "service 清理 orphan",
+      "pass": true,
+      "detail": {
+        "calls": [
+          41,
+          42
+        ],
+        "stopped": false,
+        "error": "fixture 清理未完成：仍有 2 個已核對程序或 0 個 listener",
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          },
+          {
+            "pid": 42,
+            "parentPid": 41,
+            "name": "node.exe",
+            "creationDate": "/Date(1500)/"
+          }
+        ]
+      }
+    },
+    {
+      "name": "service 清理 late",
+      "pass": true,
+      "detail": {
+        "calls": [
+          41,
+          42,
+          43
+        ],
+        "stopped": true,
+        "error": null,
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          },
+          {
+            "pid": 42,
+            "parentPid": 41,
+            "name": "node.exe",
+            "creationDate": "/Date(1500)/"
+          },
+          {
+            "pid": 43,
+            "parentPid": 42,
+            "name": "node.exe",
+            "creationDate": "/Date(1800)/"
+          }
+        ]
+      }
+    },
+    {
+      "name": "service 清理 query-error",
+      "pass": true,
+      "detail": {
+        "calls": [],
+        "stopped": false,
+        "error": "fixture 清理未完成：fixture CIM failure",
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          }
+        ]
+      }
+    },
+    {
+      "name": "service 清理 late-query-error",
+      "pass": true,
+      "detail": {
+        "calls": [
+          41
+        ],
+        "stopped": false,
+        "error": "fixture 清理未完成：fixture CIM failure",
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          },
+          {
+            "pid": 42,
+            "parentPid": 41,
+            "name": "node.exe",
+            "creationDate": "/Date(1500)/"
+          }
+        ]
+      }
+    },
+    {
+      "name": "service 清理 missing-birth",
+      "pass": true,
+      "detail": {
+        "calls": [],
+        "stopped": false,
+        "error": "fixture 清理未完成：缺少已核對的 spawn 身分，禁止清理",
+        "tree": []
+      }
+    },
+    {
+      "name": "service 清理 foreign-listener",
+      "pass": true,
+      "detail": {
+        "calls": [
+          41,
+          42
+        ],
+        "stopped": false,
+        "error": "fixture 清理未完成：仍有 0 個已核對程序或 1 個 listener",
+        "tree": [
+          {
+            "pid": 41,
+            "parentPid": 9,
+            "name": "node.exe",
+            "creationDate": "/Date(1000)/"
+          },
+          {
+            "pid": 42,
+            "parentPid": 41,
+            "name": "node.exe",
+            "creationDate": "/Date(1500)/"
+          }
+        ]
+      }
+    }
+  ],
+  "passed": 13,
+  "total": 13,
+  "realKills": 0
+}

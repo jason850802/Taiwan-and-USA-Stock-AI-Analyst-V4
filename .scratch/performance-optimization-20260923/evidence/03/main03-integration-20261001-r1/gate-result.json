@@ -1,0 +1,16 @@
+{
+  "head": "54193c41ab7cd955af6e384c672711c99a742b50",
+  "command": [
+    "node",
+    "scripts/run-gate.mjs",
+    "--require-env"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "drift": [],
+  "envRemoved": true,
+  "noInstall": true,
+  "noDeployment": true,
+  "pass": false
+}

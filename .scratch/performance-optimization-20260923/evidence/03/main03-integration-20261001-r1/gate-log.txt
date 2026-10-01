@@ -1,0 +1,24 @@
+
+=== [1/5] tsc --noEmit ===
+vite.config.ts(42,13): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'Plugin<any>[]' is not assignable to type 'PluginOption'.
+      Type 'Plugin<any>[]' is not assignable to type 'PluginOption[]'.
+        Type 'Plugin<any>' is not assignable to type 'PluginOption'.
+          Type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/vite/dist/node/index").Plugin<any>' is not assignable to type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/integration03-isolated-20261001-r1/node_modules/vite/dist/node/index").Plugin<any>'.
+            Types of property 'hotUpdate' are incompatible.
+              Type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/rollup/dist/rollup").ObjectHook<(this: HotUpdatePluginContext, options: import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/vite/dist/node/index").HotUpdateOptions) => void | ... 1 more ... | Promise<...>>' is not assignable to type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/rollup/dist/rollup").ObjectHook<(this: HotUpdatePluginContext, options: import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/integration03-isolated-20261001-r1/node_modules/vite/dist/node/index").HotUpdateOptions) => void | ... 1 more...'.
+                Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type 'ObjectHook<(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>>'.
+                  Type '(this: HotUpdatePluginContext, options: import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/vite/dist/node/index").HotUpdateOptions) => void | ... 1 more ... | Promise<...>' is not assignable to type '(this: HotUpdatePluginContext, options: import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/integration03-isolated-20261001-r1/node_modules/vite/dist/node/index").HotUpdateOptions) => void | ... 1 more ... | Promise<...>'.
+                    The 'this' types of each signature are incompatible.
+                      Type 'HotUpdatePluginContext' is not assignable to type 'HotUpdatePluginContext'. Two different types with this name exist, but they are unrelated.
+                        The types of 'environment.pluginContainer.environment' are incompatible between these types.
+                          Type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/integration03-isolated-20261001-r1/node_modules/vite/dist/node/index").Environment' is not assignable to type 'import("E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/node_modules/vite/dist/node/index").Environment'.
+                            Type 'DevEnvironment' is not assignable to type 'Environment'.
+npm notice
+npm notice New major version of npm available! 11.17.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+✗ GATE 紅燈：tsc 段未通過（後續段落未執行）。

@@ -1,0 +1,73 @@
+{
+  "runId": "main03-gemini-20261001-r1",
+  "routeKind": "gemini",
+  "pass": true,
+  "response": {
+    "trace": "main03-gemini-20261001-r1-cancel",
+    "method": "POST",
+    "route": "/api/gemini",
+    "totalMs": 2037,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.spawn",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.stdin",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.kill",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": 0
+    }
+  ],
+  "errors": []
+}
