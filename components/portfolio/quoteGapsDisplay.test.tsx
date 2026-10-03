@@ -2,7 +2,7 @@
 // 2026-10-01 使用者拍板：任一持股沒有可用報價 → 市值與總損益一律顯示「—」並列出缺哪幾檔，
 // 報價齊全才出數字；群組小計比照、台美各自判斷。不以 0 計（＝假設歸零）、不排除兩邊（＝假設不賺不賠）。
 // 匯率未取得時數字照舊以備用匯率估，但市值卡要標示出來。
-// 總投入成本卡：有美元計價批次沒記買入匯率時，小字照實寫出用即時匯率還是備用匯率估（2026-10-03 拍板）。
+// 總投入成本卡：有 USD 計價批次沒記買入匯率時，小字照實寫出用即時匯率還是備用匯率估（2026-10-03 拍板）。
 // 以 renderToStaticMarkup 在 Node 渲染成 HTML 字串驗卡片文字；報價 hook 與歷史圖表（會讀 localStorage）換成替身。
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
@@ -132,10 +132,10 @@ describe('匯率未取得：數字照舊以備用匯率估，市值卡標示出�
   });
 });
 
-describe('總投入成本小字：缺買入匯率的美元批次照實寫出用哪個匯率估', () => {
-  // 美元計價、沒記買入匯率（舊資料）：台幣成本靠當下匯率換算，匯率未取得時就是備用匯率 32
+describe('總投入成本小字：缺買入匯率的 USD 計價批次照實寫出用哪個匯率估', () => {
+  // USD 計價、沒記買入匯率（舊資料）：台幣成本靠當下匯率換算，匯率未取得時就是備用匯率 32
   const U_NORATE: PortfolioItem = { ...U, id: 'u2', symbol: 'MSFT', exchangeRate: undefined };
-  // 台幣計價、沒記買入匯率：台幣成本就是實付 30,000，不經任何匯率
+  // TWD 計價、沒記買入匯率：台幣成本就是實付 30,000，不經任何匯率
   const T_NORATE: PortfolioItem = {
     ...U, id: 'u3', symbol: 'NVDA', purchaseCurrency: 'TWD', totalCost: 30000,
     totalCostUSD: undefined, exchangeRate: undefined,
@@ -159,12 +159,12 @@ describe('總投入成本小字：缺買入匯率的美元批次照實寫出用�
     expect(stat(renderPage([U], { AAPL: ok(150) }, 0), '總投入成本 (TWD)')).toBe('30,000 元｜美股依買入匯率換算');
   });
 
-  it.each([0, 31])('只有台幣計價批次沒記買入匯率 → 台幣成本是實付，不算估（匯率 %s）', rate => {
+  it.each([0, 31])('只有 TWD 計價批次沒記買入匯率 → 台幣成本是實付，不算估（匯率 %s）', rate => {
     expect(stat(renderPage([U, T_NORATE], { AAPL: ok(150), NVDA: ok(150) }, rate), '總投入成本 (TWD)'))
       .toBe('60,000 元｜美股依買入匯率換算');
   });
 
-  it('美元與台幣計價都有批次沒記買入匯率 → 依美元那批標示', () => {
+  it('USD 與 TWD 計價都有批次沒記買入匯率 → 依 USD 計價那批標示', () => {
     expect(stat(renderPage([U_NORATE, T_NORATE], { MSFT: ok(150), NVDA: ok(150) }, 0), '總投入成本 (TWD)'))
       .toBe(`62,000 元｜${ESTIMATED_FALLBACK}`);
   });

@@ -127,7 +127,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const twInvested  = twItems.reduce((s, i) => s + i.totalCost, 0);
   // 成本用買入匯率、市值用即時匯率（使用者拍板口徑）；缺買入匯率的舊批次退回即時匯率
   const usInvestedTwd = usItems.reduce((s, i) => s + lotCostTwd(i, rate), 0);
-  // 只有台幣成本真的靠當下匯率換算的批次才算估；台幣計價批次是實付台幣，沒記買入匯率也不算（2026-10-03 拍板）
+  // 只有台幣成本真的靠當下匯率換算的批次才算估；TWD 計價批次是實付台幣，沒記買入匯率也不算（2026-10-03 拍板）
   const usInvestedEstimated = usItems.some(costTwdUsesLiveRate);
   const totalInvested = twInvested + usInvestedTwd;
 
@@ -243,7 +243,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       {/* ── 全局摘要 ───────────────────────────────────────────────────── */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* 缺買入匯率的美元批次在匯率未取得時實際以備用匯率換算，小字要照實寫（2026-10-03 拍板） */}
+          {/* 缺買入匯率的 USD 計價批次在匯率未取得時實際以備用匯率換算，小字要照實寫（2026-10-03 拍板） */}
           <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`}
             sub={usItems.length === 0 ? undefined
               : !usInvestedEstimated ? '美股依買入匯率換算'
