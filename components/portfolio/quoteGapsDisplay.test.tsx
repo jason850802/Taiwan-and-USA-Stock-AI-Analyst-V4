@@ -4,6 +4,7 @@
 // 匯率未取得時數字照舊以備用匯率估，但市值卡要標示出來。
 // 持股列比照（2026-10-03 拍板）：有報價項目但不可用（含回應成功但價格無效）一律顯示「讀取失敗」、不顯示名稱，
 // 與頁首、群組小計的「讀取失敗：代號」同一套判定；只改畫面，報價 hook 發佈的資料語意不動。
+// 總投入成本卡：有 USD 計價批次沒記買入匯率時，小字照實寫出用即時匯率還是備用匯率估（2026-10-03 拍板）。
 // 以 renderToStaticMarkup 在 Node 渲染成 HTML 字串驗卡片文字；報價 hook 與歷史圖表（會讀 localStorage）換成替身。
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
@@ -180,5 +181,43 @@ describe('匯率未取得：數字照舊以備用匯率估，市值卡標示出�
 
   it('只有台股時匯率未取得不標示', () => {
     expect(stat(renderPage([A, B], { '2330': ok(600), '1234': ok(80) }, 0), '目前市值 (TWD)')).toBe('680,000 元');
+  });
+});
+
+describe('總投入成本小字：缺買入匯率的 USD 計價批次照實寫出用哪個匯率估', () => {
+  // USD 計價、沒記買入匯率（舊資料）：台幣成本靠當下匯率換算，匯率未取得時就是備用匯率 32
+  const U_NORATE: PortfolioItem = { ...U, id: 'u2', symbol: 'MSFT', exchangeRate: undefined };
+  // TWD 計價、沒記買入匯率：台幣成本就是實付 30,000，不經任何匯率
+  const T_NORATE: PortfolioItem = {
+    ...U, id: 'u3', symbol: 'NVDA', purchaseCurrency: 'TWD', totalCost: 30000,
+    totalCostUSD: undefined, exchangeRate: undefined,
+  };
+  const ESTIMATED_LIVE = '美股依買入匯率換算（部分批次無匯率，以即時匯率估）';
+  const ESTIMATED_FALLBACK = '美股依買入匯率換算（部分批次無匯率；即時匯率未取得，暫以 32 估）';
+
+  // 報價載入中時市值卡只顯示載入中、不提匯率，成本卡得自己交代
+  const quotes: [string, PriceData][] = [['報價齊全', ok(150)], ['報價載入中', LOADING]];
+  it.each(quotes)('匯率未取得 → 寫出暫以 32 估（%s）', (_, quote) => {
+    expect(stat(renderPage([U_NORATE], { MSFT: quote }, 0), '總投入成本 (TWD)'))
+      .toBe(`32,000 元｜${ESTIMATED_FALLBACK}`);
+  });
+
+  it('匯率已取得 → 照舊寫以即時匯率估', () => {
+    expect(stat(renderPage([U_NORATE], { MSFT: ok(150) }, 31), '總投入成本 (TWD)'))
+      .toBe(`31,000 元｜${ESTIMATED_LIVE}`);
+  });
+
+  it('美股批次都有買入匯率 → 匯率未取得也沒用到 32，不標示', () => {
+    expect(stat(renderPage([U], { AAPL: ok(150) }, 0), '總投入成本 (TWD)')).toBe('30,000 元｜美股依買入匯率換算');
+  });
+
+  it.each([0, 31])('只有 TWD 計價批次沒記買入匯率 → 台幣成本是實付，不算估（匯率 %s）', rate => {
+    expect(stat(renderPage([U, T_NORATE], { AAPL: ok(150), NVDA: ok(150) }, rate), '總投入成本 (TWD)'))
+      .toBe('60,000 元｜美股依買入匯率換算');
+  });
+
+  it('USD 與 TWD 計價都有批次沒記買入匯率 → 依 USD 計價那批標示', () => {
+    expect(stat(renderPage([U_NORATE, T_NORATE], { MSFT: ok(150), NVDA: ok(150) }, 0), '總投入成本 (TWD)'))
+      .toBe(`62,000 元｜${ESTIMATED_FALLBACK}`);
   });
 });
