@@ -48,28 +48,38 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 
 - **就地放置**：測試檔與受測檔同目錄，檔名 `<模組>.test.ts`（例：`utils/portfolioFees.ts` ↔
   `utils/portfolioFees.test.ts`、`api/_lib/guard.ts` ↔ `api/_lib/guard.test.ts`）。後端由 ADR-0002
-  （2026-07-28）拍板；2026-07-30 起 `services/`、`components/` 也開始有同目錄的測試。核對時 49 檔中
-  有 38 檔的同目錄就有同名受測檔（2026-10-01 更正，原寫 39——漏算守門測試
-  `utils/appLazyBoundaries.test.ts`）。對證：對 `git ls-files '*.test.ts'` 的每支，取檔名第一段為
-  `<模組>`，檢查同目錄有沒有 `<模組>.ts`／`<模組>.tsx`。
+  （2026-07-28）拍板；2026-07-30 起 `services/`、`components/` 也開始有同目錄的測試。2026-10-01 第二次
+  重算：59 檔中有 46 檔的同目錄就有同名受測檔（第一次更正寫 49 檔中 38 檔）。對證：對
+  `git ls-files '*.test.ts' '*.test.tsx'` 的每支，取檔名第一段為 `<模組>`，檢查同目錄有沒有
+  `<模組>.ts`／`<模組>.tsx`。
 - **同一模組多支測試**：`<模組>.<面向>.test.ts`，例：`services/yahoo.loading.test.ts`、
   `services/yahoo.revalidation.test.ts`、`services/finmind.bounds.test.ts`、
   `api/_lib/llm.claude-cli.test.ts`。
-- **副檔名一律 `.test.ts`**（核對時 49 檔無例外，沒有 `.spec.*`、`.test.tsx`）。`api/` 底下**必須**是
-  `.test.ts`：`.vercelignore` 的規則只蓋得到這種命名，換成別的命名 vitest 照收，卻會被部署成函式。
-- **元件檔只測匯出的純函式**，不做渲染：例 `components/fundamentals/QuarterlyTrendCharts.test.ts`
+- **副檔名用 `.test.ts`**；唯一例外是要寫 JSX 的畫面測試用 `.test.tsx`（2026-10-01 起 1 支，見下一點）。
+  沒有 `.spec.*`。`api/` 底下**必須**是 `.test.ts`：`.vercelignore` 的規則只蓋得到這種命名，換成別的命名
+  vitest 照收，卻會被部署成函式。
+- **元件檔優先測匯出的純函式**：例 `components/fundamentals/QuarterlyTrendCharts.test.ts`
   測 `QuarterlyTrendCharts.tsx` 匯出的 `formatEpsLabel`。
+  - **畫面測試**（2026-10-01 起）：要鎖住畫面上實際顯示的文字（例如碰錢的統計卡數字）時，用 react-dom
+    內建的 `renderToStaticMarkup`（`react-dom/server`）在 node 環境把元件渲染成 HTML 字串再比對——不需要
+    jsdom、不裝新套件。限制：只看得到第一次渲染的靜態輸出，`useEffect`／`useLayoutEffect` 不會執行，也不能
+    點擊、輸入；會讀瀏覽器儲存或打網路的 hook／子元件要用 `vi.mock` 換成替身；以標題等文字定位、不要依賴
+    樣式 class。例：`components/portfolio/quoteGapsDisplay.test.tsx`（統計卡、持股表群組小計與逐檔列在報價不齊時的顯示；
+    明細列要點開才渲染，靜態輸出驗不到，它與逐檔列共用同一個股價格元件、實機另驗）。
 - **測試標題**：`it` 用繁體中文描述行為；`describe` 常以受測函式名分組（核對時 947 行標題中
   894 行含中文，純英文的多是 `describe('getModelForMode', …)` 這類分組）。
-- 同目錄沒有同名受測檔的 11 支（2026-10-01 更正，原寫 10）都在 `utils/`，分三類：
-  1. **同目錄、以功能命名**（2 支）：`utils/backfillFromTxns.test.ts`（測 `utils/portfolioHistory.ts` 的回推）、
-     `utils/statementParsers/parsers.test.ts`（同目錄的多個對帳單解析器合測）。
+- 同目錄沒有同名受測檔的 13 支（2026-10-01 第二次重算；第一次更正寫 11）：12 支在 `utils/`、1 支在
+  `components/portfolio/`，分三類：
+  1. **同目錄、以功能命名**（3 支）：`utils/backfillFromTxns.test.ts`（測 `utils/portfolioHistory.ts` 的回推）、
+     `utils/statementParsers/parsers.test.ts`（同目錄的多個對帳單解析器合測）、
+     `components/portfolio/quoteGapsDisplay.test.tsx`（畫面測試，同時測同目錄的 `HoldingsTable.tsx` 與上一層的
+     `Portfolio.tsx`）。
   2. **早期放置，不搬**（5 支）：2026-07-28 以前的測試全放 `utils/`，受測物在 `services/` 也一樣——
      `fetchError`（測 `services/fetchError.ts`）、`geminiRules`／`geminiPrompts`（測 `services/gemini.ts`）、
      `geminiCache`（測 `services/_shared/geminiCache.ts`）。這幾支檔頭寫的「沿用現行 vitest 收錄範圍」
      描述的是當時現況、不是規定（ADR-0002 背景節）；ADR-0002 也決定不搬舊檔。之後同主題的
      `utils/portfolioHealthStreaming.test.ts`（測 `services/gemini.ts`）也放在這裡。
-  3. **守門測試**（4 支）：受測物是根目錄的設定檔或跨檔結構，見下節。
+  3. **守門測試**（5 支）：受測物是根目錄的設定檔或跨檔結構，見下節。
 
 ## 守門測試（guard tests）
 
@@ -82,8 +92,9 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 | `utils/vercelIgnoreGuard.test.ts` | `.vercelignore` 保有 `api/**/*.test.ts` 且沒有 `!` 反向規則；`api/` 下的測試檔都是 `.test.ts` | 2026-07-31 正式部署曾把 `api/gemini-stream.test` 部署成函式，一呼叫就 500 |
 | `utils/tsconfigScopeGuard.test.ts` | tsconfig 型檢範圍內的 JS 檔不得寫 `globalThis` 屬性 | 2026-09-30 量測腳本把 `fetch` 換成假函式，污染 Vercel 對 `api/` 的型別檢查（建置 log 多出 5 個 error TS） |
 | `utils/appLazyBoundaries.test.ts` | `App.tsx` 以 `lazy()` 載入 `StockChart`／`AnalysisResult`；`vite.config.ts` 不用 manual chunk 破壞 lazy 邊界 | 2026-09 效能優化案的首屏基線（`ade5dca`） |
+| `utils/vercelConfigGuard.test.ts` | `vercel.json` 讓每支 API 函式恰好被一個 functions 樣式命中、該樣式開 `supportsCancellation`，且不設 `maxDuration` | 使用者關頁時後端要停止呼叫 AI 與行情上游，而 Vercel 的請求取消是 opt-in（票 03 平台取消診斷，`9c6145f`） |
 
-前三支的檔頭寫明守什麼、為什麼、邊界在哪；`appLazyBoundaries` 沒有檔頭說明。
+`appLazyBoundaries` 沒有檔頭說明，其餘四支的檔頭都寫明守什麼、為什麼、邊界在哪。
 
 ## Snapshot 鎖
 
@@ -102,9 +113,11 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 
 - **網路**：`vi.stubGlobal('fetch', …)`（24 處）。測試不打真 API——Gemini 要花錢、也要金鑰。
   `api/_lib/http.test.ts`、`utils/fetchError.test.ts` 裡的 fetch 只出現在錯誤訊息字串，不發請求。
-- **子程序／模組替換**：`vi.mock()` 只有兩支——`api/_lib/llm.claude-cli.test.ts` 換掉
+- **子程序／模組替換**：`vi.mock()` 有四支（2026-10-01 重算）——`api/_lib/llm.claude-cli.test.ts` 換掉
   `node:child_process`（不真的啟動 claude CLI），`api/gemini-stream.test.ts` 換掉 `./_lib/llm.js`
-  與 `./_lib/ratelimit.js`。
+  與 `./_lib/ratelimit.js`，`api/_lib/http.cancel.test.ts` 換掉 `@google/genai` 與 `./config.js`，
+  `components/portfolio/quoteGapsDisplay.test.tsx` 換掉報價 hook 與會讀 localStorage 的
+  `useDailySnapshot`／`PnlHistorySection`。
 - **環境變數**：`vi.stubEnv`＋`vi.unstubAllEnvs`（7 檔）；沒有測試直接賦值 `process.env`
   （ADR-0002：env 相依用框架的 stub 處理）。
 - **瀏覽器全域**（node 環境沒有）：`sessionStorage`（26 處）、`localStorage`（5 處）、
@@ -146,8 +159,9 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 
 ## 已知缺口
 
-- 沒有 React 元件的渲染／互動測試（沒有 jsdom、Testing Library；要加得裝新套件＝先問使用者）。
-  UI 行為靠實機驗證（CORE_RULES 的 runtime 人工項）。
+- 沒有 React 元件的互動測試（點擊、輸入、effect 之後的狀態）——要 jsdom／Testing Library 得裝新套件＝先問
+  使用者。靜態畫面可用 `renderToStaticMarkup` 鎖（見「放置與命名」），互動與 effect 仍靠實機驗證
+  （CORE_RULES 的 runtime 人工項）。
 - `api/_lib/` 的 7 個模組都有測試。5 支 API handler 中，`api/gemini-stream.ts`（`api/gemini-stream.test.ts`）
   與 `api/yahoo/chart.ts`（`api/_lib/yahoo.handshake.test.ts` 內）有 handler 層測試；`api/finmind.ts`、
   `api/gemini.ts`、`api/yahoo/search.ts` 沒有。
@@ -163,3 +177,6 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 以及 2026-09-30 在 worktree 跑的 `npm run test`（49 檔／811 案例全綠）。*
 *2026-10-01 更正：「放置與命名」的同名受測檔計數 39／10 → 38／11（原計數漏了守門測試
 `utils/appLazyBoundaries.test.ts`；三類各標支數 2＋5＋4＝11）。其餘內容未變動。*
+*2026-10-01 第二次增補：畫面測試寫法（`renderToStaticMarkup`）與 `.test.tsx` 例外、`vi.mock` 四支、同名受測檔
+計數重算（59 檔中 46 有、13 沒有，三類 3＋5＋5）、守門測試表補 `vercelConfigGuard`。摘要表的規模數字仍是
+2026-09-30 的快照。*

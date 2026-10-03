@@ -4,7 +4,8 @@ import { getStockData } from '../services/yahoo';
 import { classifyCaught } from '../services/fetchError';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
-import { lotCostTwd, hasBuyRate } from '../utils/fx';
+import { lotCostTwd, hasBuyRate, USD_TWD_FALLBACK } from '../utils/fx';
+import { isUsableQuote, summarizeQuoteGaps } from '../utils/quoteGaps';
 import { formatQuoteTime } from '../utils/quoteTime';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
 import Badge from './ui/Badge';
@@ -131,14 +132,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
 
   const totalValue = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;
     const valTwd = isTwStock(i.symbol) ? p.price * i.totalShares : p.price * i.totalShares * rate;
     return s + valTwd;
   }, 0);
 
   const totalSellFees = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;
     if (isTwStock(i.symbol)) {
       const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.symbol);
       return s + sellFee + tax;
@@ -149,10 +150,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   }, 0);
 
   const totalCashDiv = items.reduce((s, i) => s + i.cashDividends, 0);
-  const totalPnL     = totalValue > 0
+  // 報價不齊（任一持股載入中／讀取失敗／價格無效）→ 市值與總損益顯示「—」並列出缺哪幾檔，
+  // 不把缺價那檔當 0 計（2026-10-01 使用者拍板，見 utils/quoteGaps.ts）
+  const quoteStatus  = summarizeQuoteGaps(items.map(i => i.symbol), prices);
+  const totalPnL     = quoteStatus.complete && totalValue > 0
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
-  const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
   const loadedQuoteTimes = Array.from(new Set(items.map(i => i.symbol))).flatMap(symbol => {
     const p = prices[symbol];
     return p && !p.loading && !p.error && Number.isFinite(p.fetchedAt)
@@ -243,10 +246,13 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             sub={usItems.length === 0 ? undefined
               : usInvestedEstimated ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
               : '美股依買入匯率換算'} />
+          {/* 匯率未取得時美股照舊以備用匯率估，但要標示出來（2026-10-01 拍板） */}
           <StatCard
             label="目前市值 (TWD)"
-            value={hasAnyPrice ? `${fmt(totalValue)} 元` : '—'}
-            sub={usdTwdRate > 0 ? `USD/TWD ${fmt(usdTwdRate, 2)}` : undefined}
+            value={quoteStatus.complete ? `${fmt(totalValue)} 元` : '—'}
+            sub={!quoteStatus.complete ? quoteStatus.note
+              : usdTwdRate > 0 ? `USD/TWD ${fmt(usdTwdRate, 2)}`
+              : usItems.length > 0 ? `匯率未取得，暫以 ${USD_TWD_FALLBACK} 估` : undefined}
           />
           <StatCard label="已領現金股利" value={`${fmt(totalCashDiv)} 元`} tone="up" />
           <StatCard
@@ -255,7 +261,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             tone={totalPnL === null ? 'neutral' : totalPnL >= 0 ? 'up' : 'down'}
             sub={totalPnL !== null && totalPnLPct !== null
               ? `${totalPnL >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}% · ${includeDividend ? '含息' : '不含息'}`
-              : undefined}
+              : !quoteStatus.complete ? quoteStatus.note : undefined}
           />
         </div>
       )}

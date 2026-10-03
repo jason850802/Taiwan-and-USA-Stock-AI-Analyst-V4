@@ -16,6 +16,7 @@ import { calcTwSellFeeAndTax, calcUsFee } from '../../utils/portfolioFees';
 import { groupLotsBySymbol } from '../../utils/portfolioGrouping';
 import { USD_TWD_FALLBACK, lotCostTwd, lotCostUsd, lotBuyRate, hasBuyRate } from '../../utils/fx';
 import { fmtShares } from '../../utils/shareUnits';
+import { isUsableQuote, summarizeQuoteGaps } from '../../utils/quoteGaps';
 import { Trash2, Loader2, ChevronDown, ChevronUp, Info, HeartPulse, Banknote } from 'lucide-react';
 import Badge from '../ui/Badge';
 import type { PriceData } from './useHoldingPrices';
@@ -62,6 +63,17 @@ const EditableDateCell: React.FC<{
       hover:border-slate-500 focus:outline-none focus:ring-1 focus:ring-accent cursor-text transition-colors`}
   />
 );
+
+// ── 股價儲存格（逐檔列與明細列共用）────────────────────────────────────────
+// 報價狀態與頁首、群組小計同一套判定（utils/quoteGaps.ts）：載入中轉圈；有報價項目但不可用（抓取失敗，
+// 或回應成功但價格無效）一律「讀取失敗」，名稱欄也比照不顯示（2026-10-03 拍板：只改畫面、不動報價語意）。
+// 可用才顯示 children 的價格；還沒有報價項目（請求發出前的一瞬間）照舊「—」。
+const PriceCell: React.FC<{ quote: PriceData | undefined; children: React.ReactNode }> = ({ quote, children }) => {
+  if (quote?.loading) return <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />;
+  if (!quote) return <>—</>;
+  if (!isUsableQuote(quote)) return <span className="text-danger text-xs">讀取失敗</span>;
+  return <>{children}</>;
+};
 
 // ── 損益儲存格 ─────────────────────────────────────────────────────────────
 const PnLCell: React.FC<{
@@ -207,18 +219,17 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
   const groupCost  = items.reduce((s, i) => s + itemCostInDisplay(i), 0);
   const groupValue = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;
     const valueUsd = p.price * i.totalShares;
     return s + (isTW ? valueUsd : toDisplay(valueUsd));
   }, 0);
   const groupSellCosts = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;   // 可用報價必為正價，US ETF 不會對 0 元報價收 $3
     if (isTW) {
       const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.symbol);
       return s + sellFee + tax;
     }
-    if (p.price <= 0) return s;
     return s + toDisplay(calcUsFee(p.price * i.totalShares, i.isUsEtf ?? false));
   }, 0);
   const groupCashDiv = items.reduce((s, i) => {
@@ -226,7 +237,9 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
     if (isTW) return s + i.cashDividends;
     return s + (dc === 'USD' ? i.cashDividends / rate : i.cashDividends);
   }, 0);
-  const groupPnL    = groupValue > 0
+  // 報價不齊 → 群組小計不出數字、改列缺哪幾檔（比照全局摘要，台美各自判斷；2026-10-01 拍板）
+  const groupQuotes = summarizeQuoteGaps(items.map(i => i.symbol), prices);
+  const groupPnL    = groupQuotes.complete && groupValue > 0
     ? groupValue - groupCost - groupSellCosts + (includeDividend ? groupCashDiv : 0) : null;
   const groupPnLPct = groupPnL !== null && groupCost > 0 ? (groupPnL / groupCost) * 100 : null;
   const f = (v: number) => dc === 'USD' ? fmtUsd(v) : `${fmt(v)}`;
@@ -263,6 +276,9 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
           <span className={`font-bold font-mono tabular-nums ${groupPnL >= 0 ? 'text-up' : 'text-down'}`}>
             {groupPnL >= 0 ? '+' : ''}{f(groupPnL)} ({groupPnL >= 0 ? '+' : ''}{groupPnLPct.toFixed(2)}%)
           </span>
+        )}
+        {!groupQuotes.complete && (
+          <span className="text-xs text-slate-500">—（{groupQuotes.note}）</span>
         )}
         {collapsed ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronUp size={16} className="text-slate-400" />}
       </div>
@@ -325,7 +341,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       const lotValueUsd = priceUsd * lot.totalShares;
                       return sum + toDisplay(calcUsFee(lotValueUsd, lot.isUsEtf ?? false));
                     }, 0);
-                const pnl = (p && !p.loading && !p.error && currentPrice > 0)
+                const pnl = isUsableQuote(p)
                   ? dispValue - totalCost - sellCosts + (includeDividend ? totalCashDividends : 0)
                   : null;
                 const pnlPct = pnl !== null && totalCost > 0 ? (pnl / totalCost) * 100 : null;
@@ -344,7 +360,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       </td>
                       <td className="p-3">
                         <p className="font-bold text-white">{symbol}</p>
-                        {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
+                        {isUsableQuote(p) && <p className="text-xs text-slate-400">{p.name}</p>}
                         <p className="text-[10px] text-slate-500 mt-0.5">{lots.length} 批</p>
                       </td>
                       <td className="p-3 text-right font-mono tabular-nums">
@@ -374,13 +390,11 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                         </td>
                       )}
                       <td className="p-3 text-right font-mono tabular-nums">
-                        {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
-                          : p?.error ? <span className="text-danger text-xs">讀取失敗</span>
-                          : currentPrice > 0
-                            ? (isTW
-                                ? <span className={currentPrice >= avgCost ? 'text-up' : 'text-down'}>{currentPrice.toFixed(2)}</span>
-                                : fmtUsd(currentPrice))
-                            : '—'}
+                        <PriceCell quote={p}>
+                          {isTW
+                            ? <span className={currentPrice >= avgCost ? 'text-up' : 'text-down'}>{currentPrice.toFixed(2)}</span>
+                            : fmtUsd(currentPrice)}
+                        </PriceCell>
                       </td>
                       <td className="p-3 text-right font-mono tabular-nums">
                         {dispValue > 0 ? (isTW ? fmt(dispValue) : (dc === 'USD' ? fmtUsd(dispValue) : fmt(dispValue))) : '—'}
@@ -411,7 +425,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                       const feeUsd       = !isTW && valueRaw > 0 ? calcUsFee(valueRaw, item.isUsEtf ?? false) : 0;
                       const dispFee      = isTW ? twSell.sellFee + twSell.tax : toDisplay(feeUsd);
                       const cashDivDisp  = isTW ? item.cashDividends : (dc === 'USD' ? item.cashDividends / rate : item.cashDividends);
-                      const pnl          = (p && !p.loading && !p.error && currentPrice > 0)
+                      const pnl          = isUsableQuote(p)
                         ? dispValue - dispCost - dispFee + (includeDividend ? cashDivDisp : 0) : null;
                       const pnlPct       = pnl !== null && dispCost > 0 ? (pnl / dispCost) * 100 : null;
 
@@ -430,7 +444,7 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                           <td className="p-3 text-center text-xs text-slate-500">明細</td>
                           <td className="p-3">
                             <p className="font-bold text-white">{item.symbol}</p>
-                            {p && !p.loading && !p.error && <p className="text-xs text-slate-400">{p.name}</p>}
+                            {isUsableQuote(p) && <p className="text-xs text-slate-400">{p.name}</p>}
                             {!isTW && (
                               <p className={`text-[10px] mt-0.5 ${item.isUsEtf ? 'text-accent' : 'text-slate-400'}`}>
                                 {item.isUsEtf ? 'ETF  · $3/次' : '個股 · 0.08%'}
@@ -494,17 +508,15 @@ const HoldingsTable: React.FC<HoldingsTableProps> = ({
                             </td>
                           )}
                           <td className="p-3 text-right font-mono tabular-nums">
-                            {p?.loading ? <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />
-                              : p?.error  ? <span className="text-danger text-xs">讀取失敗</span>
-                              : currentPrice > 0
-                                ? (isTW
-                                    ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-up' : 'text-down'}`}>
-                                        {currentPrice.toFixed(2)}
-                                      </span>
-                                    : <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / lotBuyRate(item, rate)) ? 'text-up' : 'text-down'}`}>
-                                        {fmtUsd(priceUsd)}
-                                      </span>)
-                                : '—'}
+                            <PriceCell quote={p}>
+                              {isTW
+                                ? <span className={`font-medium ${currentPrice >= item.avgCostPrice ? 'text-up' : 'text-down'}`}>
+                                    {currentPrice.toFixed(2)}
+                                  </span>
+                                : <span className={`font-medium ${priceUsd >= (item.purchaseCurrency === 'USD' ? item.avgCostPrice : item.avgCostPrice / lotBuyRate(item, rate)) ? 'text-up' : 'text-down'}`}>
+                                    {fmtUsd(priceUsd)}
+                                  </span>}
+                            </PriceCell>
                           </td>
                           <td className="p-3 text-right text-slate-200 font-mono tabular-nums">
                             {dispValue > 0 ? (isTW ? fmt(dispValue) : (dc === 'USD' ? fmtUsd(dispValue) : fmt(dispValue))) : '—'}
