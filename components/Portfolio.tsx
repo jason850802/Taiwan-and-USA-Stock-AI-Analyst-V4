@@ -4,7 +4,7 @@ import { getStockData } from '../services/yahoo';
 import { classifyCaught } from '../services/fetchError';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
-import { lotCostTwd, hasBuyRate, USD_TWD_FALLBACK } from '../utils/fx';
+import { lotCostTwd, costTwdUsesLiveRate, USD_TWD_FALLBACK } from '../utils/fx';
 import { isUsableQuote, summarizeQuoteGaps } from '../utils/quoteGaps';
 import { formatQuoteTime } from '../utils/quoteTime';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
@@ -127,7 +127,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const twInvested  = twItems.reduce((s, i) => s + i.totalCost, 0);
   // 成本用買入匯率、市值用即時匯率（使用者拍板口徑）；缺買入匯率的舊批次退回即時匯率
   const usInvestedTwd = usItems.reduce((s, i) => s + lotCostTwd(i, rate), 0);
-  const usInvestedEstimated = usItems.some(i => !hasBuyRate(i));
+  // 只有台幣成本真的靠當下匯率換算的批次才算估；台幣計價批次是實付台幣，沒記買入匯率也不算（2026-10-03 拍板）
+  const usInvestedEstimated = usItems.some(costTwdUsesLiveRate);
   const totalInvested = twInvested + usInvestedTwd;
 
   const totalValue = items.reduce((s, i) => {
@@ -242,10 +243,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       {/* ── 全局摘要 ───────────────────────────────────────────────────── */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* 缺買入匯率的美元批次在匯率未取得時實際以備用匯率換算，小字要照實寫（2026-10-03 拍板） */}
           <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`}
             sub={usItems.length === 0 ? undefined
-              : usInvestedEstimated ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
-              : '美股依買入匯率換算'} />
+              : !usInvestedEstimated ? '美股依買入匯率換算'
+              : usdTwdRate > 0 ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
+              : `美股依買入匯率換算（部分批次無匯率；即時匯率未取得，暫以 ${USD_TWD_FALLBACK} 估）`} />
           {/* 匯率未取得時美股照舊以備用匯率估，但要標示出來（2026-10-01 拍板） */}
           <StatCard
             label="目前市值 (TWD)"
