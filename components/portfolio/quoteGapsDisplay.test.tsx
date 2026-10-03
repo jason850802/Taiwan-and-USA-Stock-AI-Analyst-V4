@@ -2,6 +2,8 @@
 // 2026-10-01 使用者拍板：任一持股沒有可用報價 → 市值與總損益一律顯示「—」並列出缺哪幾檔，
 // 報價齊全才出數字；群組小計比照、台美各自判斷。不以 0 計（＝假設歸零）、不排除兩邊（＝假設不賺不賠）。
 // 匯率未取得時數字照舊以備用匯率估，但市值卡要標示出來。
+// 持股列比照（2026-10-03 拍板）：有報價項目但不可用（含回應成功但價格無效）一律顯示「讀取失敗」、不顯示名稱，
+// 與頁首、群組小計的「讀取失敗：代號」同一套判定；只改畫面，報價 hook 發佈的資料語意不動。
 // 以 renderToStaticMarkup 在 Node 渲染成 HTML 字串驗卡片文字；報價 hook 與歷史圖表（會讀 localStorage）換成替身。
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, it, expect, vi } from 'vitest';
@@ -67,6 +69,17 @@ const stat = (html: string, label: string) => {
 const header = (html: string) =>
   html.split('<table')[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
+/** 持股表某代號的逐檔列：表頭欄名 → 該格純文字。以代號定位列、以表頭文字對欄，不依賴樣式 class 與欄序。
+ *  明細列要點開才渲染，靜態輸出裡沒有（它與逐檔列共用同一個股價格元件，實機另驗） */
+const holdingRow = (html: string, symbol: string): Record<string, string> => {
+  const plain = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const heads = [...html.matchAll(/<th(?:\s[^>]*)?>(.*?)<\/th>/gs)].map(m => plain(m[1]));
+  const tr = html.split('<tr').find(seg => seg.includes(`>${symbol}</p>`));
+  if (!tr) throw new Error(`找不到持股列：${symbol}`);
+  const cells = [...tr.matchAll(/<td(?:\s[^>]*)?>(.*?)<\/td>/gs)].map(m => plain(m[1]));
+  return Object.fromEntries(heads.map((h, i) => [h, cells[i]]));
+};
+
 describe('報價齊全：數字與改版前完全一致', () => {
   it('全局摘要', () => {
     const page = renderPage([A, B], { '2330': ok(600), '1234': ok(80) });
@@ -110,6 +123,45 @@ describe('報價不齊：市值與總損益顯示「—」並列出缺哪幾檔'
     expect(header(renderTable('US', [U], prices, 31))).toContain('+$498.80 (+49.88%)');
     const page = renderPage([A, B, U], prices, 31);
     expect(stat(page, '總損益 (TWD)')).toBe('—｜讀取失敗：1234');
+  });
+});
+
+describe('持股列：有報價項目但不可用一律「讀取失敗」、不顯示名稱（與頁首、群組小計說法一致）', () => {
+  const invalid: [string, PriceData][] = [
+    ['undefined（下市冷門股會回這種）', INVALID],
+    ['NaN', ok(NaN)],
+    ['0', ok(0)],
+  ];
+
+  /** 逐檔列跟報價有關的四格；美股欄名帶幣別 */
+  const quoteCells = (row: Record<string, string>, unit = '') => ({
+    股價: row[`目前股價${unit}`], 名稱欄: row['代號 / 名稱'], 市值: row[`目前市值${unit}`], 損益: row[`總損益${unit}`],
+  });
+  const failedRow = (symbol: string) => ({ 股價: '讀取失敗', 名稱欄: `${symbol} 1 批`, 市值: '—', 損益: '—' });
+
+  it.each(invalid)('台股價格 %s → 讀取失敗、不顯示名稱', (_, quote) => {
+    const row = holdingRow(renderTable('TW', [A, B], { '2330': ok(600), '1234': quote }), '1234');
+    expect(quoteCells(row)).toEqual(failedRow('1234'));
+  });
+
+  it('美股價格無效 → 讀取失敗、不顯示名稱', () => {
+    const row = holdingRow(renderTable('US', [U], { AAPL: INVALID }, 31), 'AAPL');
+    expect(quoteCells(row, ' (USD)')).toEqual(failedRow('AAPL'));
+  });
+
+  const unchanged: [string, PriceData | undefined, ReturnType<typeof quoteCells>][] = [
+    ['讀取失敗', FAILED, failedRow('1234')],
+    ['載入中（轉圈，沒有文字）', LOADING, { 股價: '', 名稱欄: '1234 1 批', 市值: '—', 損益: '—' }],
+    // 請求發出前的一瞬間；頁首把它算載入中，列上不能說讀取失敗
+    ['還沒有報價項目', undefined, { 股價: '—', 名稱欄: '1234 1 批', 市值: '—', 損益: '—' }],
+    // 80,000 − 100,000 − 預估賣出費稅 354
+    ['報價可用', ok(80), { 股價: '80.00', 名稱欄: '1234 X 1 批', 市值: '80,000', 損益: '-20,354 元 (-20.35%)' }],
+  ];
+
+  it.each(unchanged)('護欄：台股%s的顯示不變', (_, quote, expected) => {
+    const prices: Record<string, PriceData> = { '2330': ok(600) };
+    if (quote) prices['1234'] = quote;
+    expect(quoteCells(holdingRow(renderTable('TW', [A, B], prices), '1234'))).toEqual(expected);
   });
 });
 

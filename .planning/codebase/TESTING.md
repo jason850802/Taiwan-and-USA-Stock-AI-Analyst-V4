@@ -64,7 +64,8 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
     內建的 `renderToStaticMarkup`（`react-dom/server`）在 node 環境把元件渲染成 HTML 字串再比對——不需要
     jsdom、不裝新套件。限制：只看得到第一次渲染的靜態輸出，`useEffect`／`useLayoutEffect` 不會執行，也不能
     點擊、輸入；會讀瀏覽器儲存或打網路的 hook／子元件要用 `vi.mock` 換成替身；以標題等文字定位、不要依賴
-    樣式 class。例：`components/portfolio/quoteGapsDisplay.test.tsx`（統計卡與持股表群組小計在報價不齊時的顯示）。
+    樣式 class。例：`components/portfolio/quoteGapsDisplay.test.tsx`（統計卡、持股表群組小計與逐檔列在報價不齊時的顯示；
+    明細列要點開才渲染，靜態輸出驗不到，它與逐檔列共用同一個股價格元件、實機另驗）。
 - **測試標題**：`it` 用繁體中文描述行為；`describe` 常以受測函式名分組（核對時 947 行標題中
   894 行含中文，純英文的多是 `describe('getModelForMode', …)` 這類分組）。
 - 同目錄沒有同名受測檔的 13 支（2026-10-01 第二次重算；第一次更正寫 11）：12 支在 `utils/`、1 支在
