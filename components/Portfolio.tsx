@@ -47,7 +47,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
   const {
     showAddModal, setShowAddModal, form, setForm, feeInput, setFeeInput, setFeeTouched,
-    setRateTouched, formIsTW, shares, rate, preview, handleAdd,
+    setRateTouched, formIsTW, shares, rate, hasLiveRate, preview, handleAdd,
   } = usePortfolioForm(onAdd, usdTwdRate);
   const {
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
@@ -247,14 +247,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`}
             sub={usItems.length === 0 ? undefined
               : !usInvestedEstimated ? '美股依買入匯率換算'
-              : usdTwdRate > 0 ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
+              : hasLiveRate ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
               : `美股依買入匯率換算（部分批次無匯率；即時匯率未取得，暫以 ${USD_TWD_FALLBACK} 估）`} />
-          {/* 匯率未取得時美股照舊以備用匯率估，但要標示出來（2026-10-01 拍板） */}
+          {/* 匯率未取得時美股照舊以備用匯率估，但要標示出來（2026-10-01 拍板）；
+              兩張卡的小字都看 usePortfolioForm 的 hasLiveRate，與數字用的 rate 出自同一個判斷 */}
           <StatCard
             label="目前市值 (TWD)"
             value={quoteStatus.complete ? `${fmt(totalValue)} 元` : '—'}
             sub={!quoteStatus.complete ? quoteStatus.note
-              : usdTwdRate > 0 ? `USD/TWD ${fmt(usdTwdRate, 2)}`
+              : hasLiveRate ? `USD/TWD ${fmt(rate, 2)}`
               : usItems.length > 0 ? `匯率未取得，暫以 ${USD_TWD_FALLBACK} 估` : undefined}
           />
           <StatCard label="已領現金股利" value={`${fmt(totalCashDiv)} 元`} tone="up" />
