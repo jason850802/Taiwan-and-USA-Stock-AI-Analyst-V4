@@ -202,16 +202,19 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
 2. **報價與匯率**（`useHoldingPrices`）：初值同步讀報價快取（`peekLatestPrice`）；持股代號集合一變就逐檔
    `fetchPrice`，未命中才排進 `holdingPriceQueue` → `getLatestPrice`（`/api/yahoo/chart` 取 5 日日線最後一根有效
    收盤；台股另補 FinMind 中文名）。有美股時另抓 `USDTWD=X`。「更新報價」＝強制更新（`force: true`）。
+   抓取失敗一律 `error: true`（畫面顯示「讀取失敗」），查無行情（`NOT_FOUND`）另標 `notFound`（`failedQuote`）。
 3. **每日快照**（`useDailySnapshot`）：持股、報價、匯率任一變動後 800 ms → `computeLiveSnapshot` 分市場計算（任一檔
-   報價不全、或美股需要匯率卻沒有 → 該市場本輪跳過）→ `upsertSnapshots` → `saveSnapshots` → 遞增 `historyTick`
-   通知圖表重讀。
+   報價不全、或美股需要匯率卻沒有 → 該市場本輪跳過；例外是查無行情的那檔不擋：不計入、以 `notFoundSymbols`
+   標成缺價日，與第 4 步回推同一套；整個市場都查無則沒有交易日可定日期，照舊跳過）→ `upsertSnapshots` →
+   `saveSnapshots` → 遞增 `historyTick` 通知圖表重讀。
 4. **歷史損益曲線**（`PnlHistorySection`）：依 `historyTick` 從 storage 重讀快照，`buildChartSeries` 組合已實現帳本與
    配息流水後交給 `PnlHistoryChart`（台股 TWD；美股可切 USD／TWD）。「建立／重算歷史回推」→ `runBackfillPipeline`：
    先查收盤價快取，缺的以 `getStockData(sym, '1d')` 抓（首輪 3 條並行，失敗者最多再重試 2 輪、每輪 1 條、間隔
    45 秒，查無代號（`NOT_FOUND`）不重試；還有其他失敗或全部標的都查無則整輪不寫入）；有交易流水時以流水重播
    （含已清倉部位），沒有才從現存持股逆推；只填第一筆 live 快照之前的日期 → 清掉該市場舊的 backfill 列再寫入。
    查無的標的不擋整輪：持有它的日子是**缺價日**（`CONTEXT.md`），照樣出列但數字只算查得到的、以 `notFoundSymbols`
-   標出，`buildChartSeries` 不畫這些點（期間的賣出與配息照樣累計），圖下以 `notFoundGapNote` 持久提示。
+   標出，`buildChartSeries` 不分來源都不畫這些點（期間的賣出與配息照樣累計），圖下以 `notFoundGapNote` 持久提示；
+   查無的標的仍在庫存、且最新一筆快照還缺它時，提示另說明刪除或改用正確代號重新新增後曲線才會接著畫。
 5. **賣出**（`SellModal` → `App.handlePortfolioSell`）：預覽與入帳都走 `utils/portfolioLedger.ts` 的 `buildSellResult`；
    產出 `RealizedTrade`（含當沖旗標，ADR-0003），追加手動賣出流水，批次扣減或移除。
 6. **對帳單匯入**（`ImportStatementModal` → `App.handleStatementImport`）：`parseStatementFile` 依內容判別格式（xlsx
@@ -446,7 +449,8 @@ K、D 與 MACD 各欄（DIF、DEA、柱）在交易決策 prompt 會被省略、
   其餘以 `diagnose` 依種類給處置（認不出再比對訊息），退避期間只有限流才說「限流中」（`progressLabel`、
   `applyBackfillProgress`、`backfillFailMessage`、`notFoundGapNote` 有行為鎖：
   `components/portfolio/PnlHistorySection.test.ts`）；
-  基本面 → `Banner`＋強制重抓。
+  庫存報價 → 查無另標 `notFound`，每日快照據此只讓查無那檔不擋整個市場、其餘失敗照舊整個市場跳過（行為鎖：
+  `components/portfolio/useHoldingPrices.test.ts`、`utils/portfolioHistory.test.ts`）；基本面 → `Banner`＋強制重抓。
 
 **降級：**
 - 台股日線 Yahoo 失敗 → FinMind 日線備援（只限台股 `1d`）；使用者取消（`AbortError`）直接上拋、不觸發備援；
