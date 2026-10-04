@@ -338,7 +338,7 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
               </>
             ) : gapNote ? (
               // 每一筆快照（回推或 live）都持有查無行情的標的 → 沒有畫得出的點。
-              // 只有 live 缺價日時還沒回推過：沒填買進日期就回推不出東西，改提示補填
+              // 只有 live 缺價日時還沒回推過：沒填買進日期就回推不出東西，改提示補填；持股已刪光則只說無持股
               <>
                 <p className="text-sm text-amber-300/80">{gapNote}</p>
                 {hasBackfill || datedLots.length > 0 ? (
@@ -347,8 +347,11 @@ const PnlHistorySection: React.FC<PnlHistorySectionProps> = ({
                     {st.running ? <Loader2 size={14} className="animate-spin" /> : <History size={14} />}
                     {st.running ? progressLabel(st) : (hasBackfill ? '重算歷史回推' : '建立歷史曲線')}
                   </button>
-                ) : (
+                ) : mLots.length > 0 ? (
                   <p className="text-sm text-slate-500">持股尚未填「買進日期」——點各批明細列的日期欄補填後，即可回推歷史損益</p>
+                ) : (
+                  // 持股已全部刪光：沒有買進日期可補，只說現況
+                  <p className="text-sm text-slate-500">此市場目前無持股；歷史快照將於新增持股後開始累積。</p>
                 )}
                 {st.error && <p className="text-danger text-xs">{st.error}</p>}
               </>
