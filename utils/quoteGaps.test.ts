@@ -87,3 +87,45 @@ describe('quoteGapKind：單檔的缺報價種類（健檢守門與 findQuoteGap
     expect(quoteGapKind(ok(0))).toBe('failed');
   });
 });
+
+// ── 查無行情分開說（2026-10-05 使用者拍板 B）──────────────────────────────
+// 查無（NOT_FOUND，多為已下市或代號有誤）是永久的、要使用者處理；限流這類讀取失敗等一下就好。
+// 說明文字把查無拆出來列在最前面；處理提示只放總損益卡（notFoundHint），市值卡與群組小計只列代號。
+// 判定不變：查無仍不可用（加總照舊「—」），健檢守門的 quoteGapKind 也照舊歸 failed。
+describe('查無行情：與其他讀取失敗分開列', () => {
+  const NF = { price: 0, loading: false, error: true, notFound: true };
+  const FAILED = { price: 0, loading: false, error: true };
+  const HINT = '（可能已下市或代號有誤，可刪除或改用正確代號重新新增）';
+
+  it('findQuoteGaps：查無另列 notFound，不進讀取失敗；沒有查無時不帶這欄', () => {
+    expect(findQuoteGaps(['A', 'B', 'C'], { A: NF, B: FAILED, C: ok(10) }))
+      .toEqual({ loading: [], failed: ['B'], notFound: ['A'] });
+    expect(findQuoteGaps(['B'], { B: FAILED })).toEqual({ loading: [], failed: ['B'] });
+  });
+
+  it('findQuoteGaps：載入中的不算查無（只認已定案的失敗）', () => {
+    expect(findQuoteGaps(['A'], { A: { ...NF, loading: true } })).toEqual({ loading: ['A'], failed: [] });
+  });
+
+  it('describeQuoteGaps：查無列最前面，接讀取失敗、載入中', () => {
+    expect(describeQuoteGaps({ loading: ['X'], failed: ['1234'], notFound: ['9999', '8888'] }))
+      .toBe('查無行情：9999、8888；讀取失敗：1234；1 檔報價載入中');
+  });
+
+  it('describeQuoteGaps：notFoundHint 只在有查無時於查無清單後補處理提示', () => {
+    expect(describeQuoteGaps({ loading: [], failed: ['1234'], notFound: ['9999'] }, { notFoundHint: true }))
+      .toBe(`查無行情：9999${HINT}；讀取失敗：1234`);
+    expect(describeQuoteGaps({ loading: [], failed: ['1234'] }, { notFoundHint: true })).toBe('讀取失敗：1234');
+  });
+
+  it('summarizeQuoteGaps：只有查無也不齊，提示依選項', () => {
+    expect(summarizeQuoteGaps(['2330', '9999'], { '2330': ok(600), '9999': NF }))
+      .toEqual({ complete: false, note: '查無行情：9999' });
+    expect(summarizeQuoteGaps(['2330', '9999'], { '2330': ok(600), '9999': NF }, { notFoundHint: true }))
+      .toEqual({ complete: false, note: `查無行情：9999${HINT}` });
+  });
+
+  it('quoteGapKind：查無照舊歸 failed（健檢「缺報價」徽章不受影響）', () => {
+    expect(quoteGapKind(NF)).toBe('failed');
+  });
+});
