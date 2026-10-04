@@ -20,14 +20,19 @@ export interface QuoteGaps {
 export const isUsableQuote = (p: QuoteLike | undefined): boolean =>
   !!p && !p.loading && !p.error && Number.isFinite(p.price) && p.price > 0;
 
+/** 缺報價的種類（QuoteGaps 的兩個清單） */
+export type QuoteGapKind = keyof QuoteGaps;
+
+/** 單檔的缺報價種類：可用回 null；沒有項目與載入中歸 loading，讀取失敗與價格無效歸 failed（健檢守門也用這套） */
+export const quoteGapKind = (p: QuoteLike | undefined): QuoteGapKind | null =>
+  isUsableQuote(p) ? null : (!p || p.loading ? 'loading' : 'failed');
+
 /** 盤點缺報價的代號；同代號多批只列一次、依第一次出現的順序。兩個清單皆空＝報價齊全 */
 export const findQuoteGaps = (symbols: string[], prices: Record<string, QuoteLike | undefined>): QuoteGaps => {
   const gaps: QuoteGaps = { loading: [], failed: [] };
   for (const symbol of new Set(symbols)) {
-    const p = prices[symbol];
-    if (isUsableQuote(p)) continue;
-    if (!p || p.loading) gaps.loading.push(symbol);
-    else gaps.failed.push(symbol);
+    const kind = quoteGapKind(prices[symbol]);
+    if (kind) gaps[kind].push(symbol);
   }
   return gaps;
 };

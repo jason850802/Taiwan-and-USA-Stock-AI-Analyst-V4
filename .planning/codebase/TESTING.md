@@ -66,6 +66,12 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
     點擊、輸入；會讀瀏覽器儲存或打網路的 hook／子元件要用 `vi.mock` 換成替身；以標題等文字定位、不要依賴
     樣式 class。例：`components/portfolio/quoteGapsDisplay.test.tsx`（統計卡、持股表群組小計與逐檔列在報價不齊時的顯示；
     明細列要點開才渲染，靜態輸出驗不到，它與逐檔列共用同一個股價格元件、實機另驗）。
+  - **hook 接線測試**（2026-10-03 起）：要鎖 hook 裡 handler 的接線（例如批次健檢一檔缺資料不拖垮同批）、
+    純函式又測不到時，用 `vi.mock('react')` 換成極簡假 dispatcher——state／ref 依呼叫順序存在槽位裡、layout effect
+    只在第一次渲染執行——直接呼叫 hook 拿到 handler 來驅動，讀結果時再「渲染」一次取最新 state；不裝新套件。
+    外部 I/O 照常在 `fetch` 層或用 `vi.mock` 換掉。限制：effect 依 deps 重跑與重新渲染的時機都沒模擬，只適合
+    「渲染一次 → 呼叫 handler → 讀結果」的流程；hook 改用沒模擬到的 React API 會直接報錯（不會默默失效），
+    屆時在假 dispatcher 補上。例：`components/portfolio/useHealthCheck.wiring.test.ts`。
 - **測試標題**：`it` 用繁體中文描述行為；`describe` 常以受測函式名分組（核對時 947 行標題中
   894 行含中文，純英文的多是 `describe('getModelForMode', …)` 這類分組）。
 - 同目錄沒有同名受測檔的 13 支（2026-10-01 第二次重算；第一次更正寫 11）：12 支在 `utils/`、1 支在
@@ -160,8 +166,8 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 ## 已知缺口
 
 - 沒有 React 元件的互動測試（點擊、輸入、effect 之後的狀態）——要 jsdom／Testing Library 得裝新套件＝先問
-  使用者。靜態畫面可用 `renderToStaticMarkup` 鎖（見「放置與命名」），互動與 effect 仍靠實機驗證
-  （CORE_RULES 的 runtime 人工項）。
+  使用者。靜態畫面可用 `renderToStaticMarkup` 鎖、hook 的 handler 接線可用假 dispatcher 鎖（見「放置與命名」），
+  點擊、輸入與 effect 仍靠實機驗證（CORE_RULES 的 runtime 人工項）。
 - `api/_lib/` 的 7 個模組都有測試。5 支 API handler 中，`api/gemini-stream.ts`（`api/gemini-stream.test.ts`）
   與 `api/yahoo/chart.ts`（`api/_lib/yahoo.handshake.test.ts` 內）有 handler 層測試；`api/finmind.ts`、
   `api/gemini.ts`、`api/yahoo/search.ts` 沒有。
@@ -180,3 +186,4 @@ npm run gate                    # 機械驗收五道，見「與機械 gate 的�
 *2026-10-01 第二次增補：畫面測試寫法（`renderToStaticMarkup`）與 `.test.tsx` 例外、`vi.mock` 四支、同名受測檔
 計數重算（59 檔中 46 有、13 沒有，三類 3＋5＋5）、守門測試表補 `vercelConfigGuard`。摘要表的規模數字仍是
 2026-09-30 的快照。*
+*2026-10-03 增補：hook 接線測試寫法（假 dispatcher）與已知缺口的對應說明。各處標日期的計數快照未重算。*
