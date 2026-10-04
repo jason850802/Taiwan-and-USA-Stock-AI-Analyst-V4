@@ -154,6 +154,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   // 報價不齊（任一持股載入中／讀取失敗／價格無效）→ 市值與總損益顯示「—」並列出缺哪幾檔，
   // 不把缺價那檔當 0 計（2026-10-01 使用者拍板，見 utils/quoteGaps.ts）
   const quoteStatus  = summarizeQuoteGaps(items.map(i => i.symbol), prices);
+  // 查無行情的處理提示只放總損益卡（2026-10-05 拍板 B）：市值卡與群組小計只列代號
+  const pnlQuoteNote = summarizeQuoteGaps(items.map(i => i.symbol), prices, { notFoundHint: true }).note;
   const totalPnL     = quoteStatus.complete && totalValue > 0
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
@@ -265,7 +267,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             tone={totalPnL === null ? 'neutral' : totalPnL >= 0 ? 'up' : 'down'}
             sub={totalPnL !== null && totalPnLPct !== null
               ? `${totalPnL >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}% · ${includeDividend ? '含息' : '不含息'}`
-              : !quoteStatus.complete ? quoteStatus.note : undefined}
+              : !quoteStatus.complete ? pnlQuoteNote : undefined}
           />
         </div>
       )}
