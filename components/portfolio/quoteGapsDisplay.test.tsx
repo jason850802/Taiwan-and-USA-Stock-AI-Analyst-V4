@@ -246,3 +246,24 @@ describe('查無行情：與其他讀取失敗分開列，處理提示只在總�
     expect(header(renderTable('TW', [A, C, B, D], prices))).toContain('—（查無行情：9999；讀取失敗：1234；1 檔報價載入中）');
   });
 });
+
+// 持股列比照（2026-10-05 code-review 收、使用者裁決）：頁首與群組小計說「查無行情」，列上也要說「查無行情」，
+// 不顯示名稱；其他不可用的照舊「讀取失敗」。明細列共用同一個股價格元件（靜態輸出驗不到，實機另驗）。
+describe('持股列：查無行情的那檔說「查無行情」（與頁首、群組小計說法一致）', () => {
+  const C = twLot('c', '9999', 50, 1000);
+  const NOT_FOUND: PriceData = { price: 0, name: '9999', loading: false, error: true, notFound: true };
+  const cells = (row: Record<string, string>, unit = '') => ({
+    股價: row[`目前股價${unit}`], 名稱欄: row['代號 / 名稱'], 市值: row[`目前市值${unit}`], 損益: row[`總損益${unit}`],
+  });
+
+  it('台股：查無那列說查無行情，同表讀取失敗那列照舊', () => {
+    const html = renderTable('TW', [A, B, C], { '2330': ok(600), '1234': FAILED, '9999': NOT_FOUND });
+    expect(cells(holdingRow(html, '9999'))).toEqual({ 股價: '查無行情', 名稱欄: '9999 1 批', 市值: '—', 損益: '—' });
+    expect(cells(holdingRow(html, '1234'))).toEqual({ 股價: '讀取失敗', 名稱欄: '1234 1 批', 市值: '—', 損益: '—' });
+  });
+
+  it('美股：查無那列說查無行情', () => {
+    const html = renderTable('US', [U], { AAPL: { ...NOT_FOUND, name: 'AAPL' } }, 31);
+    expect(cells(holdingRow(html, 'AAPL'), ' (USD)')).toEqual({ 股價: '查無行情', 名稱欄: 'AAPL 1 批', 市值: '—', 損益: '—' });
+  });
+});

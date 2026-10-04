@@ -67,11 +67,14 @@ const EditableDateCell: React.FC<{
 // ── 股價儲存格（逐檔列與明細列共用）────────────────────────────────────────
 // 報價狀態與頁首、群組小計同一套判定（utils/quoteGaps.ts）：載入中轉圈；有報價項目但不可用（抓取失敗，
 // 或回應成功但價格無效）一律「讀取失敗」，名稱欄也比照不顯示（2026-10-03 拍板：只改畫面、不動報價語意）。
+// 其中查無行情說「查無行情」，與頁首、群組小計分開列的說法一致（2026-10-05 拍板）。
 // 可用才顯示 children 的價格；還沒有報價項目（請求發出前的一瞬間）照舊「—」。
 const PriceCell: React.FC<{ quote: PriceData | undefined; children: React.ReactNode }> = ({ quote, children }) => {
   if (quote?.loading) return <Loader2 size={14} className="animate-spin text-slate-500 ml-auto" />;
   if (!quote) return <>—</>;
-  if (!isUsableQuote(quote)) return <span className="text-danger text-xs">讀取失敗</span>;
+  if (!isUsableQuote(quote)) {
+    return <span className="text-danger text-xs">{quote.notFound ? '查無行情' : '讀取失敗'}</span>;
+  }
   return <>{children}</>;
 };
 
