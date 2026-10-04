@@ -55,6 +55,11 @@
 - **Problem:** `getLatestPrice` falls back to `meta.regularMarketPrice` when no valid closes exist (`services/yahoo.ts` L429); for delisted/illiquid symbols this can be `undefined`/`NaN` and is then stored as a portfolio price and used in P/L math.
 - **Files:** `services/yahoo.ts` L423-440; consumed in `components/Portfolio.tsx` `fetchPrice` L586-594.
 - **Fix approach:** Validate the price is a finite number > 0 before treating the fetch as successful.
+  - 2026-10-03 註：根源（`fetchLatestPrice` 近 5 日沒有有效收盤、`regularMarketPrice` 也缺時回 `price: undefined`）
+    仍在，改由消費端各自守住：報價快取不寫入無效價（`getLatestPrice`）；庫存頁頁首、群組小計與持股列以
+    `utils/quoteGaps.ts` 的 `isUsableQuote` 判定（2026-10-01／10-03）；健檢送 AI 前以同一判定擋下、標「缺報價」
+    （2026-10-03，`components/portfolio/useHealthCheck.ts` 的 `healthDataGapResult`——之前無效價會在
+    `formatHealthCheckData` 丟 TypeError、拖垮整批）。抓取已移到 `components/portfolio/useHoldingPrices.ts`，上列行號已失準。
 
 ### LLM emits actionable BUY/SELL/停損/停利 levels
 

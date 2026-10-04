@@ -218,9 +218,11 @@ state 鏡像（`portfolioItems`、`realizedTrades`，變更即由 `useEffect` �
    讀取器動態載入；國泰台股經名錄反查代號）→ `buildImportPlan`（比對匯入紀錄去重、排序、乾跑重播找出期初缺口）→
    使用者補缺口成本 → `replayStatement` 預覽 → 確認後一次套用：持股換成重播結果、追加已實現紀錄、寫入匯入紀錄
    與交易流水。
-7. **AI 健檢**（`useHealthCheck`）：每檔組 `PortfolioHealthItem`（成本換算到報價幣別、`getStockData(sym, '1d')`、
-   盤中預估量）→ 動態載入 `analyzePortfolioHealth`。單檔走串流並即時顯示；全部健檢與重試失敗是「資料準備 3 條並行、
-   行情失敗的檔位個別標錯、其餘一次送 LLM」（同樣打串流端點，但不顯示中途文字）。回應先解析末尾的 JSON 決策區
+7. **AI 健檢**（`useHealthCheck`）：每檔組 `PortfolioHealthItem`（成本換算到報價幣別——美股走 `lotCostUsd`，
+   成本用買入匯率、同持股表；`getStockData(sym, '1d')`、盤中預估量）→ 送 AI 前先過資料守門 `healthDataGapResult`
+   （K 線抓不到標「資料取得失敗」；沒有可用報價——判定同頁首的 `isUsableQuote`——標「缺報價」，都不送 AI）→
+   動態載入 `analyzePortfolioHealth`。單檔走串流並即時顯示；全部健檢與重試失敗是「資料準備 3 條並行、
+   沒過守門的檔位個別標錯、其餘一次送 LLM」（同樣打串流端點，但不顯示中途文字）。回應先解析末尾的 JSON 決策區
    （`parseHealthDecisions`），失敗才退回 regex；批次再以 `splitHealthReport` 切成各檔段落。每檔以 `healthSeqRef`
    世代守衛，單檔與批次重疊時以後起跑者為準。
 8. **新增並 AI 分析**（`Portfolio` 的 `handleAddAndAnalyze`）：先新增持股，再抓日線並呼叫 `analyzeTradeDecision`
