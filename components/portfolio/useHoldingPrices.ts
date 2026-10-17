@@ -5,10 +5,20 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { PortfolioItem } from '../../types';
 import { getLatestPrice, getLatestPriceName, patchLatestPriceName, peekLatestPrice } from '../../services/yahoo';
 import type { GetLatestPriceOpts } from '../../services/yahoo';
+import { DataFetchError } from '../../services/fetchError';
 import { isTwStock } from '../../utils/portfolioFees';
 import { createHoldingPriceQueue } from './holdingPriceQueue';
 
-export interface PriceData { price: number; name: string; loading: boolean; error: boolean; date?: string; fetchedAt?: number }
+export interface PriceData { price: number; name: string; loading: boolean; error: boolean; notFound?: boolean; date?: string; fetchedAt?: number }
+
+/**
+ * 報價抓取失敗時的狀態。畫面一律是「讀取失敗」；查無行情（NOT_FOUND）是永久的，另標 notFound——
+ * 每日快照據此只讓那檔不擋整個市場（缺價日，2026-10-01 拍板），限流、後端沒開等暫時失敗照舊擋。
+ */
+export const failedQuote = (symbol: string, e: unknown): PriceData => ({
+  price: 0, name: symbol, loading: false, error: true,
+  ...(e instanceof DataFetchError && e.kind === 'NOT_FOUND' ? { notFound: true } : {}),
+});
 
 const USD_TWD_SYMBOL = 'USDTWD=X';
 
@@ -156,8 +166,8 @@ export const useHoldingPrices = (items: PortfolioItem[]) => {
         const data = { ...r, loading: false, error: false };
         publish(data);
         enrichPriceName(symbol, data, true);
-      } catch {
-        publish({ price: 0, name: symbol, loading: false, error: true });
+      } catch (e) {
+        publish(failedQuote(symbol, e));
       }
     }, true).finally(() => { request.pending = undefined; });
     return request.pending;

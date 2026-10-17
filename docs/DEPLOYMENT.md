@@ -35,7 +35,7 @@ openssl rand -hex 24
 
 前端會把 `VITE_PROXY_SECRET` 放進每次 `/api/*` 請求的 `X-Proxy-Secret` header。改密鑰後必須重新 `npm run build` 並重新部署，因為 `VITE_` 變數是 build-time 注入。
 
-`VITE_PROXY_SECRET` 會出現在 `dist/` 是預期行為；它不是保護 Gemini 帳單的最後祕密，只是提高外部濫用門檻。真正不可外洩的是 `GEMINI_API_KEY`，驗收時 `grep -r "AIza" dist/` 必須為 0。
+`VITE_PROXY_SECRET` 會出現在 `dist/` 是預期行為；它不是保護 Gemini 帳單的最後祕密，只是提高外部濫用門檻。真正不可外洩的是 `GEMINI_API_KEY`，驗收時跑 `npm run gate`，第 4 道金鑰掃描必須乾淨（掃 `dist/`、git 追蹤原始碼，並拿 `.env` 的實際值比對）。不要用 `grep -r "AIza" dist/` 代替：真金鑰不一定是 `AIza` 開頭，這種 grep 掃不到（見 `CORE_RULES.md`「機械驗收 gate」段）。
 
 ## 3. Upstash Redis 建立
 
@@ -101,5 +101,5 @@ ALLOWED_ORIGIN=http://localhost:3000,http://localhost:3001,https://xxx.vercel.ap
 - 對 `/api/gemini` 一分鐘連發超過 10 次，應觀察到 429。
 - `curl -X OPTIONS -i` 檢查 CORS header，且不得出現 `Access-Control-Allow-Origin: *`。
 - 2330 與 6488 都能顯示真實外資/投信籌碼，不應出現「籌碼暫時不可用」。
-- `grep -r "AIza" dist/` 結果必須為 0。
+- `npm run gate` 的金鑰掃描必須乾淨（不要用 `grep -r "AIza" dist/` 代替，理由見第 2 節）。
 - 若故意填錯 Upstash 變數，請求應 fail-open 放行，後端 log 應有 `[guard] ratelimit unavailable, failing open`。

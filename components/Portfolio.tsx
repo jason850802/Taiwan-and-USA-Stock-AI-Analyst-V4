@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { PortfolioItem, RealizedTrade } from '../types';
 import { getStockData } from '../services/yahoo';
+import { classifyCaught } from '../services/fetchError';
 import { isTwStock, calcTwSellFeeAndTax, calcUsFee } from '../utils/portfolioFees';
 import { SellInput } from '../utils/portfolioLedger';
-import { lotCostTwd, hasBuyRate } from '../utils/fx';
+import { lotCostTwd, costTwdUsesLiveRate, USD_TWD_FALLBACK } from '../utils/fx';
+import { isUsableQuote, summarizeQuoteGaps } from '../utils/quoteGaps';
 import { formatQuoteTime } from '../utils/quoteTime';
 import { Plus, RefreshCw, Wallet, Loader2, DollarSign, BrainCircuit, CalendarDays, MessageSquare, HeartPulse, Upload, Download, Coins, DatabaseBackup } from 'lucide-react';
 import Badge from './ui/Badge';
@@ -24,6 +26,7 @@ import { usePortfolioForm } from './portfolio/usePortfolioForm';
 import { useHealthCheck } from './portfolio/useHealthCheck';
 import { useLotDividendUpdate } from './portfolio/useLotDividendUpdate';
 import { usePortfolioBackup } from './portfolio/usePortfolioBackup';
+import { tradeFailMarkdown } from './portfolio/tradeFailMarkdown';
 
 interface PortfolioProps {
   items: PortfolioItem[];
@@ -44,7 +47,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const { historyTick } = useDailySnapshot(items, prices, usdTwdRate);
   const {
     showAddModal, setShowAddModal, form, setForm, feeInput, setFeeInput, setFeeTouched,
-    setRateTouched, formIsTW, shares, rate, preview, handleAdd,
+    setRateTouched, formIsTW, shares, rate, hasLiveRate, preview, handleAdd,
   } = usePortfolioForm(onAdd, usdTwdRate);
   const {
     healthResults, healthModalSymbol, setHealthModalSymbol, batchChecking,
@@ -108,8 +111,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
         recentData
       );
       setTradeResult(result);
-    } catch {
-      setTradeResult('**AI 分析失敗**\n\n請稍後再試，或檢查 API Key 是否設定正確。');
+    } catch (e) {
+      setTradeResult(tradeFailMarkdown(classifyCaught(e)));
     } finally {
       setTradeAnalyzing(false);
       setShowTradeResult(true);
@@ -124,19 +127,20 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   const twInvested  = twItems.reduce((s, i) => s + i.totalCost, 0);
   // 成本用買入匯率、市值用即時匯率（使用者拍板口徑）；缺買入匯率的舊批次退回即時匯率
   const usInvestedTwd = usItems.reduce((s, i) => s + lotCostTwd(i, rate), 0);
-  const usInvestedEstimated = usItems.some(i => !hasBuyRate(i));
+  // 只有台幣成本真的靠當下匯率換算的批次才算估；TWD 計價批次是實付台幣，沒記買入匯率也不算（2026-10-03 拍板）
+  const usInvestedEstimated = usItems.some(costTwdUsesLiveRate);
   const totalInvested = twInvested + usInvestedTwd;
 
   const totalValue = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;
     const valTwd = isTwStock(i.symbol) ? p.price * i.totalShares : p.price * i.totalShares * rate;
     return s + valTwd;
   }, 0);
 
   const totalSellFees = items.reduce((s, i) => {
     const p = prices[i.symbol];
-    if (!p || p.loading || p.error) return s;
+    if (!isUsableQuote(p)) return s;
     if (isTwStock(i.symbol)) {
       const { sellFee, tax } = calcTwSellFeeAndTax(p.price * i.totalShares, i.symbol);
       return s + sellFee + tax;
@@ -147,10 +151,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
   }, 0);
 
   const totalCashDiv = items.reduce((s, i) => s + i.cashDividends, 0);
-  const totalPnL     = totalValue > 0
+  // 報價不齊（任一持股載入中／讀取失敗／價格無效）→ 市值與總損益顯示「—」並列出缺哪幾檔，
+  // 不把缺價那檔當 0 計（2026-10-01 使用者拍板，見 utils/quoteGaps.ts）
+  const quoteStatus  = summarizeQuoteGaps(items.map(i => i.symbol), prices);
+  // 查無行情的處理提示只放總損益卡（2026-10-05 拍板 B）：市值卡與群組小計只列代號
+  const pnlQuoteNote = summarizeQuoteGaps(items.map(i => i.symbol), prices, { notFoundHint: true }).note;
+  const totalPnL     = quoteStatus.complete && totalValue > 0
     ? totalValue - totalInvested - totalSellFees + (includeDividend ? totalCashDiv : 0) : null;
   const totalPnLPct  = totalPnL !== null && totalInvested > 0 ? (totalPnL / totalInvested) * 100 : null;
-  const hasAnyPrice  = items.some(i => prices[i.symbol]?.price > 0);
   const loadedQuoteTimes = Array.from(new Set(items.map(i => i.symbol))).flatMap(symbol => {
     const p = prices[symbol];
     return p && !p.loading && !p.error && Number.isFinite(p.fetchedAt)
@@ -237,14 +245,20 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
       {/* ── 全局摘要 ───────────────────────────────────────────────────── */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* 缺買入匯率的 USD 計價批次在匯率未取得時實際以備用匯率換算，小字要照實寫（2026-10-03 拍板） */}
           <StatCard label="總投入成本 (TWD)" value={`${fmt(totalInvested)} 元`}
             sub={usItems.length === 0 ? undefined
-              : usInvestedEstimated ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
-              : '美股依買入匯率換算'} />
+              : !usInvestedEstimated ? '美股依買入匯率換算'
+              : hasLiveRate ? '美股依買入匯率換算（部分批次無匯率，以即時匯率估）'
+              : `美股依買入匯率換算（部分批次無匯率；即時匯率未取得，暫以 ${USD_TWD_FALLBACK} 估）`} />
+          {/* 匯率未取得時美股照舊以備用匯率估，但要標示出來（2026-10-01 拍板）；
+              兩張卡的小字都看 usePortfolioForm 的 hasLiveRate，與數字用的 rate 出自同一個判斷 */}
           <StatCard
             label="目前市值 (TWD)"
-            value={hasAnyPrice ? `${fmt(totalValue)} 元` : '—'}
-            sub={usdTwdRate > 0 ? `USD/TWD ${fmt(usdTwdRate, 2)}` : undefined}
+            value={quoteStatus.complete ? `${fmt(totalValue)} 元` : '—'}
+            sub={!quoteStatus.complete ? quoteStatus.note
+              : hasLiveRate ? `USD/TWD ${fmt(rate, 2)}`
+              : usItems.length > 0 ? `匯率未取得，暫以 ${USD_TWD_FALLBACK} 估` : undefined}
           />
           <StatCard label="已領現金股利" value={`${fmt(totalCashDiv)} 元`} tone="up" />
           <StatCard
@@ -253,7 +267,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
             tone={totalPnL === null ? 'neutral' : totalPnL >= 0 ? 'up' : 'down'}
             sub={totalPnL !== null && totalPnLPct !== null
               ? `${totalPnL >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}% · ${includeDividend ? '含息' : '不含息'}`
-              : undefined}
+              : !quoteStatus.complete ? pnlQuoteNote : undefined}
           />
         </div>
       )}
@@ -611,7 +625,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ items, onAdd, onDelete, onUpdate,
           <Skeleton variant="lines" lines={4} />
           <div className="text-center">
             <p className="text-slate-400 text-sm">正在評估您的買入決策，請稍候…</p>
-            <p className="text-slate-500 text-xs mt-1">使用 Gemini 3.1 Pro 思考模式</p>
+            {/* 對應 analyzeTradeDecision 送出的 mode: 'fast'，改 mode 要一起改這句；型號只在後端決定，這裡不寫型號名 */}
+            <p className="text-slate-500 text-xs mt-1">使用快捷模式</p>
           </div>
         </div>
       </Modal>

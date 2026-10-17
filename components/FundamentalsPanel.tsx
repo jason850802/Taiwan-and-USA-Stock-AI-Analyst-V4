@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Bot } from 'lucide-react';
 import { TwFundamentals } from '../types';
 import { getTwFundamentals } from '../services/finmind';
+import { isTwCode } from '../utils/market';
 import AnalysisResult from './AnalysisResult';
 import Banner from './ui/Banner';
 import Button from './ui/Button';
@@ -19,7 +20,14 @@ interface FundamentalsPanelProps {
 }
 
 const stripTwCode = (raw: string): string => raw.trim().toUpperCase().replace(/\.TWO?$/i, '');
-const isTwCode = (code: string): boolean => /^\d{3,6}[A-Z]?$/.test(code);
+
+// 搜尋輸入 → 交給 FinMind 的台股純代碼；不是台股回 null（面板改顯示「僅支援台股」提示）。
+// 只剝一層後綴，所以判斷必須用 isTwCode：換成 isTwStock 會放行「2330.TW.TW」剝剩的「2330.TW」。
+// 匯出供 FundamentalsPanel.test.ts 鎖行為。
+export const toTwCode = (raw: string): string | null => {
+  const code = stripTwCode(raw);
+  return isTwCode(code) ? code : null;
+};
 
 const WARNING_LABELS: Record<string, string> = {
   info: '公司基本資料',
@@ -104,8 +112,8 @@ const FundamentalsPanel: React.FC<FundamentalsPanelProps> = ({ initialSymbol }) 
   }, []);
 
   const handleSelect = (raw: string) => {
-    const code = stripTwCode(raw);
-    if (!isTwCode(code)) {
+    const code = toTwCode(raw);
+    if (code === null) {
       setNonTwWarning(true);
       return;
     }

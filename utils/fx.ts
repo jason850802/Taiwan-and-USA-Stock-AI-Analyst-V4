@@ -18,15 +18,31 @@ export const lotBuyRate = (lot: PortfolioItem, liveRate: number): number =>
 export const hasBuyRate = (lot: PortfolioItem): boolean =>
   lot.exchangeRate !== undefined && lot.exchangeRate > 0;
 
+/**
+ * 該批是否以 USD 計價且記了美元成本——是的話成本以 totalCostUSD 為準，否則以 totalCost（實付台幣）為準。
+ * 寫成 type guard：判定為真時呼叫端的 lot.totalCostUSD 自動收窄成 number。
+ * 下面三個成本函式共用這一個判定，分支才不會各寫各的。
+ */
+export const hasUsdCost = (lot: PortfolioItem): lot is PortfolioItem & { totalCostUSD: number } =>
+  lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null;
+
 /** 美股批次成本（TWD）：USD 計價 → ×買入匯率；TWD 計價 → totalCost 本來就是實付台幣 */
 export const lotCostTwd = (lot: PortfolioItem, liveRate: number): number =>
-  lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null
+  hasUsdCost(lot)
     ? lot.totalCostUSD * lotBuyRate(lot, liveRate)
     : lot.totalCost;
 
+/**
+ * 該批的台幣成本是否得靠呼叫端給的當下匯率換算（即時匯率；取不到時是備用匯率）：USD 計價、沒記買入匯率。
+ * 與 lotCostTwd 的分支對應——TWD 計價（含幣別未填的舊資料）的台幣成本是實付，不經任何匯率。
+ * 統計卡據此決定要不要標示估算（2026-10-03 使用者拍板）。
+ */
+export const costTwdUsesLiveRate = (lot: PortfolioItem): boolean =>
+  hasUsdCost(lot) && !hasBuyRate(lot);
+
 /** 美股批次成本（USD）：USD 計價 → 固定值；TWD 計價 → ÷買入匯率 */
 export const lotCostUsd = (lot: PortfolioItem, liveRate: number): number =>
-  lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null
+  hasUsdCost(lot)
     ? lot.totalCostUSD
     : lot.totalCost / lotBuyRate(lot, liveRate);
 

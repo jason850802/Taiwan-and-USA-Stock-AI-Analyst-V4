@@ -77,6 +77,6 @@
 
 ## 技術棧與資料鏈備註
 
-- 相依套件需**同時維護兩處**：`package.json` 與 `index.html` 的 esm.sh importmap。
-- 行情資料鏈：Yahoo Finance（走公共 CORS proxy 輪替）為主，失敗時 fallback 到 FinMind 免費層；遇到 429 先懷疑限流，再考慮改碼。
+- 相依套件只維護 `package.json`＋`package-lock.json`（`index.html` 的 esm.sh importmap 已於 2026-07-13 移除，Vite 從 `node_modules` 解析打包）。
+- 行情資料鏈：Yahoo Finance 為主，由後端 `/api/yahoo/chart` 抓（公共 CORS proxy 已於 2026-07-05 移除）；台股日線失敗時 fallback 到 FinMind 免費層（同樣經後端 `/api/finmind`）。遇到 429 先懷疑限流，再考慮改碼。
 - 更完整的技術棧、架構、慣例與已知問題說明，見 `.planning/codebase/` 下的 `STACK.md`、`ARCHITECTURE.md`、`CONVENTIONS.md`、`CONCERNS.md`、`INTEGRATIONS.md`。

@@ -251,3 +251,69 @@ describe('buildBackfillFromTxns｜買入匯率缺漏時以歷史市場匯率回�
     expect(rows[0].totalCostTwd).toBeUndefined();
   });
 });
+
+// ── 缺價日（2026-10-01 使用者拍板）────────────────────────────────────────────
+// 查無行情（NOT_FOUND）的標的沒有收盤序列，持有它的那幾天算不出完整損益。
+// 這些天照樣出列（市值與成本只算查得到的），以 notFoundSymbols 標出缺哪幾檔，由圖表決定不畫；
+// 只持有它的日子也要出列，缺價日才標得完整。沒列進 notFoundSymbols 的缺序列標的照舊（上市前語意）。
+describe('buildBackfillFromTxns｜缺價日', () => {
+  // AAA 01/02 買 1000@10 一路持有；XYZ（查無）01/03 買 100@50、01/06 全賣
+  const txns: TxnForBackfill[] = [
+    { date: '2026-01-02', symbol: 'AAA', market: 'TW', kind: 'buy', shares: 1000, gross: 10000, fee: 14, tax: 0 },
+    { date: '2026-01-03', symbol: 'XYZ', market: 'TW', kind: 'buy', shares: 100, gross: 5000, fee: 7, tax: 0 },
+    { date: '2026-01-06', symbol: 'XYZ', market: 'TW', kind: 'sell', shares: 100, gross: 4000, fee: 5, tax: 12 },
+  ];
+  const closeSeries = {
+    AAA: series([['2026-01-02', 10], ['2026-01-03', 11], ['2026-01-05', 11.5], ['2026-01-06', 12]]),
+  };
+  const strip = (rows: DailyPnlSnapshot[]) => rows.map(({ capturedAt, ...rest }) => rest);
+
+  it('持有查無標的的日子標出缺哪檔、數字只算查得到的；沒持有它的日子不標', () => {
+    const rows = buildBackfillFromTxns({ market: 'TW', txns, closeSeries, notFoundSymbols: ['XYZ'], capturedAt: T });
+    // 手排：賣費 max(1, floor(市值×0.001425))＋稅 floor(市值×0.003)
+    expect(strip(rows)).toEqual([
+      // 01/02：只有 AAA 10,000（14＋30）
+      { date: '2026-01-02', market: 'TW', source: 'backfill',
+        marketValue: 10000, totalCost: 10014, estSellCosts: 44, cashDividends: 0, symbolCount: 1 },
+      // 01/03：AAA 11,000（15＋33）；XYZ 持有但查無 → 不計、標出
+      { date: '2026-01-03', market: 'TW', source: 'backfill',
+        marketValue: 11000, totalCost: 10014, estSellCosts: 48, cashDividends: 0, symbolCount: 1, notFoundSymbols: ['XYZ'] },
+      // 01/05：AAA 11,500（16＋34）；XYZ 仍持有
+      { date: '2026-01-05', market: 'TW', source: 'backfill',
+        marketValue: 11500, totalCost: 10014, estSellCosts: 50, cashDividends: 0, symbolCount: 1, notFoundSymbols: ['XYZ'] },
+      // 01/06：XYZ 當日全賣 → 不再持有、不標；AAA 12,000（17＋36）
+      { date: '2026-01-06', market: 'TW', source: 'backfill',
+        marketValue: 12000, totalCost: 10014, estSellCosts: 53, cashDividends: 0, symbolCount: 1 },
+    ]);
+  });
+
+  it('只持有查無標的的日子也出列（數字為 0），缺價日才標得完整', () => {
+    // XYZ 01/02 先買且一路持有；AAA 01/05 才買
+    const early: TxnForBackfill[] = [
+      { date: '2026-01-02', symbol: 'XYZ', market: 'TW', kind: 'buy', shares: 100, gross: 5000, fee: 7, tax: 0 },
+      { date: '2026-01-05', symbol: 'AAA', market: 'TW', kind: 'buy', shares: 1000, gross: 10000, fee: 14, tax: 0 },
+    ];
+    const rows = buildBackfillFromTxns({ market: 'TW', txns: early, closeSeries, notFoundSymbols: ['XYZ'], capturedAt: T });
+    expect(rows.map(r => [r.date, r.marketValue, r.totalCost, r.symbolCount, r.notFoundSymbols])).toEqual([
+      ['2026-01-02', 0, 0, 0, ['XYZ']],
+      ['2026-01-03', 0, 0, 0, ['XYZ']],
+      ['2026-01-05', 11500, 10014, 1, ['XYZ']],
+      ['2026-01-06', 12000, 10014, 1, ['XYZ']],
+    ]);
+  });
+
+  it('同一天持有多檔查無標的：依代號排序列出', () => {
+    const two: TxnForBackfill[] = [
+      ...txns,
+      { date: '2026-01-03', symbol: 'ABC', market: 'TW', kind: 'buy', shares: 10, gross: 1000, fee: 1, tax: 0 },
+    ];
+    const rows = buildBackfillFromTxns({ market: 'TW', txns: two, closeSeries, notFoundSymbols: ['XYZ', 'ABC'], capturedAt: T });
+    expect(rows.find(r => r.date === '2026-01-05')!.notFoundSymbols).toEqual(['ABC', 'XYZ']);
+  });
+
+  it('沒列進 notFoundSymbols 的缺序列標的照舊：不計也不標（上市前語意不變）', () => {
+    const rows = buildBackfillFromTxns({ market: 'TW', txns, closeSeries, capturedAt: T });
+    expect(rows.map(r => r.marketValue)).toEqual([10000, 11000, 11500, 12000]);
+    expect(rows.every(r => r.notFoundSymbols === undefined)).toBe(true);
+  });
+});

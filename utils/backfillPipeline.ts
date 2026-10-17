@@ -70,15 +70,19 @@ export type BackfillResult =
       snapshots: DailyPnlSnapshot[];
       fetched: number;        // 本輪實際打網路抓到的檔數
       cacheHits: number;      // 吃到快取、免抓的檔數
-      missedSymbols: string[];// 成功路徑恆為空
+      missedSymbols: string[];// 成功路徑恆為空（查無的標的不算 missed：標在快照列的 notFoundSymbols）
       kind?: undefined;
       detail?: undefined;
+      notFoundSymbols?: undefined;
     }
   | {
       ok: false;
       kind?: FetchErrorKind | 'NO_DATA';   // 認不出來就 undefined，交由 UI 退回訊息比對
-      detail: string;                      // 最後一個錯誤的原文（未經包裝）
+      // 回報那個錯誤的原文（未經包裝）：還有該處置的失敗（限流、後端沒開…）就是它們最近一次的錯誤，
+      // 全部標的都查無才是查無的——UI 的處置提示只對前者
+      detail: string;
       missedSymbols: string[];
+      notFoundSymbols: string[];           // missedSymbols 之中查無代號（NOT_FOUND）、沒有重試的那幾檔
       snapshots?: undefined;
       fetched?: undefined;
       cacheHits?: undefined;
@@ -100,7 +104,9 @@ const DEFAULT_PORTS: BackfillPorts = {
 
 /**
  * 跑完一個市場的歷史回推，回傳待合併的快照列（不負責存檔）。
- * 重試政策沿用既有：首輪 3 workers、失敗者再重試 2 輪各 1 worker、輪間等 45 秒。
+ * 重試政策沿用既有：首輪 3 workers、失敗者再重試 2 輪各 1 worker、輪間等 45 秒；
+ * 查無代號（NOT_FOUND）重試也是同樣結果，不進重試，也不擋整輪——持有它的日子標成缺價日
+ * （2026-10-01 拍板）。
  */
 export const runBackfillPipeline = async (params: BackfillParams): Promise<BackfillResult> => {
   const { market, items, txns, realizedTrades, usdTwdRate, onProgress } = params;
@@ -115,7 +121,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
     ? [...new Set(txns.map(t => t.symbol))]           // 含已清倉部位（完整歷史）
     : [...new Set(datedLots.map(l => l.symbol))];
   if (symbols.length === 0) {
-    return { ok: false, kind: 'NO_DATA', detail: '此市場沒有可回推的標的', missedSymbols: [] };
+    return { ok: false, kind: 'NO_DATA', detail: '此市場沒有可回推的標的', missedSymbols: [], notFoundSymbols: [] };
   }
   // 美股台幣口徑：市值側要「每一天的匯率」才看得出匯差 → 把匯率當成一檔標的一起抓。
   // 抓失敗不擋回推（USD 曲線本來就不需要它），只是那段沒有台幣可畫。
@@ -138,8 +144,15 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
   let done = cacheHits;
   onProgress?.({ done, total });
 
-  // 記錄最後一個錯誤，用來區分「限流」與「後端掛掉」——兩者的處置完全不同
-  let lastError: { kind?: FetchErrorKind; message: string } = { message: '' };
+  // 每檔最近一次失敗（成功就移除），用來決定誰該重試、退避成因、最終回報哪個錯誤——
+  // 「限流」與「後端掛掉」的處置完全不同，查無代號則重試也沒用，三者不能互相帶偏
+  // （例：查無那檔最後才失敗，或限流那檔後來重試成功，都不能讓回報的原因跟著它走）。
+  type Failure = { kind?: FetchErrorKind; message: string; seq: number };
+  const failures = new Map<string, Failure>();
+  let failureSeq = 0;
+  const latestFailure = (syms: string[]): Failure =>
+    syms.map(s => failures.get(s)!).reduce((a, b) => (b.seq > a.seq ? b : a));
+  const isNotFound = (sym: string) => failures.get(sym)?.kind === 'NOT_FOUND';
   const freshlyFetched: { symbol: string; bars: CloseBar[] }[] = [];
 
   const fetchBatch = async (list: string[], workers: number): Promise<string[]> => {
@@ -156,11 +169,14 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
       onSettled: (sym, result) => {
         if (!result.ok) {
           const e = result.error as { message?: unknown } | undefined;
-          lastError = {
+          failures.set(sym, {
             kind: result.error instanceof DataFetchError ? result.error.kind : undefined,
             message: String(e?.message ?? result.error ?? ''),
-          };
+            seq: failureSeq++,
+          });
           missed.push(sym);
+        } else {
+          failures.delete(sym);
         }
         done = Math.min(done + 1, total);
         onProgress?.({ done, total });
@@ -169,22 +185,37 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
     return missed;
   };
 
-  let pending = await fetchBatch(toFetch, FIRST_ROUND_WORKERS);
+  // 查無代號（NOT_FOUND）重試也是同樣結果：直接算失敗，不進退避（2026-10-01 拍板）
+  const notFound: string[] = [];
+  const keepRetryable = (missed: string[]): string[] => {
+    notFound.push(...missed.filter(isNotFound));
+    return missed.filter(s => !isNotFound(s));
+  };
+
+  let pending = keepRetryable(await fetchBatch(toFetch, FIRST_ROUND_WORKERS));
   // 重試兩輪：降併發並拉長等待，讓限流視窗（每分鐘）先過去
   for (let round = 0; round < RETRY_ROUNDS && pending.length > 0; round++) {
-    onProgress?.({ done, total, retrying: pending.length, waitSec: RETRY_WAIT_MS / 1000, kind: lastError.kind });
+    onProgress?.({ done, total, retrying: pending.length, waitSec: RETRY_WAIT_MS / 1000, kind: latestFailure(pending).kind });
     await ports.sleep(RETRY_WAIT_MS);
     done = Math.max(0, total - pending.length);
     onProgress?.({ done, total, retrying: pending.length, waitSec: 0 });
-    pending = await fetchBatch(pending, RETRY_WORKERS);
+    pending = keepRetryable(await fetchBatch(pending, RETRY_WORKERS));
   }
 
   ports.closeCache.putMany(freshlyFetched, firstTxnDate);   // 一次寫入本輪抓到的全部序列
 
   // 匯率抓失敗不算失敗：USD 曲線照常，只是這輪沒有台幣口徑的資料
-  const missedReal = pending.filter(s => s !== FX_SYMBOL);
-  if (missedReal.length > 0) {
-    return { ok: false, kind: lastError.kind, detail: lastError.message, missedSymbols: missedReal };
+  const notFoundReal = notFound.filter(s => s !== FX_SYMBOL);
+  const retriedReal = pending.filter(s => s !== FX_SYMBOL);
+  // 查無是永久的，重按也不會好：只剩查無時照建曲線，持有它們的日子標成缺價日（2026-10-01 拍板）。
+  // 還有暫時失敗（限流、後端沒開…）等一下重按有意義，照舊整輪不寫；全部標的都查無則沒東西可畫。
+  if (retriedReal.length > 0 || notFoundReal.length === symbols.length) {
+    // 還有該處置的失敗就報它，全部查無才報查無
+    const reported = latestFailure(retriedReal.length > 0 ? retriedReal : notFoundReal);
+    return {
+      ok: false, kind: reported.kind, detail: reported.message,
+      missedSymbols: [...notFoundReal, ...retriedReal], notFoundSymbols: notFoundReal,
+    };
   }
   const fxSeries = market === 'US' ? closeSeries[FX_SYMBOL] : undefined;
 
@@ -215,6 +246,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
         fxSeries,
+        notFoundSymbols: notFoundReal,
         capturedAt: Date.now(),
       })
     : buildBackfillRows({
@@ -240,6 +272,7 @@ export const runBackfillPipeline = async (params: BackfillParams): Promise<Backf
         boundaryDate,
         usdTwdRate: market === 'US' ? rate : undefined,
         fxSeries,
+        notFoundSymbols: notFoundReal,
         capturedAt: Date.now(),
       }).rows;
 

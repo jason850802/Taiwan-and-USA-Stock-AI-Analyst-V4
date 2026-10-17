@@ -23,7 +23,8 @@ export const useDailySnapshot = (
       : [item.symbol, null];
   }));
 
-  // 守衛 A/B 內建於 computeLiveSnapshot（部分報價/缺匯率 → 該市場跳過，寧缺勿錯）。
+  // 守衛 A/B 內建於 computeLiveSnapshot（部分報價/缺匯率 → 該市場跳過，寧缺勿錯；
+  // 查無行情的那檔例外：不計入、標成缺價日，不擋整個市場）。
   // fallback 32 只准表格顯示用——這裡把無效匯率轉 undefined，禁入持久化快照。
   useEffect(() => {
     if (items.length === 0) return;
