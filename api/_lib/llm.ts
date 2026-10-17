@@ -183,10 +183,13 @@ function getClaudeCliModel(mode: GeminiRequest['mode']): string {
   return (process.env.CLAUDE_CLI_MODEL_FAST ?? '').trim() || 'sonnet';
 }
 
-/** 模式對應 CLI effort；env 可覆寫 */
+/**
+ * 模式對應 CLI effort；env 可覆寫。思考預設 xhigh、不用 max：實測 Sonnet 5.5 設 max 會 300 秒零字逾時，
+ * Opus 5.5 xhigh 首字約 66 秒（Opus 的 max 未量過）。快取鍵不含 effort，改預設要同步 bump ENGINE_TAG。
+ */
 function getClaudeCliEffort(mode: GeminiRequest['mode']): string {
   if (mode === 'thinking') {
-    return (process.env.CLAUDE_CLI_EFFORT_THINKING ?? '').trim() || 'max';
+    return (process.env.CLAUDE_CLI_EFFORT_THINKING ?? '').trim() || 'xhigh';
   }
   return (process.env.CLAUDE_CLI_EFFORT_FAST ?? '').trim() || 'medium';
 }
