@@ -39,7 +39,9 @@ export const usePortfolioForm = (
   // ── 表單輔助 ───────────────────────────────────────────────────────────
   const formIsTW = isTwStock(form.symbol);
   const shares   = parseFloat(form.totalShares)    || 0;
-  const rate     = usdTwdRate > 0 ? usdTwdRate : USD_TWD_FALLBACK;
+  // 即時匯率取不到就用備用匯率；旗標一併回傳，統計卡小字據此說明，與數字用的匯率同一個判斷
+  const hasLiveRate = usdTwdRate > 0;
+  const rate     = hasLiveRate ? usdTwdRate : USD_TWD_FALLBACK;
 
   // 匯率欄預設帶當日匯率；使用者一改就永久讓位（同 feeTouched 語意，送出後重置）
   // Yahoo 回來是 32.33700180053711 這種浮點，直接塞進欄位很醜 → 收到 3 位小數
@@ -174,7 +176,7 @@ export const usePortfolioForm = (
     feeInput, setFeeInput,
     feeTouched, setFeeTouched,
     setRateTouched,
-    formIsTW, shares, rate, entryRate,
+    formIsTW, shares, rate, hasLiveRate, entryRate,
     preview, handleAdd,
   };
 };

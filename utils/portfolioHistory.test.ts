@@ -224,6 +224,51 @@ describe('buildBackfillRows（逐日手算情境）', () => {
   });
 });
 
+// 缺價日（2026-10-01 使用者拍板）：查無行情（NOT_FOUND）的標的沒有收盤序列，持有它的日子
+// 照樣出列（數字只算查得到的）並標出缺哪幾檔，由圖表決定不畫。lots 模式的批次都是現存持股。
+describe('buildBackfillRows｜缺價日', () => {
+  const closeSeries = {
+    '2330.TW': [
+      { date: '2026-07-01', close: 100 },
+      { date: '2026-07-02', close: 110 },
+      { date: '2026-07-03', close: 120 },
+    ],
+  };
+  const LX = { id: 'LX', symbol: '2330.TW', buyDate: '2026-07-01', shares: 1000, cost: 100_000, cashDiv: 0 };
+
+  it('持有查無標的的日子標出缺哪檔、數字只算查得到的', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-02', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({
+      market: 'TW', lots: [LX, LQ], closeSeries, trades: [], notFoundSymbols: ['XYZ'], capturedAt: T,
+    });
+    expect(rows.map(r => [r.date, r.marketValue, r.totalCost, r.symbolCount, r.notFoundSymbols])).toEqual([
+      ['2026-07-01', 100_000, 100_000, 1, undefined],
+      ['2026-07-02', 110_000, 100_000, 1, ['XYZ']],
+      ['2026-07-03', 120_000, 100_000, 1, ['XYZ']],
+    ]);
+  });
+
+  it('只持有查無標的的日子也出列（數字為 0）', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-01', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({
+      market: 'TW', lots: [{ ...LX, buyDate: '2026-07-02' }, LQ], closeSeries, trades: [],
+      notFoundSymbols: ['XYZ'], capturedAt: T,
+    });
+    expect(rows.map(r => [r.date, r.marketValue, r.symbolCount, r.notFoundSymbols])).toEqual([
+      ['2026-07-01', 0, 0, ['XYZ']],
+      ['2026-07-02', 110_000, 1, ['XYZ']],
+      ['2026-07-03', 120_000, 1, ['XYZ']],
+    ]);
+  });
+
+  it('沒列進 notFoundSymbols 的缺序列批次照舊：不計也不標', () => {
+    const LQ = { id: 'LQ', symbol: 'XYZ', buyDate: '2026-07-02', shares: 10, cost: 5_000, cashDiv: 0 };
+    const { rows } = buildBackfillRows({ market: 'TW', lots: [LX, LQ], closeSeries, trades: [], capturedAt: T });
+    expect(rows.map(r => r.marketValue)).toEqual([100_000, 110_000, 120_000]);
+    expect(rows.every(r => r.notFoundSymbols === undefined)).toBe(true);
+  });
+});
+
 // ── buildChartSeries ────────────────────────────────────────────────────────
 
 describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () => {
@@ -273,6 +318,35 @@ describe('buildChartSeries（三線組合＋含息開關＋帳本階梯）', () 
   it('無帳本：realizedCum 全 0（D-11 已實現線由 UI disabled）', () => {
     const pts = buildChartSeries(rows, [], 'TW', false);
     expect(pts.every(p => p.realizedCum === 0)).toBe(true);
+  });
+});
+
+// 缺價日不畫（2026-10-01 使用者拍板）：那天的數字缺了查無標的，畫出來會系統性偏差（寧缺勿錯）
+describe('buildChartSeries｜缺價日不畫', () => {
+  it('標了查無標的的列不畫；那幾天的賣出與配息照樣累計，下一個點接得上', () => {
+    const rows: DailyPnlSnapshot[] = [
+      row({ date: '2026-07-01', source: 'backfill', marketValue: 1100, totalCost: 1000, estSellCosts: 10 }),
+      row({ date: '2026-07-02', source: 'backfill', marketValue: 1200, totalCost: 1000, estSellCosts: 12,
+            notFoundSymbols: ['XYZ'] }),
+      row({ date: '2026-07-03', source: 'backfill', marketValue: 1300, totalCost: 1000, estSellCosts: 13 }),
+    ];
+    const trades = [{ market: 'TW', sellDate: '2026-07-02', realizedPnl: 100, divCarried: 0 } as RealizedTrade];
+    const divs = [{ date: '2026-07-02', amount: 30 }];
+    const pts = buildChartSeries(rows, trades, 'TW', true, divs);
+    expect(pts.map(p => p.date)).toEqual(['2026-07-01', '2026-07-03']);
+    // 7/03：未實現 1300−1000−13＝287；已實現＝缺價日那天的賣出 100＋配息 30
+    expect(pts[1]).toEqual({ date: '2026-07-03', unrealized: 287, realizedCum: 130, total: 417, source: 'backfill' });
+  });
+
+  it('美股兩種口徑都不畫（台幣口徑即使匯率與台幣成本齊全也一樣）', () => {
+    const us: DailyPnlSnapshot[] = [
+      row({ market: 'US', date: '2026-07-01', marketValue: 1100, totalCost: 1000, estSellCosts: 10,
+            fxRate: 31, totalCostTwd: 31000, notFoundSymbols: ['XYZ'] }),
+      row({ market: 'US', date: '2026-07-02', marketValue: 1100, totalCost: 1000, estSellCosts: 10,
+            fxRate: 32, totalCostTwd: 31000 }),
+    ];
+    expect(buildChartSeries(us, [], 'US', false, undefined, 'USD').map(p => p.date)).toEqual(['2026-07-02']);
+    expect(buildChartSeries(us, [], 'US', false, undefined, 'TWD').map(p => p.date)).toEqual(['2026-07-02']);
   });
 });
 
@@ -365,5 +439,74 @@ describe('computeLiveSnapshot｜台幣欄位', () => {
       { '2330': { price: 110, date: '2026-07-02' } }, 32, T)!;
     expect(snap.totalCostTwd).toBeUndefined();
     expect(snap.fxRate).toBeUndefined();
+  });
+});
+
+// ── computeLiveSnapshot｜缺價日（2026-10-01 拍板：live 快照比照回推）───────────
+// 仍持有查無行情（NOT_FOUND）的標的時，該市場不再整個寫不出 live 快照：那檔不計入、
+// 以 notFoundSymbols 標出，圖表不畫（寧缺勿錯）。查無以外的失敗（限流、載入中…）照舊擋。
+
+describe('computeLiveSnapshot｜缺價日（仍持有查無行情的標的）', () => {
+  const NF: PriceInfo = { price: 0, loading: false, error: true, notFound: true };   // useHoldingPrices 對查無的形狀
+  const ok: PriceInfo = { price: 643, date: '2026-07-20' };
+  const found = lot({ id: 'A', symbol: '2330.TW', totalShares: 1000, totalCost: 600_855, cashDividends: 5000 });
+  const ghost = lot({ id: 'G', symbol: '9999.TW', totalShares: 2000, totalCost: 50_000, cashDividends: 1000 });
+
+  it('查無那檔不擋整個市場：照出列，數字只算查得到的，並標出缺哪檔', () => {
+    const s = computeLiveSnapshot('TW', [found, ghost], { '2330.TW': ok, '9999.TW': NF }, undefined, T)!;
+    expect(s).not.toBeNull();
+    expect(s.source).toBe('live');
+    expect(s.date).toBe('2026-07-20');            // 日期取查得到的報價
+    expect(s.marketValue).toBe(643_000);
+    expect(s.totalCost).toBe(600_855);            // 不含查無那檔的 50,000
+    expect(s.estSellCosts).toBe(916 + 1929);      // 只算 2330 那批（同 Case 4 的 1000 股）
+    expect(s.cashDividends).toBe(5000);           // 不含查無那檔的 1,000
+    expect(s.symbolCount).toBe(1);
+    expect(s.notFoundSymbols).toEqual(['9999.TW']);
+  });
+
+  it('同一檔查無的多批只列一次、多檔依代號排序；報價完整時不帶這欄', () => {
+    const lots = [found, ghost, { ...ghost, id: 'G2' }, lot({ id: 'H', symbol: '1111.TW', totalShares: 1, totalCost: 1 })];
+    const s = computeLiveSnapshot('TW', lots, { '2330.TW': ok, '9999.TW': NF, '1111.TW': NF }, undefined, T)!;
+    expect(s.notFoundSymbols).toEqual(['1111.TW', '9999.TW']);
+    expect(computeLiveSnapshot('TW', [found], { '2330.TW': ok }, undefined, T)!.notFoundSymbols).toBeUndefined();
+  });
+
+  it('查無以外的失敗照舊擋整個市場（部分報價是毒資料）', () => {
+    const lots = [found, ghost];
+    expect(computeLiveSnapshot('TW', lots, { '2330.TW': { ...ok, error: true }, '9999.TW': NF }, undefined, T)).toBeNull();
+    expect(computeLiveSnapshot('TW', lots, { '2330.TW': { ...ok, loading: true }, '9999.TW': NF }, undefined, T)).toBeNull();
+    expect(computeLiveSnapshot('TW', lots, { '9999.TW': NF }, undefined, T)).toBeNull();   // 2330 報價還沒到
+  });
+
+  it('整個市場都查無 → null（沒有交易日可定快照日期）', () => {
+    expect(computeLiveSnapshot('TW', [ghost], { '9999.TW': NF }, undefined, T)).toBeNull();
+  });
+
+  it('美股：匯率需求與台幣成本只看查得到的批次', () => {
+    const usd = lot({ id: 'U', symbol: 'AAA', totalShares: 10, purchaseCurrency: 'USD', totalCostUSD: 1000, exchangeRate: 31 });
+    const twdGhost = lot({ id: 'V', symbol: 'XYZ', totalShares: 5, totalCost: 64_000 });   // TWD 計價：查得到才需要匯率
+    const usdGhost = lot({ id: 'W', symbol: 'XYZ', totalShares: 5, purchaseCurrency: 'USD', totalCostUSD: 500 });   // 缺買入匯率
+    const p: Record<string, PriceInfo> = { AAA: { price: 110, date: '2026-07-02' }, XYZ: NF };
+    // 只有查無那批需要匯率：缺匯率也照出列，不記匯率
+    const noRate = computeLiveSnapshot('US', [usd, twdGhost], p, undefined, T)!;
+    expect(noRate).not.toBeNull();
+    expect(noRate.marketValue).toBe(1100);
+    expect(noRate.totalCost).toBe(1000);
+    expect(noRate.usdTwdRate).toBeUndefined();
+    expect(noRate.notFoundSymbols).toEqual(['XYZ']);
+    // 查無那批缺買入匯率，不拖累查得到那批的台幣成本
+    const withRate = computeLiveSnapshot('US', [usd, usdGhost], p, 32, T)!;
+    expect(withRate.totalCostTwd).toBe(31000);
+    expect(withRate.fxRate).toBe(32);
+  });
+
+  it('live 缺價日一樣不畫（buildChartSeries 不分來源）', () => {
+    const d1 = computeLiveSnapshot('TW', [found], { '2330.TW': ok }, undefined, T)!;
+    const d2 = computeLiveSnapshot('TW', [found, ghost],
+      { '2330.TW': { price: 650, date: '2026-07-21' }, '9999.TW': NF }, undefined, T)!;
+    const d3 = computeLiveSnapshot('TW', [found], { '2330.TW': { price: 660, date: '2026-07-22' } }, undefined, T)!;
+    expect(d2?.notFoundSymbols).toEqual(['9999.TW']);
+    expect(buildChartSeries([d1, d2, d3], [], 'TW', false).map(p => p.date)).toEqual(['2026-07-20', '2026-07-22']);
   });
 });

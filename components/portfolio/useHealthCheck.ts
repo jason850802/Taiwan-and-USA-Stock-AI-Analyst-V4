@@ -12,6 +12,8 @@ import type { PortfolioHealthItem } from '../../services/gemini';
 import { parseHealthDecisions, extractDecisionByRegex, splitHealthReport, DECISION_EMOJI } from '../../services/_shared/healthDecision';
 import { estimateVolumeTrend } from '../../utils/volume';
 import { isTwStock } from '../../utils/portfolioFees';
+import { lotCostUsd } from '../../utils/fx';
+import { isUsableQuote, quoteGapKind, type QuoteGapKind, type QuoteLike } from '../../utils/quoteGaps';
 import { runWithConcurrency } from '../../utils/workerPool';
 import type { PriceData } from './useHoldingPrices';
 import { createFramePublisher } from '../../utils/framePublisher';
@@ -44,12 +46,43 @@ const healthInputSignatures = (items: PortfolioItem[]): Map<string, string> => {
  * 行情抓取失敗的健檢文案（T3）：依錯誤 kind 分流，不再無條件寫「可能限流中」。
  * 後端沒開跟被限流的處置完全不同，猜錯會把使用者指去做錯的事。
  * tail 是各呼叫點的尾句（單檔＝句號；批次＝「，或單獨對此檔重跑健檢。」）。
+ * 查無代號（NOT_FOUND）重試也是同樣結果：不接 tail、不叫人稍後再試，改請使用者確認代號（2026-10-01 拍板）。
  */
-const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
+export const quoteFailMarkdown = (kind: FetchErrorKind | null | undefined, tail: string): string => {
+  if (kind === 'NOT_FOUND') {
+    return '**查無此代號的行情資料**\n\n行情來源找不到這個代號，可能已下市、更換代號，或代號有誤，請先確認代號。';
+  }
   const lead = kind === 'RATE_LIMIT' ? '（Yahoo／FinMind 可能限流中）請'
     : (kind === 'BACKEND_DOWN' || kind === 'NETWORK') ? '行情後端目前無回應，請確認網路或'
     : '請';
   return `**行情資料暫時無法取得**\n\n${lead}稍後再試${tail}`;
+};
+
+/**
+ * 缺報價的健檢文案（2026-10-03 使用者拍板）：K 線抓得到、但沒有可用報價時不送 AI——
+ * 拿 0 或無效價當現價，AI 會據此判斷停損／續抱。分法同報價不齊（載入中／讀取失敗）；tail 同 quoteFailMarkdown。
+ */
+export const quoteGapMarkdown = (kind: QuoteGapKind, tail: string): string =>
+  kind === 'loading'
+    ? `**報價尚未載入完成**\n\n為避免用不完整的現價判斷停損或續抱，本次未送 AI 分析。請等報價載入後再試${tail}`
+    : `**最新報價無法取得**\n\n為避免用錯的現價判斷停損或續抱，本次未送 AI 分析。請按「更新報價」後再試${tail}若一直失敗，這檔可能已停牌或下市。`;
+
+/**
+ * 送 AI 前的資料守門（單檔／批次共用）：回傳該檔要標的可重試錯誤，null＝資料齊全、可以送 AI。
+ * 先看 K 線（空資料會讓 formatHealthCheckData 拋錯；文案依抓取失敗種類，含查無代號），
+ * 再看報價（判定同庫存頁頁首的 isUsableQuote；無效價同樣會拋錯，0 則讓 AI 拿錯的現價判斷）。
+ */
+export const healthDataGapResult = (
+  item: PortfolioHealthItem | null,
+  quote: QuoteLike | undefined,
+  fetchKind: FetchErrorKind | null | undefined,
+  tail: string,
+): HealthResult | null => {
+  if (!item || item.recentData.length === 0) {
+    return { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(fetchKind, tail) };
+  }
+  const gap = quoteGapKind(quote);
+  return gap ? { status: 'error', decision: '缺報價', fullResult: quoteGapMarkdown(gap, tail) } : null;
 };
 
 /**
@@ -142,17 +175,17 @@ export const useHealthCheck = (
     if (lots.length === 0) return null;
 
     const p = prices[symbol];
-    const currentPrice = p && !p.loading && !p.error ? p.price : 0;
+    // 報價不可用的檔位送 AI 前會被 healthDataGapResult 擋下；這裡只確保項目裡不帶 undefined／NaN
+    const currentPrice = p && isUsableQuote(p) ? p.price : 0;
 
-    // 美股：currentPrice 永遠是 USD；avgCostPrice 若以 TWD 購入需先換算成 USD
+    // 美股：currentPrice 永遠是 USD；成本換成 USD 走 lotCostUsd，口徑同持股表（2026-07-24 拍板：成本用買入匯率）。
+    // 沒記買入匯率的舊批次退回即時匯率；即時匯率也還沒取得時沿用 32
+    // （2026-10-03 使用者：實務上會等報價與匯率到齊才按健檢，不另處理）
     const isUS = !isTwStock(symbol);
     const rate = usdTwdRate > 0 ? usdTwdRate : 32;
     const totalShares = lots.reduce((sum, lot) => sum + lot.totalShares, 0);
-    const totalCostInCurrentCurrency = lots.reduce((sum, lot) => {
-      if (!isUS) return sum + lot.totalCost;
-      if (lot.purchaseCurrency === 'USD' && lot.totalCostUSD != null) return sum + lot.totalCostUSD;
-      return sum + lot.totalCost / rate;
-    }, 0);
+    const totalCostInCurrentCurrency = lots.reduce(
+      (sum, lot) => sum + (isUS ? lotCostUsd(lot, rate) : lot.totalCost), 0);
     const avgCostPriceInCurrentCurrency = totalShares > 0
       ? totalCostInCurrentCurrency / totalShares
       : 0;
@@ -198,9 +231,10 @@ export const useHealthCheck = (
       const prepared = await buildHealthItem(symbol);
       if (!prepared || !isCurrent()) return;
       const healthItem = prepared.item;
-      if (healthItem.recentData.length === 0) {
-        // 行情抓取失敗：空資料送 LLM 只會在 formatHealthCheckData 拋錯，直接誠實標記可重試
-        display.finish({ status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(prepared.fetchKind, '。') });
+      const gapResult = healthDataGapResult(healthItem, prices[symbol], prepared.fetchKind, '。');
+      if (gapResult) {
+        // K 線或報價不可用：送 LLM 只會拋錯或讓 AI 拿錯的現價判斷，直接誠實標記可重試
+        display.finish(gapResult);
         return;
       }
 
@@ -225,7 +259,7 @@ export const useHealthCheck = (
       display.cancel();
       if (displaysRef.current.get(symbol) === display) displaysRef.current.delete(symbol);
     }
-  }, [items, buildHealthItem]);
+  }, [items, prices, buildHealthItem]);
 
   // ── 一鍵批次健檢（全部持股一次 LLM 呼叫）──────────────────────────────
   const handleBatchHealthCheck = useCallback(async (targetSymbols?: readonly string[]) => {
@@ -264,22 +298,23 @@ export const useHealthCheck = (
       });
       if (!mountedRef.current) return;
 
-      // 行情抓取失敗（recentData 空）的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——
-      // 空資料會讓 formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮
+      // K 線或報價不可用的檔位個別標記為可重試錯誤，不混進送 LLM 的陣列——空資料與無效價會讓
+      // formatHealthCheckData 拋錯，把整批（含正常檔位）一起拖垮；0 價則讓 AI 拿錯的現價判斷
       const healthItems: PortfolioHealthItem[] = [];
-      const failedSymbols: string[] = [];
+      const gapResults: [string, HealthResult][] = [];
       symbols.forEach((symbol, idx) => {
         if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-        const it = results[idx]?.item;
-        if (it && it.recentData.length > 0) healthItems.push(it);
-        else failedSymbols.push(symbol);
+        const prepared = results[idx];
+        const gap = healthDataGapResult(prepared?.item ?? null, prices[symbol], prepared?.fetchKind, '，或單獨對此檔重跑健檢。');
+        if (gap) gapResults.push([symbol, gap]);
+        else if (prepared) healthItems.push(prepared.item);
       });
-      if (failedSymbols.length > 0) {
+      if (gapResults.length > 0) {
         setHealthResults(prev => {
           const next = { ...prev };
-          failedSymbols.forEach(symbol => {
+          gapResults.forEach(([symbol, gap]) => {
             if (healthSeqRef.current[symbol] !== gens[symbol]) return;
-            next[symbol] = { status: 'error', decision: '資料取得失敗', fullResult: quoteFailMarkdown(results[symbols.indexOf(symbol)]?.fetchKind, '，或單獨對此檔重跑健檢。') };
+            next[symbol] = gap;
           });
           return next;
         });
@@ -338,7 +373,7 @@ export const useHealthCheck = (
         setBatchChecking(false);
       }
     }
-  }, [items, batchChecking, buildHealthItem, failedHealthSymbols]);
+  }, [items, prices, batchChecking, buildHealthItem, failedHealthSymbols]);
 
   return {
     healthResults,

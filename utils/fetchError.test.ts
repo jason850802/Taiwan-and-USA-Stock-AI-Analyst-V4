@@ -4,7 +4,7 @@
 // vs 通用）全靠 kind 分流；kind 判錯，使用者就會被指去做錯的處置。
 // 測試檔放 utils/ 是沿用現行 vitest 收錄範圍（現況測試全在 utils/）。
 import { describe, it, expect } from 'vitest';
-import { DataFetchError, classifyCaught } from '../services/fetchError';
+import { DataFetchError, classifyCaught, classifyHttpStatus } from '../services/fetchError';
 
 describe('DataFetchError', () => {
   it('是 Error 的子類，kind 與 message 都留著', () => {
@@ -64,5 +64,29 @@ describe('classifyCaught', () => {
     expect(classifyCaught('429')).toBe('UNKNOWN');
     expect(classifyCaught(undefined)).toBe('UNKNOWN');
     expect(classifyCaught(null)).toBe('UNKNOWN');
+  });
+});
+
+// 四個 fetch 出口（queryYahoo、fetchFinMindRows、callGeminiApi、callGeminiApiStream）共用的
+// 「HTTP 失敗狀態 → 種類」規則。各出口有沒有真的接上，鎖在 services/fetchError.wiring.test.ts。
+describe('classifyHttpStatus', () => {
+  it('429 → RATE_LIMIT', () => {
+    expect(classifyHttpStatus(429)).toBe('RATE_LIMIT');
+  });
+
+  it('404 → NOT_FOUND（後端說要的東西不存在：查無代號、設定的模型不存在）', () => {
+    expect(classifyHttpStatus(404)).toBe('NOT_FOUND');
+  });
+
+  it('5xx → BACKEND_DOWN（含本機後端沒開時 Vite proxy 回的 500）', () => {
+    expect(classifyHttpStatus(500)).toBe('BACKEND_DOWN');
+    expect(classifyHttpStatus(502)).toBe('BACKEND_DOWN');
+    expect(classifyHttpStatus(503)).toBe('BACKEND_DOWN');
+  });
+
+  it('其他 4xx（參數不合、把關擋下、方法不符）不猜，回 UNKNOWN', () => {
+    expect(classifyHttpStatus(400)).toBe('UNKNOWN');
+    expect(classifyHttpStatus(403)).toBe('UNKNOWN');
+    expect(classifyHttpStatus(405)).toBe('UNKNOWN');
   });
 });

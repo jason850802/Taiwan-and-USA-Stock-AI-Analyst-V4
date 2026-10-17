@@ -389,7 +389,7 @@ const App: React.FC = () => {
                     : 'border-surface-line bg-surface-inset text-slate-400'
                 }`}
               >
-                <span className="flex items-center gap-2 font-medium"><Zap size={18} /> 快捷 (Flash)</span>
+                <span className="flex items-center gap-2 font-medium"><Zap size={18} /> 快捷</span>
                 <span className="block text-xs text-slate-500 mt-1">快速完成重點分析</span>
               </button>
               <button
@@ -401,7 +401,7 @@ const App: React.FC = () => {
                     : 'border-surface-line bg-surface-inset text-slate-400'
                 }`}
               >
-                <span className="flex items-center gap-2 font-medium"><BrainCircuit size={18} /> 思考 (Pro)</span>
+                <span className="flex items-center gap-2 font-medium"><BrainCircuit size={18} /> 思考</span>
                 <span className="block text-xs text-slate-500 mt-1">進行更深入的推理</span>
               </button>
             </div>

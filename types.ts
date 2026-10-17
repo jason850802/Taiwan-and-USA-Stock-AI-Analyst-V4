@@ -209,6 +209,9 @@ export interface DailyPnlSnapshot {
   // ── 台幣口徑（美股專用；缺欄＝該日無法算台幣，圖表跳過該點，不用即時匯率補）──
   fxRate?: number;         // 該日 USD/TWD 收盤（市值側換算用；回推取當日匯率、live 取即時匯率）
   totalCostTwd?: number;   // Σ 批次成本×**買入匯率**（成本側；不隨之後匯率變動）
+  // ── 缺價日（2026-10-01 拍板，回推與 live 快照同一套）：這天仍持有、但查無行情（NOT_FOUND）的標的。
+  //    有值＝市值、成本、檔數都只算查得到的，圖表不畫這點（寧缺勿錯） ──
+  notFoundSymbols?: string[];
   symbolCount: number;     // 當日檔數（組成變動偵測／除錯）
   capturedAt: number;      // 寫入時刻 Date.now()
 }
