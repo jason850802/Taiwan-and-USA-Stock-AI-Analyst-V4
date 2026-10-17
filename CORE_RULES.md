@@ -124,3 +124,4 @@ Codex 只收 PLAN 文件不自行規劃）；`start-dev`（起 dev 環境固定�
   圖查不到或要找文字內容再 grep。索引刻意排除 `.scratch/`（規則在根目錄 `.cbmignore`，不排會撐爆記憶體），
   票據與證據直接讀檔。`.cbmignore` 刻意不進 git：**不要 commit、不要刪**。
 - When writing a PR body, use the plain-pr skill.
+- merge 進 `main` 前，先用 plain-pr skill 的格式在對話中給使用者一份白話摘要（只在對話呈現，不寫進 merge commit，也不取代 `Code-Review:` trailer）。
