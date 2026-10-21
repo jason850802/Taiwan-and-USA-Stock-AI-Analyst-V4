@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "name": "殘留程序保留復原身分",
+      "pass": false,
+      "detail": {
+        "exitCode": 0,
+        "removed": true,
+        "state": null
+      }
+    },
+    {
+      "name": "程序表失敗不可宣稱成功",
+      "pass": false,
+      "detail": {
+        "exitCode": 0,
+        "removed": true,
+        "state": null
+      }
+    },
+    {
+      "name": "成功才能移除自己狀態",
+      "pass": true,
+      "detail": {
+        "exitCode": 0,
+        "removed": true,
+        "state": null
+      }
+    },
+    {
+      "name": "失敗不得改別人的狀態",
+      "pass": false,
+      "detail": {
+        "exitCode": 0,
+        "removed": false,
+        "state": {
+          "token": "foreign"
+        }
+      }
+    },
+    {
+      "name": "PID 重用不可誤殺",
+      "pass": false,
+      "detail": {
+        "calls": [
+          [
+            "taskkill",
+            [
+              "/PID",
+              "41",
+              "/T",
+              "/F"
+            ],
+            {
+              "encoding": "utf8",
+              "windowsHide": true
+            }
+          ]
+        ],
+        "stopped": true
+      }
+    },
+    {
+      "name": "非 listener 孤兒不可假成功",
+      "pass": false,
+      "detail": {
+        "calls": [
+          [
+            "taskkill",
+            [
+              "/PID",
+              "41",
+              "/T",
+              "/F"
+            ],
+            {
+              "encoding": "utf8",
+              "windowsHide": true
+            }
+          ]
+        ],
+        "stopped": true
+      }
+    }
+  ],
+  "passed": 1,
+  "total": 6,
+  "realKills": 0
+}

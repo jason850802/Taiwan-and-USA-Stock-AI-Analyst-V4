@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":27.324,"pid":7680,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1814.071,"pid":7680,"seq":1}
+{"ev":"child.listening","t":1829.42,"pid":7680,"seq":1}
+{"ev":"child.listenCall","t":1885.987,"pid":7680,"seq":2}
+{"ev":"child.listening","t":1887.529,"pid":7680,"seq":2}
+{"ev":"child.ready","t":1887.857,"pid":7680}
+{"ev":"child.recv","t":1891.417,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?interval=1d&range=5d"}
+{"ev":"child.recv","t":1898.091,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"handler","method":"GET","route":"/api/yahoo/chart?interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1898.443,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4681","x-forwarded-host":"127.0.0.1:4681","x-forwarded-proto":"http","x-forwarded-port":"4681","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4681","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1901.104,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"handler","status":400}
+{"ev":"child.finish","t":1902.491,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"handler"}
+{"ev":"child.writeHead","t":1907.297,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"devProxy","status":400}
+{"ev":"child.finish","t":1907.989,"pid":7680,"trace":"smoke-02b-parity-default-b1-get-chart-missing-symbol","layer":"devProxy"}

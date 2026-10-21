@@ -1,0 +1,23 @@
+{
+  "runId": "stale03-20260925-r2",
+  "createdAt": "2026-09-25T05:11:04.183Z",
+  "ports": {
+    "oldPort": 4781,
+    "frontPort": 4782,
+    "apiPort": 4783
+  },
+  "source": {
+    "runnerSha256": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+    "dailySha256": "a58630f7753389797c44fc17c74d41ce3cdd07735200ecfca0f7cbe9382db181"
+  },
+  "start": {
+    "status": 1,
+    "stderr": "舊狀態的控制管道失聯，但程序或 listener 仍存在；請先使用 recover 核對並清理。",
+    "stdout": ""
+  },
+  "statePreserved": true,
+  "oldListenerAlive": true,
+  "newPortsFree": true,
+  "errors": [],
+  "finishedAt": "2026-09-25T05:11:05.094Z"
+}

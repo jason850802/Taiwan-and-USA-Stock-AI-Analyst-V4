@@ -1,0 +1,24 @@
+{
+  "createdAt": "2026-10-01T00:49:08.3721641Z",
+  "head": "4d2b2ba51fa2a6ba12a5f86915c6ca8be8d85a50",
+  "ports": [],
+  "aliveOwn": [],
+  "stateExists": false,
+  "gateEnvExists": false,
+  "junction": {
+    "LinkType": "Junction",
+    "Target": "C:\\pfv\\node_modules"
+  },
+  "appProfiles": [
+    {
+      "name": "desktop",
+      "profileRemoved": true,
+      "closedCleanly": true
+    },
+    {
+      "name": "narrow",
+      "profileRemoved": true,
+      "closedCleanly": true
+    }
+  ]
+}

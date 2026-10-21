@@ -1,0 +1,8 @@
+{"ev":"parent.boot","t":668.533,"pid":10536}
+{"ev":"parent.listenCall","t":2166.971,"pid":10536,"seq":1}
+{"ev":"parent.listening","t":2168.621,"pid":10536,"seq":1}
+{"ev":"parent.recv","t":3174.712,"pid":10536,"trace":"chart03-cookie-20260924-r3-a","layer":"entry","method":"GET","route":"/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d"}
+{"ev":"parent.fork","t":3370.293,"pid":10536,"trace":"chart03-cookie-20260924-r3-a","childPid":8852,"forkCallMs":13.954}
+{"ev":"parent.childReady","t":5571.584,"pid":10536,"trace":"chart03-cookie-20260924-r3-a","childPid":8852}
+{"ev":"parent.proxyReq","t":5576.045,"pid":10536,"trace":"chart03-cookie-20260924-r3-a","port":"64887"}
+{"ev":"parent.aborted","t":5717.079,"pid":10536,"trace":"chart03-cookie-20260924-r3-a","layer":"entry"}

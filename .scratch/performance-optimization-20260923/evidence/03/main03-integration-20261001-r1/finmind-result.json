@@ -1,0 +1,18 @@
+{
+  "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+  "command": [
+    "node",
+    ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+    "main03-finmind-20261001-r1",
+    "finmind",
+    "3413"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "drift": [],
+  "envRemoved": true,
+  "noInstall": true,
+  "noDeployment": true,
+  "pass": true
+}

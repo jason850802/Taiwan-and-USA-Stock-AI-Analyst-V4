@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "runId": "fixed-three-slot-fx-priority-20260923-v1",
+  "summaries": [
+    {
+      "count": 10,
+      "expectedRequests": 16,
+      "forceRounds": 5,
+      "mediansMs": {
+        "firstValidQuote": 96.19999998807907,
+        "allValidQuotesFx": 376,
+        "queueWait": 95.59999999403954,
+        "queueWaitMax": 280.19999998807907,
+        "allNamesVisible": 566.1999999880791
+      },
+      "rangesMs": {
+        "firstValidQuote": [
+          90.30000001192093,
+          107.19999998807907
+        ],
+        "allValidQuotesFx": [
+          372,
+          385.39999997615814
+        ],
+        "queueWait": [
+          89.2000000178814,
+          108.7999999821186
+        ],
+        "queueWaitMax": [
+          278.2000000178814,
+          288.5
+        ],
+        "allNamesVisible": [
+          555.0999999940395,
+          573.3999999761581
+        ]
+      },
+      "httpPeaks": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "fxStartRanks": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "requestCounts": [
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "problems": [],
+      "pass": true
+    },
+    {
+      "count": 30,
+      "expectedRequests": 46,
+      "forceRounds": 5,
+      "mediansMs": {
+        "firstValidQuote": 103.59999999403954,
+        "allValidQuotesFx": 1059.2999999821186,
+        "queueWait": 487.59999999403954,
+        "queueWaitMax": 964.8000000119209,
+        "allNamesVisible": 1539.9000000059605
+      },
+      "rangesMs": {
+        "firstValidQuote": [
+          90.39999997615814,
+          111
+        ],
+        "allValidQuotesFx": [
+          1042.300000011921,
+          1205.9000000059605
+        ],
+        "queueWait": [
+          475.5,
+          497.90000000596046
+        ],
+        "queueWaitMax": [
+          945.9000000059605,
+          1108.9000000059605
+        ],
+        "allNamesVisible": [
+          1507.5,
+          1671.5999999940395
+        ]
+      },
+      "httpPeaks": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "fxStartRanks": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "requestCounts": [
+        46,
+        46,
+        46,
+        46,
+        46
+      ],
+      "problems": [],
+      "pass": true
+    }
+  ],
+  "pass": true
+}

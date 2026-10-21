@@ -1,0 +1,6 @@
+{"ev":"child.boot","t":26.088,"pid":25836,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1987.356,"pid":25836,"seq":1}
+{"ev":"child.listening","t":2002.891,"pid":25836,"seq":1}
+{"ev":"child.listenCall","t":2065.724,"pid":25836,"seq":2}
+{"ev":"child.listening","t":2067.249,"pid":25836,"seq":2}
+{"ev":"child.ready","t":2067.684,"pid":25836}

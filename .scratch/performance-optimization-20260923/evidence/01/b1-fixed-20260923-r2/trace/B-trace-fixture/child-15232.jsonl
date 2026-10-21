@@ -1,0 +1,12 @@
+{"ev":"child.boot","t":21.926,"pid":15232,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":50,"ipc":true}
+{"ev":"child.listenCall","t":1760.31,"pid":15232,"seq":1}
+{"ev":"child.listening","t":1776.459,"pid":15232,"seq":1}
+{"ev":"child.listenCall","t":1837.672,"pid":15232,"seq":2}
+{"ev":"child.listening","t":1839.319,"pid":15232,"seq":2}
+{"ev":"child.ready","t":1839.665,"pid":15232}
+{"ev":"child.recv","t":1843.115,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":1851.172,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.writeHead","t":1852.017,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"handler","status":204}
+{"ev":"child.finish","t":1853.259,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"handler"}
+{"ev":"child.writeHead","t":1858.232,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"devProxy","status":204}
+{"ev":"child.finish","t":1858.782,"pid":15232,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o7","layer":"devProxy"}

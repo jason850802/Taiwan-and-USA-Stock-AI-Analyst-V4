@@ -1,0 +1,134 @@
+{
+  "runId": "route03-search-20260924-r3",
+  "routeKind": "search",
+  "port": 4569,
+  "createdAt": "2026-09-24T06:00:53.201Z",
+  "source": {
+    "runnerSha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "files": {
+      "api/yahoo/search.ts": "5d4ffd44a179a61c305cebea35e61405e52a459d008dc9d503f8f55cd18ee40b",
+      "api/_lib/yahoo.ts": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815"
+    }
+  },
+  "reachedTarget": true,
+  "response": {
+    "trace": "route03-search-20260924-r3-cancel",
+    "method": "GET",
+    "route": "/api/yahoo/search?q=AAPL&quotesCount=5",
+    "totalMs": 2246.3,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchBody",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "yahoo-search",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchError",
+      "kind": "yahoo-search",
+      "name": "AbortError",
+      "layer": null,
+      "emitted": null
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 4216,
+    "listenerPid": 4216,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/search.ts",
+        "pid": 28104,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T06:01:02.793Z"
+}

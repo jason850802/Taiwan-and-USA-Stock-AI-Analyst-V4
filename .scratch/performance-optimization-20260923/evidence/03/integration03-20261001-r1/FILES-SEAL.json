@@ -1,0 +1,107 @@
+{
+  "candidateCommit": "cfbd118c28710de9b3fbeb6bc0f8c4333955e606",
+  "sourceMain": "2b2811b9300e7480112453e08d3b32beb3b306ed",
+  "fileCount": 20,
+  "files": [
+    {
+      "path": "prepare.cjs",
+      "bytes": 6334,
+      "sha256": "da578ee57e198620534dbfe7998aef77f72d0008f7e4a95e091a2c8052f39be9"
+    },
+    {
+      "path": "01-required-scratch-ignore.patch",
+      "bytes": 690,
+      "sha256": "97d6b9ea2e39f51b94a1389bcf369dbce7ae4b5923bc18150bf2cacc98d4baff"
+    },
+    {
+      "path": "02-original-03-product.patch",
+      "bytes": 40284,
+      "sha256": "007a591ac2bb4848cd74e2803d82e408e61944790c95df43de5dd032a815166a"
+    },
+    {
+      "path": "03-approved-platform-configuration.patch",
+      "bytes": 4219,
+      "sha256": "d3eee3d501840dfb4d9ea90c0b5d2150212b86f475c4ec497f99dbfd273d3109"
+    },
+    {
+      "path": "candidate-main.patch",
+      "bytes": 521624,
+      "sha256": "188d393f89386a0d31955aea83ba9b7ae761505362b3f02005e46cdbcf39577c"
+    },
+    {
+      "path": "candidate-stat.txt",
+      "bytes": 2922,
+      "sha256": "40851630dbeae7419c6f32d5c9a522d8a8ce3f80096658f8ceaf0d9722c62351"
+    },
+    {
+      "path": "candidate-files.txt",
+      "bytes": 2230,
+      "sha256": "835def3c2f4dd690b7084dc69c70ee87beb533bf504b468fbb41348a8f300e74"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 13425,
+      "sha256": "45203d1795dfd9cac602e32dac9c1397df9e449322d3df3c92d796a8f3e13392"
+    },
+    {
+      "path": "tool-history.txt",
+      "bytes": 1155,
+      "sha256": "03b9e878f2c9910f9ceac11f01b1ce3863c88caa03a0ee8af94ad7f7a82f3878"
+    },
+    {
+      "path": "product-history.txt",
+      "bytes": 993,
+      "sha256": "b3f38b4197e229ec8f5f54faa8ecbaf316102275f07b00f65c10783b01259546"
+    },
+    {
+      "path": "syntax-check.json",
+      "bytes": 3780,
+      "sha256": "de85ab50f1af1ba23a025be5803577633934866922f12da8198f9f12169d9a47"
+    },
+    {
+      "path": "tool-history-utf8.txt",
+      "bytes": 1155,
+      "sha256": "03b9e878f2c9910f9ceac11f01b1ce3863c88caa03a0ee8af94ad7f7a82f3878"
+    },
+    {
+      "path": "product-history-utf8.txt",
+      "bytes": 993,
+      "sha256": "b3f38b4197e229ec8f5f54faa8ecbaf316102275f07b00f65c10783b01259546"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7092,
+      "sha256": "b87dbb91ad7ec0cd6e4e965f2e8b4b8a81b62a47cbdea6a73f10e8b87f28f8b2"
+    },
+    {
+      "path": "gate-run.cjs",
+      "bytes": 3862,
+      "sha256": "a3ef5e32803c27fe4cf4f89157ace2ba6e8ac7cd23690eb3401883cea3ecc26b"
+    },
+    {
+      "path": "gate-source-before.json",
+      "bytes": 28235,
+      "sha256": "be4dbabcaeeb44157a9bd60360478c46c4cf9ac506371ca96a766151b6f946df"
+    },
+    {
+      "path": "gate-20261001-r1.txt",
+      "bytes": 6363,
+      "sha256": "45cef6fec5b5838656ebd7286416437f91305e5d7209fab115ec37a6bb27534d"
+    },
+    {
+      "path": "gate-source-after.json",
+      "bytes": 28105,
+      "sha256": "09e3cb1c0b75877025299ea8999fe140f764dc637b384879de56a81d1db9fa33"
+    },
+    {
+      "path": "gate-result.json",
+      "bytes": 1064,
+      "sha256": "7c28fe4c4179727fe2b24061cb3ed0e2023dd85ecdfd86fdbaa82fea7f45a1ff"
+    },
+    {
+      "path": "committed-source-check.json",
+      "bytes": 13951,
+      "sha256": "0c7564f0fee005e507274d0b070a7d11bc9b530928186d73b1761272b3b61532"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "runId": "main03-finmind-20261001-r1",
+  "routeKind": "finmind",
+  "pass": true,
+  "response": {
+    "trace": "main03-finmind-20261001-r1-cancel",
+    "method": "GET",
+    "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330&start_date=2026-09-01",
+    "totalMs": 1917.4,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "finmind",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchError",
+      "kind": "finmind",
+      "name": "AbortError",
+      "layer": null,
+      "emitted": null
+    }
+  ],
+  "errors": []
+}

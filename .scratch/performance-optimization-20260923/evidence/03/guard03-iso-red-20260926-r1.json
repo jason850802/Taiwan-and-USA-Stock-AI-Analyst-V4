@@ -1,0 +1,28 @@
+{
+  "runId": "guard03-iso-red-20260926-r1",
+  "sourceCommit": "85c553680849b495a85a938503fcc91b9bb1ca8c",
+  "realProcessKills": 0,
+  "results": [
+    {
+      "function": "descendantsOf",
+      "actual": [
+        2,
+        3
+      ],
+      "expected": [
+        3
+      ]
+    },
+    {
+      "function": "descendantTree",
+      "actual": [
+        2,
+        3
+      ],
+      "expected": [
+        3
+      ]
+    }
+  ],
+  "pass": false
+}

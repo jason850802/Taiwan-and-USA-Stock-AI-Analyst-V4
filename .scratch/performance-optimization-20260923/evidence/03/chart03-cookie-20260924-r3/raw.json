@@ -1,0 +1,98 @@
+{
+  "runId": "chart03-cookie-20260924-r3",
+  "port": 4549,
+  "phase": "cookie",
+  "createdAt": "2026-09-24T05:46:37.407Z",
+  "source": {
+    "runnerSha256": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "chartSha256": "a71de04c8c92a4b924d5526049d965a560c070a9b91d4240692f37eb1a828424",
+    "yahooSha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815"
+  },
+  "reachedTarget": true,
+  "a": {
+    "trace": "chart03-cookie-20260924-r3-a",
+    "method": "GET",
+    "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+    "totalMs": 2551.4,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "b": null,
+  "events": [
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-cookie-20260924-r3-a",
+      "ev": "child.fetchError",
+      "kind": "yahoo-cookie",
+      "name": "AbortError",
+      "layer": null
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 10536,
+    "listenerPid": 10536,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 8852,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T05:46:47.334Z"
+}

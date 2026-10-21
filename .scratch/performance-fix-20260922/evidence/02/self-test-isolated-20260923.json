@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T06:38:39.592Z",
+  "checkout": "C:/pfv（git worktree，HEAD e9fa1a2，1878 追蹤檔、0 缺檔、0 skip-worktree）",
+  "command": "node .scratch/performance-fix-20260922/tools/self-test.mjs",
+  "exitCode": 0,
+  "node": "v26.4.0",
+  "files": {
+    ".scratch/performance-fix-20260922/tools/self-test.mjs": "2cf0ae3dd9d2ad184c83452bc301c47b4e5c1547ddfb39d6ab4f23e6790f8189",
+    ".scratch/performance-fix-20260922/tools/compare-options.mjs": "242fde39b8778a20544e84e896e3b59154eedea4ae92e7ea12aa0addeb9693d9",
+    ".scratch/performance-fix-20260922/tools/validate-options-formal-v2.mjs": "54f69b236590e4ad1404dceb7ece1589da314d15f5447455307ebf6d8b6fde13",
+    ".scratch/performance-fix-20260922/tools/verify-holdings-name-blocking.mjs": "db86548f03c4592cf49cc209014f984bf3d77a901bf9994cc0e98fa80862ef55",
+    ".scratch/performance-diagnosis-20260922/http-probes.json": "85a878c336c9a8792d241d1dc2e9b01c43b8c66fade71cf94a24c3cb4c77ee63"
+  },
+  "passCount": 15,
+  "caseCount": 15,
+  "result": {
+    "pass": true,
+    "cases": [
+      {
+        "name": "歷史 clean 候選通過門檻方向",
+        "expectedCode": 0,
+        "actualCode": 0,
+        "pass": true
+      },
+      {
+        "name": "既有輸出拒絕覆寫",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "歷史慢原站作候選判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "非 204 判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "漏路由判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "warm 不可跨服務啟動湊足五組",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "warm pairId 跨路由不一致判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "warm pairId 缺跨路由對應判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "warm pairId 同 route 重複判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "overall 僅摘要不作額外門檻",
+        "expectedCode": 0,
+        "actualCode": 0,
+        "pass": true
+      },
+      {
+        "name": "formal v2 identity bundle 通過",
+        "expectedCode": 0,
+        "actualCode": 0,
+        "pass": true
+      },
+      {
+        "name": "formal v2 重複 actual PID 判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "formal v2 缺 start identity 判紅",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      },
+      {
+        "name": "名稱阻塞合成綠例",
+        "expectedCode": 0,
+        "actualCode": 0,
+        "pass": true
+      },
+      {
+        "name": "名稱阻塞合成紅例",
+        "expectedCode": 1,
+        "actualCode": 1,
+        "pass": true
+      }
+    ]
+  }
+}

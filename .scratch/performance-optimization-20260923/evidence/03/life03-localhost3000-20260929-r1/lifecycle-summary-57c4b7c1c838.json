@@ -1,0 +1,82 @@
+{
+  "runId": "life03-localhost3000-20260929-r1",
+  "formal": true,
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "problems": [],
+  "failed": [
+    {
+      "scenario": "cycle-1",
+      "failedChecks": [
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "cycle-2",
+      "failedChecks": [
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-vercel",
+      "failedChecks": [
+        "重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-vite",
+      "failedChecks": [
+        "重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor",
+      "failedChecks": [
+        "之後重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor-no-watchdog",
+      "failedChecks": [
+        "之後重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "stop 回報 stopped"
+      ]
+    }
+  ],
+  "scenarios": [
+    "cycle-1:FAIL",
+    "cycle-2:FAIL",
+    "conflict-front:PASS",
+    "conflict-api:PASS",
+    "crash-vercel:FAIL",
+    "crash-vite:FAIL",
+    "crash-supervisor:FAIL",
+    "crash-supervisor-no-watchdog:FAIL"
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 591,
+    "foreign": 0
+  },
+  "leftoverCleanup": {
+    "found": [],
+    "killed": [],
+    "stillAlive": []
+  }
+}

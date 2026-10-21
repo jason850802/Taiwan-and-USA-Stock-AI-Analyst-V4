@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:14:42.229Z",
+  "startedAt": "2026-09-23T07:13:11.762Z",
+  "variant": "e0",
+  "serviceStartId": "e0-formal-options-v6-20260923-start-1",
+  "success": false,
+  "failure": "Error: vercel ready log 等待逾時",
+  "probeExitCode": null,
+  "rawExists": false,
+  "identityExists": false,
+  "stopped": {
+    "vercel": {
+      "pid": 22028,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 5616 (PID �� 1972 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 1972 (PID �� 26608 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 9560 (PID �� 22028 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 26608 (PID �� 22028 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 22028 (PID �� 20672 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    },
+    "vite": {
+      "pid": 23564,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 12652 (PID �� 23564 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 26744 (PID �� 23564 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 23564 (PID �� 20672 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    }
+  }
+}

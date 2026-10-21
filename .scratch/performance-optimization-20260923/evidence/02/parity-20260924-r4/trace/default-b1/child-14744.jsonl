@@ -1,0 +1,17 @@
+{"ev":"child.boot","t":28.589,"pid":14744,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1795.68,"pid":14744,"seq":1}
+{"ev":"child.listening","t":1814.693,"pid":14744,"seq":1}
+{"ev":"child.listenCall","t":1884.559,"pid":14744,"seq":2}
+{"ev":"child.listening","t":1886.356,"pid":14744,"seq":2}
+{"ev":"child.ready","t":1886.758,"pid":14744}
+{"ev":"child.recv","t":1890.407,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d"}
+{"ev":"child.recv","t":1900.11,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=MSFT&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1900.541,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4811","x-forwarded-host":"127.0.0.1:4811","x-forwarded-proto":"http","x-forwarded-port":"4811","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4811","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1901.941,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","seq":1,"kind":"yahoo-cookie"}
+{"ev":"child.fetchHeaders","t":1923.988,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","seq":1,"kind":"yahoo-cookie","status":200,"fixture":true,"fixtureWaitMs":20.579,"scripted":true}
+{"ev":"child.fetchStart","t":2436.369,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","seq":2,"kind":"yahoo-cookie"}
+{"ev":"child.fetchHeaders","t":2467.373,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","seq":2,"kind":"yahoo-cookie","status":200,"fixture":true,"fixtureWaitMs":30.528,"scripted":true}
+{"ev":"child.writeHead","t":2469.575,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"handler","status":502}
+{"ev":"child.finish","t":2471.046,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"handler"}
+{"ev":"child.writeHead","t":2476.472,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"devProxy","status":502}
+{"ev":"child.finish","t":2477.176,"pid":14744,"trace":"parity-20260924-r4-default-b1-get-chart-cookie-missing","layer":"devProxy"}

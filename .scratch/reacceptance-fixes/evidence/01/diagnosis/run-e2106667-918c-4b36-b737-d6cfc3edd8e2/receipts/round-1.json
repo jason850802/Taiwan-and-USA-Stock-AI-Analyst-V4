@@ -1,0 +1,95 @@
+{
+  "round": 1,
+  "type": "歷史捕捉資料的檔案投遞模擬，非本次瀏覽器新驗收",
+  "expectedFiles": [
+    "desktop-green-stale-return.json",
+    "desktop-green-switch-return.json",
+    "desktop-green-tab-return.json",
+    "desktop-green-force-pending.json",
+    "desktop-green-failure-retry.json",
+    "desktop-manual-market.json",
+    "narrow-green-stale-return.json",
+    "narrow-green-switch-return.json",
+    "narrow-green-tab-return.json",
+    "narrow-green-force-pending.json",
+    "narrow-green-failure-retry.json",
+    "narrow-manual-market.json"
+  ],
+  "deliveredFiles": [
+    "desktop-green-stale-return.json",
+    "desktop-green-switch-return.json",
+    "desktop-green-tab-return.json",
+    "desktop-green-force-pending.json",
+    "desktop-green-failure-retry.json",
+    "desktop-manual-market.json",
+    "narrow-green-stale-return.json",
+    "narrow-green-switch-return.json",
+    "narrow-green-tab-return.json",
+    "narrow-green-force-pending.json",
+    "narrow-green-failure-retry.json",
+    "narrow-manual-market.json"
+  ],
+  "omittedFiles": [],
+  "deliveries": [
+    {
+      "file": "desktop-green-stale-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-stale-return.json",
+      "sha256": "e9e8478b880c1af2278fdaaf417bb299af44ae5366e65e98e8bf275df8ad546a"
+    },
+    {
+      "file": "desktop-green-switch-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-switch-return.json",
+      "sha256": "38425b464dea159188a1a6f90d0b208c2275c1ba12ed634f70910c94e3d23526"
+    },
+    {
+      "file": "desktop-green-tab-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-tab-return.json",
+      "sha256": "8d755a53b1b728beaff4761c1e71afcb7f9254b96c3619625dfb7f80e5890a23"
+    },
+    {
+      "file": "desktop-green-force-pending.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-force-pending.json",
+      "sha256": "df1e30108b662cc1e330825f20cc92cdb14e4ac90b4227ccd53d6c506f09e926"
+    },
+    {
+      "file": "desktop-green-failure-retry.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-failure-retry.json",
+      "sha256": "617b5a2a6886d2ce072adab3595fa1deefbd2612e18af4bea39d203b975516e4"
+    },
+    {
+      "file": "desktop-manual-market.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-manual-market.json",
+      "sha256": "d5259c05e964f050b747a1fea3d8731cc2e3d8189afdbd44ec8bb09f09868993"
+    },
+    {
+      "file": "narrow-green-stale-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-stale-return.json",
+      "sha256": "915cef1cd5aea52bf0b480b2a28eba5e230cc96399d8b91309532fb095186fbf"
+    },
+    {
+      "file": "narrow-green-switch-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-switch-return.json",
+      "sha256": "9636e6572e0170e1f56a4d1ea4dcf13f7c3fd05a2c086b2100b2b59b80120be8"
+    },
+    {
+      "file": "narrow-green-tab-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-tab-return.json",
+      "sha256": "694d9d032686ac9291cf7bc457bd8915151fb494bc23cb15b41bea10a815df89"
+    },
+    {
+      "file": "narrow-green-force-pending.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-force-pending.json",
+      "sha256": "9186886543650cc794f69561d23394dcd5bf3438cf07c48cb88389ba380f9dd7"
+    },
+    {
+      "file": "narrow-green-failure-retry.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-failure-retry.json",
+      "sha256": "3f84f3c4ddc77bc3a30acfa75657d26e6be54d195ae881e022458fc556ba707b"
+    },
+    {
+      "file": "narrow-manual-market.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-manual-market.json",
+      "sha256": "c43f62947344262de5bfc51e606d5b434ad4e673c0eb7248f9080b6078cc12a1"
+    }
+  ]
+}

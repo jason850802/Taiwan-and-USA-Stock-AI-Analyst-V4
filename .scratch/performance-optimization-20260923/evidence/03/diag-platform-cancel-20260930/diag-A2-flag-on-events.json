@@ -1,0 +1,62 @@
+﻿{
+  "tag": "diag03-munyulom",
+  "origin": "https://taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app",
+  "route": "/api/gemini-stream-events",
+  "deployment": "dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+  "logLinesFetched": 6,
+  "red": 0,
+  "green": 0,
+  "unknown": 3,
+  "verdicts": [
+    {
+      "trace": "diag03-munyulom-0",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1204,
+      "clientReceived": "{\"t\":\"delta\",\"text\":\"假片段1\"}",
+      "verdict": "判不出來（事件組合不完整）",
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "840ms child.fakeCli.kill emitted=1",
+        "842ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munyulom-1",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1192,
+      "clientReceived": "{\"t\":\"delta\",\"text\":\"假片段1\"}",
+      "verdict": "判不出來（事件組合不完整）",
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "5ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "1208ms child.fakeCli.delta#2",
+        "1809ms child.fakeCli.delta#3",
+        "2015ms child.fakeCli.kill emitted=3",
+        "2017ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munyulom-2",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 900,
+      "clientReceived": "{\"t\":\"delta\",\"text\":\"假片段1\"}",
+      "verdict": "判不出來（事件組合不完整）",
+      "serverTimeline": [
+        "0ms handler-start",
+        "1ms child.fakeCli.spawn",
+        "1ms child.fakeCli.stdin",
+        "602ms child.fakeCli.delta#1",
+        "1203ms child.fakeCli.delta#2",
+        "1803ms child.fakeCli.delta#3",
+        "2002ms child.fakeCli.kill emitted=3",
+        "2003ms handler-return"
+      ]
+    }
+  ],
+  "otherLogs": []
+}

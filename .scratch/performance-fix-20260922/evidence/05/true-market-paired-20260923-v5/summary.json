@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "runId": "true-market-paired-20260923-v5",
+  "protocol": "3 interleaved cold before/after paired batches; five TW + five US; true Yahoo/FinMind upstream",
+  "before": {
+    "firstValidQuoteMs": {
+      "median": 6901.799999999814,
+      "min": 6696.5,
+      "max": 8448.400000000373,
+      "values": [
+        8448.400000000373,
+        6901.799999999814,
+        6696.5
+      ]
+    },
+    "allValidQuotesFxMs": {
+      "median": 20729.799999999814,
+      "min": 20586.099999999627,
+      "max": 23170.200000000186,
+      "values": [
+        23170.200000000186,
+        20729.799999999814,
+        20586.099999999627
+      ]
+    },
+    "successCounts": [
+      10,
+      10,
+      10
+    ],
+    "requestCounts": [
+      16,
+      16,
+      16
+    ],
+    "httpPeaks": [
+      3,
+      3,
+      3
+    ],
+    "nameSuccessCounts": [
+      5,
+      5,
+      5
+    ]
+  },
+  "after": {
+    "firstValidQuoteMs": {
+      "median": 4419.4000000003725,
+      "min": 4172.299999999814,
+      "max": 4602.5,
+      "values": [
+        4602.5,
+        4419.4000000003725,
+        4172.299999999814
+      ]
+    },
+    "allValidQuotesFxMs": {
+      "median": 16637.700000000186,
+      "min": 16309.599999999627,
+      "max": 17566.099999999627,
+      "values": [
+        17566.099999999627,
+        16637.700000000186,
+        16309.599999999627
+      ]
+    },
+    "successCounts": [
+      10,
+      10,
+      10
+    ],
+    "requestCounts": [
+      16,
+      16,
+      16
+    ],
+    "httpPeaks": [
+      3,
+      3,
+      3
+    ],
+    "nameSuccessCounts": [
+      5,
+      5,
+      5
+    ]
+  },
+  "improvement": {
+    "firstValidQuotePct": 35.9674287866862,
+    "allValidQuotesFxPct": 19.740180802514566
+  },
+  "thresholdPass": false,
+  "problems": [],
+  "pass": false
+}

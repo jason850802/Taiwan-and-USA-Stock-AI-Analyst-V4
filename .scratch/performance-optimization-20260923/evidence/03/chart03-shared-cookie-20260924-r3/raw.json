@@ -1,0 +1,214 @@
+{
+  "runId": "chart03-shared-cookie-20260924-r3",
+  "port": 4550,
+  "phase": "shared-cookie",
+  "createdAt": "2026-09-24T05:46:36.275Z",
+  "source": {
+    "runnerSha256": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "chartSha256": "a71de04c8c92a4b924d5526049d965a560c070a9b91d4240692f37eb1a828424",
+    "yahooSha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815"
+  },
+  "reachedTarget": true,
+  "a": {
+    "trace": "chart03-shared-cookie-20260924-r3-a",
+    "method": "GET",
+    "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+    "totalMs": 2683.5,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "b": {
+    "trace": "chart03-shared-cookie-20260924-r3-b",
+    "method": "GET",
+    "route": "/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d",
+    "totalMs": 3058.3,
+    "status": 200,
+    "headers": {
+      "cache-control": "s-maxage=60, stale-while-revalidate=300",
+      "server": "Vercel",
+      "x-vercel-id": "dev1::dev1::17ais-1790228802441-f148050ace33",
+      "x-vercel-cache": "MISS",
+      "access-control-allow-headers": "Content-Type, X-Proxy-Secret",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-max-age": "86400",
+      "connection": "close",
+      "content-length": "526",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Thu, 24 Sep 2026 05:46:45 GMT",
+      "etag": "W/\"20e-0DCFLnMNQcWfhlKriUkjGQaxX+Y\""
+    },
+    "ttfbMs": 3057.4,
+    "bytes": 526,
+    "bodySha256": "d89a1b4055a095710a5b5744b18547c7cec0a9e7866116530bdf0e09acc12618",
+    "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"NVDA\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":576,\"longName\":\"FIXTURE NVDA\",\"shortName\":\"FIXTURE NVDA\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[573.75,574.25,574.75,575.25,575.75],\"high\":[575,575.5,576,576.5,577],\"low\":[573,573.5,574,574.5,575],\"close\":[574,574.5,575,575.5,576],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[574,574.5,575,575.5,576]}]}}],\"error\":null}}",
+    "lines": []
+  },
+  "events": [
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-cookie",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-a",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-crumb",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.fetchStart",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.fetchHeaders",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.fetchBody",
+      "kind": "yahoo-chart",
+      "name": null,
+      "layer": null
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "handler"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.writeHead",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    },
+    {
+      "trace": "chart03-shared-cookie-20260924-r3-b",
+      "ev": "child.finish",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy"
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 8676,
+    "listenerPid": 8676,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 33280,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T05:46:49.646Z"
+}

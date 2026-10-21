@@ -1,0 +1,35 @@
+{
+  "schema": "p1-native-browser-negative-observation-v1",
+  "method": "CoS Desktop.browser_evaluate，既有正式App頁面保持不重載；停止原terminal74211後以同manifest重啟terminal24750",
+  "manifest": ".scratch/reacceptance-fixes/evidence/01/batches/core-precheck-2a3a5c2c-7dc9-4189-8770-dc5a43e3037a/manifest.json",
+  "tabId": "b0c48f4b-7d16-41c6-85fe-9af3718f54a3:230300312",
+  "pageId": "736fa9bb-bde0-4f27-8967-fb6fef7ad2e3",
+  "frameId": "ACF8B705106486F0968A9A43DE62AE16",
+  "pageUrl": "http://127.0.0.1:4177/?probe=p05",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": { "width": 1440, "height": 900 },
+  "oldRunId": "f8385ae1-5871-44f8-807e-fee46679d8d8",
+  "newRunId": "bc15f46e-f8ad-4e4b-abf2-5e5720eaa758",
+  "initialHtmlRunId": "f8385ae1-5871-44f8-807e-fee46679d8d8",
+  "originalPassed": true,
+  "originalFile": "desktop-green-switch-return.json",
+  "originalRawSha256": "37a30fb2b9f32d0a50b5ac8b3d65c582c52d52d8c6dd7111bdc6db8e15c5a995",
+  "pageTimeOrigin": 1789982708525.9,
+  "duplicate": {
+    "originalRunId": "f8385ae1-5871-44f8-807e-fee46679d8d8",
+    "pageTimeOrigin": 1789982708525.9,
+    "status": 409,
+    "body": "{\"error\":\"同case重複送出；失敗保留，請新啟完整組\"}"
+  },
+  "delayedBootstrap": {
+    "path": "/__integration/f8385ae1-5871-44f8-807e-fee46679d8d8/7f53eb35e1c807fba35a2fd2c1efe979fb466d0cdb4984285aa8d45d2abea6b2.js",
+    "status": 410,
+    "body": "{\"error\":\"此頁面bootstrap執行版本已過期；請完整重載本輪頁面\"}"
+  },
+  "upload": {
+    "status": 409,
+    "body": "{\"error\":\"頁面runId缺失或已過期\"}"
+  },
+  "sequence": ["原正式App執行switch-return成功並保存原結果", "同頁重送收到409", "停止原server", "同manifest啟動新run", "舊頁刻意延後讀取meta看到新ID", "舊版本bootstrap收到410", "舊頁以原fetch包裝上傳仍收到409"],
+  "limits": "這是實際工具回傳的觀測轉存，不是新browser案例raw；P05頁面與P08重複收件證據，未算入109份矩陣。"
+}

@@ -1,0 +1,837 @@
+{
+  "schema": "p1-replay-v1",
+  "scope": "P1-replay-109",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "manifestRevision": 5,
+  "manifestSha256": "093801d62a253e1fa885e6b93d56beb36b2905f742cd6846cd969d3800a1095a",
+  "definitionSha256": "f3b56510dda315acc4486db0cc0c236619910ea077a8466f302680991e6cec83",
+  "groups": {
+    "05-before": {
+      "runId": "9ba190b4-1516-48d5-ac9c-b12748a8ff3f",
+      "startupSha256": "6697e7c699858d98c27e8dc90d7d5f0f91a62c35d4ef2c988d5052918ab8ee9b",
+      "stateSha256": "ba40f3bc7a2e74ce23b651ea49b4c7a26e97d546096eb0e426be1ec08f59158f",
+      "artifactHashes": {
+        "holdings.js": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc"
+      },
+      "artifacts": [
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/artifacts/holdings.js",
+          "sha256": "498db2f31f554c280c047ad012ce30b13b6f1fabab6b58e2856e7c4e8a30dbfc"
+        }
+      ],
+      "cases": [
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-0.json",
+          "sha256": "59d7179dd8d7f5fcccb4106c48be3c4c76567712c711a1d05a17a10bcc12e810",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-1.json",
+          "sha256": "7536abdb1b7c744aa6aec44a793542e7bab485a281663ec9263baff6776abc82",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-2.json",
+          "sha256": "9f6e024e48c49a6c40ab725874b43d7ea2c0cc689086479bbda4597b1e6b05d7",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-3.json",
+          "sha256": "b3b9e7449ce30f70675d89c90b82c290191e57048bbcc390bd5b9295bb1095e6",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-4.json",
+          "sha256": "68978e333e0cc969b5684f21c8c2adef68903d83105037024256d08846dff2bb",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-5.json",
+          "sha256": "37a63974a66a08067fceb58fff8927a8347845ae1c30bb18c52da1b62f43e20d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-6.json",
+          "sha256": "3e0497935d5c6341ddd016625de86ab5696c01540f8852ff36ee86ecae05df93",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-0.json",
+          "sha256": "1aa60923e0445ba2b85777f3f7f823c78c2a600653aa58f0a0f6ed285797e394",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-1.json",
+          "sha256": "30bb5cfcfa85165c64eb163a77ebe6fc104d7a0567940cac8531097fb6dde112",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-2.json",
+          "sha256": "6128320d96a267b1bae87ce7b06900b16b556df5660595153a2110707f9b4168",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-3.json",
+          "sha256": "c208c9d1587bf9216c8c7fda8cac01f3f428de86f34da57642e3f3fb0422e6b8",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-4.json",
+          "sha256": "1b60bb874306244ba8bd9f6f2ac3b9a91fa3267b6929f89c2a73c80852f45042",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-5.json",
+          "sha256": "ff4582c7c7de83e6c37fbc2c6483698dc2cab38f48eaff9cbb57b3b73053c509",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-6.json",
+          "sha256": "396de0e4f343d1224adbff00f7a7a49b665057a5e3efb47ac24092ad14455489",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-0.json",
+          "sha256": "466a9d114c0ce3db9a699b8337723f3302ebf7d7a744e0f696ad1d2303ae491a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-1.json",
+          "sha256": "89eca74189f16c2815c8db2bb31be18c69bb4689580f0886350ed436b8596678",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-2.json",
+          "sha256": "2e2ce9354d61bc22af0fc7811399e7b54f256a9786182367a212de0a331a6208",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-3.json",
+          "sha256": "0218ec9e91142cb29c5417de7c0f7f950f721f512e58b8ef8a7a5550b5f3efea",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-4.json",
+          "sha256": "9cf3fb5e112e05581d0acee165db474bd0c29493f007656096bcb432a1653607",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-5.json",
+          "sha256": "c772b44ecaa33bc9fdedbf448a8f28ac19a15e154d574f7612bc906973e15fb1",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-6.json",
+          "sha256": "8e3b1f4f638fd6e8fdade800e740f0fb7d2a7ba467708dde06766d3ce3fe89c9",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        }
+      ]
+    },
+    "05-after": {
+      "runId": "cb61b603-19f5-458f-b8c0-0ef6745af011",
+      "startupSha256": "3526e03ff5995472bd6ec32e477b829f48aff262b824cebc826922a50958e4af",
+      "stateSha256": "3bd61508b06761d36ae95bcc7eb8de9d35ab7c869223888dae43b3e1dd9f005d",
+      "artifactHashes": {
+        "holdings.js": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc"
+      },
+      "artifacts": [
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/artifacts/holdings.js",
+          "sha256": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc"
+        }
+      ],
+      "cases": [
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-0.json",
+          "sha256": "2e640cee32fa83b80d05cc590353eff6933228ce700a54a1d76019af35623b1d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-1.json",
+          "sha256": "69717c4b691663b7ff56035207c9b38b93b346f36de96dc61d0f4893c3f662ac",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-2.json",
+          "sha256": "54127b72f6296387eed7dddce99cbd415d74ca272d0d63984cc0842ea0db6ce5",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-3.json",
+          "sha256": "fd31b651a83441ff88f7c6255b319d987c41a55fd43189d8740a9e21e9db83c4",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-4.json",
+          "sha256": "d50e62986d90b7e9ee2019d305f9f61f15e0082f92ff61935758866954915108",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-5.json",
+          "sha256": "748fe5453a02dea320129fec878abc0a4e257baa993e5191ea5df3b05266263e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-6.json",
+          "sha256": "6671e467f223bfa01f2f12598754f5eb65d408cea66afcade31a41dd3e662093",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-0.json",
+          "sha256": "db7f6abfc7216b6b136d405a4e1d78260a1ad9af328240b4e1a5eecb0d6e479f",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-1.json",
+          "sha256": "1379e6980f333b9f78cacf48712b73e57e97d1cd88fc9c38e385055b188ed9f9",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-2.json",
+          "sha256": "cca1209e5b0a0b541a169fe0a23f68f68b843412cd980093fa12f4803d6e889a",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-3.json",
+          "sha256": "161515e97337d2c4824f3089b55607c12774f8f9fe63b9222c07528129f3e14b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-4.json",
+          "sha256": "226e7cd455224de8316fd2bdc95fd055250eeb986bb8c1368214cd398bb407ca",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-5.json",
+          "sha256": "804a5b46794dd78b013a765e5b9a264e8646340e4bb88d3fe53e9c60fa9fe19b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-6.json",
+          "sha256": "4bb1a6d7d3de14bf6739434de42835e9c361c6f9f53dd5c6e3ba6c1fa795b846",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-0.json",
+          "sha256": "3723f6a36e2d09e00e0624f4268e4bb6231ae7947c73c91cdd58be7e8c1f393e",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-1.json",
+          "sha256": "70193f991fee1b1edd01cc396e87aef84478a2a8b3270dddcf5edb83c70f0c81",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-2.json",
+          "sha256": "28fb8d96e8cc88ea5e5ba8c0e27c13acc590cea29eea12921d6ab5fa3e95f31d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-3.json",
+          "sha256": "532ccc8c3b841a50d87a96dffac00fe9f7f42be70970f13988dcc984cb831dad",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-4.json",
+          "sha256": "48fe6133f062998527cf1dbcf6c153111895ca57fb1e21ac9327b605785f848d",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-5.json",
+          "sha256": "ffd85428c7a597a62aa0b71bd52142b9cd4308942a6f5980446acb24fa94131f",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-6.json",
+          "sha256": "7150b268738c9c4c0ea901c01941b9e7eb5f9c48d5cc276b2cfc63850d23d3b8",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-overlap-30-0.json",
+          "sha256": "a3bfee47e624a97099d8fdd0f081cf808efa3d03beae1fd280273c34449aee2c",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-remove-30-0.json",
+          "sha256": "d5da10c477193d5950004df58784918a04fbb781dbb12215ccaf456f64c2c021",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-unmount-30-0.json",
+          "sha256": "3f64e594f28c6337dee54dd21591cac89047714f06ade0cf329a0c0946287332",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-cache-30-0.json",
+          "sha256": "dbdf49e5ff5b434cc1f5bda315ec84e8ef936e4a79131219dace0ebbdac7e99b",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-duplicate-30-0.json",
+          "sha256": "5310359bae92e27b9a3311d77aeb04a02e05281493d35f1a5cbaa03e9402df82",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-retry-30-0.json",
+          "sha256": "66dd3bcfba146533ad8a1f75808e00de4591d63b08e865281ac21490d4808dec",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": false,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/desktop-green-app-30-0.json",
+          "sha256": "47b75d701749d93d775e8a8e111624308551a83654cfb07e665051c31e6f6754",
+          "passed": true,
+          "width": 1440,
+          "height": 900,
+          "formalApp": true,
+          "nativeKeys": 0
+        },
+        {
+          "file": "runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/narrow-green-app-30-0.json",
+          "sha256": "0ee415784cb7fdf92392cd148fc9371b83dfc752abc9784d7ebb61cc3a7e44b2",
+          "passed": true,
+          "width": 390,
+          "height": 844,
+          "formalApp": true,
+          "nativeKeys": 0
+        }
+      ]
+    }
+  },
+  "allPassed": true,
+  "beforeBaseline": "0366f5fb1d58d963323cc9d519f49ec87217a048",
+  "afterCandidate": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "method": "前版固定04完成來源，後版為當前候選；80ms合成HTTP，各0冷頁、1暖機、2～6完整五樣本。",
+  "rows": [
+    {
+      "count": 1,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 179.7999999821186,
+          "allCompleteMs": 179.7999999821186
+        },
+        "warmup": {
+          "firstVisibleMs": 99,
+          "allCompleteMs": 99.40000000596046
+        },
+        "firstVisibleMs": {
+          "samples": [
+            93,
+            98.19999998807907,
+            98.69999998807907,
+            97.90000000596046,
+            101.59999999403954
+          ],
+          "median": 98.19999998807907,
+          "min": 93,
+          "max": 101.59999999403954
+        },
+        "allCompleteMs": {
+          "samples": [
+            93.19999998807907,
+            98.40000000596046,
+            98.69999998807907,
+            97.90000000596046,
+            102.09999999403954
+          ],
+          "median": 98.40000000596046,
+          "min": 93.19999998807907,
+          "max": 102.09999999403954
+        },
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "peaks": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 141.40000000596046,
+          "allCompleteMs": 141.40000000596046
+        },
+        "warmup": {
+          "firstVisibleMs": 93.7999999821186,
+          "allCompleteMs": 93.7999999821186
+        },
+        "firstVisibleMs": {
+          "samples": [
+            92.30000001192093,
+            98,
+            102.39999997615814,
+            103.30000001192093,
+            100.80000001192093
+          ],
+          "median": 100.80000001192093,
+          "min": 92.30000001192093,
+          "max": 103.30000001192093
+        },
+        "allCompleteMs": {
+          "samples": [
+            92.30000001192093,
+            98,
+            102.39999997615814,
+            103.30000001192093,
+            100.80000001192093
+          ],
+          "median": 100.80000001192093,
+          "min": 92.30000001192093,
+          "max": 103.30000001192093
+        },
+        "requestCounts": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "peaks": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 10,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 100.69999998807907,
+          "allCompleteMs": 195
+        },
+        "warmup": {
+          "firstVisibleMs": 87.90000000596046,
+          "allCompleteMs": 194.30000001192093
+        },
+        "firstVisibleMs": {
+          "samples": [
+            90.19999998807907,
+            93.69999998807907,
+            100.30000001192093,
+            100.40000000596046,
+            97.69999998807907
+          ],
+          "median": 97.69999998807907,
+          "min": 90.19999998807907,
+          "max": 100.40000000596046
+        },
+        "allCompleteMs": {
+          "samples": [
+            184.30000001192093,
+            189,
+            186.09999999403954,
+            194.80000001192093,
+            190.40000000596046
+          ],
+          "median": 189,
+          "min": 184.30000001192093,
+          "max": 194.80000001192093
+        },
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "peaks": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "fxStartPositions": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 96.30000001192093,
+          "allCompleteMs": 371.40000000596046
+        },
+        "warmup": {
+          "firstVisibleMs": 101.89999997615814,
+          "allCompleteMs": 377.19999998807907
+        },
+        "firstVisibleMs": {
+          "samples": [
+            96.59999999403954,
+            104.69999998807907,
+            101.5,
+            94,
+            94.5
+          ],
+          "median": 96.59999999403954,
+          "min": 94,
+          "max": 104.69999998807907
+        },
+        "allCompleteMs": {
+          "samples": [
+            377.09999999403954,
+            383,
+            371,
+            382.60000002384186,
+            369.5
+          ],
+          "median": 377.09999999403954,
+          "min": 369.5,
+          "max": 383
+        },
+        "requestCounts": [
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "peaks": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "count": 30,
+      "before": {
+        "cold": {
+          "firstVisibleMs": 115.40000000596046,
+          "allCompleteMs": 554.4000000059605
+        },
+        "warmup": {
+          "firstVisibleMs": 108.60000002384186,
+          "allCompleteMs": 543.6000000238419
+        },
+        "firstVisibleMs": {
+          "samples": [
+            100.90000000596046,
+            101,
+            105.59999999403954,
+            110.30000001192093,
+            101
+          ],
+          "median": 101,
+          "min": 100.90000000596046,
+          "max": 110.30000001192093
+        },
+        "allCompleteMs": {
+          "samples": [
+            545.8000000119209,
+            533.0999999940395,
+            538.2999999821186,
+            524.3000000119209,
+            538
+          ],
+          "median": 538,
+          "min": 524.3000000119209,
+          "max": 545.8000000119209
+        },
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "peaks": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "fxStartPositions": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ]
+      },
+      "after": {
+        "cold": {
+          "firstVisibleMs": 97.90000000596046,
+          "allCompleteMs": 986.5
+        },
+        "warmup": {
+          "firstVisibleMs": 102.7999999821186,
+          "allCompleteMs": 1004.8999999761581
+        },
+        "firstVisibleMs": {
+          "samples": [
+            102.5,
+            104.90000000596046,
+            96.59999999403954,
+            102.40000000596046,
+            100.60000002384186
+          ],
+          "median": 102.40000000596046,
+          "min": 96.59999999403954,
+          "max": 104.90000000596046
+        },
+        "allCompleteMs": {
+          "samples": [
+            1002.1999999880791,
+            1048.9000000059605,
+            1045,
+            1010,
+            1034
+          ],
+          "median": 1034,
+          "min": 1002.1999999880791,
+          "max": 1048.9000000059605
+        },
+        "requestCounts": [
+          31,
+          31,
+          31,
+          31,
+          31
+        ],
+        "peaks": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "fxStartPositions": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}

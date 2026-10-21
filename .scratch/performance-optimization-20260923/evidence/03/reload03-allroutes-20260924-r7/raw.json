@@ -1,0 +1,777 @@
+{
+  "schemaVersion": 1,
+  "runId": "reload03-allroutes-20260924-r7",
+  "kind": "reload",
+  "createdAt": "2026-09-24T05:47:58.947Z",
+  "identity": {
+    "git": {
+      "head": "6a7b029ad9cf99d399ac648c37fcc096efffbe89"
+    },
+    "workdir": "C:/pfv7",
+    "productBefore": {
+      "differsFromBaseline": [
+        "api/_lib/http.ts",
+        "api/_lib/llm.ts",
+        "api/_lib/yahoo.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.test.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts",
+        "vite.config.ts"
+      ],
+      "untrackedFunctionFiles": [
+        "api/_lib/http.cancel.test.ts"
+      ]
+    },
+    "versions": {
+      "node": "v26.4.0",
+      "vercel": "55.0.0",
+      "vercelNode": "5.8.23",
+      "tsx": "4.21.0",
+      "vite": "6.4.1"
+    },
+    "tools": {
+      "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "b1-breakdown.mjs": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "c-parity.mjs": "5755827d9d0eef5c2d2432ae6af6fa465df9f1883afeed83bd0ceb176e8b1a45",
+      "c-reload.mjs": "1acfb4d7ac8c015fa072ced19c38fb78bad9415709575af56aa2378662eddcec"
+    },
+    "reloadTool": "1acfb4d7ac8c015fa072ced19c38fb78bad9415709575af56aa2378662eddcec",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a"
+  },
+  "protocol": {
+    "longStream": {
+      "deltas": 25,
+      "intervalMs": 2000
+    },
+    "invalidateWaitMs": 8000,
+    "editSettleMs": 1500,
+    "verifierSha": "f2bc858cc29b"
+  },
+  "steps": [
+    {
+      "step": "baseline",
+      "invalidated": null,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 2330.2,
+            "totalMs": 2331.2,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 2030.8,
+            "totalMs": 2031,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "b1Instance": "b1",
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "status": 400,
+            "ttfbMs": 2140,
+            "totalMs": 2140.3,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+            "error": null
+          },
+          "c": {
+            "status": 400,
+            "ttfbMs": 25.9,
+            "totalMs": 26.1,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+            "error": null
+          },
+          "b1Instance": "b1",
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 2289,
+            "totalMs": 2289.2,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 1864.9,
+            "totalMs": 1865,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+            "error": null
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {}
+    },
+    {
+      "step": "edit-lib-message",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "status": 400,
+            "ttfbMs": 2092.1,
+            "totalMs": 2092.3,
+            "bodySha256": "8cac0f057e624d76456ef139ff3b404a6589448f01704883ad41bea4823e5ca4",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。（重載測試）\"}",
+            "error": null
+          },
+          "c": {
+            "status": 400,
+            "ttfbMs": 1692.7,
+            "totalMs": 1692.9,
+            "bodySha256": "8cac0f057e624d76456ef139ff3b404a6589448f01704883ad41bea4823e5ca4",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。（重載測試）\"}",
+            "error": null
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "兩邊都拿到新訊息": true
+      }
+    },
+    {
+      "step": "syntax-error",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "status": 500,
+            "ttfbMs": 2210.3,
+            "totalMs": 2210.7,
+            "bodySha256": "4b74840efef56a2c27780c7ad4b19c350eee08a3eaf4f7c93898cc66cc21180b",
+            "bodyText": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n",
+            "error": null
+          },
+          "c": {
+            "status": 500,
+            "ttfbMs": 1825.3,
+            "totalMs": 1825.5,
+            "bodySha256": "4b74840efef56a2c27780c7ad4b19c350eee08a3eaf4f7c93898cc66cc21180b",
+            "bodyText": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n",
+            "error": null
+          },
+          "b1Instance": "b1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "兩邊都不再回舊碼的成功結果": true
+      }
+    },
+    {
+      "step": "restore-syntax",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 2515.8,
+            "totalMs": 2516,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 2427.7,
+            "totalMs": 2427.8,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "還原後兩邊恢復": true
+      }
+    },
+    {
+      "step": "env-add-secret",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "status": 403,
+            "ttfbMs": 2080.6,
+            "totalMs": 2080.7,
+            "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+            "error": null
+          },
+          "c": {
+            "status": 403,
+            "ttfbMs": 1863.9,
+            "totalMs": 1864.1,
+            "bodySha256": "eaeb03fe5670b2debaed14133aa6616885d86ff603f8dace9fcd7ef68f96bc2c",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求未通過驗證。\"}",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "兩邊都因缺密鑰拒絕": true
+      }
+    },
+    {
+      "step": "env-restore",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 2293.8,
+            "totalMs": 2293.9,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 1894.2,
+            "totalMs": 1894.3,
+            "bodySha256": "593b77e261dc2fe624f9d0d753030a384ac46d1302b3bb4c62f89e18a9912732",
+            "bodyText": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"TWD\",\"symbol\":\"2330.TW\",\"exchangeTimezoneName\":\"Asia/Taipei\",\"regularMarketPrice\":901,\"longName\":\"FIXTURE 2330.TW\",\"shortName\":\"FIXTURE 2330.TW\"},\"timestamp\":[1789803000,1789889400,1789975800,1790062200,1790148600],\"indicators\":{\"quote\":[{\"open\":[898.75,899.25,899.75,900.25,900.75],\"high\":[900,900.5,901,901.5,902],\"low\":[898,898.5,899,899.5,900],\"close\":[899,899.5,900,900.5,901],\"volume\":[1000,1001,1002,1003,1004]}],\"adjclose\":[{\"adjclose\":[899,899.5,900,900.5,901]}]}}],\"error\":null}}",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "兩邊恢復放行": true
+      }
+    },
+    {
+      "step": "delete-route",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "status": 404,
+            "ttfbMs": 12.9,
+            "totalMs": 13,
+            "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+            "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+            "error": null
+          },
+          "c": {
+            "status": 404,
+            "ttfbMs": 14,
+            "totalMs": 14.1,
+            "bodySha256": "7377b3dde5cfa88d840e3f010350ec12b3c06f85645e0d9707b9df4e01f369cd",
+            "bodyText": "The page could not be found.\n\nNOT_FOUND\n",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "兩邊都找不到路由": true
+      }
+    },
+    {
+      "step": "restore-route",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 2243.7,
+            "totalMs": 2243.8,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 1893.7,
+            "totalMs": 1893.8,
+            "bodySha256": "501975c9545bb24f01d3b6b30b9c18196929ec69fdca50f66d787a09c20bed10",
+            "bodyText": "{\"quotes\":[{\"symbol\":\"2330.TW\",\"shortname\":\"FIXTURE 2330\",\"exchange\":\"TAI\",\"quoteType\":\"EQUITY\"}],\"news\":[]}",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "路由還原後兩邊恢復": true
+      }
+    },
+    {
+      "step": "restore-lib",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": {
+            "status": 400,
+            "ttfbMs": 2054.1,
+            "totalMs": 2054.2,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+            "error": null
+          },
+          "c": {
+            "status": 400,
+            "ttfbMs": 1870.9,
+            "totalMs": 1871,
+            "bodySha256": "6fd0dd8867aad4f3dcd870c5e594a816829968bfbbea8385cf34a00027bde9df",
+            "bodyText": "{\"code\":\"BAD_REQUEST\",\"message\":\"請求參數不正確，請確認股票代號與時間區間設定。\"}",
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {},
+      "checks": {
+        "訊息還原後兩邊都回原文": true
+      }
+    },
+    {
+      "step": "edit-during-stream",
+      "invalidated": true,
+      "probes": [
+        {
+          "route": "/api/gemini-stream",
+          "b1": {
+            "status": 200,
+            "ttfbMs": 4455.2,
+            "totalMs": 54591.5,
+            "bodySha256": "6584ffe45fda92bb96ed9a65195a96695017444fefe190fb4b61ff30411f1045",
+            "bodyText": null,
+            "lines": [
+              {
+                "t": 4455.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+              },
+              {
+                "t": 6466.1,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段2\"}"
+              },
+              {
+                "t": 8474.2,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段3\"}"
+              },
+              {
+                "t": 10477.1,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段4\"}"
+              },
+              {
+                "t": 12489.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段5\"}"
+              },
+              {
+                "t": 14494.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段6\"}"
+              },
+              {
+                "t": 16495.9,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段7\"}"
+              },
+              {
+                "t": 18500.4,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段8\"}"
+              },
+              {
+                "t": 20503.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段9\"}"
+              },
+              {
+                "t": 22508.8,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段10\"}"
+              },
+              {
+                "t": 24517.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段11\"}"
+              },
+              {
+                "t": 26528.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段12\"}"
+              },
+              {
+                "t": 28538.2,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段13\"}"
+              },
+              {
+                "t": 30539,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段14\"}"
+              },
+              {
+                "t": 32541.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段15\"}"
+              },
+              {
+                "t": 34543.8,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段16\"}"
+              },
+              {
+                "t": 36546.1,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段17\"}"
+              },
+              {
+                "t": 38551.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段18\"}"
+              },
+              {
+                "t": 40560.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段19\"}"
+              },
+              {
+                "t": 42566.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段20\"}"
+              },
+              {
+                "t": 44568.9,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段21\"}"
+              },
+              {
+                "t": 46577,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段22\"}"
+              },
+              {
+                "t": 48578.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段23\"}"
+              },
+              {
+                "t": 50579.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段24\"}"
+              },
+              {
+                "t": 52586.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段25\"}"
+              },
+              {
+                "t": 54591.1,
+                "text": "{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5假片段6假片段7假片段8假片段9假片段10假片段11假片段12假片段13假片段14假片段15假片段16假片段17假片段18假片段19假片段20假片段21假片段22假片段23假片段24假片段25\"}"
+              }
+            ],
+            "error": null
+          },
+          "c": {
+            "status": 200,
+            "ttfbMs": 4190.3,
+            "totalMs": 54389,
+            "bodySha256": "6584ffe45fda92bb96ed9a65195a96695017444fefe190fb4b61ff30411f1045",
+            "bodyText": null,
+            "lines": [
+              {
+                "t": 4190.4,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段1\"}"
+              },
+              {
+                "t": 6188.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段2\"}"
+              },
+              {
+                "t": 8193.6,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段3\"}"
+              },
+              {
+                "t": 10196.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段4\"}"
+              },
+              {
+                "t": 12207.4,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段5\"}"
+              },
+              {
+                "t": 14216.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段6\"}"
+              },
+              {
+                "t": 16230.9,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段7\"}"
+              },
+              {
+                "t": 18235.8,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段8\"}"
+              },
+              {
+                "t": 20251.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段9\"}"
+              },
+              {
+                "t": 22258.1,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段10\"}"
+              },
+              {
+                "t": 24265.8,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段11\"}"
+              },
+              {
+                "t": 26277.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段12\"}"
+              },
+              {
+                "t": 28290.7,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段13\"}"
+              },
+              {
+                "t": 30305.9,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段14\"}"
+              },
+              {
+                "t": 32322.1,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段15\"}"
+              },
+              {
+                "t": 34326.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段16\"}"
+              },
+              {
+                "t": 36329.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段17\"}"
+              },
+              {
+                "t": 38332.6,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段18\"}"
+              },
+              {
+                "t": 40344.2,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段19\"}"
+              },
+              {
+                "t": 42348,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段20\"}"
+              },
+              {
+                "t": 44350,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段21\"}"
+              },
+              {
+                "t": 46360.3,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段22\"}"
+              },
+              {
+                "t": 48376.6,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段23\"}"
+              },
+              {
+                "t": 50379.5,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段24\"}"
+              },
+              {
+                "t": 52384,
+                "text": "{\"t\":\"delta\",\"text\":\"假片段25\"}"
+              },
+              {
+                "t": 54388.7,
+                "text": "{\"t\":\"done\",\"text\":\"假片段1假片段2假片段3假片段4假片段5假片段6假片段7假片段8假片段9假片段10假片段11假片段12假片段13假片段14假片段15假片段16假片段17假片段18假片段19假片段20假片段21假片段22假片段23假片段24假片段25\"}"
+              }
+            ],
+            "error": null
+          },
+          "b1Instance": "b1-1",
+          "same": true
+        }
+      ],
+      "observed": {
+        "editedAfterSecondDelta": true
+      },
+      "checks": {
+        "改碼發生在串流進行中（候選已收到第 2 段）": true,
+        "B1 串流完整跑完": true,
+        "候選串流沒有被停用流程切斷": true
+      }
+    }
+  ],
+  "services": [
+    {
+      "label": "b1",
+      "name": "b1",
+      "port": 4552,
+      "ownedPid": 15348,
+      "listenerPid": 15348,
+      "stopped": true,
+      "exit": {
+        "code": 1,
+        "signal": null
+      }
+    },
+    {
+      "label": "c",
+      "name": "c",
+      "port": 4553,
+      "ownedPid": 20080,
+      "listenerPid": 20080,
+      "stopped": true,
+      "exit": null
+    },
+    {
+      "label": "b1",
+      "name": "b1-1",
+      "port": 4554,
+      "ownedPid": 35220,
+      "listenerPid": 35220,
+      "stopped": true,
+      "exit": null
+    }
+  ],
+  "b1Crashes": [
+    {
+      "beforeStep": "restore-syntax",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4552,
+      "logErrors": [
+        "Error: Transform failed with 1 error:",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 30524 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    }
+  ],
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 4312,
+        "generation": 0
+      },
+      {
+        "entrypoint": "api/yahoo/search.ts",
+        "pid": 23384,
+        "generation": 0
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 24704,
+        "generation": 1
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 29752,
+        "generation": 2
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 9560,
+        "generation": 3
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 32000,
+        "generation": 4
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 17448,
+        "generation": 5
+      },
+      {
+        "entrypoint": "api/yahoo/search.ts",
+        "pid": 12776,
+        "generation": 7
+      },
+      {
+        "entrypoint": "api/yahoo/chart.ts",
+        "pid": 2008,
+        "generation": 8
+      },
+      {
+        "entrypoint": "api/gemini-stream.ts",
+        "pid": 24776,
+        "generation": 8
+      }
+    ],
+    "invalidations": 10,
+    "retirements": 9,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "cleanup": {
+    "restored": true,
+    "deleted": [
+      ".env",
+      ".vercel/README.txt",
+      ".vercel/project.json",
+      ".vercel"
+    ],
+    "productAfter": {
+      "differsFromBaseline": [
+        "api/_lib/http.ts",
+        "api/_lib/llm.ts",
+        "api/_lib/yahoo.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.test.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts",
+        "vite.config.ts"
+      ],
+      "untrackedFunctionFiles": [
+        "api/_lib/http.cancel.test.ts"
+      ]
+    },
+    "productClean": true,
+    "testFilesRemoved": true
+  },
+  "aborted": null,
+  "identityAfter": {
+    "head": "6a7b029ad9cf99d399ac648c37fcc096efffbe89",
+    "tools": {
+      "trace-preload.cjs": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "service-kit.mjs": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "b1-breakdown.mjs": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "verify-b1-breakdown.mjs": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "b1-vite-proxy.config.mjs": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "c-parity.mjs": "5755827d9d0eef5c2d2432ae6af6fa465df9f1883afeed83bd0ceb176e8b1a45",
+      "c-reload.mjs": "1acfb4d7ac8c015fa072ced19c38fb78bad9415709575af56aa2378662eddcec"
+    }
+  },
+  "finishedAt": "2026-09-24T05:50:14.774Z"
+}

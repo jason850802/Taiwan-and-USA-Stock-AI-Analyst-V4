@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":29.261,"pid":14192,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1926.729,"pid":14192,"seq":1}
+{"ev":"child.listening","t":1943.187,"pid":14192,"seq":1}
+{"ev":"child.listenCall","t":1998.477,"pid":14192,"seq":2}
+{"ev":"child.listening","t":1999.96,"pid":14192,"seq":2}
+{"ev":"child.ready","t":2000.289,"pid":14192}
+{"ev":"child.recv","t":2003.262,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":2010.832,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":2011.232,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4921","x-forwarded-host":"127.0.0.1:4921","x-forwarded-proto":"http","x-forwarded-port":"4921","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4921","origin":"http://evil.example","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2012.307,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"handler","status":204}
+{"ev":"child.finish","t":2013.718,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"handler"}
+{"ev":"child.writeHead","t":2018.443,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"devProxy","status":204}
+{"ev":"child.finish","t":2019.031,"pid":14192,"trace":"parity-20260924-r5-default-b1-options-chart-evil-origin","layer":"devProxy"}

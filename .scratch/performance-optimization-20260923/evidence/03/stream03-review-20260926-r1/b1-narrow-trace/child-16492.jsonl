@@ -1,0 +1,9 @@
+{"ev":"child.boot","t":32.346,"pid":16492,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":50,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":3603.913,"pid":16492,"seq":1}
+{"ev":"child.listening","t":3624.052,"pid":16492,"seq":1}
+{"ev":"child.listenCall","t":3709.037,"pid":16492,"seq":2}
+{"ev":"child.listening","t":3711.032,"pid":16492,"seq":2}
+{"ev":"child.ready","t":3711.453,"pid":16492}
+{"ev":"child.fetchStart","t":3722.103,"pid":16492,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockPrice","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":3784.129,"pid":16492,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockPrice","dataId":"2330","status":200,"fixture":true,"fixtureWaitMs":60.288,"scripted":false}
+{"ev":"child.fetchBody","t":3785.32,"pid":16492,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockPrice","dataId":"2330"}

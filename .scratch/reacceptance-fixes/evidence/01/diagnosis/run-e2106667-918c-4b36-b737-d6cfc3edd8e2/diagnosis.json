@@ -1,0 +1,802 @@
+{
+  "schema": "p1-stale-replay-diagnosis-v1",
+  "startedAt": "2026-09-21T08:38:22.102Z",
+  "completedAt": "2026-09-21T08:38:27.012Z",
+  "node": "v26.4.0",
+  "fixedCommit": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "mode": "保留第一輪殘留的紅燈",
+  "harness": {
+    "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/reproduce-stale-replay.mjs",
+    "sha256": "538f34c281f19872d5d0cd65668d38b4b743e02b7b66671c7f73b5855639f2d5"
+  },
+  "scope": "僅重算原 03 verifier；歷史成功 raw 作種子，沒有執行新瀏覽器矩陣。",
+  "originalVerifier": {
+    "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/verify-replays.mjs",
+    "fixedCommit": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+    "sha256": "eee7dc28da3467e4968038d5b8add1c03c58b7a9d523db7ddd231444e35b9b58",
+    "copiedBytesIdentical": true,
+    "relocationEdits": 0
+  },
+  "runDirectory": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2",
+  "dependencies": [
+    {
+      "file": ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/verify-replays.mjs",
+      "bytes": 5190,
+      "sha256": "eee7dc28da3467e4968038d5b8add1c03c58b7a9d523db7ddd231444e35b9b58"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/audit.json",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/audit.json",
+      "bytes": 9765,
+      "sha256": "515b96d29b20d1f545eeafdbab78f09fb2e73ea34f75b05bfdeb9f9563d3301e"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/holdings-cases.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/holdings-cases.mjs",
+      "bytes": 12565,
+      "sha256": "7529648bb0b337fb5806636e9ac2d1d80e0b9184a54b91818391b56db16f26a8"
+    },
+    {
+      "file": "dist/index.html",
+      "original": ".scratch/reacceptance-20260921/workspace/dist/index.html",
+      "bytes": 637,
+      "sha256": "c517770a21f9a456dc17c19ae0124c4fc6f8a0cefcc547653e1a3180518c454c"
+    },
+    {
+      "file": "App.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/App.tsx",
+      "bytes": 29234,
+      "sha256": "b49096851db6029964370ae4f9463c6b501cd7bb74c58e9943c71981bf799790"
+    },
+    {
+      "file": "index.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/index.tsx",
+      "bytes": 470,
+      "sha256": "1629934007b53fe858d8c7e1ab4c81eb616a903de2c450ea2a0b8ec1c7ef3d71"
+    },
+    {
+      "file": "types.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/types.ts",
+      "bytes": 11382,
+      "sha256": "ac0e1c89c6bc5b9e577fc23df5283a3a3c7a75b6892498f6a4e8dfa731b6d9d5"
+    },
+    {
+      "file": "api/finmind.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/finmind.ts",
+      "bytes": 3086,
+      "sha256": "4b868aa456b90da77ed85ef73f02d88dfc0d15e9dfbf745ff4664f8f507a364c"
+    },
+    {
+      "file": "api/gemini-stream.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/gemini-stream.ts",
+      "bytes": 2895,
+      "sha256": "d64a9097502520cc27301e1647afa54a8fd6d26621610029e0beb9b7064168df"
+    },
+    {
+      "file": "api/gemini.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/gemini.ts",
+      "bytes": 1686,
+      "sha256": "e0830661abcf25e47abe94ed337bc8de553d91a9db71d11b4172f5202415c44d"
+    },
+    {
+      "file": "api/_lib/config.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/config.ts",
+      "bytes": 2116,
+      "sha256": "339bf8774c49ee9eb12ec69adc4605d04b7ba2ae4ff3d31bb441e1e1e0fc8f40"
+    },
+    {
+      "file": "api/_lib/finmind.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/finmind.ts",
+      "bytes": 5463,
+      "sha256": "05179a8c38fb92f7368ba9e7dbf0f18b6dceec95274d52c7a8a019e629c29833"
+    },
+    {
+      "file": "api/_lib/guard.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/guard.ts",
+      "bytes": 4341,
+      "sha256": "397c23dc8c27888d14f14c069c2e81c4e4cefb9dfdfb92d6200b0510397c4068"
+    },
+    {
+      "file": "api/_lib/http.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/http.ts",
+      "bytes": 3981,
+      "sha256": "b358e9931b5f65acf4e04eeaeea199a76b8486033deed223104c09e7e1261251"
+    },
+    {
+      "file": "api/_lib/llm.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/llm.ts",
+      "bytes": 21649,
+      "sha256": "a16d13e8622095ac623fe96b7908756a27145123a57f92081d19bc16b7269509"
+    },
+    {
+      "file": "api/_lib/ratelimit.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/ratelimit.ts",
+      "bytes": 2105,
+      "sha256": "3d604628651fd3003f43a31c9d68d4d5e310f5ed53838e1f5038c6ccbbd1e630"
+    },
+    {
+      "file": "api/_lib/yahoo.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/_lib/yahoo.ts",
+      "bytes": 8334,
+      "sha256": "69c91143887334fe38ed89d71245fa173d11bdf4af4f0dfa060b769d273d84fb"
+    },
+    {
+      "file": "api/yahoo/chart.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/yahoo/chart.ts",
+      "bytes": 2977,
+      "sha256": "b499f3870a0c3ec811a6b7a1a6417c5aa32fc73357e259eac88111f467d1e449"
+    },
+    {
+      "file": "api/yahoo/search.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/api/yahoo/search.ts",
+      "bytes": 1933,
+      "sha256": "5b81ae8b13dd28d7b5973aff91685769d6e893ce8fbc35222922c7eaa5d2bd79"
+    },
+    {
+      "file": "components/AnalysisResult.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/AnalysisResult.tsx",
+      "bytes": 1091,
+      "sha256": "1de15e4337f5212119b900168609e1c437610af25ae50a0a4eb1d81137742e1a"
+    },
+    {
+      "file": "components/ChartToolbar.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ChartToolbar.tsx",
+      "bytes": 8574,
+      "sha256": "cb98457eaa6d284fc8a2a159230787b9ae419bc16f133be1be2fdbcd6a044d57"
+    },
+    {
+      "file": "components/EntryChecklist.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/EntryChecklist.tsx",
+      "bytes": 5879,
+      "sha256": "62e9ad59eb0379a83033bf34e9c115d7067c47e5b101dd3d2ceea0066174046f"
+    },
+    {
+      "file": "components/ErrorBoundary.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ErrorBoundary.tsx",
+      "bytes": 2230,
+      "sha256": "93f0a8065902feb42840fff9adec9908fcc1cf87793b964760c4de2447018999"
+    },
+    {
+      "file": "components/FundamentalsPanel.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/FundamentalsPanel.tsx",
+      "bytes": 8134,
+      "sha256": "ecd87c12e5a0750eae584b793fcee0150d3330bb2501f6337af6952724c790ba"
+    },
+    {
+      "file": "components/Portfolio.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/Portfolio.tsx",
+      "bytes": 38916,
+      "sha256": "c6326ce5e180c3970abc31231f36ef98af9092082a3df16c12a1d438c2c973ec"
+    },
+    {
+      "file": "components/QuoteHeader.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/QuoteHeader.tsx",
+      "bytes": 2930,
+      "sha256": "718a6f03172ee9cb95c4d30afef331d15925d6a6ddf9d8f955c4d28370408086"
+    },
+    {
+      "file": "components/Sidebar.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/Sidebar.tsx",
+      "bytes": 2656,
+      "sha256": "9d304a640949cb1a4fb853a8248845b4f32fef4b5be340b2e677b8ef41d45a86"
+    },
+    {
+      "file": "components/StockChart.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/StockChart.tsx",
+      "bytes": 50955,
+      "sha256": "1e500b426a8bfd068357bb1d17a68d8ac92925bd99299c0a2b570e3fbd837cf1"
+    },
+    {
+      "file": "components/StockSearch.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/StockSearch.tsx",
+      "bytes": 8623,
+      "sha256": "14f6984276b0308100ccf38818620d6819a3efeb27e974ce4ca99bc2880c8449"
+    },
+    {
+      "file": "components/fundamentals/DividendTable.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/fundamentals/DividendTable.tsx",
+      "bytes": 2140,
+      "sha256": "9586b96f2b2b40dff23ab2a2ce5960e62d90705ee682eb22bf1fbe1a02b4f290"
+    },
+    {
+      "file": "components/fundamentals/FinancialHealthCards.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/fundamentals/FinancialHealthCards.tsx",
+      "bytes": 2766,
+      "sha256": "77db1782cc696dfd4bb0c158720ff0124b490f1efe99fd663ab470d559e876a5"
+    },
+    {
+      "file": "components/fundamentals/MonthlyRevenueChart.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/fundamentals/MonthlyRevenueChart.tsx",
+      "bytes": 3281,
+      "sha256": "bde24d724a6c966a817c4c172693fd7f22c7ac55c96ca397ff770b2b953f0e01"
+    },
+    {
+      "file": "components/fundamentals/QuarterlyTrendCharts.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/fundamentals/QuarterlyTrendCharts.tsx",
+      "bytes": 6432,
+      "sha256": "0fc898f94d7b1f73bd346811d4cb3bfd71530ee7081805a8c54033e961fec67f"
+    },
+    {
+      "file": "components/fundamentals/ValuationHeader.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/fundamentals/ValuationHeader.tsx",
+      "bytes": 1493,
+      "sha256": "325a51bcd0bb58921eccb6a7c947bda7869bb539ffc69f047368223a7efc9a73"
+    },
+    {
+      "file": "components/portfolio/HoldingsTable.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/HoldingsTable.tsx",
+      "bytes": 34021,
+      "sha256": "f39820c45304a123d590538bf1d5a18e87291f619f829543822022adb98032dc"
+    },
+    {
+      "file": "components/portfolio/ImportStatementModal.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/ImportStatementModal.tsx",
+      "bytes": 13244,
+      "sha256": "c89869f772fa6a8f2d1c58a9f01b0f7a9b6dc05b8a08fa696225fac7ee586eab"
+    },
+    {
+      "file": "components/portfolio/PnlHistoryChart.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/PnlHistoryChart.tsx",
+      "bytes": 7214,
+      "sha256": "884a6a4ab7a143fcafae437781113ca70877610c4c96150e050aff4e68d683af"
+    },
+    {
+      "file": "components/portfolio/PnlHistorySection.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/PnlHistorySection.tsx",
+      "bytes": 17154,
+      "sha256": "c1a642fb903028042c9020555d2dd79c39752f7e940a0943428a45658a535694"
+    },
+    {
+      "file": "components/portfolio/RealizedLedger.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/RealizedLedger.tsx",
+      "bytes": 10154,
+      "sha256": "4db8db68937c0386c5e576966540ea078bb89466a95a4717fe79c0a74f896961"
+    },
+    {
+      "file": "components/portfolio/RestoreBackupModal.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/RestoreBackupModal.tsx",
+      "bytes": 11194,
+      "sha256": "a8d9613b8e94f917dedc5d5499ce58b4add3d08868789380b133b4488b6ee45d"
+    },
+    {
+      "file": "components/portfolio/SellModal.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/SellModal.tsx",
+      "bytes": 12121,
+      "sha256": "c7c6325dd4f678145121cb88059b3dc33f5cd15db51bd58865c090f8f33644c3"
+    },
+    {
+      "file": "components/portfolio/holdingPriceQueue.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/holdingPriceQueue.ts",
+      "bytes": 1684,
+      "sha256": "d4a28bdbfda48e0dafedcfe59631062891b2a8ba5d86316c4d6340cff4418b1e"
+    },
+    {
+      "file": "components/portfolio/useDailySnapshot.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/useDailySnapshot.ts",
+      "bytes": 1979,
+      "sha256": "15006145030650d4d80d4018112e1192fbda72c709e31c0c075707b4d4a2c5e6"
+    },
+    {
+      "file": "components/portfolio/useHealthCheck.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/useHealthCheck.ts",
+      "bytes": 14987,
+      "sha256": "f21c10dccaa22f8e89380957e8918a99c3f85bd83ee19e7ba8d90cc43d2556be"
+    },
+    {
+      "file": "components/portfolio/useHoldingPrices.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/useHoldingPrices.ts",
+      "bytes": 6571,
+      "sha256": "8d5df33205109a3d982c2d54eb4b547fa9aa10d34775d3b3fab64a2a3ef2be5f"
+    },
+    {
+      "file": "components/portfolio/useLotDividendUpdate.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/useLotDividendUpdate.ts",
+      "bytes": 4156,
+      "sha256": "7f06fd1dd3cf7faeb789e29ba5fff0f2e3c29c6fd3168c7f2375081fac23493b"
+    },
+    {
+      "file": "components/portfolio/usePortfolioBackup.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/usePortfolioBackup.ts",
+      "bytes": 4044,
+      "sha256": "a58a225468350c71f7fc0d046bf0e4c870e66fd7ba3cbdbaeb547acc0ac35ac0"
+    },
+    {
+      "file": "components/portfolio/usePortfolioForm.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/components/portfolio/usePortfolioForm.ts",
+      "bytes": 8017,
+      "sha256": "c942a538d44a71982e6abd06338d13914c2c26ed323948ae67682dd0aa445ac9"
+    },
+    {
+      "file": "components/ui/Badge.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Badge.tsx",
+      "bytes": 726,
+      "sha256": "a1c21a5e714063576ae612de4b245bb239cae40bee2d427954f4dda9ccc2b1bf"
+    },
+    {
+      "file": "components/ui/Banner.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Banner.tsx",
+      "bytes": 1133,
+      "sha256": "99b69a02b56484c77278c13e50641413f842d6e1d857b08a1d1440dbdd476d51"
+    },
+    {
+      "file": "components/ui/Button.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Button.tsx",
+      "bytes": 1296,
+      "sha256": "b9c6c035f5a3bd21e4eff9e6f7d36d0d36e9c161fbb5d75d5f5dd5d6e3a5d409"
+    },
+    {
+      "file": "components/ui/Card.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Card.tsx",
+      "bytes": 694,
+      "sha256": "16294824d22895981a5e1f3baaab3cf0203f3537a2046fea290a5afabbacadd6"
+    },
+    {
+      "file": "components/ui/MarkdownReport.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/MarkdownReport.tsx",
+      "bytes": 3902,
+      "sha256": "4489f6f8d7a5086801e51cfff71053801ed0fb1d4dcbf220a131b058b17eadb4"
+    },
+    {
+      "file": "components/ui/Modal.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Modal.tsx",
+      "bytes": 5962,
+      "sha256": "7f8ff2617b4fef86d06284213226876c88f1bb9a52c647c2a93ac7f8c65a36fe"
+    },
+    {
+      "file": "components/ui/Skeleton.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/Skeleton.tsx",
+      "bytes": 785,
+      "sha256": "56268bc77c8eb60ccd2e6504c3bf4a3d246d025983985248357abdde714c51c7"
+    },
+    {
+      "file": "components/ui/StatCard.tsx",
+      "original": ".scratch/reacceptance-20260921/workspace/components/ui/StatCard.tsx",
+      "bytes": 750,
+      "sha256": "a46d0a0a5360d61387312927a0f7cf0cab49acf76c34d1a22ef4ef752a383b1b"
+    },
+    {
+      "file": "config/twFeeRates.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/config/twFeeRates.ts",
+      "bytes": 2356,
+      "sha256": "991a92f8d42e89d4eb6c3ab1c65b77ba1edc8df8fd95815f5d3e9ac8aa2a8dd0"
+    },
+    {
+      "file": "services/fetchError.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/fetchError.ts",
+      "bytes": 2005,
+      "sha256": "45b80684acc1f311480a0aa09b5afca62cbe53a02321c70958dd88439501e4f9"
+    },
+    {
+      "file": "services/finmind.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/finmind.ts",
+      "bytes": 18042,
+      "sha256": "3603d08e4261fac431ee2cace039b5b6e4e27e6fbad315a0dc9829c4a9de2416"
+    },
+    {
+      "file": "services/gemini.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/gemini.ts",
+      "bytes": 61852,
+      "sha256": "643716da0e3d8f359525ad3ab5c4b91b3f38c83191a4a6e0ef821d5f70db8142"
+    },
+    {
+      "file": "services/quoteCache.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/quoteCache.ts",
+      "bytes": 10811,
+      "sha256": "cc5abe590c6dbc68d3bc9c091823239682b8fc1e8c0a79ca940650857a989d2f"
+    },
+    {
+      "file": "services/stockDirectory.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/stockDirectory.ts",
+      "bytes": 9891,
+      "sha256": "28d2e11a5990ac7f779589bc3d8344ab7d0261052522cd4c30e99f32c6e11668"
+    },
+    {
+      "file": "services/yahoo.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/yahoo.ts",
+      "bytes": 53159,
+      "sha256": "6c0bdca5daa63442fc72eb4d8f89369ade1715651663a34a5b3c38d0b4ad8b19"
+    },
+    {
+      "file": "services/_shared/apiClient.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/_shared/apiClient.ts",
+      "bytes": 219,
+      "sha256": "c7b57c11259226517df62445489d0bf5467983c4e8c5d5f726a978efd5de97ca"
+    },
+    {
+      "file": "services/_shared/boundedSession.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/_shared/boundedSession.ts",
+      "bytes": 5733,
+      "sha256": "73d778ad2c374a49e88778661f8a615582a7c1623d0879b9542ed47c7de9aed7"
+    },
+    {
+      "file": "services/_shared/geminiCache.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/_shared/geminiCache.ts",
+      "bytes": 5640,
+      "sha256": "b4aa6bf739cd7a672c3b6bb8d46544180372b73d4382cac377528889834d77c0"
+    },
+    {
+      "file": "services/_shared/healthDecision.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/services/_shared/healthDecision.ts",
+      "bytes": 6469,
+      "sha256": "e7b543e495dc122a58ae6dfcce48ef6616ba4c36148a6fca0e5241189cf08d5b"
+    },
+    {
+      "file": "utils/backfillPipeline.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/backfillPipeline.ts",
+      "bytes": 11518,
+      "sha256": "3d8fbc1e16e0b196132d5e5ac4ff3a7c96bd68e3eea7a2df4c8ca0e71f87738b"
+    },
+    {
+      "file": "utils/closeSeriesCache.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/closeSeriesCache.ts",
+      "bytes": 2986,
+      "sha256": "24ec32c11d7f3196d44f102f6a4f905cefe41743e2114309c18a4f9e93ab303d"
+    },
+    {
+      "file": "utils/dividendEstimator.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/dividendEstimator.ts",
+      "bytes": 7682,
+      "sha256": "2f3f82abaad9839b671835048f6c70a5c0e87488f9b5504725ec8b0750b3e952"
+    },
+    {
+      "file": "utils/entryFilter.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/entryFilter.ts",
+      "bytes": 21470,
+      "sha256": "d3e3e9f3a712e270dcf4563b28bd1ba2b53dbc216e895b1d8e0230f179f548f5"
+    },
+    {
+      "file": "utils/framePublisher.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/framePublisher.ts",
+      "bytes": 823,
+      "sha256": "cd3265dd53a47965f7867c053cc3d43f97f0256a272f3bf721571ec9182be4a9"
+    },
+    {
+      "file": "utils/fx.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/fx.ts",
+      "bytes": 2502,
+      "sha256": "3263a8ac4814be01db26e97d1376a1bb4fbca712517caae4e7148ef16603c4f9"
+    },
+    {
+      "file": "utils/importPlan.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/importPlan.ts",
+      "bytes": 1835,
+      "sha256": "1a0738f3bffc044eb869e000235621b6a3d42f828424d927fbd0654386d3cf96"
+    },
+    {
+      "file": "utils/importReplay.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/importReplay.ts",
+      "bytes": 10441,
+      "sha256": "dfccfed4a086e594e4ad249e4f05a19230a5ff87725694541f5bf1f90211599a"
+    },
+    {
+      "file": "utils/importStore.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/importStore.ts",
+      "bytes": 2498,
+      "sha256": "20e4650932c7586e0c26d5e0b41ac4ff312bfae04c9b5337c2d3ca557aacdccb"
+    },
+    {
+      "file": "utils/market.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/market.ts",
+      "bytes": 1580,
+      "sha256": "27f2289645f3eb482e67d84037c835e4185cb40c18e969f56c60bbeeb9383370"
+    },
+    {
+      "file": "utils/math.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/math.ts",
+      "bytes": 5861,
+      "sha256": "723e52755a891515bab8376d5b98646cfeffb1fc2fc5c1d593f4be41a72782f6"
+    },
+    {
+      "file": "utils/panMath.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/panMath.ts",
+      "bytes": 5473,
+      "sha256": "f35a13b2ba1a23410f2278f7dca4b2c982985e0e80b87debeb7a05e42e845070"
+    },
+    {
+      "file": "utils/persistentStore.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/persistentStore.ts",
+      "bytes": 2754,
+      "sha256": "f35aba008583a90ab0b730f797fc88c04fb4c406ff21c4cb7b70ef4165fd3eb9"
+    },
+    {
+      "file": "utils/portfolioBackup.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioBackup.ts",
+      "bytes": 16835,
+      "sha256": "7da4221710e4af02a623affc58824100fc6068b094b981b2c855d082c8a50e71"
+    },
+    {
+      "file": "utils/portfolioFees.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioFees.ts",
+      "bytes": 3929,
+      "sha256": "e564c97c6841ef664011188454c4714e870cf37c815b350547981ba60eaf8e46"
+    },
+    {
+      "file": "utils/portfolioGrouping.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioGrouping.ts",
+      "bytes": 658,
+      "sha256": "b0209ee2fcd7ac17475ab4428beece7c769c0eaf170e722410ae91cbdc5cb09a"
+    },
+    {
+      "file": "utils/portfolioHistory.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioHistory.ts",
+      "bytes": 23893,
+      "sha256": "c78f3cd0a9b910d35acb1f06f5760b07f7a2560131e2f44c9920067dc714c99c"
+    },
+    {
+      "file": "utils/portfolioHistoryStore.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioHistoryStore.ts",
+      "bytes": 3048,
+      "sha256": "b71f9ef1cde6f1218c2c84b8f52208fb6b6b44a1007ea6ddf59813b59c6affc1"
+    },
+    {
+      "file": "utils/portfolioItemsStore.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioItemsStore.ts",
+      "bytes": 1499,
+      "sha256": "62de203efa76e8048e4a726a970b78cdfea9b6878cdd09929500a0092b3a0442"
+    },
+    {
+      "file": "utils/portfolioLedger.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/portfolioLedger.ts",
+      "bytes": 9711,
+      "sha256": "e5e9cbf85eb61a71af9f5d18019470f49ae627764f81c79bf0aa3e6167faa0f2"
+    },
+    {
+      "file": "utils/quoteTime.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/quoteTime.ts",
+      "bytes": 579,
+      "sha256": "4dcf5867c1d2ec7ef4ba9cd5af759c80b9f3d571ef508e499dc7bfac60071f5e"
+    },
+    {
+      "file": "utils/shareUnits.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/shareUnits.ts",
+      "bytes": 317,
+      "sha256": "f0fa312ce3c818c1cf848a57311fd465fe574b3c81b45c769ce23aa23ee18463"
+    },
+    {
+      "file": "utils/txnStore.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/txnStore.ts",
+      "bytes": 4454,
+      "sha256": "19c61ec4d5f162c90bb9464140b54c38eefc2aeef4f7c4d64842b096815a69fb"
+    },
+    {
+      "file": "utils/volume.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/volume.ts",
+      "bytes": 7387,
+      "sha256": "5f253158a65f92aea16d76d64dd41e78a6be337775618bcc18f55785102e3f3c"
+    },
+    {
+      "file": "utils/workerPool.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/workerPool.ts",
+      "bytes": 1910,
+      "sha256": "8835dfb5776e9124f80ce850e1840156cb47130c62dc78af9f25daeabff7eb0f"
+    },
+    {
+      "file": "utils/statementParsers/cathay.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/cathay.ts",
+      "bytes": 5838,
+      "sha256": "4594a45c0e7a2e07b60f57e170d2617e2830c2b157626de6e592ddfbcbfb5e25"
+    },
+    {
+      "file": "utils/statementParsers/cathayTw.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/cathayTw.ts",
+      "bytes": 10801,
+      "sha256": "43bca0629bbdf3aed639a03890ce7af15f6776f35b7302ce12d2712cfb17314b"
+    },
+    {
+      "file": "utils/statementParsers/index.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/index.ts",
+      "bytes": 7139,
+      "sha256": "c4c31c2214506fd557dc9c26f9327bf2c1b46029c5bde81fc3fa5ee985253662"
+    },
+    {
+      "file": "utils/statementParsers/sinopac.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/sinopac.ts",
+      "bytes": 4036,
+      "sha256": "df280e1e58da58f60c222e37f2b69ff552daeebf9db4a1568e8c2bad5f938810"
+    },
+    {
+      "file": "utils/statementParsers/twSymbolResolver.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/twSymbolResolver.ts",
+      "bytes": 3617,
+      "sha256": "3478b08e6871ec2f0c7980b9d949c66f40b261e9368f6b3f9ff16815e825c7e8"
+    },
+    {
+      "file": "utils/statementParsers/xlsxReader.ts",
+      "original": ".scratch/reacceptance-20260921/workspace/utils/statementParsers/xlsxReader.ts",
+      "bytes": 6920,
+      "sha256": "3008127747cfdf29de82427c3ea3e49aa296fd5048888fd2a0499f1b3a2ce71c"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/03/bootstrap.js",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/03/bootstrap.js",
+      "bytes": 2082,
+      "sha256": "67f9fcb03d98753a91d3346ac9d8ac10e3982642a7229aeaa713adf6264af889"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/03/browser-cases.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/03/browser-cases.mjs",
+      "bytes": 6424,
+      "sha256": "1bbe944f27af37cfd653fbb293a491495e40fc7815e918678f58acb50a68d7eb"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/03/compare-market.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/03/compare-market.mjs",
+      "bytes": 5423,
+      "sha256": "130ae9161bfd487fa1abf8d67043efc87b8243112bbb1581870e5ad525270aff"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/03/fixture-server.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/03/fixture-server.mjs",
+      "bytes": 6636,
+      "sha256": "b9e6536c01b61687319d8b1aa92c492dd75f9d61a5e0b6df74986786a258e65e"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/03/validate.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/03/validate.mjs",
+      "bytes": 3038,
+      "sha256": "2ceb9dd0be67c2993b392b11d51b80baf595277353ee95e637b8cdf189d33951"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/replay-server.mjs",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-server.mjs",
+      "bytes": 6243,
+      "sha256": "a71fd012c175387a22ad05911c2e32f6157c1077958f7a4a901168b5190daf8c"
+    },
+    {
+      "file": ".scratch/optimization-followup/evidence/12/integration-bootstrap.js",
+      "original": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/integration-bootstrap.js",
+      "bytes": 2184,
+      "sha256": "11de5abcaa1e9e866cd22b11d831e589f071d1587ea824ab5c2a6b710cfa6fdd"
+    }
+  ],
+  "seedRaw": [
+    {
+      "file": "desktop-green-stale-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-stale-return.json",
+      "bytes": 16283,
+      "sha256": "e9e8478b880c1af2278fdaaf417bb299af44ae5366e65e98e8bf275df8ad546a"
+    },
+    {
+      "file": "desktop-green-switch-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-switch-return.json",
+      "bytes": 15854,
+      "sha256": "38425b464dea159188a1a6f90d0b208c2275c1ba12ed634f70910c94e3d23526"
+    },
+    {
+      "file": "desktop-green-tab-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-tab-return.json",
+      "bytes": 14867,
+      "sha256": "8d755a53b1b728beaff4761c1e71afcb7f9254b96c3619625dfb7f80e5890a23"
+    },
+    {
+      "file": "desktop-green-force-pending.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-force-pending.json",
+      "bytes": 16613,
+      "sha256": "df1e30108b662cc1e330825f20cc92cdb14e4ac90b4227ccd53d6c506f09e926"
+    },
+    {
+      "file": "desktop-green-failure-retry.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-green-failure-retry.json",
+      "bytes": 14876,
+      "sha256": "617b5a2a6886d2ce072adab3595fa1deefbd2612e18af4bea39d203b975516e4"
+    },
+    {
+      "file": "desktop-manual-market.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/desktop-manual-market.json",
+      "bytes": 18454,
+      "sha256": "d5259c05e964f050b747a1fea3d8731cc2e3d8189afdbd44ec8bb09f09868993"
+    },
+    {
+      "file": "narrow-green-stale-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-stale-return.json",
+      "bytes": 16027,
+      "sha256": "915cef1cd5aea52bf0b480b2a28eba5e230cc96399d8b91309532fb095186fbf"
+    },
+    {
+      "file": "narrow-green-switch-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-switch-return.json",
+      "bytes": 15766,
+      "sha256": "9636e6572e0170e1f56a4d1ea4dcf13f7c3fd05a2c086b2100b2b59b80120be8"
+    },
+    {
+      "file": "narrow-green-tab-return.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-tab-return.json",
+      "bytes": 14779,
+      "sha256": "694d9d032686ac9291cf7bc457bd8915151fb494bc23cb15b41bea10a815df89"
+    },
+    {
+      "file": "narrow-green-force-pending.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-force-pending.json",
+      "bytes": 15637,
+      "sha256": "9186886543650cc794f69561d23394dcd5bf3438cf07c48cb88389ba380f9dd7"
+    },
+    {
+      "file": "narrow-green-failure-retry.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-green-failure-retry.json",
+      "bytes": 15628,
+      "sha256": "3f84f3c4ddc77bc3a30acfa75657d26e6be54d195ae881e022458fc556ba707b"
+    },
+    {
+      "file": "narrow-manual-market.json",
+      "source": ".scratch/reacceptance-20260921/workspace/.scratch/optimization-followup/evidence/12/replay-03/narrow-manual-market.json",
+      "bytes": 18191,
+      "sha256": "c43f62947344262de5bfc51e606d5b434ad4e673c0eb7248f9080b6078cc12a1"
+    }
+  ],
+  "firstRound": {
+    "received": 12,
+    "expected": 12,
+    "execution": {
+      "round": 1,
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "arguments": [
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-e2106667-918c-4b36-b737-d6cfc3edd8e2\\snapshot\\.scratch\\optimization-followup\\evidence\\12\\verify-replays.mjs",
+        "03"
+      ],
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-e2106667-918c-4b36-b737-d6cfc3edd8e2\\snapshot",
+      "commandFromRepo": "node .scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/snapshot/.scratch/optimization-followup/evidence/12/verify-replays.mjs 03",
+      "exitCode": 0,
+      "elapsedMs": 173.035,
+      "stdout": "{\"group\":\"03\",\"cases\":12,\"formalApp\":12,\"sourceFiles\":94,\"allPassed\":true}\n",
+      "stderr": "",
+      "consoleResult": {
+        "group": "03",
+        "cases": 12,
+        "formalApp": 12,
+        "sourceFiles": 94,
+        "allPassed": true
+      },
+      "summarySha256": "0eb85e8ad4fced0d1aa352195798fb05d1c0308e6d21be74e1909a354e53b591",
+      "summaryCases": 12
+    }
+  },
+  "secondRound": {
+    "received": 11,
+    "expected": 12,
+    "missing": [
+      "desktop-green-stale-return.json"
+    ],
+    "residuePresent": true,
+    "residueSha256": "e9e8478b880c1af2278fdaaf417bb299af44ae5366e65e98e8bf275df8ad546a",
+    "residueUntouchedBeforeControl": true,
+    "execution": {
+      "round": 2,
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "arguments": [
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-e2106667-918c-4b36-b737-d6cfc3edd8e2\\snapshot\\.scratch\\optimization-followup\\evidence\\12\\verify-replays.mjs",
+        "03"
+      ],
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-e2106667-918c-4b36-b737-d6cfc3edd8e2\\snapshot",
+      "commandFromRepo": "node .scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/snapshot/.scratch/optimization-followup/evidence/12/verify-replays.mjs 03",
+      "exitCode": 0,
+      "elapsedMs": 157.742,
+      "stdout": "{\"group\":\"03\",\"cases\":12,\"formalApp\":12,\"sourceFiles\":94,\"allPassed\":true}\n",
+      "stderr": "",
+      "consoleResult": {
+        "group": "03",
+        "cases": 12,
+        "formalApp": 12,
+        "sourceFiles": 94,
+        "allPassed": true
+      },
+      "summarySha256": "0eb85e8ad4fced0d1aa352195798fb05d1c0308e6d21be74e1909a354e53b591",
+      "summaryCases": 12
+    }
+  },
+  "originalFilesChecked": 117,
+  "changedOriginals": [],
+  "regression": {
+    "expected": "第二輪缺案必須讓 verifier 非零退出",
+    "actualExitCode": 0,
+    "passed": false,
+    "failure": {
+      "name": "AssertionError",
+      "code": "ERR_ASSERTION",
+      "message": "P02：本輪只投遞 11/12 案，原 verifier 卻接受第一輪殘留檔並成功退出",
+      "actual": 0,
+      "operator": "notStrictEqual"
+    }
+  },
+  "harnessExitCode": 1
+}

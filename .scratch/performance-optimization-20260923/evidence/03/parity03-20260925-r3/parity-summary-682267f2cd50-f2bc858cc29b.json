@@ -1,0 +1,15 @@
+{
+  "runId": "parity03-20260925-r3",
+  "toolSha": "682267f2cd505899e02c9bb186163637eb5ae1d7798dec2b714dd4380733af17",
+  "cases": 0,
+  "equal": 0,
+  "mismatches": [],
+  "knownDifferences": [],
+  "cancel": [],
+  "streamTiming": [],
+  "handshake": [],
+  "results": [],
+  "problems": [
+    "run 中止：03 候選產品樹有缺檔或未追蹤產品檔，拒絕比對"
+  ]
+}

@@ -1,0 +1,8 @@
+{"ev":"parent.boot","t":657.163,"pid":34848}
+{"ev":"parent.listenCall","t":2059.209,"pid":34848,"seq":1}
+{"ev":"parent.listening","t":2061.322,"pid":34848,"seq":1}
+{"ev":"parent.recv","t":2950.652,"pid":34848,"trace":"route03-search-20260924-r2-cancel","layer":"entry","method":"GET","route":"/api/yahoo/search"}
+{"ev":"parent.fork","t":3125.85,"pid":34848,"trace":"route03-search-20260924-r2-cancel","childPid":15236,"forkCallMs":13.868}
+{"ev":"parent.childReady","t":4984.087,"pid":34848,"trace":"route03-search-20260924-r2-cancel","childPid":15236}
+{"ev":"parent.proxyReq","t":4987.865,"pid":34848,"trace":"route03-search-20260924-r2-cancel","port":"51636"}
+{"ev":"parent.aborted","t":5174.595,"pid":34848,"trace":"route03-search-20260924-r2-cancel","layer":"entry"}

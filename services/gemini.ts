@@ -163,7 +163,7 @@ export const ENTRY_SYSTEM_INSTRUCTION_FULL = `
 
 #### 2. 六步驟逐項解讀
 依序針對 趨勢 / 位置 / K線 / 均線 / 量價 / 指標 六步驟，各用 1-2 句白話解釋「為什麼是這個燈號」、代表的多空意義，以及朱家泓紀律提醒（如：買強不買弱、買低不追高、量價背離不進場）。
-（買點語彙：講義六大買點＝①盤整突破 ②回後買上漲 ③K線橫盤突破 ④突破ABC修正下降切線 ⑤突破上升軌道線 ⑥型態確認（W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線）。濾網目前程式偵測①②；若你從K線資料觀察到③~⑥的型態，可在解讀中補充說明，但不得因此推翻濾網決策。）
+（買點語彙：講義六大買點＝①盤整突破 ②回後買上漲 ③K線橫盤突破 ④突破ABC修正下降切線 ⑤突破上升軌道線 ⑥型態確認（W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線）。濾網目前程式偵測①②③（輸入資料的「進場口訣」即其結果）；若你從K線資料觀察到④~⑥的型態，可在解讀中補充說明，但不得因此推翻濾網決策。）
 
 #### 3. 操作計畫
 - 若決策為 GO：說明進場理由與輸入資料中的建議進場價，並列出**兩個停損防守價**（照輸入資料「停損雙軌」段：① 固定停損 -5% 價位；② 關鍵均線防守價位與其均線名稱），註明擇一作為主要防守、收盤跌破即出場，以及停利紀律。
@@ -192,7 +192,7 @@ export const ENTRY_SYSTEM_INSTRUCTION_FAST = `
 趨勢/位置/K線/均線/量價/指標各**一句**白話解釋燈號原因（共 6 行條列）。
 #### 3. 操作計畫
 - GO：進場價、停損雙軌兩價位（擇一主防守、收盤跌破出場）、停利紀律，共 2-3 句。
-- WAIT / NO_GO：對照「未卜先知 5 觀察」標明目前所處情境編號，給出具體觸發條件與等待價位（盤整上頸線/月線/前高等，從濾網資料推算），共 2-3 句；五情境皆不符則一句說明需等趨勢翻多。
+- WAIT / NO_GO：對照「未卜先知 5 觀察」（①低檔爆量止跌不破前低 ②低檔約 2 個月窄幅盤整、均線糾結 ③空頭強力反彈突破月線、月線上橫盤 ④反彈突破前高，鎖第二支腳 ⑤低檔強勢底部型態）標明目前所處情境編號，給出具體觸發條件與等待價位（盤整上頸線/月線/前高等，從濾網資料推算），共 2-3 句；五情境皆不符（如高檔回檔中）則一句說明目前不在鎖股情境、需等趨勢重新翻多。
 - 使用者持有中：依成本價一句加減碼/停損建議；空手則不談持股操作。
 
 ### 限制
@@ -640,6 +640,7 @@ export interface PortfolioHealthItem {
   profitPct: number;
   recentData: StockDataPoint[];
   volumeProjection?: VolumeProjectionInfo | null;
+  chipDataUnavailable?: boolean;
 }
 
 // 輸出格式同樣受 snapshot 鎖（utils/geminiRules.test.ts）：這是餵給 LLM 的資料版面，
@@ -719,12 +720,16 @@ export const formatHealthCheckData = (items: PortfolioHealthItem[]): string => {
     // 籌碼近5日
     let chipsStr = '';
     if (isTW) {
-      const last5 = item.recentData.slice(-5);
-      const foreignSum = last5.reduce((s, d) => s + (d.foreignBuySell || 0), 0);
-      const trustSum = last5.reduce((s, d) => s + (d.investmentTrustBuySell || 0), 0);
-      chipsStr = `
+      if (item.chipDataUnavailable) {
+        chipsStr = '\n近5日籌碼：資料暫時不可用';
+      } else {
+        const last5 = item.recentData.slice(-5);
+        const foreignSum = last5.reduce((s, d) => s + (d.foreignBuySell || 0), 0);
+        const trustSum = last5.reduce((s, d) => s + (d.investmentTrustBuySell || 0), 0);
+        chipsStr = `
 近5日外資合計：${Math.round(foreignSum / 1000)}張
 近5日投信合計：${Math.round(trustSum / 1000)}張`;
+      }
     }
 
     const priceCurrency = isTW ? 'TWD' : 'USD';
@@ -852,7 +857,7 @@ export const HEALTH_CHECK_SYSTEM_INSTRUCTION = `
 | 編號 | 加碼條件 | 說明 |
 |------|---------|------|
 | E1 | 多頭趨勢確認且未改變 | 符合「頭頭高、底底高」定義 |
-| E2 | 出現六大多頭實戰買點之一 | 買點1-6（盤整突破、回後買上漲、K線橫盤突破、突破ABC下降線、突破緩降軌道線、雙底突破） |
+| E2 | 出現六大多頭實戰買點之一 | 買點1-6（盤整突破、回後買上漲、K線橫盤突破、突破ABC修正下降切線、突破上升軌道線、型態確認〔W底/頭肩底/N字底/圓弧底/一字底帶量突破頸線〕） |
 | E3 | 進場 K 線符合「幅量線實」 | 漲幅 ≥ 2%、攻擊量成立（今量>昨量×1.3 或 >5日均量×1.2，擇一）、中長實體紅 K |
 | E4 | 均線架構完美 | MA10、MA20 多頭排列向上，且股價穩立於月線之上 |
 | E5 | KD 指標加持 | KD 參數 (5,3,3) 呈現 K值向上、KD多頭排列、或黃金交叉（多頭中 50 以下金叉皆起漲點，50 附近強於 20 附近；高檔鈍化回歸價量不扣分） |

@@ -1,0 +1,165 @@
+{
+  "createdAt": "2026-09-25T08:09:45.437Z",
+  "baseCommit": "94848ac19ce364dda6de84aa2d89012546a848c0",
+  "branch": "codex/reacceptance-fixes-p1-s1",
+  "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+  "note": "r5 的 26 檔；daily-dev.mjs 修正孤兒（程序樹、看門程序、後備清理），app-03／lifecycle-03／port-guard-03 改為核對整棵程序樹。blob 為 git hash-object（含 eol 過濾），rawBlob 為 --no-filters。",
+  "files": [
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "blob": "991863ab70759450c36088ba5a57571eeab09fe1",
+      "rawBlob": "991863ab70759450c36088ba5a57571eeab09fe1"
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "blob": "3abe66a202e66bfc36661586969a267195b2f626",
+      "rawBlob": "3abe66a202e66bfc36661586969a267195b2f626"
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "blob": "8f5b7d47d53459aaf18d0aec3efd7e9db464ce90",
+      "rawBlob": "8f5b7d47d53459aaf18d0aec3efd7e9db464ce90"
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "blob": "85cd6d653295d5ea86b349d6d736fa7b8ddd7c95",
+      "rawBlob": "85cd6d653295d5ea86b349d6d736fa7b8ddd7c95"
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "blob": "21d2319681697ea7ed0727d9bf85b5a5780d0826",
+      "rawBlob": "21d2319681697ea7ed0727d9bf85b5a5780d0826"
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "blob": "411459f3c2247c5868481b542a993be0d72ad9b0",
+      "rawBlob": "411459f3c2247c5868481b542a993be0d72ad9b0"
+    },
+    {
+      "path": "api/finmind.ts",
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "blob": "ec70e78e4d2a718ed97a774f7a560e66520e1345",
+      "rawBlob": "ec70e78e4d2a718ed97a774f7a560e66520e1345"
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "blob": "a031f64ced5a4e80104ad2216a6b0c114b37daba",
+      "rawBlob": "a031f64ced5a4e80104ad2216a6b0c114b37daba"
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "blob": "77ed6013747c731aa61e4b3e5f92a1b3f2ba64ea",
+      "rawBlob": "77ed6013747c731aa61e4b3e5f92a1b3f2ba64ea"
+    },
+    {
+      "path": "api/gemini.ts",
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "blob": "703530eb9366cbe01ba34d074fa473ca1875d4a1",
+      "rawBlob": "703530eb9366cbe01ba34d074fa473ca1875d4a1"
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "blob": "c7ba431d4ef7f4cfa75ebf94392122d4ebf4d7a1",
+      "rawBlob": "c7ba431d4ef7f4cfa75ebf94392122d4ebf4d7a1"
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "blob": "f570c584a84e0380155db05ef40f73f318aa9b54",
+      "rawBlob": "f570c584a84e0380155db05ef40f73f318aa9b54"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "4a968c07236ba3faa25f3875afb876db34da5660f39ec6d39484df0e5280b360",
+      "blob": "523dbf169113597b47e3540ebc8920f144868083",
+      "rawBlob": "523dbf169113597b47e3540ebc8920f144868083"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "sha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "blob": "2e0995f3c944ab4385370edb1e7ad4bbffdd4877",
+      "rawBlob": "2e0995f3c944ab4385370edb1e7ad4bbffdd4877"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "sha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "blob": "f2340b90a82d57cc692acfaa787096bcfc71f646",
+      "rawBlob": "f2340b90a82d57cc692acfaa787096bcfc71f646"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "sha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "blob": "c3b84a274a1768d24af14e7326c593c32a57e3fd",
+      "rawBlob": "c3b84a274a1768d24af14e7326c593c32a57e3fd"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "sha256": "a58630f7753389797c44fc17c74d41ce3cdd07735200ecfca0f7cbe9382db181",
+      "blob": "ec89854fa8502bfd03ad00be4a8ed749d4874f4d",
+      "rawBlob": "ec89854fa8502bfd03ad00be4a8ed749d4874f4d"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "sha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "blob": "2e18d7bad4c3fd609f5e55d68751ee2fa2447024",
+      "rawBlob": "2e18d7bad4c3fd609f5e55d68751ee2fa2447024"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "sha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "blob": "b2f7e26f8f6850e409d7c30d215bbc44420f325f",
+      "rawBlob": "b2f7e26f8f6850e409d7c30d215bbc44420f325f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "sha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "blob": "e0ec410e8f734292975705da149899796465b360",
+      "rawBlob": "e0ec410e8f734292975705da149899796465b360"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "sha256": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "blob": "c6e7f6a9dd3e9f1628019f64508c80428315e18b",
+      "rawBlob": "c6e7f6a9dd3e9f1628019f64508c80428315e18b"
+    },
+    {
+      "path": "scripts/start-dev.ps1",
+      "sha256": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "blob": "13bc2dd6b08e6215e212d1de4510601c76ce4f23",
+      "rawBlob": "13bc2dd6b08e6215e212d1de4510601c76ce4f23"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "sha256": "0ca50766a674ec67653eae20ab817f13ead179a2f41ca73da5d2d00698e22fe1",
+      "blob": "1159a6203c1b6bc751deed9eb7ccfa10e8868579",
+      "rawBlob": "1159a6203c1b6bc751deed9eb7ccfa10e8868579"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "sha256": "70fbfb333fe743071ba0cadea6e7973d6ff982ff277a0dad0d9a8b45db73f165",
+      "blob": "064872bb57070ddbfec2b1b03aa678f9eaae078a",
+      "rawBlob": "064872bb57070ddbfec2b1b03aa678f9eaae078a"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "sha256": "226adea969e70f961ffbe4c0d317051b7db0e2df0e47cee6345b657bad41192d",
+      "blob": "46e621a152a4b2459ce45c4b4b028a79cc09139e",
+      "rawBlob": "46e621a152a4b2459ce45c4b4b028a79cc09139e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "sha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "blob": "d78d97315191feff1e64dd22d02e14852dd34ce2",
+      "rawBlob": "d78d97315191feff1e64dd22d02e14852dd34ce2"
+    }
+  ]
+}

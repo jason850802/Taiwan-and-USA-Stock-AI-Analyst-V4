@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":26.891,"pid":16076,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1749.253,"pid":16076,"seq":1}
+{"ev":"child.listening","t":1764.511,"pid":16076,"seq":1}
+{"ev":"child.listenCall","t":1825.028,"pid":16076,"seq":2}
+{"ev":"child.listening","t":1826.607,"pid":16076,"seq":2}
+{"ev":"child.ready","t":1826.921,"pid":16076}
+{"ev":"child.recv","t":1830.231,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":1838.931,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1839.233,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4317","x-forwarded-host":"127.0.0.1:4317","x-forwarded-proto":"http","x-forwarded-port":"4317","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4317","origin":"http://localhost:3000","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1840.127,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"handler","status":204}
+{"ev":"child.finish","t":1841.458,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"handler"}
+{"ev":"child.writeHead","t":1846.579,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"devProxy","status":204}
+{"ev":"child.finish","t":1847.184,"pid":16076,"trace":"parity03-20260925-r2-secret-b1-secret-options-short-circuit","layer":"devProxy"}

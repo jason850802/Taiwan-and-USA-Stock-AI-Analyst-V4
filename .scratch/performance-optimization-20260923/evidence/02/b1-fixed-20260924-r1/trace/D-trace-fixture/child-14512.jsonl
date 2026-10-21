@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":24.592,"pid":14512,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":50,"control":false,"ipc":true}
+{"ev":"child.listenCall","t":1728.266,"pid":14512,"seq":1}
+{"ev":"child.listening","t":1743.556,"pid":14512,"seq":1}
+{"ev":"child.listenCall","t":1799.823,"pid":14512,"seq":2}
+{"ev":"child.listening","t":1801.465,"pid":14512,"seq":2}
+{"ev":"child.ready","t":1801.842,"pid":14512}
+{"ev":"child.recv","t":1804.806,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"devProxy","method":"OPTIONS","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1812.949,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"handler","method":"OPTIONS","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.reqHeaders","t":1813.293,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4725","x-forwarded-host":"127.0.0.1:4725","x-forwarded-proto":"http","x-forwarded-port":"4725","x-forwarded-for":"::ffff:127.0.0.1","x-real-ip":"::ffff:127.0.0.1","x-vercel-forwarded-for":"::ffff:127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4725","origin":"http://localhost:3000","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":1814.459,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"handler","status":204}
+{"ev":"child.finish","t":1815.974,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"handler"}
+{"ev":"child.writeHead","t":1820.531,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"devProxy","status":204}
+{"ev":"child.finish","t":1821.12,"pid":14512,"trace":"b1-fixed-20260924-r1-D-trace-fixture-o13","layer":"devProxy"}

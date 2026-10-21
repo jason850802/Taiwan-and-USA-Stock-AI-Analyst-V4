@@ -1,0 +1,8 @@
+{"ev":"parent.boot","t":660.84,"pid":37612}
+{"ev":"parent.listenCall","t":2110.751,"pid":37612,"seq":1}
+{"ev":"parent.listening","t":2112.343,"pid":37612,"seq":1}
+{"ev":"parent.recv","t":2904.864,"pid":37612,"trace":"main03-guard-cancel-20261001-r1-stream","layer":"entry","method":"POST","route":"/api/gemini-stream"}
+{"ev":"parent.fork","t":3003.161,"pid":37612,"trace":"main03-guard-cancel-20261001-r1-stream","childPid":32200,"forkCallMs":6.188}
+{"ev":"parent.childReady","t":4792.567,"pid":37612,"trace":"main03-guard-cancel-20261001-r1-stream","childPid":32200}
+{"ev":"parent.proxyReq","t":4794.967,"pid":37612,"trace":"main03-guard-cancel-20261001-r1-stream","port":"63866"}
+{"ev":"parent.aborted","t":4918.763,"pid":37612,"trace":"main03-guard-cancel-20261001-r1-stream","layer":"entry"}

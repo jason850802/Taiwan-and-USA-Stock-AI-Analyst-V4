@@ -1,0 +1,57 @@
+{
+  "runId": "life03-localhost3000-20260925-r2",
+  "formal": true,
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "problems": [],
+  "failed": [
+    {
+      "scenario": "crash-supervisor",
+      "failedChecks": [
+        "崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）",
+        "下次啟停之後舊樹也無殘留"
+      ]
+    }
+  ],
+  "scenarios": [
+    "cycle-1:PASS",
+    "cycle-2:PASS",
+    "conflict-front:PASS",
+    "conflict-api:PASS",
+    "crash-vercel:PASS",
+    "crash-vite:PASS",
+    "crash-supervisor:FAIL"
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 301,
+    "foreign": 0
+  },
+  "leftoverCleanup": {
+    "found": [
+      {
+        "pid": 18888,
+        "name": "node.exe",
+        "parentPid": 14528
+      },
+      {
+        "pid": 10916,
+        "name": "esbuild.exe",
+        "parentPid": 18888
+      }
+    ],
+    "killed": [
+      {
+        "pid": 18888,
+        "name": "node.exe",
+        "status": 0
+      }
+    ],
+    "stillAlive": []
+  }
+}

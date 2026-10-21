@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "runId": "true-market-07-20260923-v4",
+  "holdingsRunId": "true-market-paired-20260923-v5",
+  "createdAt": "2026-09-23T07:44:07.996Z",
+  "head": "6eee87efb1211e7b9dd8b21238b140c17b501374",
+  "backendEntry": "主工作區 vercel dev（日常開發入口：E2 設定的 .vercelignore／vite.config.ts）",
+  "backendConfig": {
+    "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+    "viteConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db"
+  },
+  "runtimes": {
+    "before": {
+      "commit": "444d6b19913f00c236a425602512b708af7aaf9f",
+      "dir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "fileCount": 133,
+      "manifestSha256": "9897c9a8420793fe0635c611a93eda6c076ce67c173312ff9a9d5b60dd120232"
+    },
+    "after": {
+      "commit": "6eee87efb1211e7b9dd8b21238b140c17b501374",
+      "dir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "fileCount": 135,
+      "manifestSha256": "c8a85836f8007066dc04f8ced4a4933ad99da6f95c9931f4aefceff72f40a35c"
+    }
+  },
+  "tools": {
+    "true-market-stack-07.mjs": "b3c2fa414e2abef5b2c6b0fbb6df67b575d3796189f59a0564dc5ffda4738085",
+    "true-market-07-vite.config.mjs": "f18102a95836fff64e4e0b28309fd23d6ade1e301b6807cc047f9744c17470c6",
+    "holdings-true-market-vite.config.mjs": "24e47faba367f33143713f78adf89875fe2bc339b7d544d873c3b0ad3cde3869",
+    "holdings-true-market-probe.jsx": "ab787212fe077e8e4cafe8d4cbe82b8e3dd34b4f6ddf2f3dbd2d485f9d228c0d",
+    "holdings-true-market-30-probe.jsx": "ebfd43fc88a0b393df455e1f1bbe58affe265bb3c4613248db28fefbdfd4cbb0",
+    "chart-true-market-probe.jsx": "29a6bc18bc2779dc1d1fe954d03c6ac2113242548ee4eea43292141d19eb56c7",
+    "holdings-true-market-capture.mjs": "ac447b0cc102b694179bbd012042b119ee2703dd7868ab75be68e92e5e2c803c",
+    "capture-evidence-07.mjs": "c6eb8cc6c31c693e4c1a4e2b4dce88fd2940816eee8c74d6b7f214a450e880bb",
+    "verify-holdings-true-market.mjs": "8022102332164e5bd52e0634ca22a7155c3b60069a82468d204af20fbdbcc2ec"
+  },
+  "runtime": {
+    "nodeVersion": "v26.4.0",
+    "vercelVersion": "55.0.0",
+    "viteVersion": "6.4.1",
+    "timezone": "Asia/Taipei"
+  },
+  "services": {
+    "backend": {
+      "spawnPid": 26068,
+      "listenerPid": 26068,
+      "port": 3041,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "variant": null,
+      "viteCacheDir": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\jason\\AppData\\Roaming\\npm\\node_modules\\vercel\\dist\\vc.js",
+        "dev",
+        "--listen",
+        "3041"
+      ]
+    },
+    "holdingsCapture": {
+      "spawnPid": 16744,
+      "listenerPid": 16744,
+      "port": 4193,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "variant": null,
+      "viteCacheDir": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\holdings-true-market-capture.mjs",
+        "--port",
+        "4193",
+        "--run-id",
+        "true-market-paired-20260923-v5"
+      ]
+    },
+    "capture07": {
+      "spawnPid": 8156,
+      "listenerPid": 8156,
+      "port": 4197,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "variant": null,
+      "viteCacheDir": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\capture-evidence-07.mjs",
+        "--port",
+        "4197",
+        "--run-id",
+        "true-market-07-20260923-v4"
+      ]
+    },
+    "h10-before-1": {
+      "spawnPid": 33580,
+      "listenerPid": 33580,
+      "port": 4301,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4301",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4301",
+        "--strictPort"
+      ]
+    },
+    "h10-after-1": {
+      "spawnPid": 20016,
+      "listenerPid": 20016,
+      "port": 4302,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4302",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4302",
+        "--strictPort"
+      ]
+    },
+    "h10-before-2": {
+      "spawnPid": 24336,
+      "listenerPid": 24336,
+      "port": 4303,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4303",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4303",
+        "--strictPort"
+      ]
+    },
+    "h10-after-2": {
+      "spawnPid": 29564,
+      "listenerPid": 29564,
+      "port": 4304,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4304",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4304",
+        "--strictPort"
+      ]
+    },
+    "h10-before-3": {
+      "spawnPid": 21988,
+      "listenerPid": 21988,
+      "port": 4305,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4305",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4305",
+        "--strictPort"
+      ]
+    },
+    "h10-after-3": {
+      "spawnPid": 28020,
+      "listenerPid": 28020,
+      "port": 4306,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4306",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4306",
+        "--strictPort"
+      ]
+    },
+    "h30-before": {
+      "spawnPid": 20004,
+      "listenerPid": 20004,
+      "port": 4307,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4307",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4307",
+        "--strictPort"
+      ]
+    },
+    "h30-after": {
+      "spawnPid": 15328,
+      "listenerPid": 15328,
+      "port": 4308,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4308",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4308",
+        "--strictPort"
+      ]
+    },
+    "chart-before-1": {
+      "spawnPid": 25228,
+      "listenerPid": 25228,
+      "port": 4309,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4309",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4309",
+        "--strictPort"
+      ]
+    },
+    "chart-after-1": {
+      "spawnPid": 32252,
+      "listenerPid": 32252,
+      "port": 4310,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4310",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4310",
+        "--strictPort"
+      ]
+    },
+    "chart-before-2": {
+      "spawnPid": 8084,
+      "listenerPid": 8084,
+      "port": 4311,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "variant": "before",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1\\.perf07-cache\\true-market-07-20260923-v4\\4311",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4311",
+        "--strictPort"
+      ]
+    },
+    "chart-after-2": {
+      "spawnPid": 32180,
+      "listenerPid": 32180,
+      "port": 4312,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "variant": "after",
+      "viteCacheDir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e\\.perf07-cache\\true-market-07-20260923-v4\\4312",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4312",
+        "--strictPort"
+      ]
+    }
+  },
+  "listenerMismatch": [],
+  "envVariableNames": [
+    "ALLOWED_ORIGIN",
+    "CLAUDE_CLI_PATH",
+    "FINMIND_TOKEN",
+    "GEMINI_API_KEY",
+    "GEMINI_MODEL_FAST",
+    "GEMINI_MODEL_THINKING",
+    "LLM_PROVIDER"
+  ],
+  "requestBudget": {
+    "holdings10": "每頁 16（10 報價＋1 匯率＋5 名稱）× 6 頁 = 96",
+    "holdings30": "每頁 46（30 報價＋1 匯率＋15 名稱）× 2 頁 = 92",
+    "chart10": "每頁冷抓 35（5 台股 × 2 chart＋3 FinMind、5 美股 × 2 chart）＋回訪 0 × 2 頁 = 70",
+    "stopRule": "任一頁出現 429、持續 5xx 或逾時即停止該批，保留結果，不密集重試"
+  },
+  "viteConfig": ".scratch/performance-fix-20260922/tools/true-market-07-vite.config.mjs",
+  "cacheMode": "每頁使用從未開過的 port（新 origin 無瀏覽器 HTTP 快取）；每個 Vite 獨立預打包目錄；探針另清行情 session 快取；後端無本機持久快取"
+}

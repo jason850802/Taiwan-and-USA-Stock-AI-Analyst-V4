@@ -1,0 +1,12 @@
+{
+  "kind": "本輪新增文件／診斷腳本及原封存只讀核對",
+  "sealFilesChecked": 154,
+  "oldEvidenceUnchanged": 109,
+  "currentStatusDocsUpdated": 3,
+  "newTextFilesChecked": 51,
+  "actualSecretValuesCompared": 2,
+  "secretMatches": 0,
+  "syntax": "新增cjs/mjs解析通過",
+  "links": "新md相對連結通過",
+  "mainUnchanged": true
+}

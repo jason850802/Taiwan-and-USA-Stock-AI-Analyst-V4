@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:16:06.661Z",
+  "baseUrl": "http://127.0.0.1:3034/",
+  "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+  "timeoutMs": 60000,
+  "warmPairs": 5,
+  "rows": [
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 2152.2969,
+      "phase": "cold",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1898.3546000000001,
+      "phase": "cold",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1811.9390999999996,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1883.951,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1808.7217,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1772.8037999999997,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1775.0226999999995,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1778.3006000000005,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1798.0393000000022,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1776.8335999999981,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1766.5253000000012,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-5"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1769.089100000001,
+      "phase": "warm",
+      "serviceStartId": "clean-formal-options-v6-20260923-start-1",
+      "pairId": "clean-formal-options-v6-20260923-start-1-warm-5"
+    }
+  ]
+}

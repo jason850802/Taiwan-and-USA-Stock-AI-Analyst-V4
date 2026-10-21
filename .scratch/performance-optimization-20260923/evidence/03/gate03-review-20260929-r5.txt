@@ -1,0 +1,126 @@
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 gate
+> node scripts/run-gate.mjs --require-env
+
+
+=== [1/5] tsc --noEmit ===
+
+=== [2/5] vitest run ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 C:/pfv7
+
+ ✓ api/_lib/config.test.ts (24 tests) 23ms
+ ✓ api/_lib/finmind.test.ts (36 tests) 33ms
+ ✓ services/stockDirectory.loading.test.ts (6 tests) 108ms
+ ✓ api/_lib/ratelimit.test.ts (16 tests) 53ms
+ ✓ utils/workerPool.test.ts (7 tests) 111ms
+ ✓ services/yahoo.maWarmup.test.ts (7 tests) 38ms
+ ✓ utils/geminiRules.test.ts (13 tests) 32ms
+ ✓ utils/portfolioLedger.test.ts (38 tests) 36ms
+(node:11076) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/geminiPrompts.test.ts (8 tests) 51ms
+ ✓ services/finmind.loading.test.ts (4 tests) 258ms
+ ✓ api/_lib/yahoo.handshake.test.ts (19 tests) 382ms
+ ✓ services/quoteCache.bounds.test.ts (15 tests) 490ms
+ ✓ services/yahoo.loading.test.ts (10 tests) 495ms
+(node:14812) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/portfolioHealthStreaming.test.ts (1 test) 32ms
+ ✓ services/quoteCache.test.ts (9 tests) 30ms
+(node:10856) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ utils/geminiCache.test.ts (8 tests) 30ms
+ ✓ utils/shareUnits.test.ts (6 tests) 22ms
+ ✓ services/finmind.bounds.test.ts (11 tests) 699ms
+ ✓ services/yahoo.chipContext.test.ts (11 tests) 706ms
+ ✓ utils/portfolioHistory.test.ts (30 tests) 20ms
+ ✓ utils/backfillPipeline.test.ts (20 tests) 429ms
+stderr | utils/persistentStore.test.ts > 舊格式相容（@36c0f41 現行 JSON 形狀字面量） > 未知版本的交易流水 → 空陣列（原資料不動）
+[txnStore] 未知版本的交易流水（原樣保留，以空流水啟動）: 2
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > txnStore：不裁剪，quota 直接回 false
+[txnStore] 交易流水寫入失敗（storage 已滿）
+
+stderr | utils/persistentStore.test.ts > quota 裁剪策略維持原樣 > portfolioItemsStore：不裁剪，quota 直接回 false（持股是本體，寧可寫不進去也不砍）
+[portfolioItemsStore] 庫存寫入失敗（storage 滿或不可用）
+
+ ✓ api/_lib/guard.test.ts (27 tests) 21ms
+ ✓ utils/persistentStore.test.ts (26 tests) 19ms
+ ✓ utils/importReplay.test.ts (29 tests) 24ms
+ ✓ utils/portfolioBackup.test.ts (42 tests) 25ms
+ ✓ utils/math.test.ts (23 tests) 16ms
+ ✓ api/gemini-stream.test.ts (6 tests) 18ms
+ ✓ utils/statementParsers/cathayTw.test.ts (30 tests) 13ms
+ ✓ utils/viteConfigGuard.test.ts (5 tests) 697ms
+   ✓ vite envPrefix 防漂移鎖 > resolveConfig（serve）後仍是 VITE_ 且無 define——plugin 沒有偷改  562ms
+ ✓ services/yahoo.revalidation.test.ts (19 tests) 1115ms
+ ✓ components/portfolio/portfolioHooks.regression.test.ts (4 tests) 16ms
+ ✓ api/_lib/yahoo.test.ts (40 tests) 11ms
+ ✓ api/_lib/llm.test.ts (14 tests) 13ms
+ ✓ utils/backfillFromTxns.test.ts (20 tests) 12ms
+ ✓ utils/statementParsers/parsers.test.ts (24 tests) 14ms
+ ✓ utils/dividendEstimator.test.ts (20 tests) 11ms
+ ✓ utils/importPlan.test.ts (8 tests) 13ms
+ ✓ utils/portfolioFees.test.ts (27 tests) 9ms
+ ✓ components/portfolio/holdingPriceQueue.test.ts (6 tests) 9ms
+ ✓ api/_lib/http.cancel.test.ts (2 tests) 7ms
+ ✓ utils/framePublisher.test.ts (6 tests) 8ms
+ ✓ utils/entryFilter.test.ts (9 tests) 6ms
+ ✓ utils/market.test.ts (17 tests) 6ms
+ ✓ api/_lib/llm.claude-cli.test.ts (53 tests) 1415ms
+ ✓ api/_lib/http.test.ts (47 tests) 14ms
+ ✓ utils/fetchError.test.ts (8 tests) 6ms
+ ✓ utils/portfolioGrouping.test.ts (5 tests) 5ms
+ ✓ utils/quoteTime.test.ts (4 tests) 5ms
+ ✓ utils/appLazyBoundaries.test.ts (2 tests) 4ms
+ ✓ components/fundamentals/QuarterlyTrendCharts.test.ts (7 tests) 2ms
+
+ Test Files  50 passed (50)
+      Tests  829 passed (829)
+   Start at  16:32:54
+   Duration  2.62s (transform 3.99s, setup 0ms, collect 8.50s, tests 7.62s, environment 11ms, prepare 7.33s)
+
+
+=== [3/5] vite build ===
+
+> taiwan-and-usa-stock-ai-analyst-v4@0.0.0 build
+> vite build
+
+vite v6.4.1 building for production...
+transforming...
+✓ 2681 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              0.64 kB │ gzip:   0.41 kB
+dist/assets/index-YaWf-Iy0.css              28.03 kB │ gzip:   5.78 kB
+dist/assets/StatCard-BE0i2i7X.js             0.47 kB │ gzip:   0.29 kB
+dist/assets/AnalysisResult-DlKahCHb.js       0.79 kB │ gzip:   0.47 kB
+dist/assets/xlsxReader-Bboq1lzx.js           2.67 kB │ gzip:   1.43 kB
+dist/assets/ReferenceLine-Bdm4eHdI.js        4.40 kB │ gzip:   1.82 kB
+dist/assets/FundamentalsPanel-M4UB6Blm.js   14.71 kB │ gzip:   4.35 kB
+dist/assets/ComposedChart-BmgE5sLj.js       17.67 kB │ gzip:   6.11 kB
+dist/assets/StockChart-BrdvRABY.js          34.17 kB │ gzip:  10.78 kB
+dist/assets/gemini-DBG2TWOB.js              52.74 kB │ gzip:  22.07 kB
+dist/assets/index-B_sm1K_I.js              105.02 kB │ gzip:  37.77 kB
+dist/assets/Portfolio-CXyFgmdy.js          136.93 kB │ gzip:  42.84 kB
+dist/assets/Skeleton-D44s97Ww.js           159.72 kB │ gzip:  48.54 kB
+dist/assets/vendor-CmCSiRIh.js             193.77 kB │ gzip:  60.50 kB
+dist/assets/CartesianChart-BUKkHTzZ.js     357.16 kB │ gzip: 106.97 kB
+✓ built in 4.74s
+
+=== [4/5] 金鑰掃描 ===
+  · .env 來源：本目錄（6 筆）、主 worktree（E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4）（6 筆）
+  ✓ 乾淨（掃 dist/ 15 檔、追蹤原始碼 4501 檔、.env 值 6 筆）
+
+=== [5/5] package.json / package-lock.json diff ===
+  ✓ 與 HEAD 完全一致
+
+✓ GATE 全綠（機械部分）。
+  runtime 類驗證腳本管不到，仍須人工：console 零紅字、UI 數字要量、快取換乾淨代號。
+(node:14464) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

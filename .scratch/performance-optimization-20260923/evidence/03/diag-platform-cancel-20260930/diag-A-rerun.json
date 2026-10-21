@@ -1,0 +1,75 @@
+﻿{
+  "tag": "diag03-munyzr0j",
+  "origin": "https://taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app",
+  "route": "/api/gemini-stream",
+  "deployment": "dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+  "gapMs": 15000,
+  "logLinesFetched": 9,
+  "red": 0,
+  "green": 3,
+  "unknown": 0,
+  "note": "時間軸中 * ＝平台觸發、依請求紀錄歸屬的事件",
+  "verdicts": [
+    {
+      "trace": "diag03-munyzr0j-0",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1420,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 854,
+      "firstSignal": "response-close",
+      "killMs": 855,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "5ms child.fakeCli.stdin",
+        "607ms child.fakeCli.delta#1",
+        "854ms* response-close finished=false",
+        "855ms child.fakeCli.kill emitted=1",
+        "856ms* request-aborted",
+        "856ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munyzr0j-1",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1205,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 885,
+      "firstSignal": "response-close",
+      "killMs": 885,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "885ms* response-close finished=false",
+        "885ms child.fakeCli.kill emitted=1",
+        "886ms* request-aborted",
+        "887ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munyzr0j-2",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1197,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 852,
+      "firstSignal": "response-close",
+      "killMs": 852,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "5ms child.fakeCli.stdin",
+        "607ms child.fakeCli.delta#1",
+        "852ms* response-close finished=false",
+        "852ms child.fakeCli.kill emitted=1",
+        "853ms* request-aborted",
+        "854ms handler-return"
+      ]
+    }
+  ],
+  "otherLogs": []
+}

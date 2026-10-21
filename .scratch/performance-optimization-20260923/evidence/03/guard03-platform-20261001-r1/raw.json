@@ -1,0 +1,132 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "name": "保留串流 200 秒",
+      "pass": true
+    },
+    {
+      "name": "保留非串流 120 秒",
+      "pass": true
+    },
+    {
+      "name": "無時限常數時不猜新值",
+      "pass": true
+    },
+    {
+      "name": "缺旗標拒絕",
+      "pass": true
+    },
+    {
+      "name": "旗標關閉拒絕",
+      "pass": true
+    },
+    {
+      "name": "未核准覆蓋值拒絕",
+      "pass": true
+    },
+    {
+      "name": "動態時限拒絕",
+      "pass": true
+    },
+    {
+      "name": "同筆取消成功",
+      "pass": true
+    },
+    {
+      "name": "只取消客戶端不足",
+      "pass": true
+    },
+    {
+      "name": "沒有上游啟動不能宣稱 kill 成功",
+      "pass": true
+    },
+    {
+      "name": "沒有中止訊號不足",
+      "pass": true
+    },
+    {
+      "name": "其他請求 kill 不得誤收",
+      "pass": true
+    },
+    {
+      "name": "done 與 kill 同在拒絕",
+      "pass": true
+    },
+    {
+      "name": "完成回應後 kill 拒絕",
+      "pass": true
+    },
+    {
+      "name": "斷線且 kill 後靜默收尾可通過",
+      "pass": true
+    },
+    {
+      "name": "收尾早於 kill 拒絕",
+      "pass": true
+    },
+    {
+      "name": "kill 後仍出字拒絕",
+      "pass": true
+    },
+    {
+      "name": "靜默收尾缺斷線時間拒絕",
+      "pass": true
+    },
+    {
+      "name": "沒有客戶端取消拒絕",
+      "pass": true
+    },
+    {
+      "name": "同部署事件去重",
+      "pass": true
+    },
+    {
+      "name": "別的部署不能充當證據",
+      "pass": true
+    },
+    {
+      "name": "缺 trace 不推定",
+      "pass": true
+    },
+    {
+      "name": "只接受綁定包的同網址 Preview",
+      "pass": true
+    },
+    {
+      "name": "錯網址在網路前拒絕",
+      "pass": true
+    },
+    {
+      "name": "正式部署拒絕",
+      "pass": true
+    },
+    {
+      "name": "其他包雜湊拒絕",
+      "pass": true
+    },
+    {
+      "name": "AI 空文字 200 不能通過",
+      "pass": true
+    },
+    {
+      "name": "錯股票 200 不能通過",
+      "pass": true
+    },
+    {
+      "name": "429 錯 code 不能通過",
+      "pass": true
+    },
+    {
+      "name": "FinMind 期望不依 shell 的 App 開關",
+      "pass": true
+    }
+  ],
+  "realNetworkCalls": 0,
+  "realProcessKills": 0,
+  "runId": "guard03-platform-20261001-r1",
+  "tools": {
+    "guard-platform-03.mjs": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+    "platform-03.mjs": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649"
+  }
+}

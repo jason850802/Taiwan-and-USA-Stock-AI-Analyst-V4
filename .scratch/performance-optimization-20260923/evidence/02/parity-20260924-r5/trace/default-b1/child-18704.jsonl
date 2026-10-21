@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":27.075,"pid":18704,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1964.848,"pid":18704,"seq":1}
+{"ev":"child.listening","t":1980.207,"pid":18704,"seq":1}
+{"ev":"child.listenCall","t":2034.94,"pid":18704,"seq":2}
+{"ev":"child.listening","t":2036.406,"pid":18704,"seq":2}
+{"ev":"child.ready","t":2036.705,"pid":18704}
+{"ev":"child.recv","t":2044.44,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"devProxy","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.recv","t":2051.65,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"handler","method":"OPTIONS","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":2051.947,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","names":["access-control-request-method","connection","host","origin","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4921","x-forwarded-host":"127.0.0.1:4921","x-forwarded-proto":"http","x-forwarded-port":"4921","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4921","origin":"http://localhost:3000","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2052.816,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"handler","status":204}
+{"ev":"child.finish","t":2054.214,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"handler"}
+{"ev":"child.writeHead","t":2059.774,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"devProxy","status":204}
+{"ev":"child.finish","t":2060.492,"pid":18704,"trace":"parity-20260924-r5-default-b1-options-chart-allowed","layer":"devProxy"}

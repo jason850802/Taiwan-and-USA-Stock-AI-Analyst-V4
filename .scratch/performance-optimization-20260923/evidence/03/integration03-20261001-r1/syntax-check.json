@@ -1,0 +1,142 @@
+{
+  "checks": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-vite-proxy.config.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/hmr-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stale-state-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+      "exitCode": 0,
+      "stderr": ""
+    }
+  ],
+  "pass": true,
+  "notRuntime": true,
+  "notGate": true
+}

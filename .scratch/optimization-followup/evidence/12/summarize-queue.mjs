@@ -1,41 +1,36 @@
-// 同機器重跑前後批次；完整保留冷啟動、暖機、五次樣本及最差全量時間。
-import { readFileSync, writeFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+// 05前後各21份；先核指定run與raw，再保留原冷頁／暖機／五樣本統計。
 import path from 'node:path';
-const dir = fileURLToPath(new URL('./', import.meta.url));
-const read = name => JSON.parse(readFileSync(path.join(dir, 'replay-05', `${name}.json`), 'utf8'));
-const median = values => [...values].sort((a,b) => a-b)[Math.floor(values.length/2)];
+import { pathToFileURL } from 'node:url';
+import { options, requiredManifest, verifyManifest, atomicJson, json, beforeCommit } from '../../../reacceptance-fixes/tools/replay-contract.mjs';
+const median = values => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
 const stats = values => ({ samples: values, median: median(values), min: Math.min(...values), max: Math.max(...values) });
-const beforeBaseline = '0366f5fb1d58d963323cc9d519f49ec87217a048';
-const rows = [], rawHashes = {};
-for (const count of [1,10,30]) {
-  const row = { count };
-  for (const stage of ['before','after']) {
-    const samples = Array.from({length:7}, (_, i) => {
-      const name = `${stage}-load-${count}-${i}`, raw = readFileSync(path.join(dir,'replay-05',`${name}.json`));
-      rawHashes[`${name}.json`] = createHash('sha256').update(raw).digest('hex');
-      const s = read(name);
-      if (s.passed !== true || s.count !== count || s.sample !== i || s.network.delay !== 80
-        || !Number.isFinite(s.firstVisibleMs) || !Number.isFinite(s.allCompleteMs)) throw new Error(`樣本不完整:${name}`);
-      if (stage === 'before' && (s.source !== beforeBaseline || s.queueSha256 !== null)) throw new Error(`前版本來源錯誤:${name}`);
-      if (stage === 'after' && (!s.queueSha256 || s.source !== 'working-tree' || s.network.peak > 3)) throw new Error(`後版本來源或峰值錯誤:${name}`);
-      return s;
-    });
-    const measured = samples.slice(2);
-    row[stage] = {
-      cold: { firstVisibleMs:samples[0].firstVisibleMs, allCompleteMs:samples[0].allCompleteMs },
-      warmup: { firstVisibleMs:samples[1].firstVisibleMs, allCompleteMs:samples[1].allCompleteMs },
-      firstVisibleMs: stats(measured.map(s=>s.firstVisibleMs)), allCompleteMs: stats(measured.map(s=>s.allCompleteMs)),
-      requestCounts: measured.map(s=>s.network.records.length), peaks: measured.map(s=>s.network.peak),
-      fxStartPositions: measured.map(s=>s.network.records.findIndex(r=>r.symbol==='USDTWD=X')+1),
-    };
+export function summarizeQueue(context) {
+  const verification = verifyManifest(context, ['05-before', '05-after']);
+  const rows = [];
+  for (const count of [1, 10, 30]) {
+    const row = { count };
+    for (const stage of ['before', 'after']) {
+      const files = verification.groups[`05-${stage}`].cases;
+      const samples = Array.from({ length: 7 }, (_, sample) => json(path.join(context.directory, files.find(file => file.file.endsWith(`/${stage}-load-${count}-${sample}.json`)).file)));
+      const measured = samples.slice(2);
+      row[stage] = {
+        cold: { firstVisibleMs: samples[0].firstVisibleMs, allCompleteMs: samples[0].allCompleteMs },
+        warmup: { firstVisibleMs: samples[1].firstVisibleMs, allCompleteMs: samples[1].allCompleteMs },
+        firstVisibleMs: stats(measured.map(sample => sample.firstVisibleMs)), allCompleteMs: stats(measured.map(sample => sample.allCompleteMs)),
+        requestCounts: measured.map(sample => sample.network.records.length), peaks: measured.map(sample => sample.network.peak),
+        fxStartPositions: measured.map(sample => sample.network.records.findIndex(record => record.symbol === 'USDTWD=X') + 1),
+      };
+    }
+    rows.push(row);
   }
-  rows.push(row);
+  return { ...verification, beforeBaseline: beforeCommit, afterCandidate: context.manifest.definition.inputs.candidate,
+    method: '前版固定04完成來源，後版為當前候選；80ms合成HTTP，各0冷頁、1暖機、2～6完整五樣本。', rows };
 }
-const result = { beforeBaseline, afterCandidate: read('after-load-1-0').integration.candidate,
-  method:'前版本為04完成、05三槽排隊前的來源；後版本為12最終候選。同一80ms假HTTP／資料集，各0冷啟動、1暖機、2～6五次完整樣本。不是01全部功能的等同基準。',
-  rows, rawHashes };
-writeFileSync(path.join(dir,'queue-summary.json'),JSON.stringify(result,null,2)+'\n');
-console.log(JSON.stringify(rows.map(r=>({count:r.count,peak:[Math.max(...r.before.peaks),Math.max(...r.after.peaks)],
-  firstMs:[r.before.firstVisibleMs.median,r.after.firstVisibleMs.median],allMs:[r.before.allCompleteMs.median,r.after.allCompleteMs.median]}))));
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
+  try {
+    const context = requiredManifest(options(process.argv.slice(2), ['manifest']));
+    const result = summarizeQueue(context);
+    atomicJson(path.join(context.directory, 'queue-summary.json'), result);
+    console.log(JSON.stringify({ allPassed: true, batchId: result.batchId, manifestRevision: result.manifestRevision, rows: result.rows }));
+  } catch (error) { console.error(error.message); process.exitCode = 1; }
+}

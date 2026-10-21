@@ -1,0 +1,324 @@
+{
+  "candidateCommit": "cfbd118c28710de9b3fbeb6bc0f8c4333955e606",
+  "sourceMain": "2b2811b9300e7480112453e08d3b32beb3b306ed",
+  "checks": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "actualSha": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "commitSha": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+      "actualSha": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "commitSha": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-vite-proxy.config.mjs",
+      "actualSha": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "commitSha": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "actualSha": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "commitSha": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "actualSha": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "commitSha": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+      "actualSha": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+      "commitSha": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+      "actualSha": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+      "commitSha": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "actualSha": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "commitSha": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "actualSha": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "commitSha": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "actualSha": "79ab05126d7dc12d50560c6997d570b47538f0df8691e804765d71f1f52dcbe1",
+      "commitSha": "79ab05126d7dc12d50560c6997d570b47538f0df8691e804765d71f1f52dcbe1",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "actualSha": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "commitSha": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+      "actualSha": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+      "commitSha": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "actualSha": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "commitSha": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "actualSha": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "commitSha": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/hmr-03.mjs",
+      "actualSha": "89ec1c2ca336be048d7fa94ca4b320ddbdfae09e6518b973161d7a1790b7251b",
+      "commitSha": "89ec1c2ca336be048d7fa94ca4b320ddbdfae09e6518b973161d7a1790b7251b",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "actualSha": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "commitSha": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "actualSha": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "commitSha": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "actualSha": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "commitSha": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "actualSha": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "commitSha": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "actualSha": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+      "commitSha": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "actualSha": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "commitSha": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+      "actualSha": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+      "commitSha": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "actualSha": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "commitSha": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stale-state-03.mjs",
+      "actualSha": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+      "commitSha": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+      "actualSha": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "commitSha": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "actualSha": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "commitSha": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "actualSha": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "commitSha": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+      "actualSha": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "commitSha": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "scripts/start-dev.ps1",
+      "actualSha": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "commitSha": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": ".vercelignore",
+      "actualSha": "30796e8f9616ed68ccbb0238d54ba3b659b96ffc8c22cfdae0b0612f64debc81",
+      "commitSha": "c4cf7edfa6c124b85963e14438276883ecaec1d7a5c90292ad0f7b929b73605b",
+      "exact": false,
+      "lineEndingsOnly": true
+    },
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "actualSha": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "commitSha": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "actualSha": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "commitSha": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "actualSha": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "commitSha": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "actualSha": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "commitSha": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "actualSha": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "commitSha": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "actualSha": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "commitSha": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/finmind.ts",
+      "actualSha": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "commitSha": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "actualSha": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "commitSha": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "actualSha": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "commitSha": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/gemini.ts",
+      "actualSha": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "commitSha": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "actualSha": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "commitSha": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "actualSha": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "commitSha": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "actualSha": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4",
+      "commitSha": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "vercel.json",
+      "actualSha": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b",
+      "commitSha": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b",
+      "exact": true,
+      "lineEndingsOnly": false
+    },
+    {
+      "path": "vite.config.ts",
+      "actualSha": "44c4c95fa3236ac80512ba72a4e61b4f5022c8118c08a3cad557be71d654416a",
+      "commitSha": "44c4c95fa3236ac80512ba72a4e61b4f5022c8118c08a3cad557be71d654416a",
+      "exact": true,
+      "lineEndingsOnly": false
+    }
+  ],
+  "exact": 44,
+  "lineEndingsOnly": 1,
+  "pass": true
+}

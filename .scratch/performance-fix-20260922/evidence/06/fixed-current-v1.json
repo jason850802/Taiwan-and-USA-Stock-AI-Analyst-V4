@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T16:07:39.770Z",
+  "root": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+  "scenarios": [
+    {
+      "market": "TW",
+      "symbol": "77771.TW",
+      "interval": "1d",
+      "durationMs": 68.89600000000007,
+      "requestCount": 4,
+      "requests": [
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInfo",
+          "symbol": "77771"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInstitutionalInvestorsBuySell",
+          "symbol": "77771"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockPrice",
+          "symbol": "77771"
+        },
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "77771.TW",
+          "interval": "1d",
+          "range": "10y"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "2026-01-09",
+      "lastClose": 107,
+      "infoName": "固定名稱 77771",
+      "sha256": "8fbe791395aa1ed93468fbf68f5360ff6a2dce7e62db4ae03f2f77baaa7fd2cd"
+    },
+    {
+      "market": "TW",
+      "symbol": "77772.TW",
+      "interval": "1wk",
+      "durationMs": 1.3817000000000235,
+      "requestCount": 2,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "77772.TW",
+          "interval": "1wk",
+          "range": "5y"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInfo",
+          "symbol": "77772"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "2026-02-20",
+      "lastClose": 107,
+      "infoName": "固定名稱 77772",
+      "sha256": "aeb13f923d7738baffddc7d4d5f027eb33e902971f9d0008e1fc3bbb92a4d08e"
+    },
+    {
+      "market": "TW",
+      "symbol": "77773.TW",
+      "interval": "1mo",
+      "durationMs": 0.6269999999999527,
+      "requestCount": 2,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "77773.TW",
+          "interval": "1mo",
+          "range": "15y"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInfo",
+          "symbol": "77773"
+        }
+      ],
+      "dataPoints": 7,
+      "lastDate": "2026-07-31",
+      "lastClose": 107,
+      "infoName": "固定名稱 77773",
+      "sha256": "cc922a6e5c4f3594b00d4363a196c2d04171d1e1fe5dc7fe3b92948d413c7226"
+    },
+    {
+      "market": "TW",
+      "symbol": "77774.TW",
+      "interval": "60m",
+      "durationMs": 0.8283000000000129,
+      "requestCount": 2,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "77774.TW",
+          "interval": "60m",
+          "range": "1y"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInfo",
+          "symbol": "77774"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "01-02 20:00",
+      "lastClose": 107,
+      "infoName": "固定名稱 77774",
+      "sha256": "206b2d708260ab2a393ba1f484d1a29f8b62234efee8c36f90c504ab93a5db1b"
+    },
+    {
+      "market": "TW",
+      "symbol": "77775.TW",
+      "interval": "15m",
+      "durationMs": 0.46059999999999945,
+      "requestCount": 2,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "77775.TW",
+          "interval": "15m",
+          "range": "60d"
+        },
+        {
+          "path": "/api/finmind",
+          "dataset": "TaiwanStockInfo",
+          "symbol": "77775"
+        }
+      ],
+      "dataPoints": 2,
+      "lastDate": "01-02 13:30",
+      "lastClose": 101,
+      "infoName": "固定名稱 77775",
+      "sha256": "ae8f8faee32ff9e87eeefbdca84847d81fbad657f44cab9cf6a4fd976ce190cf"
+    },
+    {
+      "market": "US",
+      "symbol": "PERF1",
+      "interval": "1d",
+      "durationMs": 0.7544000000000324,
+      "requestCount": 1,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "PERF1",
+          "interval": "1d",
+          "range": "10y"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "2026-01-09",
+      "lastClose": 157,
+      "infoName": "Yahoo Test US",
+      "sha256": "75e4e886bbadfefb5a5989f03dffc785e24466927760e39070a5cbee1fe1ed1b"
+    },
+    {
+      "market": "US",
+      "symbol": "PERF2",
+      "interval": "1wk",
+      "durationMs": 0.5543999999999869,
+      "requestCount": 1,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "PERF2",
+          "interval": "1wk",
+          "range": "5y"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "2026-02-20",
+      "lastClose": 157,
+      "infoName": "Yahoo Test US",
+      "sha256": "a2875929c99c0424e26584b7a7daf2ab394006ca7ed1a0e061cb1d7843e0246e"
+    },
+    {
+      "market": "US",
+      "symbol": "PERF3",
+      "interval": "1mo",
+      "durationMs": 0.3423999999999978,
+      "requestCount": 1,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "PERF3",
+          "interval": "1mo",
+          "range": "15y"
+        }
+      ],
+      "dataPoints": 7,
+      "lastDate": "2026-07-31",
+      "lastClose": 157,
+      "infoName": "Yahoo Test US",
+      "sha256": "56d78108f918ca1ed10b931d7d87b632586dbac42cd9840e7df1d575ae2b8201"
+    },
+    {
+      "market": "US",
+      "symbol": "PERF4",
+      "interval": "60m",
+      "durationMs": 0.41210000000000946,
+      "requestCount": 1,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "PERF4",
+          "interval": "60m",
+          "range": "1y"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "01-02 07:00",
+      "lastClose": 157,
+      "infoName": "Yahoo Test US",
+      "sha256": "b815be9a928046f7374327a5b025805a568141a041c76f7b3c3478a6a9789af6"
+    },
+    {
+      "market": "US",
+      "symbol": "PERF5",
+      "interval": "15m",
+      "durationMs": 0.30979999999999563,
+      "requestCount": 1,
+      "requests": [
+        {
+          "path": "/api/yahoo/chart",
+          "symbol": "PERF5",
+          "interval": "15m",
+          "range": "60d"
+        }
+      ],
+      "dataPoints": 8,
+      "lastDate": "01-02 01:45",
+      "lastClose": 157,
+      "infoName": "Yahoo Test US",
+      "sha256": "a59cfd26e43e7ee1d895029050f8fabeb35d58cf3a8db002de5fa97a77d3ce7f"
+    }
+  ],
+  "combinedSha256": "516eb415aa1980af99f71c75a9e107d24faad7b90f6ce7f6fed5fa8e236f85b3"
+}

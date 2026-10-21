@@ -191,8 +191,9 @@ const fetchFinMindPriceVolume = async (stockId: string, startDate: string, signa
     try {
         return await fetchFinMindRows('TaiwanStockPrice', { data_id: cleanId, start_date: startDate }, signal);
     } catch (e) {
+        if (e?.name === 'AbortError') throw e;
         console.warn("Failed to fetch price/volume data from FinMind", e);
-        return [];
+        return null;
     }
 }
 
@@ -449,7 +450,7 @@ export const peekLatestPrice = (symbol: string): LatestPriceResult | null => {
   return { ...cached, fetchedAt: entry.cachedAt };
 };
 
-const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
+const fetchLatestPriceQuote = async (symbol: string): Promise<LatestPriceResult> => {
   const response = await fetchRawData(symbol, '1d', '5d');
   const result = response.chart.result![0];
   const meta = result.meta;
@@ -470,18 +471,12 @@ const fetchLatestPrice = async (symbol: string): Promise<LatestPriceResult> => {
     }
   }
 
-  // For TW stocks, fetch Chinese name from FinMind
-  const isTW = isTwStock(meta.symbol);
-  let name = meta.longName || meta.shortName || meta.symbol;
-  if (isTW) {
-    const chineseName = await fetchFinMindStockInfo(meta.symbol);
-    if (chineseName) name = chineseName;
-  }
-
+  const name = meta.longName || meta.shortName || meta.symbol;
   return { price: latestPrice, name, date, fetchedAt: Date.now() };
 };
 
 const inflightLatestPrices = new Map<string, Promise<LatestPriceResult>>();
+const inflightLatestPriceNames = new Map<string, Promise<string | null>>();
 
 export const getLatestPrice = async (
   symbol: string,
@@ -496,7 +491,7 @@ export const getLatestPrice = async (
   }
 
   // 強制更新仍發新請求；較早到達的舊請求不得覆寫較新一輪的快取。
-  const request = fetchLatestPrice(symbol)
+  const request = fetchLatestPriceQuote(symbol)
     .then(latest => {
       if (inflightLatestPrices.get(key) === request && Number.isFinite(latest.price) && latest.price > 0) {
         const { fetchedAt, ...result } = latest;
@@ -511,11 +506,34 @@ export const getLatestPrice = async (
   return { ...await request };
 };
 
+export const getLatestPriceName = async (symbol: string): Promise<string | null> => {
+  if (!isTwStock(symbol)) return null;
+  const key = buildLatestPriceCacheKey(symbol);
+  const pending = inflightLatestPriceNames.get(key);
+  if (pending) return pending;
+
+  const request = fetchFinMindStockInfo(symbol)
+    .finally(() => {
+      if (inflightLatestPriceNames.get(key) === request) inflightLatestPriceNames.delete(key);
+    });
+  inflightLatestPriceNames.set(key, request);
+  return request;
+};
+
+export const patchLatestPriceName = (symbol: string, fetchedAt: number, name: string): boolean => {
+  const key = buildLatestPriceCacheKey(symbol);
+  const entry = readQuoteCache(key);
+  if (!entry || entry.cachedAt !== fetchedAt) return false;
+  const result = entry.result as LatestPriceCacheResult;
+  writeQuoteCache(key, { ...entry, result: { ...result, name } });
+  return true;
+};
+
 // BL-2 投機起跑籌碼三件套的形狀（模組層宣告，供 resolveChipContext 共用）。
 type ChipSpec = {
   name: Promise<string | null>;
   inst: Promise<any[] | null>;
-  pv: Promise<any[]>;
+  pv: Promise<any[] | null>;
 } | null;
 
 // 步驟 3 產出的籌碼上下文：一次解析、供兩段式（2y/10y）共用同一批籌碼，不重抓。
@@ -525,6 +543,8 @@ type ChipContext = {
   volumeMap: Map<string, number>;
   ohlcMap: Map<string, { open: number; high: number; low: number; close: number }>;
   chipDataUnavailable: boolean;
+  // FinMind 價量請求明確失敗：量能／合成 OHLC 未經校正，結果照常發布但只享短 TTL（不進公共 StockInfo）
+  priceVolumeUnavailable: boolean;
   chipsApplied: boolean; // ＝原 shouldFetchFinMindChips，步驟4 的 volume 覆寫與 chips 欄位開關
 };
 
@@ -542,6 +562,7 @@ const resolveChipContext = async (
   const chipMap = new Map<string, { foreign: number, trust: number }>();
   const volumeMap = new Map<string, number>();
   let chipDataUnavailable = false;
+  let priceVolumeUnavailable = false;
   // FinMind 當日真實 OHLC，供步驟4 取代平盤合成棒（_synthetic）用。
   const ohlcMap = new Map<string, { open: number; high: number; low: number; close: number }>();
 
@@ -560,7 +581,7 @@ const resolveChipContext = async (
   if (shouldFetchFinMindChips) {
       let fetchedName: string | null;
       let institutionalData: any[] | null;
-      let finMindPriceData: any[];
+      let finMindPriceData: any[] | null;
 
       if (chipSpec) {
           // 投機起跑結果直接收割（含 usedFallback 路徑：cleanId 相同、必為台股 1d，沿用不重抓）。
@@ -586,6 +607,11 @@ const resolveChipContext = async (
       }
       if (fetchedName) taiwanStockName = fetchedName;
 
+      // Yahoo 台股日線的成交量與 synthetic OHLC 由 FinMind PV 校正；請求明確失敗時比照籌碼
+      // 不可用的裁定：照常發布（不中斷 K 線），但標記讓快取只享短 TTL，不沿用到下一交易日開盤。
+      // 所有路徑一致，不拋錯、不誤入 FinMind fallback。fallback 本身已直接使用同資料集，免校正。
+      if (finMindPriceData === null && !usedFallback) priceVolumeUnavailable = true;
+
       if (institutionalData === null) {
           chipDataUnavailable = true;
       } else {
@@ -599,7 +625,7 @@ const resolveChipContext = async (
           });
       }
 
-      finMindPriceData.forEach((item: any) => {
+      finMindPriceData?.forEach((item: any) => {
           volumeMap.set(item.date, item.Trading_Volume);
           // FinMind 欄位：high=max、low=min（比照 fetchFinMindDailyData）。
           ohlcMap.set(item.date, { open: item.open, high: item.max, low: item.min, close: item.close });
@@ -610,7 +636,7 @@ const resolveChipContext = async (
       if (fetchedName) taiwanStockName = fetchedName;
   }
 
-  return { taiwanStockName, chipMap, volumeMap, ohlcMap, chipDataUnavailable, chipsApplied: shouldFetchFinMindChips };
+  return { taiwanStockName, chipMap, volumeMap, ohlcMap, chipDataUnavailable, priceVolumeUnavailable, chipsApplied: shouldFetchFinMindChips };
 };
 
 // 步驟 4 → 4.5 → 5 ＋ name/info 打包：純同步、無 await。
@@ -781,7 +807,7 @@ const fetchStockDataUncached = async (
     interval: TimeInterval = '1d',
     signal?: AbortSignal,
     onPartial?: (r: { info: StockInfo; data: StockDataPoint[] }) => void,
-): Promise<{info: StockInfo, data: StockDataPoint[]}> => {
+): Promise<{ result: { info: StockInfo; data: StockDataPoint[] }; priceVolumeUnavailable: boolean }> => {
 
   let mainInterval = interval as string;
   let mainRange = '5y';
@@ -804,7 +830,8 @@ const fetchStockDataUncached = async (
 
   // BL-2 投機起跑：台股 1d 且 symbol 已帶後綴（名錄已解析）時，籌碼三件套與 chart 同刻起跑，
   // 不再被 chart 網路往返＋前端處理間隙串行扣住。條件不符（美股／週月線／裸代碼）→ null，
-  // 步驟 3 照舊當場起跑，零行為差。內部三支函式皆 try/catch 吞錯回 null/[]，永不 reject。
+  // 步驟 3 照舊當場起跑，零行為差。PV 的 AbortError 會原樣 reject，故 speculative promise
+  // 建立當下就掛 rejection observer；ChipSpec 仍保存原 promise，後續 await 會拿到同一個錯誤物件。
   // （ChipSpec 型別已提升為模組層，供 resolveChipContext 共用。）
   let chipSpec: ChipSpec = null;
   if (interval === '1d' && /\.TWO?$/i.test(symbol)) {
@@ -812,10 +839,12 @@ const fetchStockDataUncached = async (
       specStart.setFullYear(specStart.getFullYear() - 5);
       const specStartStr = specStart.toISOString().split('T')[0];
       const specCleanId = symbol.replace(/\.TWO?$/i, '');
+      const speculativePv = fetchFinMindPriceVolume(specCleanId, specStartStr, signal);
+      void speculativePv.catch(() => {});
       chipSpec = {
           name: fetchFinMindStockInfo(specCleanId, signal),
           inst: fetchInstitutionalData(specCleanId, specStartStr, signal),
-          pv: fetchFinMindPriceVolume(specCleanId, specStartStr, signal),
+          pv: speculativePv,
       };
   }
 
@@ -851,7 +880,10 @@ const fetchStockDataUncached = async (
               }
               const fullRes = await p10y;
               const processedData10y = processYahooResult(fullRes, mainInterval);
-              return enrichChartData(processedData10y, symbolInfo, interval, ctx); // 同一批 chipMap，不重抓
+              return { // 同一批 chipMap，不重抓
+                  result: enrichChartData(processedData10y, symbolInfo, interval, ctx),
+                  priceVolumeUnavailable: ctx.priceVolumeUnavailable,
+              };
           }
 
           // 2y 失敗靜默（first===null）→ 等 p10y；10y 先到（CDN 熱）→ 用其結果。兩者收斂到單段尾流程。
@@ -1007,7 +1039,10 @@ const fetchStockDataUncached = async (
   const ctx = await resolveChipContext(chipSpec, symbolInfo, isTaiwanStock, usedFallback, interval, signal);
 
   // 4 → 4.5 → 5 ＋ name/info 打包（步驟 4/4.5/5 抽出）：純同步。
-  return enrichChartData(processedData, symbolInfo, interval, ctx);
+  return {
+      result: enrichChartData(processedData, symbolInfo, interval, ctx),
+      priceVolumeUnavailable: ctx.priceVolumeUnavailable,
+  };
 };
 
 // ── 行情快取外殼（B-1，quick-260712-vno）──
@@ -1047,11 +1082,12 @@ const inflightCharts = new Map<string, ChartWork>();
 // 淺拷貝防禦：防呼叫端意外 mutate 陣列污染快取（資料點物件共享，消費端本就視為 immutable）
 const cloneResult = (r: StockDataResult): StockDataResult => ({ info: { ...r.info }, data: r.data.slice() });
 
-const writeQuoteCacheResult = (key: string, interval: string, result: StockDataResult): void => {
+const writeQuoteCacheResult = (key: string, interval: string, result: StockDataResult, priceVolumeUnavailable: boolean): void => {
     const entry: QuoteCacheEntry = {
         cachedAt: Date.now(),
-        // planner_rulings #3：籌碼不可用可能是暫時性 429，只享 10 分鐘短 TTL、不享收盤後沿用
-        shortTtlOnly: result.info.chipDataUnavailable === true,
+        // planner_rulings #3：籌碼不可用可能是暫時性 429，只享 10 分鐘短 TTL、不享收盤後沿用；
+        // FinMind 價量不可用（量能未校正）比照同一裁定（2026-09-23 使用者拍板）。
+        shortTtlOnly: result.info.chipDataUnavailable === true || priceVolumeUnavailable,
         result,
     };
     writeQuoteCache(key, entry);
@@ -1134,9 +1170,9 @@ const startChartWork = (work: ChartWork, canon: string, interval: TimeInterval, 
     work.controller.abort();
     return subscribers;
   };
-  void fetchStockDataUncached(canon, interval, work.controller.signal, staged ? onPartial : undefined).then(result => {
+  void fetchStockDataUncached(canon, interval, work.controller.signal, staged ? onPartial : undefined).then(({ result, priceVolumeUnavailable }) => {
     if (!isCurrent()) return;
-    writeQuoteCacheResult(work.key, interval, result);
+    writeQuoteCacheResult(work.key, interval, result, priceVolumeUnavailable);
     for (const subscriber of finish()) {
       if (subscriber.signal?.aborted) {
         if (!subscriber.initialDelivered) subscriber.reject(abortError());

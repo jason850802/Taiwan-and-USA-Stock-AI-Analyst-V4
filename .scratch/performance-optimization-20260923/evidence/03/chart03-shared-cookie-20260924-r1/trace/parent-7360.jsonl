@@ -1,0 +1,13 @@
+{"ev":"parent.boot","t":592.512,"pid":7360}
+{"ev":"parent.listenCall","t":1964.638,"pid":7360,"seq":1}
+{"ev":"parent.listening","t":1966.159,"pid":7360,"seq":1}
+{"ev":"parent.recv","t":2621.412,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-a","layer":"entry","method":"GET","route":"/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d"}
+{"ev":"parent.fork","t":2713.215,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-a","childPid":34824,"forkCallMs":7.89}
+{"ev":"parent.childReady","t":4386.596,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-a","childPid":34824}
+{"ev":"parent.proxyReq","t":4389.438,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-a","port":"55403"}
+{"ev":"parent.recv","t":4418.694,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-b","layer":"entry","method":"GET","route":"/api/yahoo/chart?symbol=NVDA&interval=1d&range=5d"}
+{"ev":"parent.proxyReq","t":4440.083,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-b","port":"55403"}
+{"ev":"parent.aborted","t":4722.663,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-a","layer":"entry"}
+{"ev":"parent.proxyRes","t":7477.771,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-b"}
+{"ev":"parent.writeHead","t":7478.689,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-b","layer":"entry","status":200}
+{"ev":"parent.finish","t":7479.979,"pid":7360,"trace":"chart03-shared-cookie-20260924-r1-b","layer":"entry"}

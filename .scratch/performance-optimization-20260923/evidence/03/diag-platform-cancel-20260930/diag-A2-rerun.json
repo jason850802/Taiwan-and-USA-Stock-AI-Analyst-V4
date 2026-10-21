@@ -1,0 +1,85 @@
+﻿{
+  "tag": "diag03-munz0sy0",
+  "origin": "https://taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app",
+  "route": "/api/gemini-stream-events",
+  "deployment": "dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+  "gapMs": 15000,
+  "logLinesFetched": 12,
+  "red": 0,
+  "green": 3,
+  "unknown": 0,
+  "note": "時間軸中 * ＝平台觸發、依請求紀錄歸屬的事件",
+  "verdicts": [
+    {
+      "trace": "diag03-munz0sy0-0",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1180,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 846,
+      "firstSignal": "response-close",
+      "killMs": 847,
+      "deltasBeforeStop": 1,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "846ms* response-close finished=false",
+        "847ms child.fakeCli.kill emitted=1",
+        "847ms* request-aborted",
+        "848ms* DEBUG-c4n1 request-error message=aborted code=ECONNRESET",
+        "848ms* DEBUG-c4n1 request-close",
+        "849ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munz0sy0-1",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1195,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 2017,
+      "firstSignal": "response-close",
+      "killMs": 2018,
+      "deltasBeforeStop": 3,
+      "serverTimeline": [
+        "0ms handler-start",
+        "4ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "1208ms child.fakeCli.delta#2",
+        "1808ms child.fakeCli.delta#3",
+        "2017ms* response-close finished=false",
+        "2018ms child.fakeCli.kill emitted=3",
+        "2019ms* request-aborted",
+        "2019ms* DEBUG-c4n1 request-error message=aborted code=ECONNRESET",
+        "2019ms* DEBUG-c4n1 request-close",
+        "2020ms handler-return"
+      ]
+    },
+    {
+      "trace": "diag03-munz0sy0-2",
+      "clientStatus": 200,
+      "clientCanceledAtMs": 1195,
+      "verdict": "綠：取消已傳到 handler 並停掉上游",
+      "firstSignalMs": 2012,
+      "firstSignal": "response-close",
+      "killMs": 2012,
+      "deltasBeforeStop": 3,
+      "serverTimeline": [
+        "0ms handler-start",
+        "3ms child.fakeCli.spawn",
+        "4ms child.fakeCli.stdin",
+        "606ms child.fakeCli.delta#1",
+        "1208ms child.fakeCli.delta#2",
+        "1809ms child.fakeCli.delta#3",
+        "2012ms* response-close finished=false",
+        "2012ms child.fakeCli.kill emitted=3",
+        "2013ms* request-aborted",
+        "2013ms* DEBUG-c4n1 request-error message=aborted code=ECONNRESET",
+        "2013ms* DEBUG-c4n1 request-close",
+        "2014ms handler-return"
+      ]
+    }
+  ],
+  "otherLogs": []
+}

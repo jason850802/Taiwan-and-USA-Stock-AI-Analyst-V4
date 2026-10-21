@@ -1,0 +1,9 @@
+{"ev":"child.boot","t":43.218,"pid":10252,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":50,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":3756.24,"pid":10252,"seq":1}
+{"ev":"child.listening","t":3785.04,"pid":10252,"seq":1}
+{"ev":"child.listenCall","t":3914.132,"pid":10252,"seq":2}
+{"ev":"child.listening","t":3917.165,"pid":10252,"seq":2}
+{"ev":"child.ready","t":3917.982,"pid":10252}
+{"ev":"child.fetchStart","t":3937.313,"pid":10252,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockInstitutionalInvestorsBuySell","dataId":"2330"}
+{"ev":"child.fetchHeaders","t":3994.336,"pid":10252,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockInstitutionalInvestorsBuySell","dataId":"2330","status":200,"fixture":true,"fixtureWaitMs":53.565,"scripted":false}
+{"ev":"child.fetchBody","t":3996.938,"pid":10252,"trace":null,"seq":1,"kind":"finmind","dataset":"TaiwanStockInstitutionalInvestorsBuySell","dataId":"2330"}

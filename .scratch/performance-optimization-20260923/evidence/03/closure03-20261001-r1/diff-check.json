@@ -1,0 +1,9 @@
+{
+  "kind": "新增raw patch/diff的內容空白與產品／文件格式分開",
+  "stagedFiles": 56,
+  "rawCheckExit": 2,
+  "rawContextWhitespaceLines": 311,
+  "nonRawCheckExit": 0,
+  "rawPreserved": true,
+  "explanation": "diff --check把保存補丁的空白context前綴當成新檔尾空白；保留原始bytes，不strip補丁；精確候選產品自身diff check已0"
+}

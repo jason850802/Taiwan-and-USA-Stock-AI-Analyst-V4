@@ -1,0 +1,17 @@
+{"ev":"child.boot","t":143.512,"pid":6396,"entry":"api/gemini-stream.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1656.286,"pid":6396,"seq":1}
+{"ev":"child.listening","t":1672.149,"pid":6396,"seq":1}
+{"ev":"child.listenCall","t":1887.906,"pid":6396,"seq":2}
+{"ev":"child.listening","t":1889.945,"pid":6396,"seq":2}
+{"ev":"child.ready","t":1890.435,"pid":6396}
+{"ev":"child.recv","t":1899.79,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"devProxy","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.recv","t":1907.572,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"handler","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.reqHeaders","t":1908.129,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4435","x-forwarded-host":"127.0.0.1:4435","x-forwarded-proto":"http","x-forwarded-port":"4435","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4435","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fakeCli.spawn","t":1911.021,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","streaming":true,"deltas":5,"intervalMs":300,"mode":"success"}
+{"ev":"child.fakeCli.stdin","t":1911.468,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","promptBytes":21}
+{"ev":"child.writeHead","t":2215.789,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"handler","status":200}
+{"ev":"child.fakeCli.delta","t":2216.78,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","index":1}
+{"ev":"child.writeHead","t":2219.884,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"devProxy","status":200}
+{"ev":"child.aborted","t":2224.512,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"devProxy"}
+{"ev":"child.aborted","t":2226.878,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","layer":"handler"}
+{"ev":"child.fakeCli.kill","t":2227.147,"pid":6396,"trace":"cancel03-green-20260924-r3-c-cancel","emitted":1}

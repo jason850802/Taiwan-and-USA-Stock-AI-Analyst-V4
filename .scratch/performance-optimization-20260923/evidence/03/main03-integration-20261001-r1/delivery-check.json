@@ -1,0 +1,553 @@
+{
+  "scope": "精確證據與文件，產品gate838另存",
+  "files": [
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/MAIN-INTEGRATION-20261001-r1.md",
+      "sha256": "801cce230cafe8db50722535df7795567bb0d194c5a047a8eb26ed07e95b9e2a"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/REVIEW-20260925.md",
+      "sha256": "dce0dfeadc0b0c8f3064fbadeeec6bd50753f1f1d97bf2269ebdf9023b656354"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/app-summary-b9cc692577da.json",
+      "sha256": "308166f9f6ca33ea866e8023a5c4d71f6ef73863759e29e3231ffe930900b7d5"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/raw.json",
+      "sha256": "a8736f6fabaa13f1c2a9d349126fa60f647149eca1e64e63a9e6d79f82243300"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-01-open-app.jpg",
+      "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-02-search-tw-2317.jpg",
+      "sha256": "d1096abcecb45eadc1a236c5ab60514e01f266045520117e435bf4c1e907482f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-03-interval-tw-week.jpg",
+      "sha256": "8a0c30e13b7afbd197bbd4de3fe7842c50d4220854bb4a577f2cb81f6250e318"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-04-search-us-aapl.jpg",
+      "sha256": "0b16219390b7663f0e9514b68b689e796b33d77f7b9280605637a2b31d6e912e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-05-interval-us-day.jpg",
+      "sha256": "c63c9ffbddc890050a9f4d13947f782c208f7e3e94a569b30516e6c1f646574a"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-06-ai-analysis-fake.jpg",
+      "sha256": "d9bb5f0d2cb09bf90cb61e8046d7355d116d65acbf27e4ff0c2a0992d4ee7398"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-07-open-portfolio.jpg",
+      "sha256": "f42949e7a06b0d3d8d834eefc79bfdd8c9249f9c254aad5fcb5680aadd8a9dd3"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-08-add-us-aapl.jpg",
+      "sha256": "3511a296804aabfc8dd5c7f8858dd430c452573b54986b95be0fc116d7b479a2"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-09-add-tw-2330.jpg",
+      "sha256": "450c3541a031f1b631c0b009efa36abf46e8b1f0ef80d2c90f06c62c54b4e30e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-10-health-check-aapl.jpg",
+      "sha256": "eb0e611c920efa10eec12360244a157626315ad2d5d8f54c9085d43003a6bcd8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-11-reload-app.jpg",
+      "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-12-revisit-portfolio.jpg",
+      "sha256": "4b8b3b225ca627b1bc1f2f2f81559b585b887c73108b4ea9e566e38ffbc79999"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-13-delete-us-aapl.jpg",
+      "sha256": "06296b2e7a525bbbb6f7e772397a7ee8405b08f981850a45c2d2dc655b3e3a2b"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/desktop-14-delete-tw-2330.jpg",
+      "sha256": "c7e44c13c1858ae9f8b3a4ffe21e8b5917a4171aec6bb8548b8aaa57953f2918"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-01-open-app.jpg",
+      "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-02-search-tw-2317.jpg",
+      "sha256": "2eca27f88c67be330697953e21a80fe7a2849487dace821c18ce5d2348485d11"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-03-interval-tw-week.jpg",
+      "sha256": "3bd33fd75012b50aee36c2c0b6cfa004cebcb217a4ae4f37148906029e90a9f0"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-04-search-us-aapl.jpg",
+      "sha256": "7fcf294a93f6de5746e6296133cc993968369f99e9467e9ec56116c02fe942e8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-05-interval-us-day.jpg",
+      "sha256": "c34c27ce490f9579de71532c0ea5628ec14ff4fa0ee07d290fa06eca10901fb5"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-06-ai-analysis-fake.jpg",
+      "sha256": "653851bb72ae7095afec9b253e613ea1c2d9ec87e5c99418aced23a85a616ef8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-07-open-portfolio.jpg",
+      "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-08-add-us-aapl.jpg",
+      "sha256": "88b15755cf1e5e86e16c444fdf8b3971f9a5ffb85e9c681e90dcb04c19af7c26"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-09-add-tw-2330.jpg",
+      "sha256": "d722606205ca3b18bc199bd0b01ffbc8b1dc371b6116843b2be7e8ba3859d1d9"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-10-health-check-aapl.jpg",
+      "sha256": "8fbc1dcbe6ac979128420c0257e9192b80ba725a5e08565b37c82ee9fd2fbe8f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-11-reload-app.jpg",
+      "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-12-revisit-portfolio.jpg",
+      "sha256": "50baf418cec1a13ea6c8940b9df65e75f499870e95fbf21f8eef97c026b516be"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-13-delete-us-aapl.jpg",
+      "sha256": "29c25e9e653e5a2f3e22fbf7acdceaf187cac12851917cb09820e25979ee383c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-app-20261001-r1/screens/narrow-14-delete-tw-2330.jpg",
+      "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-cancel-20261001-r1/raw.json",
+      "sha256": "e2454c10e38f21f33d9acce91f12673f1d3375bc8fffcbc03733c567ec92521c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-cancel-20261001-r1/trace/child-37424.jsonl",
+      "sha256": "7edb3e4e0c68cc914afdf2d5725b2b8e8f5c56d889de612eef07c51c6b9b6978"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-cancel-20261001-r1/trace/parent-21436.jsonl",
+      "sha256": "e6df4f64a021ebcffad1bce9b3d17fab2a8c257ee14b027a84097a053a222742"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-chart-20261001-r1/raw.json",
+      "sha256": "211b26a8fa53453ccab83493b0928905684cd063897838d804e43a3ab2fb2f7b"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-chart-20261001-r1/trace/child-37284.jsonl",
+      "sha256": "0fc8a4a8e74b3dd8723a72e2dac72986ca1a1917cfdee217b9649465d26aa4de"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-chart-20261001-r1/trace/parent-33952.jsonl",
+      "sha256": "03f46a8fe641dc4432479983390d4af1c3f060f48be796b44e8a2a6c9d685073"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-finmind-20261001-r1/raw.json",
+      "sha256": "31217a8941093100b5ab0097669a5ac7624a81478277cb67b0fdb48e89da4a22"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-finmind-20261001-r1/trace/child-35328.jsonl",
+      "sha256": "626d7e2bdd3c7f528e1a8868f58b14ce73f5d9b7ea8523df3b7198b4c857bfc4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-finmind-20261001-r1/trace/parent-18700.jsonl",
+      "sha256": "3fa2a56e9a4f8f85d5139ab71d0bf618649cf8301f279c1993c7853f0f41e86c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-gemini-20261001-r1/raw.json",
+      "sha256": "16751e3eea6b488c434bf7ebd6bce4e93b0fb14f2c3629d853186ed2c6417ecd"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-gemini-20261001-r1/trace/child-37144.jsonl",
+      "sha256": "aaecc4e586ab61b4779c2a8147b6180eab23ef5441e6ca6f7ff7c2d678f332f7"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-gemini-20261001-r1/trace/parent-17112.jsonl",
+      "sha256": "8014e4def4178dc1831faadd12657b7b107e9cb12ba055e1d3b863d390f51cf5"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-20261001-r1/raw.json",
+      "sha256": "81293185301154bf4efd5ee37136fd62c5c632e101648a4c8b70c300701666a3"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/chart/trace/child-28300.jsonl",
+      "sha256": "6189e1386dde0e50bc0751a0888983684c935ed49c173cda10077fb00af3b777"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/chart/trace/parent-43076.jsonl",
+      "sha256": "e40c0d7c52548fb97643921aba5ab574c3a5e7fe57dffc3243c686a042348754"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/finmind/trace/child-33020.jsonl",
+      "sha256": "937a442c1e59d779de47d6a9255b201647cf77002ad9257943025b29446f25c0"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/finmind/trace/parent-29984.jsonl",
+      "sha256": "6245427e4dba4107d9b9d776ce26a5295b8649718d49d73014848a7d45fd918f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/gemini/trace/child-39844.jsonl",
+      "sha256": "7075915777d24deeccff3b6511f9385a25617cbf5b190e4743b2fd609555cb2e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/gemini/trace/parent-27796.jsonl",
+      "sha256": "1ec1dafbc0f433b4bdd769e7889dc286367763c4c524822b46351dd52719f6fe"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/raw.json",
+      "sha256": "04fc3093e7faf460ad5301e64dfc12b2676b6a659ef5c6f2a1c2fba1ffb2460a"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/search/trace/child-27284.jsonl",
+      "sha256": "151cd00ee900ca24a6728ded64a7750b30dd91cdbd02b6f8017866ba030f53c9"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/search/trace/parent-43688.jsonl",
+      "sha256": "e3c7ac236f00e78911c39396c02c448f175fe1e3c445e021a23db8be61e5f7fd"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/stream/trace/child-32200.jsonl",
+      "sha256": "929586b2a347627ae13796326f17d1fba00bfa3d8840027d47d22c929a5f0fe8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-guard-cancel-20261001-r1/stream/trace/parent-37612.jsonl",
+      "sha256": "946ad4b2448785001100b325bb07506bb6eaeb820ffa52b8f7d5525323881743"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/REVIEW.md",
+      "sha256": "e6b1ba86ba1c293c0eb6cee91c13bcf76f4323f6ba4deede832d136ffb7cca3f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/app-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/app-log.txt",
+      "sha256": "fc6fd088ce9df52ee165adc22e00f0949835c7de8b8a8c386175e01d25c1d8cf"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/app-result.json",
+      "sha256": "8ebbff0cc6b79ae0128869e0e94ba0281b8ad21531fbd6fde6d5c925f9848135"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/backfill-receipt.json",
+      "sha256": "24ed55543cf265d91b780adde89dccf3ea476fb7e504d4cf9146e79fdbe7cd28"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/backfill.cjs",
+      "sha256": "58296f2b5270424499e08879cf53e7ba49b4bfc1ff277e90d0b7a172f9ff9833"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cancel-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cancel-log.txt",
+      "sha256": "fbaa0dea6a50dfdd95e41d60edda1182ddaa7ec9bdc7d86b27eef68ad54cfa70"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cancel-result.json",
+      "sha256": "9f0e9462acb635ed7a2cae3df94746663d915fa6544476acab913e110c42bcfd"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/candidate-final.patch",
+      "sha256": "ed69858a9cdb48f2be18df5be0d53cc4f72daf85a8eb7726866a32fb2c1f3ab6"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/candidate-fixed-point.json",
+      "sha256": "74e0bbf36a953b0b2af46c40be764beecf1ed9341c9b8ee25bb8b98eedc23d97"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/chart-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/chart-log.txt",
+      "sha256": "34bd2eec666c048cf6de16fe4b7a777bcc1bd24def0536c8b1e9f75a7a63ab6e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/chart-result.json",
+      "sha256": "7ad7d00e24dcc2a1af8da5ffebcd85b3472adcd645192eb3d0eca38a47553c1a"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cleanup-green-r2.json",
+      "sha256": "793ec0e15c1a9bf0b32996df50686c744d6a4e56ed0c36499c8ab6c29e7752f4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cleanup-green-r3.json",
+      "sha256": "57a78abb0f6a6497a7f3f3ece43f978acf3936589b1f362d8c1da139dfb6e8ae"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cleanup-green.json",
+      "sha256": "dff172d02b1555b6749bdaf7fe0a2bfe40e3666e2f3834e19ad1607299ac01b4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/cleanup-red.json",
+      "sha256": "7e1e449d938452ecf70c0edc71737c0009582f383d14bce574ffab3b636242eb"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/collect.cjs",
+      "sha256": "55e0a31b443a3264c8412f1f17f471c0dac0130028e099a2af36b6b6976d5a72"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/finmind-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/finmind-log.txt",
+      "sha256": "884c7ec8657e5cc874544c638d07152de9fe4d45233dfcb9accb250d9de98351"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/finmind-result.json",
+      "sha256": "58201c3ef9792d7e68f7cf20683b87c10f4abe2242d47e29f58c0bc01b6001c4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate-before.json",
+      "sha256": "72fe6d08ca75f21a0a761179eaa23db2ea2105c8aedbf525bafb80e0de34ded6"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate-log.txt",
+      "sha256": "f015f53441dfab5bd3475c29407208555da866a98d55686afe66813ea60cd133"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate-result.json",
+      "sha256": "53aac5ab1d2a1f5c2fd71d63707ac365f7994418b19d72fb49b965bd6b0622f8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate2-before.json",
+      "sha256": "e20a3159be390c127079f6f8c24cfe0268644fdc7a4cdcd2d276818f5152fc12"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate2-log.txt",
+      "sha256": "344bbed9885cb074b43aca1994808d3cb515694ec094c8263c63ff8ac043d82e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate2-result.json",
+      "sha256": "3f266d4739b14aad3eebe25e9eaf8d4116fd5e67e41e46d04f7c6607f20b26a2"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate3-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate3-log.txt",
+      "sha256": "3e5f00c3cd69f7d7f44f108436be2d2ba5eba81b659e5bf0635f90c8cd10a815"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gate3-result.json",
+      "sha256": "bc9616eb36df7e94e6e49d3af819281a8072552389a72b297e89426c20dd759d"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gemini-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gemini-log.txt",
+      "sha256": "ac9bc0c4bf339fd5919fbfcaa44c202f2a77b4fc1364179c07c41a94065d55a3"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/gemini-result.json",
+      "sha256": "7cfd61df4974f6de7602bedbd5f0396d31aca82f6179f324846d9494862681c1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guard-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guard-log.txt",
+      "sha256": "81293185301154bf4efd5ee37136fd62c5c632e101648a4c8b70c300701666a3"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guard-result.json",
+      "sha256": "662a24552f121197ad5e50f4576db35c582a123b28ed0faace60d6ecc744a9fc"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guardCancel-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guardCancel-log.txt",
+      "sha256": "b802d0c38220bf20463dff24bc707d32b316864caba0bee07d38cd2f4f472602"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/guardCancel-result.json",
+      "sha256": "8ccdb39d3a03508180e6ea76b67b1deacda8074a4aac57684f35685b0d827237"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/integrate.cjs",
+      "sha256": "897a46348f086311387fbf06c48f02d2708a4dc495ee0ebbe46c7ff46454683c"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/integration-result.json",
+      "sha256": "8f1306ee392fae2bf0fc10bfbc9e0f26872c898084acf22f5f99c8aceccd2850"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life-log.txt",
+      "sha256": "a3488022d1288ffc7694de93bede0050b3b04a4223cb854217e6455a6e02369b"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life-result.json",
+      "sha256": "0d00349924129bfaa7495dcb8d395648fb343d4b5c1d5f2a7697e42f8f2ecdf4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life2-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life2-log.txt",
+      "sha256": "a8790f986f803e8f2fb46146732cbf833c9610eb84880dc403cdf8b7738e2b0b"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/life2-result.json",
+      "sha256": "bd14b712664f028499624dbad5a98ad42b7c6bf9064eee1599f78a6073345276"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/merge-message.txt",
+      "sha256": "48a7c0507526dba2ac815bed87f053cc1044d5af5a13bb68b88376861a7e53c5"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/preservation-after.json",
+      "sha256": "03f81ded3218f2b8c3ba7fd4b4398eb64ec856f1524828eb9abcf44acd5ef4a9"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/preservation-before.json",
+      "sha256": "ca9e610d5c392738c6cb2d52fc7b60fdc74039de48c56f5cecae6204b1e3591d"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/run-stage.cjs",
+      "sha256": "a9839eb3ba27274ecbf79410a5c1b8859e4cd30855e61e2aa70a78aa617a164e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/seal.cjs",
+      "sha256": "4c2271e55d869ad8430ebe95d8a2b1bc2114537ee95125c203777c669aceea62"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/search-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/search-log.txt",
+      "sha256": "ff275c5041b4870e902057018394a88cd13ae3e4b223595fbee3bd2e26cc7c44"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/search-result.json",
+      "sha256": "447b5f442d5207fd100c669666277303cb6441d35af18193dfd424bb396b76c8"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/stage-exact.cjs",
+      "sha256": "6585d1fe58413c2466bfb8fc0221c6a3aa28b8a5990cfdb23dee0b29e7e05d13"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/terminal-before.json",
+      "sha256": "7bad028dce959339ea0d0121c3db3311763e169f25ae4ee111caf3476eec35b1"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/terminal-log.txt",
+      "sha256": "da7387c51b6963df6e3835b12067a5478e162892e577401ab4e2a4eff75d5213"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/terminal-result.json",
+      "sha256": "559f666c75d47074a7c06f2cfc6e904d51b56e885a90487eb5739dd8556fe306"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/validation-summary.json",
+      "sha256": "6b92b52f02c6e6e1ddf87f764294e3f838ad6b4ee6ef072ddf11ed3b48d33f9e"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-integration-20261001-r1/verify-delivery.cjs",
+      "sha256": "f1431e2ad485542d628ee59fc834e91f1d4c3a2592283ef51eaec314f6100b78"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-life-20261001-r1/lifecycle-summary-57c4b7c1c838.json",
+      "sha256": "1f366de050114453606ead024db8607f61bee8da794326f38f5c555cc627a680"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-life-20261001-r1/raw.json",
+      "sha256": "ab922398b06e36fee3dcc9907f3c85117899233ea5394cb02fa3e70207a00990"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-life-20261001-r2/lifecycle-summary-57c4b7c1c838.json",
+      "sha256": "ade037195786906500afebfea05d1a3549530aa85a36a7b8d9c9216668a5d9e4"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-life-20261001-r2/raw.json",
+      "sha256": "260059922aae0498ed564eebd780280a27676af1c895275ffa48a4d90d02e254"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-search-20261001-r1/raw.json",
+      "sha256": "fb6b81f8c487209fd788254562e989da2a17cb40b41ca583830de065eb40363b"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-search-20261001-r1/trace/child-34520.jsonl",
+      "sha256": "42677ab97e7c229cb6e0eef7be7a485d4d63b52df1d52ecc30e2d6c35a1a809f"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-search-20261001-r1/trace/parent-39200.jsonl",
+      "sha256": "8e7d8bf86bb8bc4abf9a24326faf6ec29e810c047e2312f1d17e8cd68f1dd3db"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/main03-terminal-20261001-r1/raw.json",
+      "sha256": "1280d0600a72dfeffd363fbf280cd785f6774feeae8093f283b313ea21479065"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/issues/03-daily-dev-entry.md",
+      "sha256": "e799497011eb3d89f44ab71d5e3b883977a3182540e86ef0ae312241b7d2d6c2"
+    }
+  ],
+  "count": 127,
+  "officialSecretScanPass": true,
+  "officialScanLogs": [
+    "\n=== [4/5] 金鑰掃描 ===",
+    "  · .env 來源：本目錄（8 筆）",
+    "  ✓ 乾淨（掃 dist/ 15 檔、追蹤原始碼 4323 檔、.env 值 8 筆）"
+  ],
+  "secretValueCount": 2,
+  "secretHits": [],
+  "syntax": [
+    {
+      "name": "run-stage.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "seal.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "collect.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "integrate.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "backfill.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "verify-delivery.cjs",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-exact.cjs",
+      "exitCode": 0
+    }
+  ],
+  "pass": true
+}

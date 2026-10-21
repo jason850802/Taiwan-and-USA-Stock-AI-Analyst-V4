@@ -1,0 +1,332 @@
+[
+  {
+    "path": "EVIDENCE-MANIFEST-20260929-r1.json",
+    "sha256": "a8bb3eb61897505ae9f6c1fbd2b59f778f7548d67f288d488e64b3d996b47ce4",
+    "bytes": 11863
+  },
+  {
+    "path": "gate03-review-20260929-r1-source.json",
+    "sha256": "464c4a6ed38da25fb708b9fe66a1dfdda108def8e37f5b651cf0cbf3ce1efb8e",
+    "bytes": 60986
+  },
+  {
+    "path": "gate03-review-20260929-r1.txt",
+    "sha256": "c75adb04b201a5b916af5d8860c8caf04ec807e28d4a7d569b2eeaf6feb00808",
+    "bytes": 6655
+  },
+  {
+    "path": "gate03-review-20260929-r1.txt.exit.txt",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "bytes": 1
+  },
+  {
+    "path": "gate03-review-20260929-r2-source.json",
+    "sha256": "8cd02b722f0411263313efcfe77d6027ee7959af7c49c581221d8f26faee6c58",
+    "bytes": 60986
+  },
+  {
+    "path": "gate03-review-20260929-r2.txt",
+    "sha256": "bc74ce537fe0e6c198e36ef2c7e7739c10edd95c1a02973544a41a76a46bcd21",
+    "bytes": 6502
+  },
+  {
+    "path": "gate03-review-20260929-r2.txt.exit.txt",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "bytes": 1
+  },
+  {
+    "path": "gate03-review-20260929-r3-source.json",
+    "sha256": "9237d45879afb18b6c4a7756ae9c115fbbd3c64b1cff011f3f5879e307349aba",
+    "bytes": 61634
+  },
+  {
+    "path": "gate03-review-20260929-r3.txt",
+    "sha256": "3d8ba7fbe812c244c5d5f8141dc84dacd12cd7656f33e68f638223d0eb69248b",
+    "bytes": 6503
+  },
+  {
+    "path": "gate03-review-20260929-r3.txt.exit.txt",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "bytes": 1
+  },
+  {
+    "path": "gate03-review-20260929-r4-source.json",
+    "sha256": "b8c9490da482b46b51f53622fd284e6df7747796c5b75281b8473bfc47353440",
+    "bytes": 61758
+  },
+  {
+    "path": "gate03-review-20260929-r4.txt",
+    "sha256": "a13cce69bf1547c8a14e8a9f60bdbb6d3cb090ac47dd7cfc9bdea7aa2da3278c",
+    "bytes": 6501
+  },
+  {
+    "path": "gate03-review-20260929-r4.txt.exit.txt",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "bytes": 1
+  },
+  {
+    "path": "gate03-review-20260929-r5-source.json",
+    "sha256": "e0d24209d34da8f938f4d4324b8aa73e55d84f7b096099e10669753f2bfa3d6a",
+    "bytes": 61758
+  },
+  {
+    "path": "gate03-review-20260929-r5.txt",
+    "sha256": "0b6ea7caffff5c1c4faa083f43d0eb1252b0dbec84f5462fa89d45dbbd8d9b82",
+    "bytes": 6502
+  },
+  {
+    "path": "gate03-review-20260929-r5.txt.exit.txt",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "bytes": 1
+  },
+  {
+    "path": "platform-fixture-check-20260929-r1.json",
+    "sha256": "2d35124986d5617b83b899feb96fc25d13450d83aff14f3c331a33d43d9ff221",
+    "bytes": 722
+  },
+  {
+    "path": "REVIEW-ADDENDUM-20260929-r1.md",
+    "sha256": "20d403c325f38afa2eea4273450657c4a6a2a4279fec6661b40b265fb0574a11",
+    "bytes": 11343
+  },
+  {
+    "path": "REVIEW-DECISIONS-20260929-r1.md",
+    "sha256": "c378d8191c93be669933139968ef330636c354119bfe31d64d9a1eabd64bcc8e",
+    "bytes": 2367
+  },
+  {
+    "path": "REVIEW-INCREMENT-20260929-r1.md",
+    "sha256": "0f4579b54beb2415081634a0c831d055a083b240039f35fa6444cebf5805037b",
+    "bytes": 3904
+  },
+  {
+    "path": "SOURCE-MANIFEST-20260929-r1.json",
+    "sha256": "93e8954da7c5c11f95459eceb0fa89a5ef2c68f2a02e5488a98c8817c84bbac5",
+    "bytes": 8175
+  },
+  {
+    "path": "SOURCE-MANIFEST-20260929-r2.json",
+    "sha256": "bfeb804bf0f306de0997e4a32f628d16a9ec3b056a63ceb1f234a0b31cb03936",
+    "bytes": 8175
+  },
+  {
+    "path": "guard03-stream-red-20260929-r1/raw.json",
+    "sha256": "afcd2143ed95712dc5ffcf4e1b9d2b62a7de7127d97f5521f2d4f5e6ed3622ea",
+    "bytes": 9809
+  },
+  {
+    "path": "guard03-stream-20260929-r1/raw.json",
+    "sha256": "d41963db70df8101abdd35d211248024a63b199b26d87e3e6bb74fe015da3a01",
+    "bytes": 10888
+  },
+  {
+    "path": "life03-localhost3000-20260929-r1/lifecycle-summary-57c4b7c1c838.json",
+    "sha256": "06d8cc2bbeb03f2637673bc7a43fe6c0148df30eb2fd413bfd52775d1c93f415",
+    "bytes": 1565
+  },
+  {
+    "path": "life03-localhost3000-20260929-r1/raw.json",
+    "sha256": "9d2929d1c6a583ed0ee2c480296bdf91d84341b9b96b09b392c6633aa838dd35",
+    "bytes": 82959
+  },
+  {
+    "path": "guard03-stream-20260929-r2/raw.json",
+    "sha256": "809acc58c2cf7432ea8b53cdcc9fb0d2c1598d7aef3420087c58ceb0d11cde1f",
+    "bytes": 11082
+  },
+  {
+    "path": "life03-localhost3000-20260929-r2/lifecycle-summary-57c4b7c1c838.json",
+    "sha256": "038fae2e7fe9068afe904c7dda55d4ebc0b94e28ed3ae83d2110cd31547f5d8c",
+    "bytes": 585
+  },
+  {
+    "path": "life03-localhost3000-20260929-r2/raw.json",
+    "sha256": "2bcc5e08ba0da4e52a97ecddb6eb42a3e69caeeabc089d77f2f7fa21b84077f1",
+    "bytes": 83554
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/app-summary-5f9d6ea70787.json",
+    "sha256": "8df49674d3b88d4fbe7f02ef5bb3b05b68a69b040155154a0b3d8f10c76ed010",
+    "bytes": 3211
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/raw.json",
+    "sha256": "3d04ec2e1926b45d9b7f5a78ed6c95f52d453edd884ab87b2633eaf15c76ba94",
+    "bytes": 199974
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-01-open-app.jpg",
+    "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e",
+    "bytes": 39911
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-02-search-tw-2317.jpg",
+    "sha256": "d1096abcecb45eadc1a236c5ab60514e01f266045520117e435bf4c1e907482f",
+    "bytes": 42639
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-03-interval-tw-week.jpg",
+    "sha256": "8a0c30e13b7afbd197bbd4de3fe7842c50d4220854bb4a577f2cb81f6250e318",
+    "bytes": 37962
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-04-search-us-aapl.jpg",
+    "sha256": "0b16219390b7663f0e9514b68b689e796b33d77f7b9280605637a2b31d6e912e",
+    "bytes": 40603
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-05-interval-us-day.jpg",
+    "sha256": "c63c9ffbddc890050a9f4d13947f782c208f7e3e94a569b30516e6c1f646574a",
+    "bytes": 38993
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-06-ai-analysis-fake.jpg",
+    "sha256": "d9bb5f0d2cb09bf90cb61e8046d7355d116d65acbf27e4ff0c2a0992d4ee7398",
+    "bytes": 51640
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-07-open-portfolio.jpg",
+    "sha256": "f42949e7a06b0d3d8d834eefc79bfdd8c9249f9c254aad5fcb5680aadd8a9dd3",
+    "bytes": 36158
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-08-add-us-aapl.jpg",
+    "sha256": "3511a296804aabfc8dd5c7f8858dd430c452573b54986b95be0fc116d7b479a2",
+    "bytes": 39005
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-09-add-tw-2330.jpg",
+    "sha256": "450c3541a031f1b631c0b009efa36abf46e8b1f0ef80d2c90f06c62c54b4e30e",
+    "bytes": 45360
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-10-health-check-aapl.jpg",
+    "sha256": "eb0e611c920efa10eec12360244a157626315ad2d5d8f54c9085d43003a6bcd8",
+    "bytes": 32576
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-11-reload-app.jpg",
+    "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e",
+    "bytes": 39911
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-12-revisit-portfolio.jpg",
+    "sha256": "4b8b3b225ca627b1bc1f2f2f81559b585b887c73108b4ea9e566e38ffbc79999",
+    "bytes": 44634
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-13-delete-us-aapl.jpg",
+    "sha256": "06296b2e7a525bbbb6f7e772397a7ee8405b08f981850a45c2d2dc655b3e3a2b",
+    "bytes": 40644
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/desktop-14-delete-tw-2330.jpg",
+    "sha256": "c7e44c13c1858ae9f8b3a4ffe21e8b5917a4171aec6bb8548b8aaa57953f2918",
+    "bytes": 43540
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-01-open-app.jpg",
+    "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45",
+    "bytes": 22268
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-02-search-tw-2317.jpg",
+    "sha256": "2eca27f88c67be330697953e21a80fe7a2849487dace821c18ce5d2348485d11",
+    "bytes": 23058
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-03-interval-tw-week.jpg",
+    "sha256": "3bd33fd75012b50aee36c2c0b6cfa004cebcb217a4ae4f37148906029e90a9f0",
+    "bytes": 23058
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-04-search-us-aapl.jpg",
+    "sha256": "7fcf294a93f6de5746e6296133cc993968369f99e9467e9ec56116c02fe942e8",
+    "bytes": 23956
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-05-interval-us-day.jpg",
+    "sha256": "c34c27ce490f9579de71532c0ea5628ec14ff4fa0ee07d290fa06eca10901fb5",
+    "bytes": 22165
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-06-ai-analysis-fake.jpg",
+    "sha256": "653851bb72ae7095afec9b253e613ea1c2d9ec87e5c99418aced23a85a616ef8",
+    "bytes": 26964
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-07-open-portfolio.jpg",
+    "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c",
+    "bytes": 24986
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-08-add-us-aapl.jpg",
+    "sha256": "88b15755cf1e5e86e16c444fdf8b3971f9a5ffb85e9c681e90dcb04c19af7c26",
+    "bytes": 21395
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-09-add-tw-2330.jpg",
+    "sha256": "d722606205ca3b18bc199bd0b01ffbc8b1dc371b6116843b2be7e8ba3859d1d9",
+    "bytes": 22077
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-10-health-check-aapl.jpg",
+    "sha256": "8fbc1dcbe6ac979128420c0257e9192b80ba725a5e08565b37c82ee9fd2fbe8f",
+    "bytes": 18143
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-11-reload-app.jpg",
+    "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45",
+    "bytes": 22268
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-12-revisit-portfolio.jpg",
+    "sha256": "50baf418cec1a13ea6c8940b9df65e75f499870e95fbf21f8eef97c026b516be",
+    "bytes": 21777
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-13-delete-us-aapl.jpg",
+    "sha256": "29c25e9e653e5a2f3e22fbf7acdceaf187cac12851917cb09820e25979ee383c",
+    "bytes": 22718
+  },
+  {
+    "path": "app03-localhost3000-20260929-r1/screens/narrow-14-delete-tw-2330.jpg",
+    "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c",
+    "bytes": 24986
+  },
+  {
+    "path": "platform03-preview-20260929-r1/prepare-failure.json",
+    "sha256": "f466c3cbeab1c1eaeab8af1377370f3f58bf1d4e2330ff7a2985534f741a566c",
+    "bytes": 284
+  },
+  {
+    "path": "platform03-preview-20260929-r2/prepare-failure.json",
+    "sha256": "a8a74d18835e000d17246978664a3f221f7b9898c005685829443991a512efa1",
+    "bytes": 277
+  },
+  {
+    "path": "platform03-preview-20260929-r3/cancellation-analysis.json",
+    "sha256": "d367a4680f6279012747623ba34fc373e8ba61c2d37a5449d524c3092657abf4",
+    "bytes": 2621
+  },
+  {
+    "path": "platform03-preview-20260929-r3/deployment.json",
+    "sha256": "02ddf7c950f948607b5f2f1ab75cc99e9eb0b722b2380de73a473a53584f8265",
+    "bytes": 1028
+  },
+  {
+    "path": "platform03-preview-20260929-r3/platform-logs.json",
+    "sha256": "c4553765a342698ff8857c5085940faef43a021f04803eaf880b9b71227f6f37",
+    "bytes": 24491
+  },
+  {
+    "path": "platform03-preview-20260929-r3/prepare.json",
+    "sha256": "3c2fabbcc6e5e23d9b07d96d9c53ad8c5fc9f431ca100df6845b9cf35c58883a",
+    "bytes": 5911
+  },
+  {
+    "path": "platform03-preview-20260929-r3/raw.json",
+    "sha256": "51a3c97a308602caf3c8e7922cae2173ad743ebfd8413848d59904bba44dd7dc",
+    "bytes": 5317
+  }
+]

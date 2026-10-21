@@ -348,8 +348,9 @@ async function main() {
           port: step.vitePort,
           readyPattern: /Local:|ready in/i,
           logFile: path.join(runtimeDir, `${step.label}-vite.log`),
-          onStarted: svc => { running.push(svc); start.services.push(svc); },
         });
+        running.push(vite);
+        start.services.push(vite);
         if (!vite.ready) throw new Error(`${step.label} vite 代理未就緒`);
         assertOwnedListener(step.label, vite);
         ports.proxy = step.vitePort;

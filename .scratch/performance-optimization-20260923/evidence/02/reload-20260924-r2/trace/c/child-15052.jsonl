@@ -1,0 +1,5 @@
+{"ev":"child.boot","t":41.063,"pid":15052,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":10,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1772.953,"pid":15052,"seq":1}
+{"ev":"child.listening","t":1787.787,"pid":15052,"seq":1}
+{"ev":"child.ready","t":1839.09,"pid":15052}
+{"ev":"child.recv","t":1842.309,"pid":15052,"trace":"reload-20260924-r2-c-5","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}

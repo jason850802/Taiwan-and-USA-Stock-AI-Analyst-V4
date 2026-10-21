@@ -1,0 +1,363 @@
+{
+  "runId": "reload03-deps-20260925-r1",
+  "steps": [
+    {
+      "step": "baseline",
+      "invalidated": null,
+      "checks": {},
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "edit-lib-message",
+      "invalidated": true,
+      "checks": {
+        "兩邊都拿到新訊息": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "syntax-error",
+      "invalidated": true,
+      "checks": {
+        "兩邊都不再回舊碼的成功結果": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 500,
+          "c": 500,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-syntax",
+      "invalidated": true,
+      "checks": {
+        "還原後兩邊恢復": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "env-add-secret",
+      "invalidated": true,
+      "checks": {
+        "兩邊都因缺密鑰拒絕": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 403,
+          "c": 403,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "env-restore",
+      "invalidated": true,
+      "checks": {
+        "兩邊恢復放行": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "delete-route",
+      "invalidated": true,
+      "checks": {
+        "兩邊都找不到路由": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 404,
+          "c": 404,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-route",
+      "invalidated": true,
+      "checks": {
+        "路由還原後兩邊恢復": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-lib",
+      "invalidated": true,
+      "checks": {
+        "訊息還原後兩邊都回原文": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "delete-dependency",
+      "invalidated": true,
+      "checks": {
+        "刪除共用依賴後兩邊均不得回舊碼": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 500,
+          "c": 500,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 500,
+          "c": 500,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-dependency",
+      "invalidated": true,
+      "checks": {
+        "還原共用依賴後兩邊恢復": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "edit-during-stream",
+      "invalidated": true,
+      "checks": {
+        "改碼發生在串流進行中（候選已收到第 2 段）": true,
+        "B1 串流完整跑完": true,
+        "候選串流沒有被停用流程切斷": true
+      },
+      "probes": [
+        {
+          "route": "/api/gemini-stream",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    }
+  ],
+  "stream": {
+    "cLines": 26,
+    "cTotalMs": 54888.7
+  },
+  "b1Crashes": [
+    {
+      "beforeStep": "restore-syntax",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4800,
+      "logErrors": [
+        "Error: Transform failed with 1 error:",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 23736 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    },
+    {
+      "beforeStep": "delete-dependency",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4802,
+      "logErrors": [
+        "Error: Cannot find module 'C:\\pfv7\\api\\_lib\\yahoo.js' imported from C:\\pfv7\\api\\yahoo\\chart.ts",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 14980 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    },
+    {
+      "beforeStep": "restore-dependency",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "port": 4803,
+      "logErrors": [
+        "Error: Cannot find module 'C:\\pfv7\\api\\_lib\\yahoo.js' imported from C:\\pfv7\\api\\yahoo\\search.ts",
+        "Error: An unexpected error occurred!",
+        "Error: Command failed: taskkill /pid 35104 /T /F",
+        "    at genericNodeError (node:internal/errors:998:15)"
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 32332,
+      "generation": 0
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 36424,
+      "generation": 0
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 4228,
+      "generation": 1
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 19756,
+      "generation": 2
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 12812,
+      "generation": 3
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 25824,
+      "generation": 4
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 35848,
+      "generation": 5
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 4596,
+      "generation": 7
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 24236,
+      "generation": 8
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 29640,
+      "generation": 9
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 18080,
+      "generation": 9
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 14428,
+      "generation": 10
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 2588,
+      "generation": 10
+    },
+    {
+      "entrypoint": "api/gemini-stream.ts",
+      "pid": 16040,
+      "generation": 10
+    }
+  ],
+  "invalidations": 12,
+  "retirements": 11,
+  "cleanup": {
+    "restored": true,
+    "deleted": [
+      ".env",
+      ".vercel/README.txt",
+      ".vercel/project.json",
+      ".vercel"
+    ],
+    "productAfter": {
+      "differsFromBaseline": [
+        "api/_lib/clientAbort.ts",
+        "api/_lib/http.cancel.test.ts",
+        "api/_lib/http.ts",
+        "api/_lib/llm.ts",
+        "api/_lib/yahoo.handshake.test.ts",
+        "api/_lib/yahoo.ts",
+        "api/finmind.ts",
+        "api/gemini-stream.test.ts",
+        "api/gemini-stream.ts",
+        "api/gemini.ts",
+        "api/yahoo/chart.ts",
+        "api/yahoo/search.ts",
+        "scripts/start-dev.ps1",
+        "vite.config.ts"
+      ],
+      "untrackedFunctionFiles": []
+    },
+    "productClean": true,
+    "testFilesRemoved": true
+  },
+  "diffs": [],
+  "problems": []
+}

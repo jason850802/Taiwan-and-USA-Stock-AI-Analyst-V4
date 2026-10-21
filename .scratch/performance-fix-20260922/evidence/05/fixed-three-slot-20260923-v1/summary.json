@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "summaries": [
+    {
+      "count": 10,
+      "expectedRequests": 16,
+      "forceRounds": 5,
+      "mediansMs": {
+        "firstValidQuote": 92,
+        "allValidQuotesFx": 377.30000001192093,
+        "queueWait": 95,
+        "queueWaitMax": 280.5,
+        "allNamesVisible": 557.3000000119209
+      },
+      "rangesMs": {
+        "firstValidQuote": [
+          88.80000001192093,
+          101.5
+        ],
+        "allValidQuotesFx": [
+          371.60000002384186,
+          391.90000000596046
+        ],
+        "queueWait": [
+          90.30000001192093,
+          102.2999999821186
+        ],
+        "queueWaitMax": [
+          271.69999998807907,
+          294.59999999403954
+        ],
+        "allNamesVisible": [
+          550.8000000119209,
+          574.5
+        ]
+      },
+      "httpPeaks": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "requestCounts": [
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "problems": [],
+      "pass": true
+    },
+    {
+      "count": 30,
+      "expectedRequests": 46,
+      "forceRounds": 5,
+      "mediansMs": {
+        "firstValidQuote": 93.10000002384186,
+        "allValidQuotesFx": 1040,
+        "queueWait": 475.2999999821186,
+        "queueWaitMax": 941.3999999761581,
+        "allNamesVisible": 1505
+      },
+      "rangesMs": {
+        "firstValidQuote": [
+          90.2999999821186,
+          101.09999999403954
+        ],
+        "allValidQuotesFx": [
+          1021.5999999940395,
+          1059.9000000059605
+        ],
+        "queueWait": [
+          463.19999998807907,
+          496.7999999821186
+        ],
+        "queueWaitMax": [
+          926.8000000119209,
+          960.5999999940395
+        ],
+        "allNamesVisible": [
+          1485.199999988079,
+          1518.699999988079
+        ]
+      },
+      "httpPeaks": [
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "requestCounts": [
+        46,
+        46,
+        46,
+        46,
+        46
+      ],
+      "problems": [],
+      "pass": true
+    }
+  ],
+  "pass": true
+}

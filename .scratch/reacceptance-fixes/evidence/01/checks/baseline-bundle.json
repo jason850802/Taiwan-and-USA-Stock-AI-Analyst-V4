@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "startedAt": "2026-09-21T09:21:34.117Z",
+  "completedAt": "2026-09-21T09:21:34.204Z",
+  "node": "v26.4.0",
+  "command": [
+    "node",
+    "scripts/measure-initial-bundle.mjs",
+    "--skip-build",
+    "--json"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "runnerSha256": "32dfbbd9325dfb98dd45e01ee15cb1d1c412e293701c5666ed07a32064630cdb",
+  "entrypointSha256": "783df478a748f3bc3c9fdec62aa6ced7944fd1340bb90f675a9dbe2970136532",
+  "log": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-bundle.txt",
+  "logSha256": "7941925b46c60459357a435e61aa433e2967502955be6d84244715c5d9e2d918",
+  "tests": 0,
+  "testFiles": 0,
+  "fullGate": false,
+  "secretScanDegraded": false,
+  "measurement": {
+    "initialJsAssets": [
+      {
+        "file": "assets/index-BpOPmkNI.js",
+        "rawBytes": 104480,
+        "gzipBytes": 37586
+      },
+      {
+        "file": "assets/vendor-CmCSiRIh.js",
+        "rawBytes": 193774,
+        "gzipBytes": 60504
+      }
+    ],
+    "totalRawKb": 291.26,
+    "totalGzipKb": 95.79,
+    "budgetKb": null,
+    "withinBudget": null
+  },
+  "buildIndexSha256": "c517770a21f9a456dc17c19ae0124c4fc6f8a0cefcc547653e1a3180518c454c"
+}

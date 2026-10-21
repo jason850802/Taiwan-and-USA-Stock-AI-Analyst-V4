@@ -1,0 +1,8 @@
+{
+  "runId": "platform03-preview-20260929-r1",
+  "head": "ec68323",
+  "stage": "prepare",
+  "deployed": false,
+  "reason": "來源 ratelimit.ts 僅 CRLF/LF 差異，被逐位元組來源檢查拒絕",
+  "source": "本任務 exec 原始錯誤的事後摘錄；非平台 raw"
+}

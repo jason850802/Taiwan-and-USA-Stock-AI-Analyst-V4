@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "createdAt": "2026-09-22T18:03:43.644Z",
+  "variant": "e0",
+  "startCount": 1,
+  "serviceStartIds": [
+    "e0-v2-start-1"
+  ],
+  "rowCount": 1,
+  "failures": [
+    "獨立 start 少於 2",
+    "e0-v2-start-1: status 非成功 Error: formal OPTIONS probe 失敗，exit=1",
+    "e0-v2-start-1: probe exit=1",
+    "e0-v2-start-1: /api/yahoo/chart status=null",
+    "e0-v2-start-1: /api/yahoo/chart error=AbortError: This operation was aborted",
+    "e0-v2-start-1: /api/yahoo/chart warm=0，少於 5",
+    "e0-v2-start-1: /api/finmind cold=0，應為 1",
+    "e0-v2-start-1: /api/finmind warm=0，少於 5",
+    "缺 merged.json"
+  ],
+  "pass": false
+}

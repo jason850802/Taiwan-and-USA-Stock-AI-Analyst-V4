@@ -38,7 +38,6 @@ try {
     name: 'vite-hmr-03', argv: [path.join(workdir, 'node_modules/vite/bin/vite.js'),
       '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
     env, port, readyPattern: /ready in/i, logFile, cwd: workdir,
-    onStarted: svc => { service = svc; },
   });
   if (!service.ready || service.listenerPid !== service.ownedPid) throw new Error('隔離 Vite 未由本工具獨占啟動');
   const origin = `http://127.0.0.1:${port}`;

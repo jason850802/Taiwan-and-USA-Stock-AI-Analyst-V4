@@ -1,0 +1,677 @@
+{
+  "candidate": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+  "stages": [
+    {
+      "stage": "gate3",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        "scripts/run-gate.mjs",
+        "--require-env"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "guard",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+        "main03-guard-20261001-r1"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "life2",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+        "main03-life-20261001-r2"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "app",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+        "main03-app-20261001-r1",
+        "--viewports",
+        "desktop,narrow"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "terminal",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+        "main03-terminal-20261001-r1"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "cancel",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+        "main03-cancel-20261001-r1",
+        "c",
+        "3411"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "search",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+        "main03-search-20261001-r1",
+        "search",
+        "3412"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "finmind",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+        "main03-finmind-20261001-r1",
+        "finmind",
+        "3413"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "gemini",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+        "main03-gemini-20261001-r1",
+        "gemini",
+        "3414"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "chart",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+        "main03-chart-20261001-r1",
+        "3415"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    },
+    {
+      "stage": "guardCancel",
+      "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+      "command": [
+        "node",
+        ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+        "main03-guard-cancel-20261001-r1",
+        "3420"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "drift": [],
+      "envRemoved": true,
+      "noInstall": true,
+      "noDeployment": true,
+      "pass": true
+    }
+  ],
+  "copies": [
+    {
+      "runId": "main03-guard-20261001-r1",
+      "files": [
+        {
+          "path": "raw.json",
+          "sha256": "81293185301154bf4efd5ee37136fd62c5c632e101648a4c8b70c300701666a3"
+        }
+      ]
+    },
+    {
+      "runId": "main03-life-20261001-r1",
+      "files": [
+        {
+          "path": "raw.json",
+          "sha256": "ab922398b06e36fee3dcc9907f3c85117899233ea5394cb02fa3e70207a00990"
+        },
+        {
+          "path": "lifecycle-summary-57c4b7c1c838.json",
+          "sha256": "1f366de050114453606ead024db8607f61bee8da794326f38f5c555cc627a680"
+        }
+      ]
+    },
+    {
+      "runId": "main03-life-20261001-r2",
+      "files": [
+        {
+          "path": "raw.json",
+          "sha256": "260059922aae0498ed564eebd780280a27676af1c895275ffa48a4d90d02e254"
+        },
+        {
+          "path": "lifecycle-summary-57c4b7c1c838.json",
+          "sha256": "ade037195786906500afebfea05d1a3549530aa85a36a7b8d9c9216668a5d9e4"
+        }
+      ]
+    },
+    {
+      "runId": "main03-app-20261001-r1",
+      "files": [
+        {
+          "path": "screens/desktop-01-open-app.jpg",
+          "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e"
+        },
+        {
+          "path": "screens/desktop-02-search-tw-2317.jpg",
+          "sha256": "d1096abcecb45eadc1a236c5ab60514e01f266045520117e435bf4c1e907482f"
+        },
+        {
+          "path": "screens/desktop-03-interval-tw-week.jpg",
+          "sha256": "8a0c30e13b7afbd197bbd4de3fe7842c50d4220854bb4a577f2cb81f6250e318"
+        },
+        {
+          "path": "screens/desktop-04-search-us-aapl.jpg",
+          "sha256": "0b16219390b7663f0e9514b68b689e796b33d77f7b9280605637a2b31d6e912e"
+        },
+        {
+          "path": "screens/desktop-05-interval-us-day.jpg",
+          "sha256": "c63c9ffbddc890050a9f4d13947f782c208f7e3e94a569b30516e6c1f646574a"
+        },
+        {
+          "path": "screens/desktop-06-ai-analysis-fake.jpg",
+          "sha256": "d9bb5f0d2cb09bf90cb61e8046d7355d116d65acbf27e4ff0c2a0992d4ee7398"
+        },
+        {
+          "path": "screens/desktop-07-open-portfolio.jpg",
+          "sha256": "f42949e7a06b0d3d8d834eefc79bfdd8c9249f9c254aad5fcb5680aadd8a9dd3"
+        },
+        {
+          "path": "screens/desktop-08-add-us-aapl.jpg",
+          "sha256": "3511a296804aabfc8dd5c7f8858dd430c452573b54986b95be0fc116d7b479a2"
+        },
+        {
+          "path": "screens/desktop-09-add-tw-2330.jpg",
+          "sha256": "450c3541a031f1b631c0b009efa36abf46e8b1f0ef80d2c90f06c62c54b4e30e"
+        },
+        {
+          "path": "screens/desktop-10-health-check-aapl.jpg",
+          "sha256": "eb0e611c920efa10eec12360244a157626315ad2d5d8f54c9085d43003a6bcd8"
+        },
+        {
+          "path": "screens/desktop-11-reload-app.jpg",
+          "sha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e"
+        },
+        {
+          "path": "screens/desktop-12-revisit-portfolio.jpg",
+          "sha256": "4b8b3b225ca627b1bc1f2f2f81559b585b887c73108b4ea9e566e38ffbc79999"
+        },
+        {
+          "path": "screens/desktop-13-delete-us-aapl.jpg",
+          "sha256": "06296b2e7a525bbbb6f7e772397a7ee8405b08f981850a45c2d2dc655b3e3a2b"
+        },
+        {
+          "path": "screens/desktop-14-delete-tw-2330.jpg",
+          "sha256": "c7e44c13c1858ae9f8b3a4ffe21e8b5917a4171aec6bb8548b8aaa57953f2918"
+        },
+        {
+          "path": "screens/narrow-01-open-app.jpg",
+          "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45"
+        },
+        {
+          "path": "screens/narrow-02-search-tw-2317.jpg",
+          "sha256": "2eca27f88c67be330697953e21a80fe7a2849487dace821c18ce5d2348485d11"
+        },
+        {
+          "path": "screens/narrow-03-interval-tw-week.jpg",
+          "sha256": "3bd33fd75012b50aee36c2c0b6cfa004cebcb217a4ae4f37148906029e90a9f0"
+        },
+        {
+          "path": "screens/narrow-04-search-us-aapl.jpg",
+          "sha256": "7fcf294a93f6de5746e6296133cc993968369f99e9467e9ec56116c02fe942e8"
+        },
+        {
+          "path": "screens/narrow-05-interval-us-day.jpg",
+          "sha256": "c34c27ce490f9579de71532c0ea5628ec14ff4fa0ee07d290fa06eca10901fb5"
+        },
+        {
+          "path": "screens/narrow-06-ai-analysis-fake.jpg",
+          "sha256": "653851bb72ae7095afec9b253e613ea1c2d9ec87e5c99418aced23a85a616ef8"
+        },
+        {
+          "path": "screens/narrow-07-open-portfolio.jpg",
+          "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c"
+        },
+        {
+          "path": "screens/narrow-08-add-us-aapl.jpg",
+          "sha256": "88b15755cf1e5e86e16c444fdf8b3971f9a5ffb85e9c681e90dcb04c19af7c26"
+        },
+        {
+          "path": "screens/narrow-09-add-tw-2330.jpg",
+          "sha256": "d722606205ca3b18bc199bd0b01ffbc8b1dc371b6116843b2be7e8ba3859d1d9"
+        },
+        {
+          "path": "screens/narrow-10-health-check-aapl.jpg",
+          "sha256": "8fbc1dcbe6ac979128420c0257e9192b80ba725a5e08565b37c82ee9fd2fbe8f"
+        },
+        {
+          "path": "screens/narrow-11-reload-app.jpg",
+          "sha256": "39668347fd0c4f56b4baccdab69758506ec167ebd3cf82c0973b1e0920e30f45"
+        },
+        {
+          "path": "screens/narrow-12-revisit-portfolio.jpg",
+          "sha256": "50baf418cec1a13ea6c8940b9df65e75f499870e95fbf21f8eef97c026b516be"
+        },
+        {
+          "path": "screens/narrow-13-delete-us-aapl.jpg",
+          "sha256": "29c25e9e653e5a2f3e22fbf7acdceaf187cac12851917cb09820e25979ee383c"
+        },
+        {
+          "path": "screens/narrow-14-delete-tw-2330.jpg",
+          "sha256": "ef4abecbb379b6960bbdb02539fa05183bc85ad7fbf53ad00c66ba2a441dde3c"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "a8736f6fabaa13f1c2a9d349126fa60f647149eca1e64e63a9e6d79f82243300"
+        },
+        {
+          "path": "app-summary-b9cc692577da.json",
+          "sha256": "308166f9f6ca33ea866e8023a5c4d71f6ef73863759e29e3231ffe930900b7d5"
+        }
+      ]
+    },
+    {
+      "runId": "main03-terminal-20261001-r1",
+      "files": [
+        {
+          "path": "raw.json",
+          "sha256": "1280d0600a72dfeffd363fbf280cd785f6774feeae8093f283b313ea21479065"
+        }
+      ]
+    },
+    {
+      "runId": "main03-cancel-20261001-r1",
+      "files": [
+        {
+          "path": "trace/child-37424.jsonl",
+          "sha256": "7edb3e4e0c68cc914afdf2d5725b2b8e8f5c56d889de612eef07c51c6b9b6978"
+        },
+        {
+          "path": "trace/parent-21436.jsonl",
+          "sha256": "e6df4f64a021ebcffad1bce9b3d17fab2a8c257ee14b027a84097a053a222742"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "e2454c10e38f21f33d9acce91f12673f1d3375bc8fffcbc03733c567ec92521c"
+        }
+      ]
+    },
+    {
+      "runId": "main03-search-20261001-r1",
+      "files": [
+        {
+          "path": "trace/child-34520.jsonl",
+          "sha256": "42677ab97e7c229cb6e0eef7be7a485d4d63b52df1d52ecc30e2d6c35a1a809f"
+        },
+        {
+          "path": "trace/parent-39200.jsonl",
+          "sha256": "8e7d8bf86bb8bc4abf9a24326faf6ec29e810c047e2312f1d17e8cd68f1dd3db"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "fb6b81f8c487209fd788254562e989da2a17cb40b41ca583830de065eb40363b"
+        }
+      ]
+    },
+    {
+      "runId": "main03-finmind-20261001-r1",
+      "files": [
+        {
+          "path": "trace/child-35328.jsonl",
+          "sha256": "626d7e2bdd3c7f528e1a8868f58b14ce73f5d9b7ea8523df3b7198b4c857bfc4"
+        },
+        {
+          "path": "trace/parent-18700.jsonl",
+          "sha256": "3fa2a56e9a4f8f85d5139ab71d0bf618649cf8301f279c1993c7853f0f41e86c"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "31217a8941093100b5ab0097669a5ac7624a81478277cb67b0fdb48e89da4a22"
+        }
+      ]
+    },
+    {
+      "runId": "main03-gemini-20261001-r1",
+      "files": [
+        {
+          "path": "trace/child-37144.jsonl",
+          "sha256": "aaecc4e586ab61b4779c2a8147b6180eab23ef5441e6ca6f7ff7c2d678f332f7"
+        },
+        {
+          "path": "trace/parent-17112.jsonl",
+          "sha256": "8014e4def4178dc1831faadd12657b7b107e9cb12ba055e1d3b863d390f51cf5"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "16751e3eea6b488c434bf7ebd6bce4e93b0fb14f2c3629d853186ed2c6417ecd"
+        }
+      ]
+    },
+    {
+      "runId": "main03-chart-20261001-r1",
+      "files": [
+        {
+          "path": "trace/child-37284.jsonl",
+          "sha256": "0fc8a4a8e74b3dd8723a72e2dac72986ca1a1917cfdee217b9649465d26aa4de"
+        },
+        {
+          "path": "trace/parent-33952.jsonl",
+          "sha256": "03f46a8fe641dc4432479983390d4af1c3f060f48be796b44e8a2a6c9d685073"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "211b26a8fa53453ccab83493b0928905684cd063897838d804e43a3ab2fb2f7b"
+        }
+      ]
+    },
+    {
+      "runId": "main03-guard-cancel-20261001-r1",
+      "files": [
+        {
+          "path": "chart/trace/child-28300.jsonl",
+          "sha256": "6189e1386dde0e50bc0751a0888983684c935ed49c173cda10077fb00af3b777"
+        },
+        {
+          "path": "chart/trace/parent-43076.jsonl",
+          "sha256": "e40c0d7c52548fb97643921aba5ab574c3a5e7fe57dffc3243c686a042348754"
+        },
+        {
+          "path": "search/trace/child-27284.jsonl",
+          "sha256": "151cd00ee900ca24a6728ded64a7750b30dd91cdbd02b6f8017866ba030f53c9"
+        },
+        {
+          "path": "search/trace/parent-43688.jsonl",
+          "sha256": "e3c7ac236f00e78911c39396c02c448f175fe1e3c445e021a23db8be61e5f7fd"
+        },
+        {
+          "path": "finmind/trace/child-33020.jsonl",
+          "sha256": "937a442c1e59d779de47d6a9255b201647cf77002ad9257943025b29446f25c0"
+        },
+        {
+          "path": "finmind/trace/parent-29984.jsonl",
+          "sha256": "6245427e4dba4107d9b9d776ce26a5295b8649718d49d73014848a7d45fd918f"
+        },
+        {
+          "path": "gemini/trace/child-39844.jsonl",
+          "sha256": "7075915777d24deeccff3b6511f9385a25617cbf5b190e4743b2fd609555cb2e"
+        },
+        {
+          "path": "gemini/trace/parent-27796.jsonl",
+          "sha256": "1ec1dafbc0f433b4bdd769e7889dc286367763c4c524822b46351dd52719f6fe"
+        },
+        {
+          "path": "stream/trace/child-32200.jsonl",
+          "sha256": "929586b2a347627ae13796326f17d1fba00bfa3d8840027d47d22c929a5f0fe8"
+        },
+        {
+          "path": "stream/trace/parent-37612.jsonl",
+          "sha256": "946ad4b2448785001100b325bb07506bb6eaeb820ffa52b8f7d5525323881743"
+        },
+        {
+          "path": "raw.json",
+          "sha256": "04fc3093e7faf460ad5301e64dfc12b2676b6a659ef5c6f2a1c2fba1ffb2460a"
+        }
+      ]
+    }
+  ],
+  "guard": {
+    "passed": 37,
+    "total": 37
+  },
+  "life": {
+    "runId": "main03-life-20261001-r2",
+    "formal": true,
+    "ports": {
+      "front": 3000,
+      "api": 3001
+    },
+    "problems": [],
+    "failed": [],
+    "scenarios": [
+      "cycle-1:PASS",
+      "cycle-2:PASS",
+      "conflict-front:PASS",
+      "conflict-api:PASS",
+      "crash-vercel:PASS",
+      "crash-vite:PASS",
+      "crash-supervisor:PASS",
+      "crash-supervisor-no-watchdog:PASS"
+    ],
+    "sentinel": {
+      "events": 0,
+      "neutralized": 0
+    },
+    "monitor": {
+      "checks": 604,
+      "foreign": 0
+    },
+    "leftoverCleanup": {
+      "found": [],
+      "killed": [],
+      "stillAlive": [],
+      "known": []
+    }
+  },
+  "app": {
+    "runId": "main03-app-20261001-r1",
+    "formal": true,
+    "origin": "http://localhost:3000",
+    "problems": [],
+    "failedOps": [],
+    "incompleteViewports": [],
+    "viewports": [
+      {
+        "name": "desktop",
+        "ops": [
+          "open-app:PASS",
+          "search-tw-2317:PASS",
+          "interval-tw-week:PASS",
+          "search-us-aapl:PASS",
+          "interval-us-day:PASS",
+          "ai-analysis-fake:PASS",
+          "open-portfolio:PASS",
+          "add-us-aapl:PASS",
+          "add-tw-2330:PASS",
+          "health-check-aapl:PASS",
+          "reload-app:PASS",
+          "revisit-portfolio:PASS",
+          "delete-us-aapl:PASS",
+          "delete-tw-2330:PASS"
+        ],
+        "frozenAtStep": 11,
+        "frozenFinal": 10,
+        "externalHosts": [
+          "fonts.googleapis.com",
+          "fonts.gstatic.com"
+        ],
+        "unexpectedConsole": 0,
+        "expectedConsole": 1,
+        "designedAborts": [],
+        "failedAxes": [],
+        "requestKinds": {
+          "成功": 21,
+          "瀏覽器自發・已取消": 2,
+          "串流完整送達後的傳輸層取消": 2
+        },
+        "failedRequests": [],
+        "finalKeys": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": "{\"version\":1,\"txns\":[]}",
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": "{\"version\":1,\"rows\":[]}"
+        }
+      },
+      {
+        "name": "narrow",
+        "ops": [
+          "open-app:PASS",
+          "search-tw-2317:PASS",
+          "interval-tw-week:PASS",
+          "search-us-aapl:PASS",
+          "interval-us-day:PASS",
+          "ai-analysis-fake:PASS",
+          "open-portfolio:PASS",
+          "add-us-aapl:PASS",
+          "add-tw-2330:PASS",
+          "health-check-aapl:PASS",
+          "reload-app:PASS",
+          "revisit-portfolio:PASS",
+          "delete-us-aapl:PASS",
+          "delete-tw-2330:PASS"
+        ],
+        "frozenAtStep": 11,
+        "frozenFinal": 10,
+        "externalHosts": [
+          "fonts.googleapis.com",
+          "fonts.gstatic.com"
+        ],
+        "unexpectedConsole": 0,
+        "expectedConsole": 1,
+        "designedAborts": [],
+        "failedAxes": [],
+        "requestKinds": {
+          "成功": 21,
+          "瀏覽器自發・已取消": 2,
+          "串流完整送達後的傳輸層取消": 2
+        },
+        "failedRequests": [],
+        "finalKeys": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": "{\"version\":1,\"txns\":[]}",
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": "{\"version\":1,\"rows\":[]}"
+        }
+      }
+    ],
+    "sentinel": {
+      "events": 0,
+      "neutralized": 0
+    },
+    "monitor": {
+      "checks": 538,
+      "foreign": 0
+    },
+    "fakeCli": {
+      "spawn": 4,
+      "delta": 20,
+      "done": 4,
+      "kill": 0
+    },
+    "fetchKinds": {
+      "yahoo-cookie": 2,
+      "yahoo-crumb": 2,
+      "yahoo-search": 2,
+      "finmind": 18,
+      "yahoo-chart": 22
+    },
+    "blocked": {
+      "net": 0,
+      "fetch": 0,
+      "ai": 0
+    },
+    "persistentSpawns": 5,
+    "tree": {
+      "recorded": 12,
+      "aliveAfterStop": []
+    }
+  },
+  "terminal": {
+    "pass": true,
+    "scenarioCount": 3
+  },
+  "note": "本輪新 raw 與原始失敗均保存；舊 Preview 不重跑，不新增 production。"
+}

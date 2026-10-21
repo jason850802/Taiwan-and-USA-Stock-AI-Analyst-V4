@@ -1,0 +1,321 @@
+{
+  "runId": "integration03-20261001-r1",
+  "sourceHead": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+  "sourceMain": "2b2811b9300e7480112453e08d3b32beb3b306ed",
+  "sourceMainAfter": "2b2811b9300e7480112453e08d3b32beb3b306ed",
+  "mergeBase": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "isolated": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\integration03-isolated-20261001-r1",
+  "candidateCommit": "cfbd118c28710de9b3fbeb6bc0f8c4333955e606",
+  "patchSha256": "188d393f89386a0d31955aea83ba9b7ae761505362b3f02005e46cdbcf39577c",
+  "fileCount": 45,
+  "patchChecks": [
+    {
+      "name": "01-required-scratch-ignore.patch",
+      "sha256": "97d6b9ea2e39f51b94a1389bcf369dbce7ae4b5923bc18150bf2cacc98d4baff",
+      "applyCheck": true
+    },
+    {
+      "name": "02-original-03-product.patch",
+      "sha256": "007a591ac2bb4848cd74e2803d82e408e61944790c95df43de5dd032a815166a",
+      "applyCheck": true
+    },
+    {
+      "name": "03-approved-platform-configuration.patch",
+      "sha256": "d3eee3d501840dfb4d9ea90c0b5d2150212b86f475c4ec497f99dbfd273d3109",
+      "applyCheck": true
+    }
+  ],
+  "files": [
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "b9cc692577dacc7256b6e5103af9db708a227a0be8122abcbdcd8f92522af350",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-breakdown.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "fa6e46e4818de1f40d3b73830cc8f7d729539937b731e860bc4858d3a37be7ea",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/b1-vite-proxy.config.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "423c9f44116879c0ad9c386f07c29a11076437e8093504f77b68fdfbf2beb8da",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-parity.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "fceb43fbced939728f985ff234aa052119d8d79b5b5482e1504ed8a745162044",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/c-reload.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "8b66827daa19c61be454904ad2a800b54a485f7627591f753f7d55a670e7dea1",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/cancel-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "65235f59361aab0251fb224405b7b3bc8d139c8f3089ec2e1a163f6fd74ec18b",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/chart-cancel-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "f8df897e99d9fd5c58a1d3c71da8ec0e206075d141313a89f79849c9393b46a1",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/console-control-03.py",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-cost-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "1533087e2f437dace557980e7ebc487daab45a5682f3ae10e372bc83a3f120b5",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "79ab05126d7dc12d50560c6997d570b47538f0df8691e804765d71f1f52dcbe1",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/deploy-static-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "f962d76a7c997cd722d23d8055b7f1ccac1ebe31ff2a6a5254dbf38135449bfe",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-cancel-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-platform-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "a90bedde0197f5c5f3c9ee1e3d71758324bfe1e4a903227f5936a3cdb7d6b624",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/guard-review-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "9146c3715566bf08681bd1448641893a72cff4ae52a2301b2425e30ab8eba1cf",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/hmr-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "89ec1c2ca336be048d7fa94ca4b320ddbdfae09e6518b973161d7a1790b7251b",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/persistent-functions.cjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "07d354169d12e3b656f96c7b605247d8a87a04b1a35b9973c06d587e92aff649",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/platform-fixture-03.cjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "a16fdcb53375fdf25b06c966848455f3efe3f188856fee8c57332117f10c915a",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "7126257c2c8a8c32478f1226ba45ab83bec2870824e483b0aa25112f29c3fb91",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/recover-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/route-cancel-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/service-kit.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "fea9c1d27e0563a3f5b1d0f5cc07f8198053040ebd362bc68c54d2a80788d341",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stale-state-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "f66c3429c5948b02fe94514ad86a9b98099270a8dd6713658c5eb82178fd453a",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/stream-compare-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "ff12e349402a45b3ca53472a5c40e88126e5466f46d3e34a1490d877c2ae03b8",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/terminal-03.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/trace-preload.cjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/tools/verify-b1-breakdown.mjs",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "f2bc858cc29b394ddc38e743c59214d7a143eadb20907f58888ddcaf3739cbe1",
+      "role": "必要共用工具依賴（非整票01/02）"
+    },
+    {
+      "path": "scripts/start-dev.ps1",
+      "sourceCommit": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+      "sha256": "96e34ca522710545abe4c1814ddd050e8dbd976513aba248d956e3685a1541d5",
+      "role": "03工具／回復入口"
+    },
+    {
+      "path": ".vercelignore",
+      "sourceCommit": "c92dfa1 精確加 .scratch 並保留main原有排除",
+      "sha256": "30796e8f9616ed68ccbb0238d54ba3b659b96ffc8c22cfdae0b0612f64debc81",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/clientAbort.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "5899a6f7e61d8b0dbb3c015bfd23d979534c99e1ab8a0e1ae2e0f619a0e99388",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/http.cancel.test.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "20152d73cb030a0e921a79a0e820eea7a4260e2d06ff6b3f639808d947ddbea2",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/http.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/llm.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/yahoo.handshake.test.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "e55997395dabdd9ce2ced25e7ed3530d628bec41d457ed273d7ed4df800f04ba",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/_lib/yahoo.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "180cafa90eb62b95c2e76f94bb6398c58d058343f3b4d6d293bf972c98230815",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/finmind.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/gemini-stream.test.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "f1cf2d80278e1bda20648d7903deee2332601a8b77287bdddde25b7566ca3147",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/gemini-stream.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/gemini.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/yahoo/chart.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "api/yahoo/search.ts",
+      "sourceCommit": "5a44fd5",
+      "sha256": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "sourceCommit": "69e1cc7",
+      "sha256": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "vercel.json",
+      "sourceCommit": "69e1cc7",
+      "sha256": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b",
+      "role": "03產品／設定"
+    },
+    {
+      "path": "vite.config.ts",
+      "sourceCommit": "c92dfa1 + 5a44fd5 + 67c81ec必要exclude hunk",
+      "sha256": "44c4c95fa3236ac80512ba72a4e61b4f5022c8118c08a3cad557be71d654416a",
+      "role": "03產品／設定"
+    }
+  ],
+  "unchangedVerified": [
+    "package.json",
+    "package-lock.json",
+    "services/gemini.ts",
+    "services/_shared/geminiCache.ts"
+  ],
+  "packageAndLockUnchanged": true,
+  "fullGateRun": false,
+  "runtimeRun": false,
+  "conflicts": [],
+  "exclusions": [
+    "01/02完整票與raw",
+    "其他庫存／K線／行情效能票",
+    "AI模型／effort／CLI隔離",
+    "提示詞／Markdown／快取世代",
+    "CORE／Skills／全域規則",
+    "main獨有變更"
+  ],
+  "mainMerged": false,
+  "push": false,
+  "deployment": false
+}

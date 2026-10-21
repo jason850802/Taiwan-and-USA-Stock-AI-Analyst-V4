@@ -1,0 +1,720 @@
+{
+  "runId": "main03-life-20261001-r1",
+  "kind": "lifecycle-daily-entry",
+  "formal": true,
+  "createdAt": "2026-10-01T07:42:55.803Z",
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "cwd": "E:/My Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/integration03-isolated-20261001-r1",
+  "git": {
+    "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+    "branch": "codex/integration03-candidate"
+  },
+  "versions": {
+    "node": "v26.4.0",
+    "vercel": "55.0.0",
+    "vercelNode": "5.8.23",
+    "tsx": "4.21.0",
+    "vite": "6.4.1"
+  },
+  "tools": {
+    "lifecycle-03.mjs": "57c4b7c1c8381ea352c317f051bf0c1271e5d4b28eed90d07e83236d87e02ec3",
+    "port-guard-03.mjs": "a4a339ca071bbbccba6ec66b9819e09433f1999034fc585b0c23f68ad85b7742",
+    "daily-dev.mjs": "e1d543a2840cc3d8993fa9819c79c48a7f45b59e4b466a640585f142d2da8d4f",
+    "persistent-functions.cjs": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "service-kit.mjs": "a2df019a7b614ba7179cdd6f16b30a62f0cd44f9e5fb99ea67e57e5fcf46ca08"
+  },
+  "env": "日常命令原樣：移除 NODE_OPTIONS 與所有 PERF01_／PERF03_ 測試變數；.env 由 vercel dev 照常只給後端",
+  "requests": "只送前端首頁 GET 與同源 OPTIONS；不打行情、不執行 AI",
+  "sentinel": {
+    "port": 3000,
+    "durationMs": 8000,
+    "holdMs": 3000,
+    "ranMs": 8078,
+    "bound": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "bindErrors": [],
+    "events": [],
+    "visibleTabsNeutralized": 0
+  },
+  "monitor": {
+    "port": 3000,
+    "intervalMs": 300,
+    "checks": 310,
+    "foreign": [],
+    "allowedClientPids": []
+  },
+  "scenarios": [
+    {
+      "scenario": "cycle-1",
+      "startedAt": "2026-10-01T07:43:03.971Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-899d02dc-b639-47ad-b8ab-c073f93deeb3.log"
+          ]
+        },
+        "state": null,
+        "persistent": null,
+        "stop": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 64
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "atMs": 18300
+        },
+        "afterStop": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "logs": null
+      },
+      "checks": {
+        "就緒並寫出本輪狀態": false,
+        "狀態埠＝受測埠": false,
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+        "前端 listener 全是本輪 Vite": false,
+        "後端 listener 全是本輪 vercel": false,
+        "status 回報執行中": false,
+        "首頁 200 且是 Vite 開發頁": false,
+        "同源 OPTIONS 204（不碰上游）": false,
+        "長駐候選啟用並接手、五條函式預熱": false,
+        "stop 回報 stopped": false,
+        "監督程序自行結束": true,
+        "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+      },
+      "pass": false
+    },
+    {
+      "scenario": "cycle-2",
+      "startedAt": "2026-10-01T07:43:23.920Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-eb2775b9-9b42-492e-9aa0-faa2268bc19c.log"
+          ]
+        },
+        "state": null,
+        "persistent": null,
+        "stop": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 56
+        },
+        "supervisorExit": {
+          "value": {
+            "code": 0,
+            "signal": null
+          },
+          "atMs": 8158
+        },
+        "afterStop": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "logs": null
+      },
+      "checks": {
+        "就緒並寫出本輪狀態": false,
+        "狀態埠＝受測埠": false,
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+        "前端 listener 全是本輪 Vite": false,
+        "後端 listener 全是本輪 vercel": false,
+        "status 回報執行中": false,
+        "首頁 200 且是 Vite 開發頁": false,
+        "同源 OPTIONS 204（不碰上游）": false,
+        "長駐候選啟用並接手、五條函式預熱": false,
+        "stop 回報 stopped": false,
+        "監督程序自行結束": true,
+        "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+      },
+      "pass": false
+    },
+    {
+      "scenario": "conflict-front",
+      "startedAt": "2026-10-01T07:43:33.666Z",
+      "occupiedPort": 3000,
+      "steps": {
+        "holder": {
+          "pid": 1284,
+          "listeners": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3000,
+              "pid": 1284
+            }
+          ]
+        },
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "exit": {
+            "code": 1,
+            "signal": null
+          },
+          "output": [
+            "指定埠已有 listener；不接管其他服務。"
+          ]
+        },
+        "holderStillServing": "占用測試",
+        "otherPortListeners": [],
+        "stateExists": false,
+        "afterClose": []
+      },
+      "checks": {
+        "啟動被拒且沒有就緒": true,
+        "訊息為不接管其他服務": true,
+        "占用中的服務仍正常回應": true,
+        "另一個埠沒有被啟動": true,
+        "沒有寫出狀態檔": true,
+        "測試占用結束後該埠已釋放": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "conflict-api",
+      "startedAt": "2026-10-01T07:43:33.980Z",
+      "occupiedPort": 3001,
+      "steps": {
+        "holder": {
+          "pid": 1284,
+          "listeners": [
+            {
+              "local": "127.0.0.1",
+              "localPort": 3001,
+              "pid": 1284
+            }
+          ]
+        },
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "exit": {
+            "code": 1,
+            "signal": null
+          },
+          "output": [
+            "指定埠已有 listener；不接管其他服務。"
+          ]
+        },
+        "holderStillServing": "占用測試",
+        "otherPortListeners": [],
+        "stateExists": false,
+        "afterClose": []
+      },
+      "checks": {
+        "啟動被拒且沒有就緒": true,
+        "訊息為不接管其他服務": true,
+        "占用中的服務仍正常回應": true,
+        "另一個埠沒有被啟動": true,
+        "沒有寫出狀態檔": true,
+        "測試占用結束後該埠已釋放": true
+      },
+      "pass": true
+    },
+    {
+      "scenario": "crash-vercel",
+      "startedAt": "2026-10-01T07:43:34.282Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-ec94482b-1431-4b6e-a88b-0d27cef6acad.log"
+          ]
+        },
+        "state": null,
+        "target": null,
+        "descendants": [],
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "watchdogLog": null
+      },
+      "recovery": {
+        "scenario": "crash-vercel-recover",
+        "startedAt": "2026-10-01T07:43:42.473Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": false,
+            "readyMs": null,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "output": [
+              "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-4d282ecf-1fbf-46fb-a127-da014c7a1da4.log"
+            ]
+          },
+          "state": null,
+          "persistent": null,
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 1,
+            "stdout": [],
+            "stderr": [
+              "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+            ],
+            "ms": 54
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 5390
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": null
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": false,
+          "狀態埠＝受測埠": false,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+          "前端 listener 全是本輪 Vite": false,
+          "後端 listener 全是本輪 vercel": false,
+          "status 回報執行中": false,
+          "首頁 200 且是 Vite 開發頁": false,
+          "同源 OPTIONS 204（不碰上游）": false,
+          "長駐候選啟用並接手、五條函式預熱": false,
+          "stop 回報 stopped": false,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": false
+      },
+      "checks": {
+        "崩潰前已就緒": false,
+        "只對核對過身分的子程序下手": false,
+        "監督程序在 20 秒內自行結束": false,
+        "崩潰後無狀態、無 listener、整棵子孫樹無殘留": true,
+        "重新啟動並停止均正常": false
+      },
+      "pass": false
+    },
+    {
+      "scenario": "crash-vite",
+      "startedAt": "2026-10-01T07:43:49.465Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-3a954fd8-1a7d-4910-a84a-42c111de8f6a.log"
+          ]
+        },
+        "state": null,
+        "target": null,
+        "descendants": [],
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "watchdogLog": null
+      },
+      "recovery": {
+        "scenario": "crash-vite-recover",
+        "startedAt": "2026-10-01T07:43:57.166Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": false,
+            "readyMs": null,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "output": [
+              "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-27be17bd-4b6a-428f-ae0b-1900d0db528c.log"
+            ]
+          },
+          "state": null,
+          "persistent": null,
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 1,
+            "stdout": [],
+            "stderr": [
+              "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+            ],
+            "ms": 61
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 5495
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": null
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": false,
+          "狀態埠＝受測埠": false,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+          "前端 listener 全是本輪 Vite": false,
+          "後端 listener 全是本輪 vercel": false,
+          "status 回報執行中": false,
+          "首頁 200 且是 Vite 開發頁": false,
+          "同源 OPTIONS 204（不碰上游）": false,
+          "長駐候選啟用並接手、五條函式預熱": false,
+          "stop 回報 stopped": false,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": false
+      },
+      "checks": {
+        "崩潰前已就緒": false,
+        "只對核對過身分的子程序下手": false,
+        "監督程序在 20 秒內自行結束": false,
+        "崩潰後無狀態、無 listener、整棵子孫樹無殘留": true,
+        "重新啟動並停止均正常": false
+      },
+      "pass": false
+    },
+    {
+      "scenario": "crash-supervisor",
+      "startedAt": "2026-10-01T07:44:04.171Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-49e0b476-82f4-4870-a278-fdedb5763cf6.log"
+          ]
+        },
+        "state": null,
+        "descendants": [],
+        "identityVerified": false,
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "watchdogLog": null,
+        "stateLeft": false,
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 61
+        },
+        "renamedStateFiles": [],
+        "oldTreeAfterRecovery": []
+      },
+      "recovery": {
+        "scenario": "crash-supervisor-recover",
+        "startedAt": "2026-10-01T07:44:11.458Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": false,
+            "readyMs": null,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "output": [
+              "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-5b86b402-b541-48ed-a714-7a12f7816308.log"
+            ]
+          },
+          "state": null,
+          "persistent": null,
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 1,
+            "stdout": [],
+            "stderr": [
+              "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+            ],
+            "ms": 54
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 5919
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": null
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": false,
+          "狀態埠＝受測埠": false,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+          "前端 listener 全是本輪 Vite": false,
+          "後端 listener 全是本輪 vercel": false,
+          "status 回報執行中": false,
+          "首頁 200 且是 Vite 開發頁": false,
+          "同源 OPTIONS 204（不碰上游）": false,
+          "長駐候選啟用並接手、五條函式預熱": false,
+          "stop 回報 stopped": false,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": false
+      },
+      "checks": {
+        "崩潰前已就緒且只殺核對過的監督程序": false,
+        "監督程序已結束": false,
+        "status 誠實回報失聯（非 0 且說明沒有可確認的服務）": true,
+        "子程序隨監督程序一併結束（無 listener、無殘留）": true,
+        "殘留狀態檔由下次啟動核對後改名保存": false,
+        "崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）": true,
+        "看門程序留下失聯清理紀錄": false,
+        "下次啟停之後舊樹也無殘留": true,
+        "之後重新啟動並停止均正常": false
+      },
+      "pass": false
+    },
+    {
+      "scenario": "crash-supervisor-no-watchdog",
+      "startedAt": "2026-10-01T07:44:20.122Z",
+      "steps": {
+        "start": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+          "ready": false,
+          "readyMs": null,
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-c054f634-10a6-4533-8336-3bfd93e3d965.log"
+          ]
+        },
+        "state": null,
+        "descendants": [],
+        "watchdog": null,
+        "afterCrash": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        },
+        "status": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs status",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+          ],
+          "ms": 57
+        },
+        "startWhileStale": {
+          "ready": false,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "output": [
+            "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-cae4840f-c971-43e7-b4a9-3aae7f1f02d2.log"
+          ]
+        },
+        "recover": {
+          "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs recover",
+          "status": 1,
+          "stdout": [],
+          "stderr": [
+            "沒有可復原的本案狀態檔。"
+          ],
+          "ms": 70
+        },
+        "afterRecover": {
+          "stateRemoved": true,
+          "listeners": {
+            "front": [],
+            "api": []
+          },
+          "aliveLauncher": [],
+          "aliveFunctions": [],
+          "aliveDescendants": []
+        }
+      },
+      "recovery": {
+        "scenario": "crash-supervisor-no-watchdog-recover",
+        "startedAt": "2026-10-01T07:44:34.157Z",
+        "steps": {
+          "start": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs start",
+            "ready": false,
+            "readyMs": null,
+            "exit": {
+              "code": 0,
+              "signal": null
+            },
+            "output": [
+              "vercel 提前結束，請檢查 C:\\Users\\jason\\AppData\\Local\\Temp\\perf-opt-20260923\\daily\\vercel-20e4801a-29bc-4d20-82dc-588956c558bd.log"
+            ]
+          },
+          "state": null,
+          "persistent": null,
+          "stop": {
+            "command": "node .scratch/performance-optimization-20260923/tools/daily-dev.mjs stop",
+            "status": 1,
+            "stdout": [],
+            "stderr": [
+              "沒有可確認的本案日常服務；若 state.json 殘留，先查程序身分。"
+            ],
+            "ms": 55
+          },
+          "supervisorExit": {
+            "value": {
+              "code": 0,
+              "signal": null
+            },
+            "atMs": 5341
+          },
+          "afterStop": {
+            "stateRemoved": true,
+            "listeners": {
+              "front": [],
+              "api": []
+            },
+            "aliveLauncher": [],
+            "aliveFunctions": [],
+            "aliveDescendants": []
+          },
+          "logs": null
+        },
+        "checks": {
+          "就緒並寫出本輪狀態": false,
+          "狀態埠＝受測埠": false,
+          "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js": false,
+          "前端 listener 全是本輪 Vite": false,
+          "後端 listener 全是本輪 vercel": false,
+          "status 回報執行中": false,
+          "首頁 200 且是 Vite 開發頁": false,
+          "同源 OPTIONS 204（不碰上游）": false,
+          "長駐候選啟用並接手、五條函式預熱": false,
+          "stop 回報 stopped": false,
+          "監督程序自行結束": true,
+          "停止後無狀態、無 listener、整棵子孫樹無殘留": true
+        },
+        "pass": false
+      },
+      "checks": {
+        "崩潰前已就緒，看門程序與監督程序都核對身分後才結束": false,
+        "看門程序失效時確有殘留（後備清理的前提）": false,
+        "status 誠實回報失聯": true,
+        "start 在殘留存在時拒絕另起並指向 recover": false,
+        "recover 依狀態檔的程序樹核對並清掉殘留": false,
+        "之後重新啟動並停止均正常": false
+      },
+      "pass": false
+    }
+  ],
+  "errors": [],
+  "finalCheck": {
+    "stateExists": false,
+    "listeners": {
+      "front": [],
+      "api": []
+    }
+  },
+  "leftoverCleanup": {
+    "found": [],
+    "killed": [],
+    "stillAlive": [],
+    "known": []
+  },
+  "finishedAt": "2026-10-01T07:44:41.787Z"
+}

@@ -1,0 +1,27 @@
+{
+  "runId": "life03-localhost3000-20260925-r1",
+  "formal": true,
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "problems": [],
+  "failed": [],
+  "scenarios": [
+    "cycle-1:PASS",
+    "cycle-2:PASS",
+    "conflict-front:PASS",
+    "conflict-api:PASS",
+    "crash-vercel:PASS",
+    "crash-vite:PASS",
+    "crash-supervisor:PASS"
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 278,
+    "foreign": 0
+  }
+}

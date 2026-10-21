@@ -1,0 +1,42 @@
+{
+  "schema": "p1-native-browser-negative-observation-v1",
+  "method": "Codex CUA原生按鈕操作；父頁與正式App子頁保持不重載，server以同manifest重啟",
+  "manifest": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+  "pageUrl": "http://127.0.0.1:4177/viewport?size=desktop&path=%2F%3Fmanual%3Dmarket",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+  "viewport": {"width":1440,"height":900},
+  "oldRunId":"53905abc-e488-478f-809c-f7dd76c71020",
+  "newRunId":"4b3aeb9d-224c-40a6-84d6-4050a11af5d4",
+  "initialHtmlRunId":"53905abc-e488-478f-809c-f7dd76c71020",
+  "originalPassed":true,
+  "originalFile":"desktop-manual-market.json",
+  "originalRawSha256":"803b7fd10b3ffbdb62ce7e60ee2e4921dc3d472f39147ffcaa13a8b6af791e60",
+  "pageTimeOrigin":1790007834424,
+  "childPageTimeOrigin":1790007834487.1,
+  "duplicate":{
+    "schema":"p1-native-browser-duplicate-observation-v1",
+    "manifest":".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+    "originalRunId":"53905abc-e488-478f-809c-f7dd76c71020",
+    "originalFile":"desktop-manual-market.json",
+    "originalRawSha256":"803b7fd10b3ffbdb62ce7e60ee2e4921dc3d472f39147ffcaa13a8b6af791e60",
+    "originalPassed":true,
+    "pageTimeOrigin":1790007834424,
+    "childPageTimeOrigin":1790007834487.1,
+    "status":409,
+    "body":"{\"error\":\"同case重複送出；失敗保留，請新啟完整組\"}"
+  },
+  "delayedBootstrap":{
+    "path":"/__integration/53905abc-e488-478f-809c-f7dd76c71020/7f53eb35e1c807fba35a2fd2c1efe979fb466d0cdb4984285aa8d45d2abea6b2.js",
+    "status":410,
+    "body":"{\"error\":\"此頁面bootstrap執行版本已過期；請完整重載本輪頁面\"}"
+  },
+  "upload":{"status":409,"body":"{\"error\":\"頁面runId缺失或已過期\"}"},
+  "lateMetadata":{
+    "runId":"4b3aeb9d-224c-40a6-84d6-4050a11af5d4",
+    "group":"03",
+    "batchId":"bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+    "definitionSha256":"f3b56510dda315acc4486db0cc0c236619910ea077a8466f302680991e6cec83"
+  },
+  "sequence":["原正式App手動case成功並保存實收raw","同頁重送收到409","停止原server","同manifest啟動新run","舊頁晚取meta看到新ID","舊bootstrap收到410","舊頁以原fetch包裝上傳收到409"],
+  "limits":"這是真瀏覽器P05與P08觀測，不計入109份矩陣；JSON由父頁pre讀取後另行保存。"
+}

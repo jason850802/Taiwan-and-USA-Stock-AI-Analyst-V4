@@ -1,0 +1,50 @@
+{
+  "originalCommit": "69e1cc797c8c6cf1d1819fa043bce150c70b2828",
+  "paths": [
+    "utils/vercelConfigGuard.test.ts",
+    "vercel.json"
+  ],
+  "before": [
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "exists": true,
+      "sha256": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4",
+      "bytes": 3679
+    },
+    {
+      "path": "vercel.json",
+      "exists": true,
+      "sha256": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b",
+      "bytes": 141
+    }
+  ],
+  "reverted": [
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "path": "vercel.json",
+      "exists": false,
+      "sha256": null,
+      "bytes": null
+    }
+  ],
+  "restored": [
+    {
+      "path": "utils/vercelConfigGuard.test.ts",
+      "exists": true,
+      "sha256": "05dc33ddb9f1a7b0126d0c214a0693ef2b8d5a2f7751865ee74be426eef10aa4",
+      "bytes": 3679
+    },
+    {
+      "path": "vercel.json",
+      "exists": true,
+      "sha256": "66269e3d589f3ba0f9e12381ccd48176bff995a4219f1b697203cf3ff592e76b",
+      "bytes": 141
+    }
+  ],
+  "fullTreeRestored": true
+}

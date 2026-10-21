@@ -1,0 +1,14 @@
+{"ev":"child.boot","t":26.46,"pid":13128,"entry":"api/gemini-stream.ts","fixture":true,"fixtureDelayMs":50,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1938.052,"pid":13128,"seq":1}
+{"ev":"child.listening","t":1956.325,"pid":13128,"seq":1}
+{"ev":"child.listenCall","t":2212.209,"pid":13128,"seq":2}
+{"ev":"child.listening","t":2213.972,"pid":13128,"seq":2}
+{"ev":"child.ready","t":2214.418,"pid":13128}
+{"ev":"child.fakeCli.spawn","t":2227.309,"pid":13128,"trace":null,"streaming":true,"deltas":5,"intervalMs":200,"mode":"success"}
+{"ev":"child.fakeCli.stdin","t":2227.887,"pid":13128,"trace":null,"promptBytes":2134}
+{"ev":"child.fakeCli.delta","t":2439.909,"pid":13128,"trace":null,"index":1}
+{"ev":"child.fakeCli.delta","t":2640.825,"pid":13128,"trace":null,"index":2}
+{"ev":"child.fakeCli.delta","t":2843.258,"pid":13128,"trace":null,"index":3}
+{"ev":"child.fakeCli.delta","t":3043.692,"pid":13128,"trace":null,"index":4}
+{"ev":"child.fakeCli.delta","t":3248.098,"pid":13128,"trace":null,"index":5}
+{"ev":"child.fakeCli.done","t":3448.534,"pid":13128,"trace":null,"emitted":5,"mode":"success"}

@@ -1,0 +1,542 @@
+[
+  {
+    "id": "rvz4j-1790671034495-1b880da8bb0d",
+    "timestamp": 1790671034495,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":3,\"event\":\"child.fakeCli.delta\",\"atMs\":33585.683054}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "POST",
+    "requestPath": "/api/gemini-stream",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":3,\"event\":\"child.fakeCli.delta\",\"atMs\":33585.683054}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":4,\"event\":\"child.fakeCli.delta\",\"atMs\":34185.911493}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"event\":\"handler-start\",\"atMs\":31782.315015}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"streaming\":true,\"deltas\":5,\"intervalMs\":600,\"mode\":\"success\",\"event\":\"child.fakeCli.spawn\",\"atMs\":31782.95514}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"promptBytes\":12,\"event\":\"child.fakeCli.stdin\",\"atMs\":31783.156651}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":1,\"event\":\"child.fakeCli.delta\",\"atMs\":32383.810655}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":2,\"event\":\"child.fakeCli.delta\",\"atMs\":32984.522138}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"emitted\":5,\"mode\":\"success\",\"event\":\"child.fakeCli.done\",\"atMs\":35386.473593}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"event\":\"handler-return\",\"atMs\":35387.222697}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"event\":\"response-finish\",\"atMs\":35387.435595}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-11\",\"event\":\"response-close\",\"atMs\":35387.64667}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-11\",\"index\":5,\"event\":\"child.fakeCli.delta\",\"atMs\":34786.023635}"
+      }
+    ]
+  },
+  {
+    "id": "rvz4j-1790671030414-366b20e10072",
+    "timestamp": 1790671030414,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"event\":\"handler-start\",\"atMs\":27925.713729}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "POST",
+    "requestPath": "/api/gemini-stream",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"event\":\"handler-start\",\"atMs\":27925.713729}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"streaming\":true,\"deltas\":5,\"intervalMs\":600,\"mode\":\"success\",\"event\":\"child.fakeCli.spawn\",\"atMs\":27928.347132}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"promptBytes\":12,\"event\":\"child.fakeCli.stdin\",\"atMs\":27929.023595}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"index\":3,\"event\":\"child.fakeCli.delta\",\"atMs\":29731.604232}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"index\":4,\"event\":\"child.fakeCli.delta\",\"atMs\":30332.045093}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"index\":1,\"event\":\"child.fakeCli.delta\",\"atMs\":28530.713452}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"index\":2,\"event\":\"child.fakeCli.delta\",\"atMs\":29131.134809}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"index\":5,\"event\":\"child.fakeCli.delta\",\"atMs\":30932.141923}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"emitted\":5,\"mode\":\"success\",\"event\":\"child.fakeCli.done\",\"atMs\":31532.899848}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"event\":\"handler-return\",\"atMs\":31534.085871}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-10\",\"event\":\"response-finish\",\"atMs\":31534.274267}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-10\",\"event\":\"response-close\",\"atMs\":31534.437651}"
+      }
+    ]
+  },
+  {
+    "id": "l6krd-1790671027156-a4aa639ee95b",
+    "timestamp": 1790671027156,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"event\":\"handler-start\",\"atMs\":24495.851527}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "POST",
+    "requestPath": "/api/gemini",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"event\":\"handler-start\",\"atMs\":24495.851527}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"streaming\":false,\"deltas\":5,\"intervalMs\":600,\"mode\":\"success\",\"event\":\"child.fakeCli.spawn\",\"atMs\":24498.544138}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"promptBytes\":12,\"event\":\"child.fakeCli.stdin\",\"atMs\":24499.11156}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"emitted\":0,\"mode\":\"success\",\"event\":\"child.fakeCli.done\",\"atMs\":27499.034437}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"event\":\"handler-return\",\"atMs\":27502.368429}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-9\",\"event\":\"response-finish\",\"atMs\":27502.727105}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-9\",\"event\":\"response-close\",\"atMs\":27502.945763}"
+      }
+    ]
+  },
+  {
+    "id": "l6krd-1790671026877-4c6cf1e5894b",
+    "timestamp": 1790671026877,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "error",
+    "message": "[gemini-stream:BAD_REQUEST] 請求格式不正確，請重新整理頁面後再試一次。",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "POST",
+    "requestPath": "/api/gemini-stream",
+    "responseStatusCode": 400,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-8\",\"event\":\"handler-start\",\"atMs\":24190.390025}"
+      },
+      {
+        "level": "error",
+        "message": "[gemini-stream:BAD_REQUEST] 請求格式不正確，請重新整理頁面後再試一次。"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-8\",\"event\":\"handler-return\",\"atMs\":24194.379484}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-8\",\"event\":\"response-finish\",\"atMs\":24194.697782}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-8\",\"event\":\"response-close\",\"atMs\":24194.889024}"
+      }
+    ]
+  },
+  {
+    "id": "l6krd-1790671026266-83bfd800a6d7",
+    "timestamp": 1790671026266,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"handler-start\",\"atMs\":23825.151863}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "GET",
+    "requestPath": "/api/finmind",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"handler-start\",\"atMs\":23825.151863}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"finmind\",\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"fixture-fetch\",\"atMs\":23826.875125}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"handler-return\",\"atMs\":23914.439218}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"response-finish\",\"atMs\":23914.751546}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-7\",\"event\":\"response-close\",\"atMs\":23915.009545}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671025955-4f831d44c74c",
+    "timestamp": 1790671025955,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"handler-start\",\"atMs\":23201.446556}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "GET",
+    "requestPath": "/api/yahoo/search",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"handler-start\",\"atMs\":23201.446556}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-cookie\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"fixture-fetch\",\"atMs\":23203.340081}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-crumb\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"fixture-fetch\",\"atMs\":23256.04212}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-search\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"fixture-fetch\",\"atMs\":23258.391792}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"handler-return\",\"atMs\":23261.615315}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"response-finish\",\"atMs\":23263.357582}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-6\",\"event\":\"response-close\",\"atMs\":23263.610378}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671025632-0802beaf8dfc",
+    "timestamp": 1790671025632,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"handler-start\",\"atMs\":23002.334664}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "GET",
+    "requestPath": "/api/yahoo/chart",
+    "responseStatusCode": 200,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"handler-start\",\"atMs\":23002.334664}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-cookie\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"fixture-fetch\",\"atMs\":23004.290929}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-crumb\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"fixture-fetch\",\"atMs\":23064.173906}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"kind\":\"yahoo-chart\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"fixture-fetch\",\"atMs\":23066.065297}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"handler-return\",\"atMs\":23074.62209}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"response-finish\",\"atMs\":23075.006957}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-5\",\"event\":\"response-close\",\"atMs\":23075.181581}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671025361-7cafed95c3ee",
+    "timestamp": 1790671025361,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-4\",\"event\":\"handler-start\",\"atMs\":22659.970418}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "OPTIONS",
+    "requestPath": "/api/gemini-stream",
+    "responseStatusCode": 204,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-4\",\"event\":\"handler-start\",\"atMs\":22659.970418}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-4\",\"event\":\"handler-return\",\"atMs\":22665.838104}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-4\",\"event\":\"response-finish\",\"atMs\":22666.835494}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-4\",\"event\":\"response-close\",\"atMs\":22667.944417}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671025080-edc41506da5a",
+    "timestamp": 1790671025080,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-3\",\"event\":\"handler-start\",\"atMs\":22436.051655}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "OPTIONS",
+    "requestPath": "/api/gemini",
+    "responseStatusCode": 204,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-3\",\"event\":\"handler-start\",\"atMs\":22436.051655}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-3\",\"event\":\"handler-return\",\"atMs\":22442.209307}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-3\",\"event\":\"response-finish\",\"atMs\":22443.235075}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-3\",\"event\":\"response-close\",\"atMs\":22444.475025}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671024810-3aebae2f8724",
+    "timestamp": 1790671024810,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-2\",\"event\":\"handler-start\",\"atMs\":22110.13039}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "OPTIONS",
+    "requestPath": "/api/finmind",
+    "responseStatusCode": 204,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-2\",\"event\":\"handler-start\",\"atMs\":22110.13039}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-2\",\"event\":\"handler-return\",\"atMs\":22116.224009}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-2\",\"event\":\"response-finish\",\"atMs\":22117.163109}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-2\",\"event\":\"response-close\",\"atMs\":22118.300805}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671024535-eaae058ecb7b",
+    "timestamp": 1790671024535,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-1\",\"event\":\"handler-start\",\"atMs\":21802.43719}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "OPTIONS",
+    "requestPath": "/api/yahoo/search",
+    "responseStatusCode": 204,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-1\",\"event\":\"handler-start\",\"atMs\":21802.43719}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-1\",\"event\":\"handler-return\",\"atMs\":21808.518017}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-1\",\"event\":\"response-finish\",\"atMs\":21809.556374}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-1\",\"event\":\"response-close\",\"atMs\":21810.722335}"
+      }
+    ]
+  },
+  {
+    "id": "rsl77-1790671023998-7f8d781755a2",
+    "timestamp": 1790671023998,
+    "deploymentId": "dpl_GESz2MXQevWLaLu6E4kDNsrHZb1S",
+    "projectId": "prj_aOslmSMp3ZTQMN9zVg299zkir8ws",
+    "level": "info",
+    "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-0\",\"event\":\"handler-start\",\"atMs\":21651.43031}",
+    "source": "serverless",
+    "domain": "taiwan-and-usa-stock-ai-analyst-v4-giwrxzp7v-chuan0802.vercel.app",
+    "requestMethod": "OPTIONS",
+    "requestPath": "/api/yahoo/chart",
+    "responseStatusCode": 204,
+    "environment": "preview",
+    "branch": "",
+    "cache": "MISS",
+    "cacheReason": "",
+    "traceId": "",
+    "logs": [
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-0\",\"event\":\"handler-start\",\"atMs\":21651.43031}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-0\",\"event\":\"handler-return\",\"atMs\":21656.713993}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"trace\":\"platform03-preview-20260929-r3-0\",\"event\":\"response-finish\",\"atMs\":21657.570073}"
+      },
+      {
+        "level": "info",
+        "message": "{\"marker\":\"perf03-platform\",\"finished\":true,\"trace\":\"platform03-preview-20260929-r3-0\",\"event\":\"response-close\",\"atMs\":21658.521455}"
+      }
+    ]
+  }
+]

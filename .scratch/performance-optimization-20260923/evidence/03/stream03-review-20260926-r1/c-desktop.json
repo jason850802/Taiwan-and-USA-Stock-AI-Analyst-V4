@@ -1,0 +1,1339 @@
+{
+  "entry": "c",
+  "viewportName": "desktop",
+  "frontPort": 32422,
+  "apiPort": 32423,
+  "services": [
+    {
+      "name": "vercel",
+      "pid": 35496,
+      "port": 32423,
+      "script": "vc.js",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "ready": true,
+      "tree": [
+        {
+          "pid": 35496,
+          "creationDate": "/Date(1790355202328)/"
+        },
+        {
+          "pid": 21452,
+          "parentPid": 35496,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790355205011)/"
+        },
+        {
+          "pid": 37096,
+          "parentPid": 21452,
+          "name": "node.exe",
+          "creationDate": "/Date(1790355205065)/"
+        },
+        {
+          "pid": 10040,
+          "parentPid": 37096,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790355205712)/"
+        },
+        {
+          "pid": 34300,
+          "parentPid": 35496,
+          "name": "node.exe",
+          "creationDate": "/Date(1790355206129)/"
+        }
+      ],
+      "creationDate": "/Date(1790355202328)/",
+      "listeners": [
+        {
+          "local": "127.0.0.1",
+          "localPort": 32423,
+          "pid": 35496
+        }
+      ],
+      "readyMs": 3454,
+      "identity": [
+        {
+          "pid": 35496,
+          "parentPid": 17396,
+          "creationDate": "/Date(1790355202328)/",
+          "script": "vc.js"
+        }
+      ],
+      "cleanup": {
+        "killed": [
+          {
+            "pid": 35496,
+            "name": null,
+            "creationDate": "/Date(1790355202328)/",
+            "status": 0
+          },
+          {
+            "pid": 37096,
+            "name": "node.exe",
+            "creationDate": "/Date(1790355205065)/",
+            "status": 0
+          }
+        ],
+        "stillAlive": []
+      }
+    },
+    {
+      "name": "vite",
+      "pid": 33960,
+      "port": 32422,
+      "script": "vite.js",
+      "exit": {
+        "code": 1,
+        "signal": null
+      },
+      "ready": true,
+      "tree": [
+        {
+          "pid": 33960,
+          "creationDate": "/Date(1790355207024)/"
+        },
+        {
+          "pid": 36244,
+          "parentPid": 33960,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790355207260)/"
+        },
+        {
+          "pid": 32508,
+          "parentPid": 33960,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790355207279)/"
+        },
+        {
+          "pid": 36244,
+          "parentPid": 33960,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790355207260)/"
+        }
+      ],
+      "creationDate": "/Date(1790355207024)/",
+      "listeners": [
+        {
+          "local": "[::1]",
+          "localPort": 32422,
+          "pid": 33960
+        }
+      ],
+      "readyMs": 30,
+      "identity": [
+        {
+          "pid": 33960,
+          "parentPid": 17396,
+          "creationDate": "/Date(1790355207024)/",
+          "script": "vite.js"
+        }
+      ],
+      "cleanup": {
+        "killed": [
+          {
+            "pid": 33960,
+            "name": null,
+            "creationDate": "/Date(1790355207024)/",
+            "status": 0
+          }
+        ],
+        "stillAlive": []
+      }
+    }
+  ],
+  "viewport": {
+    "name": "c-desktop",
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "mobile": false
+    },
+    "profileDir": "profile-c-desktop",
+    "chrome": {
+      "pid": 13852,
+      "version": "Chrome/153.0.8010.53"
+    },
+    "ops": [
+      {
+        "id": "open-app",
+        "label": "開啟 App（預設台股 2330 日線）",
+        "rule": "mountInit",
+        "startedAt": "2026-09-25T16:53:28.997Z",
+        "before": {
+          "portfolio_items": null,
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": null,
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": {
+          "portfolio_items": null,
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": null,
+          "portfolio_snapshots_v1": null
+        },
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE 2330",
+            "symbol": "2330.TW",
+            "price": "901.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "日"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": null,
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "標頭為 2330.TW 固定價": true,
+          "有效 K 線（非骨架）": true,
+          "頁面可見": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 /api/yahoo/chart?symbol=2330.TW&interval=1d 為 200": true
+        },
+        "keyChecks": {
+          "開始前五鍵皆不存在（全新資料目錄）": true,
+          "portfolio_items＝[]": true,
+          "portfolio_realized_trades_v1＝空帳本": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.105",
+            "startedAtMs": 213436156.979,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInfo",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213438326.637,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213438.326637,
+                "encodedDataLength": 857
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "(匿名)@/services/stockDirectory.ts:25",
+                "ensureTaiwanDirectory@/services/stockDirectory.ts:60",
+                "(匿名)@/components/StockSearch.tsx:62",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.107",
+            "startedAtMs": 213438330.872,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213438457.417,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213438.457417,
+                "encodedDataLength": 683
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchFinMindPriceVolume@/services/yahoo.ts:127",
+                "fetchStockDataUncached@/services/yahoo.ts:570",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.108",
+            "startedAtMs": 213438331.322,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213438461.105,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213438.461105,
+                "encodedDataLength": 682
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchFinMindStockInfo@/services/yahoo.ts:137",
+                "fetchStockDataUncached@/services/yahoo.ts:574",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.109",
+            "startedAtMs": 213438331.617,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInstitutionalInvestorsBuySell&data_id=2330",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213438460.554,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213438.460554,
+                "encodedDataLength": 707
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchInstitutionalData@/services/yahoo.ts:118",
+                "fetchStockDataUncached@/services/yahoo.ts:575",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.110",
+            "startedAtMs": 213438332.498,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=2y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213440391.238,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213440.391238,
+                "encodedDataLength": 1024
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:202",
+                "fetchStockDataUncached@/services/yahoo.ts:582",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.111",
+            "startedAtMs": 213438332.775,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=10y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213440395.166,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213440.395166,
+                "encodedDataLength": 1024
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:202",
+                "fetchStockDataUncached@/services/yahoo.ts:583",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          }
+        ],
+        "console": [],
+        "expectedConsole": [
+          {
+            "kind": "log.network",
+            "text": "Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost:32422/favicon.ico"
+          }
+        ],
+        "screenshot": "screens/c-desktop-01-open-app.jpg",
+        "error": null,
+        "durationMs": 11387,
+        "designedAborts": [],
+        "badRequests": [],
+        "screenshotSha256": "dd3ab415ed58db09fd3a9bacbd6da82b14aeb0d46f7874df1be73a4b0f71564e",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": true
+        },
+        "pass": true
+      },
+      {
+        "id": "search-tw-2317",
+        "label": "搜尋台股 2317 並點選名錄結果",
+        "rule": "readOnly",
+        "startedAt": "2026-09-25T16:53:40.772Z",
+        "before": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": null,
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE 2317",
+            "symbol": "2317.TW",
+            "price": "668.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "日"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": null,
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "下拉選項為固定名錄 2317 固定資料鴻海": true,
+          "標頭為 2317.TW 固定價": true,
+          "有效 K 線（非骨架）": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 /api/yahoo/chart?symbol=2317.TW&interval=1d 為 200": true
+        },
+        "keyChecks": {
+          "portfolio_items 逐字不變": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_realized_trades_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.115",
+            "startedAtMs": 213446044.169,
+            "method": "GET",
+            "route": "/api/yahoo/search?q=2317",
+            "status": null,
+            "failed": {
+              "error": "net::ERR_ABORTED",
+              "canceled": true
+            },
+            "finishedAtMs": null,
+            "failedAtMs": 213446242.396,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFailed",
+                "timestamp": 213446.242396,
+                "errorText": "net::ERR_ABORTED",
+                "canceled": true,
+                "type": "Fetch"
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "searchYahoo@/services/stockDirectory.ts:128",
+                "searchStocks@/services/stockDirectory.ts:143",
+                "(匿名)@/components/StockSearch.tsx:87",
+                "(匿名)@/components/StockSearch.tsx:86",
+                "handleChange@/components/StockSearch.tsx:97",
+                "onChange@/components/StockSearch.tsx:165",
+                "StockSearch@/components/StockSearch.tsx:154",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": false,
+            "kind": "HTTP 失敗或無回應",
+            "ok": false
+          },
+          {
+            "requestId": "28064.116",
+            "startedAtMs": 213446233.513,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2317",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213446353.973,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213446.353973,
+                "encodedDataLength": 683
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchFinMindPriceVolume@/services/yahoo.ts:127",
+                "fetchStockDataUncached@/services/yahoo.ts:570",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "pick@/components/StockSearch.tsx:105",
+                "onMouseDown@/components/StockSearch.tsx:198",
+                "(匿名)@/components/StockSearch.tsx:190",
+                "StockSearch@/components/StockSearch.tsx:188",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.117",
+            "startedAtMs": 213446233.954,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2317",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213446352.712,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213446.352712,
+                "encodedDataLength": 682
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchFinMindStockInfo@/services/yahoo.ts:137",
+                "fetchStockDataUncached@/services/yahoo.ts:574",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "pick@/components/StockSearch.tsx:105",
+                "onMouseDown@/components/StockSearch.tsx:198",
+                "(匿名)@/components/StockSearch.tsx:190",
+                "StockSearch@/components/StockSearch.tsx:188",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.118",
+            "startedAtMs": 213446234.411,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInstitutionalInvestorsBuySell&data_id=2317",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213446356.251,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213446.356251,
+                "encodedDataLength": 707
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchInstitutionalData@/services/yahoo.ts:118",
+                "fetchStockDataUncached@/services/yahoo.ts:575",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "pick@/components/StockSearch.tsx:105",
+                "onMouseDown@/components/StockSearch.tsx:198",
+                "(匿名)@/components/StockSearch.tsx:190",
+                "StockSearch@/components/StockSearch.tsx:188",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.119",
+            "startedAtMs": 213446234.762,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=2317.TW&interval=1d&range=2y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213446365.886,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213446.365886,
+                "encodedDataLength": 1024
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:202",
+                "fetchStockDataUncached@/services/yahoo.ts:582",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "pick@/components/StockSearch.tsx:105",
+                "onMouseDown@/components/StockSearch.tsx:198",
+                "(匿名)@/components/StockSearch.tsx:190",
+                "StockSearch@/components/StockSearch.tsx:188",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.120",
+            "startedAtMs": 213446235.054,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=2317.TW&interval=1d&range=10y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213446367.639,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213446.367639,
+                "encodedDataLength": 1024
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:202",
+                "fetchStockDataUncached@/services/yahoo.ts:583",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "pick@/components/StockSearch.tsx:105",
+                "onMouseDown@/components/StockSearch.tsx:198",
+                "(匿名)@/components/StockSearch.tsx:190",
+                "StockSearch@/components/StockSearch.tsx:188",
+                "App@/App.tsx:656",
+                "(匿名)@/index.tsx:13"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          }
+        ],
+        "console": [],
+        "expectedConsole": [],
+        "screenshot": "screens/c-desktop-02-search-tw-2317.jpg",
+        "error": null,
+        "durationMs": 5145,
+        "designedAborts": [],
+        "badRequests": [
+          "/api/yahoo/search?q=2317"
+        ],
+        "screenshotSha256": "2a5d2f5fd7974063a86cce2f774753597cabdce23d884a1c2a2c7e0344be6467",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": false
+        },
+        "pass": false
+      },
+      {
+        "id": "interval-tw-week",
+        "label": "台股切換週線",
+        "rule": "readOnly",
+        "startedAt": "2026-09-25T16:53:46.303Z",
+        "before": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": null,
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE 2317",
+            "symbol": "2317.TW",
+            "price": "668.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "週"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": null,
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "週線按鈕為選取狀態": true,
+          "有效 K 線（非骨架）": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 /api/yahoo/chart?symbol=2317.TW&interval=1wk 為 200": true
+        },
+        "keyChecks": {
+          "portfolio_items 逐字不變": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_realized_trades_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.121",
+            "startedAtMs": 213451425.62,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=2317.TW&interval=1wk&range=5y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213451525.212,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213451.525212,
+                "encodedDataLength": 1024
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:202",
+                "fetchStockDataUncached@/services/yahoo.ts:621",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.122",
+            "startedAtMs": 213451526.889,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2317",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213451528.008,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213451.528008,
+                "encodedDataLength": 0
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "fetchFinMindRows@/services/finmind.ts:8",
+                "fetchFinMindStockInfo@/services/yahoo.ts:137",
+                "resolveChipContext@/services/yahoo.ts:390",
+                "fetchStockDataUncached@/services/yahoo.ts:733",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.123",
+            "startedAtMs": 213451528.952,
+            "method": "GET",
+            "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2317",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": null,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFailed",
+                "timestamp": 213462.029453,
+                "errorText": "net::ERR_ABORTED",
+                "canceled": true,
+                "type": "Other"
+              }
+            ],
+            "initiator": {
+              "type": "other",
+              "frames": []
+            },
+            "frozenOk": true,
+            "kind": "瀏覽器自發",
+            "ok": true,
+            "priorScript200": {
+              "requestId": "28064.117",
+              "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2317",
+              "finishedAtMs": 213446352.712
+            }
+          }
+        ],
+        "console": [],
+        "expectedConsole": [],
+        "screenshot": "screens/c-desktop-03-interval-tw-week.jpg",
+        "error": null,
+        "durationMs": 4673,
+        "designedAborts": [],
+        "badRequests": [],
+        "screenshotSha256": "8a0c30e13b7afbd197bbd4de3fe7842c50d4220854bb4a577f2cb81f6250e318",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": true
+        },
+        "pass": true
+      },
+      {
+        "id": "search-us-aapl",
+        "label": "輸入美股 AAPL 後按 Enter",
+        "rule": "readOnly",
+        "startedAt": "2026-09-25T16:53:51.357Z",
+        "before": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": null,
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE AAPL",
+            "symbol": "AAPL",
+            "price": "588.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "週"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": null,
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "標頭為 AAPL 固定價": true,
+          "沿用週線週期": true,
+          "有效 K 線（非骨架）": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 /api/yahoo/chart?symbol=AAPL&interval=1wk 為 200": true
+        },
+        "keyChecks": {
+          "portfolio_items 逐字不變": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_realized_trades_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.124",
+            "startedAtMs": 213456480.429,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=AAPL&interval=1wk&range=5y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213456592.497,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213456.592497,
+                "encodedDataLength": 1020
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:230",
+                "fetchStockDataUncached@/services/yahoo.ts:621",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "onSelect@/App.tsx:663",
+                "submitCurrent@/components/StockSearch.tsx:111",
+                "onKeyDown@/components/StockSearch.tsx:122"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          }
+        ],
+        "console": [],
+        "expectedConsole": [],
+        "screenshot": "screens/c-desktop-04-search-us-aapl.jpg",
+        "error": null,
+        "durationMs": 4822,
+        "designedAborts": [],
+        "badRequests": [],
+        "screenshotSha256": "0b16219390b7663f0e9514b68b689e796b33d77f7b9280605637a2b31d6e912e",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": true
+        },
+        "pass": true
+      },
+      {
+        "id": "interval-us-day",
+        "label": "美股切回日線",
+        "rule": "readOnly",
+        "startedAt": "2026-09-25T16:53:56.567Z",
+        "before": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": null,
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE AAPL",
+            "symbol": "AAPL",
+            "price": "588.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "日"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": null,
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "日線按鈕為選取狀態": true,
+          "有效 K 線（非骨架）": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 /api/yahoo/chart?symbol=AAPL&interval=1d 為 200": true
+        },
+        "keyChecks": {
+          "portfolio_items 逐字不變": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_realized_trades_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.125",
+            "startedAtMs": 213461693.698,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=2y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213461813.942,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213461.813942,
+                "encodedDataLength": 1020
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:230",
+                "fetchStockDataUncached@/services/yahoo.ts:582",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          },
+          {
+            "requestId": "28064.126",
+            "startedAtMs": 213461694.198,
+            "method": "GET",
+            "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=10y",
+            "status": 200,
+            "failed": null,
+            "finishedAtMs": 213461813,
+            "failedAtMs": null,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFinished",
+                "timestamp": 213461.813,
+                "encodedDataLength": 1020
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "queryYahoo@/services/yahoo.ts:174",
+                "performQuery@/services/yahoo.ts:197",
+                "fetchRawData@/services/yahoo.ts:230",
+                "fetchStockDataUncached@/services/yahoo.ts:583",
+                "startChartWork@/services/yahoo.ts:825",
+                "getStockData@/services/yahoo.ts:881",
+                "fetchData@/App.tsx:227",
+                "(匿名)@/App.tsx:252"
+              ]
+            },
+            "frozenOk": true,
+            "kind": "成功",
+            "ok": true
+          }
+        ],
+        "console": [],
+        "expectedConsole": [],
+        "screenshot": "screens/c-desktop-05-interval-us-day.jpg",
+        "error": null,
+        "durationMs": 4689,
+        "designedAborts": [],
+        "badRequests": [],
+        "screenshotSha256": "c63c9ffbddc890050a9f4d13947f782c208f7e3e94a569b30516e6c1f646574a",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": true
+        },
+        "pass": true
+      },
+      {
+        "id": "ai-analysis-fake",
+        "label": "美股 AAPL 假 AI 技術分析（空手、快捷）",
+        "rule": "readOnly",
+        "startedAt": "2026-09-25T16:54:01.644Z",
+        "before": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "after": {
+          "portfolio_items": "[]",
+          "portfolio_transactions_v1": null,
+          "portfolio_import_log_v1": null,
+          "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+          "portfolio_snapshots_v1": null
+        },
+        "docStart": null,
+        "facts": {
+          "url": "http://localhost:32422/",
+          "visibility": "visible",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "quote": {
+            "name": "FIXTURE AAPL",
+            "symbol": "AAPL",
+            "price": "588.00"
+          },
+          "aiButtonDisabled": false,
+          "pressedIntervals": [
+            "日"
+          ],
+          "chartSvgCount": 3,
+          "loadingChart": false,
+          "analysis": "AI 技術分析報告 假片段1假片段2假片段3假片段4假片段5",
+          "dialogs": [],
+          "holdingsHeader": false,
+          "emptyHoldings": false,
+          "holdingRows": [],
+          "fxText": null
+        },
+        "checks": {
+          "報告依序出現假片段1～5且無中斷字樣": true,
+          "分析結束（AI 分析鈕恢復可按）": true,
+          "標頭仍為 AAPL": true,
+          "頁面來源為 http://localhost:3000": true,
+          "App 發起的同源請求 POST /api/gemini-stream 為 200": true
+        },
+        "keyChecks": {
+          "portfolio_items 逐字不變": true,
+          "portfolio_transactions_v1 逐字不變": true,
+          "portfolio_import_log_v1 逐字不變": true,
+          "portfolio_realized_trades_v1 逐字不變": true,
+          "portfolio_snapshots_v1 逐字不變": true
+        },
+        "requests": [
+          {
+            "requestId": "28064.134",
+            "startedAtMs": 213467235.394,
+            "method": "POST",
+            "route": "/api/gemini-stream",
+            "status": 200,
+            "failed": {
+              "error": "net::ERR_ABORTED",
+              "canceled": true
+            },
+            "finishedAtMs": null,
+            "failedAtMs": 213471337.906,
+            "terminalEvents": [
+              {
+                "event": "Network.loadingFailed",
+                "timestamp": 213471.337906,
+                "errorText": "net::ERR_ABORTED",
+                "canceled": true,
+                "type": "Fetch"
+              }
+            ],
+            "initiator": {
+              "type": "script",
+              "frames": [
+                "callGeminiApiStream@/services/gemini.ts:29",
+                "analyzeEntryWithGemini@/services/gemini.ts:170",
+                "handleRunAnalysis@/App.tsx:299",
+                "Button@/components/ui/Button.tsx:20",
+                "App@/App.tsx:546"
+              ]
+            },
+            "frozenOk": false,
+            "kind": "串流完整送達後的傳輸層取消",
+            "ok": true
+          }
+        ],
+        "console": [],
+        "expectedConsole": [],
+        "screenshot": "screens/c-desktop-06-ai-analysis-fake.jpg",
+        "error": null,
+        "durationMs": 9075,
+        "designedAborts": [],
+        "badRequests": [],
+        "screenshotSha256": "d9bb5f0d2cb09bf90cb61e8046d7355d116d65acbf27e4ff0c2a0992d4ee7398",
+        "verdict": {
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": true
+        },
+        "pass": true
+      }
+    ],
+    "finalKeys": {
+      "portfolio_items": "[]",
+      "portfolio_transactions_v1": null,
+      "portfolio_import_log_v1": null,
+      "portfolio_realized_trades_v1": "{\"version\":1,\"trades\":[]}",
+      "portfolio_snapshots_v1": null
+    },
+    "closedCleanly": true,
+    "profileRemoved": true,
+    "externalHosts": [
+      "fonts.googleapis.com",
+      "fonts.gstatic.com"
+    ],
+    "allConsole": [
+      {
+        "kind": "log.network",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found) http://localhost:32422/favicon.ico"
+      }
+    ]
+  },
+  "errors": [],
+  "preloads": [
+    "persistent-functions.cjs",
+    "trace-preload.cjs"
+  ],
+  "persistentEnabled": true,
+  "listenersAfter": {
+    "front": [],
+    "api": []
+  },
+  "traceFiles": 5,
+  "traceCounts": {
+    "child.boot": 4,
+    "child.listenCall": 8,
+    "child.listening": 8,
+    "child.ready": 4,
+    "child.fetchStart": 21,
+    "child.fetchHeaders": 21,
+    "child.fetchBody": 19,
+    "child.fakeCli.spawn": 1,
+    "child.fakeCli.stdin": 1,
+    "child.fakeCli.delta": 5,
+    "child.fakeCli.done": 1
+  }
+}

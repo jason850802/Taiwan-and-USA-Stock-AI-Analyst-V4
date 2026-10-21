@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-09-21T09:18:39.459Z",
+  "baseline": ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json",
+  "baselineHead": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "currentHead": "b2bf7d8075eb31266d556afb0f874d37c3217bb4",
+  "baselineSha256": "46aca5d24761bdaf3683cec70b021d60465a101b6b0660d94006bb58c5ba90e8",
+  "baselineTestFiles": 49,
+  "historicalFiles": 2233,
+  "testMismatches": [],
+  "packageMismatches": [],
+  "historyMismatches": [],
+  "changed": [],
+  "unexpectedChanges": [],
+  "passed": true
+}

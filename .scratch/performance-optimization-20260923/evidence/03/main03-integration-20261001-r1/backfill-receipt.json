@@ -1,0 +1,16 @@
+[
+  {
+    "path": ".scratch/performance-optimization-20260923/issues/03-daily-dev-entry.md",
+    "beforeBytes": 23679,
+    "prefixUnchanged": true,
+    "beforeSha256": "48eca781b9519df483c1a20d0dba3634e5b268fdf0bb159c046f174aecb424b0",
+    "afterSha256": "e799497011eb3d89f44ab71d5e3b883977a3182540e86ef0ae312241b7d2d6c2"
+  },
+  {
+    "path": ".scratch/performance-optimization-20260923/evidence/03/REVIEW-20260925.md",
+    "beforeBytes": 12220,
+    "prefixUnchanged": true,
+    "beforeSha256": "5de80b18a313f03456c48bd435919d6bf1a49ab7d76284654da6e5561220dabe",
+    "afterSha256": "dce0dfeadc0b0c8f3064fbadeeec6bd50753f1f1d97bf2269ebdf9023b656354"
+  }
+]

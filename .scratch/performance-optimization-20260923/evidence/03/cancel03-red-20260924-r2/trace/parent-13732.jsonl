@@ -1,0 +1,10 @@
+{"ev":"parent.boot","t":640.738,"pid":13732}
+{"ev":"parent.listenCall","t":2076.903,"pid":13732,"seq":1}
+{"ev":"parent.listening","t":2078.437,"pid":13732,"seq":1}
+{"ev":"parent.recv","t":3910.951,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"entry","method":"POST","route":"/api/gemini-stream"}
+{"ev":"parent.fork","t":4653.917,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","childPid":34780,"forkCallMs":11.794}
+{"ev":"parent.childReady","t":8478.535,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","childPid":34780}
+{"ev":"parent.proxyReq","t":8482.422,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","port":"54843"}
+{"ev":"parent.proxyRes","t":8520.186,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel"}
+{"ev":"parent.writeHead","t":8521.261,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"entry","status":500}
+{"ev":"parent.finish","t":8522.816,"pid":13732,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"entry"}

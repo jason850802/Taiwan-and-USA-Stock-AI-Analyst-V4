@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "createdAt": "2026-09-23T07:18:13.241Z",
+  "variant": "clean",
+  "startCount": 2,
+  "serviceStartIds": [
+    "clean-formal-options-v6-20260923-start-1",
+    "clean-formal-options-v6-20260923-start-2"
+  ],
+  "rowCount": 24,
+  "failures": [],
+  "pass": true
+}

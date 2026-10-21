@@ -1,0 +1,33 @@
+{
+  "candidateCommit": "cfbd118c28710de9b3fbeb6bc0f8c4333955e606",
+  "sourceMain": "2b2811b9300e7480112453e08d3b32beb3b306ed",
+  "patchSha256": "188d393f89386a0d31955aea83ba9b7ae761505362b3f02005e46cdbcf39577c",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "sourceDrift": [],
+  "envRemoved": true,
+  "dependenciesRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules",
+  "dependencies": [
+    {
+      "name": "typescript",
+      "resolved": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\typescript\\lib\\typescript.js",
+      "version": "5.8.3"
+    },
+    {
+      "name": "vite",
+      "resolved": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\dist\\node\\index.js",
+      "version": "6.4.1"
+    },
+    {
+      "name": "vitest",
+      "resolved": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vitest\\index.cjs",
+      "version": "3.2.7"
+    }
+  ],
+  "junctionCreated": false,
+  "noPackageInstall": true,
+  "noRuntime": true,
+  "noDeployment": true,
+  "pass": true
+}

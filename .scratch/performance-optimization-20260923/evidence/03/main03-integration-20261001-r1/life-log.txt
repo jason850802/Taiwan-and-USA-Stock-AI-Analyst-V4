@@ -1,0 +1,159 @@
+cycle-1：FAIL
+cycle-2：FAIL
+conflict-front：PASS
+conflict-api：PASS
+crash-vercel：FAIL
+crash-vite：FAIL
+crash-supervisor：FAIL
+crash-supervisor-no-watchdog：FAIL
+{
+  "runId": "main03-life-20261001-r1",
+  "formal": true,
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "problems": [],
+  "failed": [
+    {
+      "scenario": "cycle-1",
+      "failedChecks": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "cycle-2",
+      "failedChecks": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-vercel",
+      "failedChecks": [
+        "崩潰前已就緒",
+        "只對核對過身分的子程序下手",
+        "監督程序在 20 秒內自行結束",
+        "重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-vite",
+      "failedChecks": [
+        "崩潰前已就緒",
+        "只對核對過身分的子程序下手",
+        "監督程序在 20 秒內自行結束",
+        "重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor",
+      "failedChecks": [
+        "崩潰前已就緒且只殺核對過的監督程序",
+        "監督程序已結束",
+        "殘留狀態檔由下次啟動核對後改名保存",
+        "看門程序留下失聯清理紀錄",
+        "之後重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor-no-watchdog",
+      "failedChecks": [
+        "崩潰前已就緒，看門程序與監督程序都核對身分後才結束",
+        "看門程序失效時確有殘留（後備清理的前提）",
+        "start 在殘留存在時拒絕另起並指向 recover",
+        "recover 依狀態檔的程序樹核對並清掉殘留",
+        "之後重新啟動並停止均正常"
+      ],
+      "recoveryFailed": [
+        "就緒並寫出本輪狀態",
+        "狀態埠＝受測埠",
+        "程序身分：監督程序 daily-dev.mjs，子程序 vc.js／vite.js",
+        "前端 listener 全是本輪 Vite",
+        "後端 listener 全是本輪 vercel",
+        "status 回報執行中",
+        "首頁 200 且是 Vite 開發頁",
+        "同源 OPTIONS 204（不碰上游）",
+        "長駐候選啟用並接手、五條函式預熱",
+        "stop 回報 stopped"
+      ]
+    }
+  ],
+  "scenarios": [
+    "cycle-1:FAIL",
+    "cycle-2:FAIL",
+    "conflict-front:PASS",
+    "conflict-api:PASS",
+    "crash-vercel:FAIL",
+    "crash-vite:FAIL",
+    "crash-supervisor:FAIL",
+    "crash-supervisor-no-watchdog:FAIL"
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 310,
+    "foreign": 0
+  },
+  "leftoverCleanup": {
+    "found": [],
+    "killed": [],
+    "stillAlive": [],
+    "known": []
+  }
+}

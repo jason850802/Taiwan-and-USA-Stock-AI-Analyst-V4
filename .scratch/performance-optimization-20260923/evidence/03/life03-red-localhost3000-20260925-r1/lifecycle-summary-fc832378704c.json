@@ -1,0 +1,103 @@
+{
+  "runId": "life03-red-localhost3000-20260925-r1",
+  "formal": true,
+  "ports": {
+    "front": 3000,
+    "api": 3001
+  },
+  "problems": [],
+  "failed": [
+    {
+      "scenario": "crash-vercel",
+      "failedChecks": [
+        "崩潰後無狀態、無 listener、整棵子孫樹無殘留"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor",
+      "failedChecks": [
+        "崩潰後整棵子孫樹無殘留（含 vercel 內部開發伺服器）",
+        "看門程序留下失聯清理紀錄",
+        "下次啟停之後舊樹也無殘留"
+      ]
+    },
+    {
+      "scenario": "crash-supervisor-no-watchdog",
+      "failedChecks": [
+        "崩潰前已就緒，看門程序與監督程序都核對身分後才結束",
+        "start 在殘留存在時拒絕另起並指向 recover",
+        "recover 依狀態檔的程序樹核對並清掉殘留"
+      ]
+    }
+  ],
+  "scenarios": [
+    "cycle-1:PASS",
+    "cycle-2:PASS",
+    "conflict-front:PASS",
+    "conflict-api:PASS",
+    "crash-vercel:FAIL",
+    "crash-vite:PASS",
+    "crash-supervisor:FAIL",
+    "crash-supervisor-no-watchdog:FAIL"
+  ],
+  "sentinel": {
+    "events": 0,
+    "neutralized": 0
+  },
+  "monitor": {
+    "checks": 480,
+    "foreign": 0
+  },
+  "leftoverCleanup": {
+    "found": [
+      {
+        "pid": 34688,
+        "name": "node.exe",
+        "parentPid": 19156
+      },
+      {
+        "pid": 37624,
+        "name": "esbuild.exe",
+        "parentPid": 34688
+      },
+      {
+        "pid": 17168,
+        "name": "node.exe",
+        "parentPid": 26340
+      },
+      {
+        "pid": 8888,
+        "name": "esbuild.exe",
+        "parentPid": 17168
+      },
+      {
+        "pid": 21484,
+        "name": "node.exe",
+        "parentPid": 13576
+      },
+      {
+        "pid": 2060,
+        "name": "esbuild.exe",
+        "parentPid": 21484
+      }
+    ],
+    "killed": [
+      {
+        "pid": 34688,
+        "name": "node.exe",
+        "status": 0
+      },
+      {
+        "pid": 17168,
+        "name": "node.exe",
+        "status": 0
+      },
+      {
+        "pid": 21484,
+        "name": "node.exe",
+        "status": 0
+      }
+    ],
+    "stillAlive": []
+  }
+}

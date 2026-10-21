@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-21T16:22:15.549Z",
+  "sourceSha256": "599e422ca2bde42419ddb9ea79e0051077415e62c077babf7522fa462f3a91a2",
+  "rows": [
+    {
+      "scenario": "success",
+      "passed": true
+    },
+    {
+      "scenario": "http-failure",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

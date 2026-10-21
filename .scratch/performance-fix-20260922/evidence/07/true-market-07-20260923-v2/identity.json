@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "runId": "true-market-07-20260923-v2",
+  "holdingsRunId": "true-market-paired-20260923-v5",
+  "createdAt": "2026-09-23T07:39:19.791Z",
+  "head": "6eee87efb1211e7b9dd8b21238b140c17b501374",
+  "backendEntry": "主工作區 vercel dev（日常開發入口：E2 設定的 .vercelignore／vite.config.ts）",
+  "backendConfig": {
+    "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+    "viteConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db"
+  },
+  "runtimes": {
+    "before": {
+      "commit": "444d6b19913f00c236a425602512b708af7aaf9f",
+      "dir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "fileCount": 163,
+      "manifestSha256": "7afa79519b457daaaace32cb0897d31f6124a406d59611fdd698e21a65127123"
+    },
+    "after": {
+      "commit": "6eee87efb1211e7b9dd8b21238b140c17b501374",
+      "dir": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "fileCount": 165,
+      "manifestSha256": "cbaea4652282396f89b64f4602d2ec10435b0184ff4648986537c821142e12b3"
+    }
+  },
+  "tools": {
+    "true-market-stack-07.mjs": "77f42042cbdb49b5090aceef36551366f649fef40a82380aa7803757554941c1",
+    "true-market-07-vite.config.mjs": "ea160f437a12f8ca1a8f5588f42b05fda5ad7e96e0082b5f7732b9e7671cefe1",
+    "holdings-true-market-vite.config.mjs": "24e47faba367f33143713f78adf89875fe2bc339b7d544d873c3b0ad3cde3869",
+    "holdings-true-market-probe.jsx": "ab787212fe077e8e4cafe8d4cbe82b8e3dd34b4f6ddf2f3dbd2d485f9d228c0d",
+    "holdings-true-market-30-probe.jsx": "ebfd43fc88a0b393df455e1f1bbe58affe265bb3c4613248db28fefbdfd4cbb0",
+    "chart-true-market-probe.jsx": "29a6bc18bc2779dc1d1fe954d03c6ac2113242548ee4eea43292141d19eb56c7",
+    "holdings-true-market-capture.mjs": "ac447b0cc102b694179bbd012042b119ee2703dd7868ab75be68e92e5e2c803c",
+    "capture-evidence-07.mjs": "c6eb8cc6c31c693e4c1a4e2b4dce88fd2940816eee8c74d6b7f214a450e880bb",
+    "verify-holdings-true-market.mjs": "8022102332164e5bd52e0634ca22a7155c3b60069a82468d204af20fbdbcc2ec"
+  },
+  "runtime": {
+    "nodeVersion": "v26.4.0",
+    "vercelVersion": "55.0.0",
+    "viteVersion": "6.4.1",
+    "timezone": "Asia/Taipei"
+  },
+  "services": {
+    "backend": {
+      "spawnPid": 20312,
+      "listenerPid": 20312,
+      "port": 3041,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\jason\\AppData\\Roaming\\npm\\node_modules\\vercel\\dist\\vc.js",
+        "dev",
+        "--listen",
+        "3041"
+      ]
+    },
+    "before": {
+      "spawnPid": 26016,
+      "listenerPid": 26016,
+      "port": 4291,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-before-444d6b1",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4291",
+        "--strictPort"
+      ]
+    },
+    "after": {
+      "spawnPid": 19816,
+      "listenerPid": 19816,
+      "port": 4292,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\07-after-6eee87e",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\node_modules\\vite\\bin\\vite.js",
+        "--config",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\true-market-07-vite.config.mjs",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4292",
+        "--strictPort"
+      ]
+    },
+    "holdingsCapture": {
+      "spawnPid": 11988,
+      "listenerPid": 11988,
+      "port": 4193,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\holdings-true-market-capture.mjs",
+        "--port",
+        "4193",
+        "--run-id",
+        "true-market-paired-20260923-v5"
+      ]
+    },
+    "capture07": {
+      "spawnPid": 26312,
+      "listenerPid": 26312,
+      "port": 4197,
+      "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\tools\\capture-evidence-07.mjs",
+        "--port",
+        "4197",
+        "--run-id",
+        "true-market-07-20260923-v2"
+      ]
+    }
+  },
+  "listenerMismatch": [],
+  "envVariableNames": [
+    "ALLOWED_ORIGIN",
+    "CLAUDE_CLI_PATH",
+    "FINMIND_TOKEN",
+    "GEMINI_API_KEY",
+    "GEMINI_MODEL_FAST",
+    "GEMINI_MODEL_THINKING",
+    "LLM_PROVIDER"
+  ],
+  "requestBudget": {
+    "holdings10": "每頁 16（10 報價＋1 匯率＋5 名稱）× 6 頁 = 96",
+    "holdings30": "每頁 46（30 報價＋1 匯率＋15 名稱）× 2 頁 = 92",
+    "chart10": "每頁冷抓 35（5 台股 × 2 chart＋3 FinMind、5 美股 × 2 chart）＋回訪 0 × 2 頁 = 70",
+    "stopRule": "任一頁出現 429、持續 5xx 或逾時即停止該批，保留結果，不密集重試"
+  },
+  "viteConfig": ".scratch/performance-fix-20260922/tools/true-market-07-vite.config.mjs",
+  "cacheMode": "每頁新載入；探針 HTML 帶 Clear-Site-Data: \"cache\" 清空本 origin 的瀏覽器 HTTP 快取；探針另清行情 session 快取；後端無本機持久快取"
+}

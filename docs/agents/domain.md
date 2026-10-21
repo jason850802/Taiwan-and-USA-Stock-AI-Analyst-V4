@@ -11,7 +11,7 @@ How the engineering skills should consume this repo's domain documentation when 
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
-This repo additionally keeps a codebase brief under `.planning/codebase/` (`STACK.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `CONCERNS.md`, `INTEGRATIONS.md`). Read the relevant one there too — the index in `CLAUDE.md` says which.
+This repo additionally keeps a codebase brief under `.planning/codebase/` (`STACK.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `CONCERNS.md`, `INTEGRATIONS.md`). Read the relevant one there too — the index in `CORE_RULES.md` says which.
 
 ## File structure
 

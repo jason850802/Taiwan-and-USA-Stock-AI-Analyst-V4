@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 2,
+  "runId": "formal-options-v4-20260923",
+  "createdAt": "2026-09-23T06:15:14.584Z",
+  "head": "e9fa1a200255d860e3166fad0e2636b49178b894",
+  "configCommit": "c92dfa15873f551e1d893ef63ed0550a38f80923",
+  "configParent": "08a25beffcc492e6b22943a675c0053d848535cb",
+  "runtimeBase": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v4-20260923",
+  "sourceManifestSha256": "12bd48c3a266c27c0b05f369814b47c500280e5b00ec35d2f6483dffa8c3b12e",
+  "baseManifestSha256": "4e729683e2df00de4647b3d7ba5618cfb3b56429865ed86ee6cdc93cac51d6a9",
+  "scratchLayoutSha256": "03d3b9ee45ee159c1ca4ebcf38aef6103c93a7b3067675db6110ed5a7580f309",
+  "envFilePresent": true,
+  "envVariableNames": [
+    "ALLOWED_ORIGIN",
+    "CLAUDE_CLI_PATH",
+    "FINMIND_TOKEN",
+    "GEMINI_API_KEY",
+    "GEMINI_MODEL_FAST",
+    "GEMINI_MODEL_THINKING",
+    "LLM_PROVIDER"
+  ],
+  "fullScratchFileCount": 8982,
+  "variants": {
+    "e0": {
+      "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v4-20260923\\full",
+      "runtimeName": "full",
+      "scratchPayload": true,
+      "vercelignoreSha256": "b631e6625de2259bec947b67564f918340a0663c9447605ce0c603fc7f7c0452",
+      "viteConfigSha256": "45e31a9caaa94dc428b6fc383b474ba876c56370c45d10eeb4bb6afbda980ccd"
+    },
+    "e1": {
+      "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v4-20260923\\full",
+      "runtimeName": "full",
+      "scratchPayload": true,
+      "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+      "viteConfigSha256": "45e31a9caaa94dc428b6fc383b474ba876c56370c45d10eeb4bb6afbda980ccd"
+    },
+    "e2": {
+      "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v4-20260923\\full",
+      "runtimeName": "full",
+      "scratchPayload": true,
+      "vercelignoreSha256": "52325d0013a5a7a6e9c1566a772db7aa78f5f2a1674f450dc3f559d5a0ad6c1a",
+      "viteConfigSha256": "d987aa92e3ba92b209c7c53b1e8ee44c1aba6e2ba847d8d5dbe88bc3165e02db"
+    },
+    "clean": {
+      "runtimeRoot": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\runtime\\formal-options-v4-20260923\\clean",
+      "runtimeName": "clean",
+      "scratchPayload": false,
+      "vercelignoreSha256": "b631e6625de2259bec947b67564f918340a0663c9447605ce0c603fc7f7c0452",
+      "viteConfigSha256": "45e31a9caaa94dc428b6fc383b474ba876c56370c45d10eeb4bb6afbda980ccd"
+    }
+  }
+}

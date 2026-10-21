@@ -1,0 +1,18 @@
+{
+  "runId": "deploy03-static-20260925-r1",
+  "base": "6a7b029ad9cf99d399ac648c37fcc096efffbe89",
+  "head": "c789bda64c338440387197ca043a45eea0720823",
+  "checks": {
+    "部署設定檔自 03 起點零差異": true,
+    "正式函式路由集合不變": true,
+    ".vercelignore 排除 .scratch（本機預載不上傳）": true,
+    "產品檔沒有引用本機專用工具": true,
+    "03 前後兩版設定建置的正式前端逐檔相同": true
+  },
+  "problems": [],
+  "notProvable": [
+    "正式平台（Vercel Node runtime）是否在用戶端斷線時對 handler 的 res 發出 close／req aborted",
+    "正式平台取消後上游（Yahoo／FinMind／AI）是否實際停止",
+    "正式平台的串流 flush 與取消時序"
+  ]
+}

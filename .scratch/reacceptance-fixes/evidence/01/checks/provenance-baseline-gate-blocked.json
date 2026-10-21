@@ -1,0 +1,15 @@
+{
+  "schema": "reacceptance-tool-block-observation-v1",
+  "tool": "Chat_On_Steroids_Core.exec_command",
+  "command": "node .scratch/reacceptance-fixes/run-check.mjs 01 provenance-baseline-gate gate",
+  "workdir": "/taiwan-and-usa-stock-ai-analyst-",
+  "toolResponse": "由於 OpenAI 無法確定要求的安全狀態，因此已將此工具調用封鎖。",
+  "identicalAttempts": 2,
+  "retryObservation": "第一次之後已以唯讀確認程序未啟動且結果檔不存在；相同命令重試一次，仍得到完全相同的封鎖回應。",
+  "processStarted": false,
+  "exitCode": null,
+  "gatePassed": false,
+  "purpose": "原gate未含後來新增的runnerSha256／entrypointSha256，修正後須重新執行真基準gate，才能建立正式manifest。",
+  "consequence": "本次呼叫沒有產生真gate紀錄。不得補寫舊gate欄位，也不得以protocol-only manifest或precheck raw替代正式驗收。",
+  "recordKind": "工具回應人工轉存；不是run-check執行結果或測試失敗。"
+}

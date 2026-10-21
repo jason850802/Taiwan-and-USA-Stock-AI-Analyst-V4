@@ -1,0 +1,357 @@
+{
+  "runId": "c-real-20260924-r3",
+  "mode": "real",
+  "verifierSha": "d50048a7d240",
+  "sourceHead": "5b7a4307d7c15f8ec3fe5b588b42aa34bc0faf5c",
+  "entry": "c",
+  "real": {
+    "statuses": [
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-d0",
+        "kind": "quote",
+        "symbol": "2330.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-d1",
+        "kind": "quote",
+        "symbol": "AAPL",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-d2",
+        "kind": "finmind",
+        "symbol": "2330",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b0",
+        "kind": "fx",
+        "symbol": "USDTWD=X",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b1",
+        "kind": "quote",
+        "symbol": "2317.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b2",
+        "kind": "quote",
+        "symbol": "2330.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b3",
+        "kind": "quote",
+        "symbol": "2454.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b4",
+        "kind": "quote",
+        "symbol": "2308.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b5",
+        "kind": "quote",
+        "symbol": "0050.TW",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b6",
+        "kind": "quote",
+        "symbol": "AAPL",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b7",
+        "kind": "quote",
+        "symbol": "NVDA",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b8",
+        "kind": "quote",
+        "symbol": "MSFT",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b9",
+        "kind": "quote",
+        "symbol": "AMZN",
+        "status": 200
+      },
+      {
+        "trace": "c-real-20260924-r3-R-trace-real-b10",
+        "kind": "quote",
+        "symbol": "TSLA",
+        "status": 200
+      }
+    ],
+    "halted": null,
+    "outboundCounts": {
+      "yahoo-cookie": 1,
+      "yahoo-crumb": 1,
+      "yahoo-chart": 13,
+      "finmind": 1
+    },
+    "outboundTotal": 16,
+    "upstreamErrors": 0,
+    "budget": {
+      "browserApi": 14,
+      "yahooOutboundNormal": 15,
+      "yahooOutboundWorst": 78,
+      "finmindOutbound": 1,
+      "outboundWorst": 79
+    },
+    "quote": {
+      "clientTtfb": {
+        "n": 13,
+        "min": 225.7,
+        "median": 302.6,
+        "max": 3928.5
+      },
+      "parentPreFork": {
+        "n": 1,
+        "min": 85.8,
+        "median": 85.8,
+        "max": 85.8
+      },
+      "parentForkCall": {
+        "n": 1,
+        "min": 6.3,
+        "median": 6.3,
+        "max": 6.3
+      },
+      "parentForkToChildReady": {
+        "n": 1,
+        "min": 1976.4,
+        "median": 1976.4,
+        "max": 1976.4
+      },
+      "parentReadyToProxy": {
+        "n": 1,
+        "min": 2.8,
+        "median": 2.8,
+        "max": 2.8
+      },
+      "childBootToPreload": {
+        "n": 1,
+        "min": 25.8,
+        "median": 25.8,
+        "max": 25.8
+      },
+      "childPreloadToDevServer": {
+        "n": 1,
+        "min": 1872.9,
+        "median": 1872.9,
+        "max": 1872.9
+      },
+      "childDevServerToHandlerLoaded": {
+        "n": 1,
+        "min": 57.6,
+        "median": 57.6,
+        "max": 57.6
+      },
+      "childHandlerBeforeFirstOutbound": {
+        "n": 13,
+        "min": 0.4,
+        "median": 0.6,
+        "max": 1.9
+      },
+      "yahooCookie": {
+        "n": 1,
+        "min": 613.3,
+        "median": 613.3,
+        "max": 613.3
+      },
+      "yahooCrumb": {
+        "n": 1,
+        "min": 842.9,
+        "median": 842.9,
+        "max": 842.9
+      },
+      "yahooCookieToCrumbEnd": {
+        "n": 1,
+        "min": 1456.7,
+        "median": 1456.7,
+        "max": 1456.7
+      },
+      "yahooChart": {
+        "n": 13,
+        "min": 201.4,
+        "median": 276.4,
+        "max": 376.9
+      },
+      "childHandlerAfterLastOutbound": {
+        "n": 13,
+        "min": 0.2,
+        "median": 0.3,
+        "max": 1.4
+      },
+      "childHandlerTotal": {
+        "n": 13,
+        "min": 202.2,
+        "median": 277.2,
+        "max": 1837.3
+      },
+      "childServiceTotal": {
+        "n": 13,
+        "min": 205.3,
+        "median": 279.5,
+        "max": 1850.7
+      },
+      "unattributedClientVsParent": {
+        "n": 13,
+        "min": 1.2,
+        "median": 2.3,
+        "max": 6.5
+      },
+      "clientBody": {
+        "n": 13,
+        "min": 0,
+        "median": 0.1,
+        "max": 1.2
+      },
+      "realDispatch": {
+        "n": 13,
+        "min": 10.7,
+        "median": 16.8,
+        "max": 2065
+      },
+      "ownHandshakeCount": 1,
+      "quoteCount": 13,
+      "distinctChildInstances": 1,
+      "startupOnPathCount": 1,
+      "handshakeTotalMs": 1456.7,
+      "coldCount": 1,
+      "coldClientTtfb": {
+        "n": 1,
+        "min": 3928.5,
+        "median": 3928.5,
+        "max": 3928.5
+      },
+      "warmCount": 12,
+      "warmClientTtfb": {
+        "n": 12,
+        "min": 225.7,
+        "median": 301.4,
+        "max": 322.9
+      },
+      "warmParentRecvToProxy": {
+        "n": 12,
+        "min": 10.7,
+        "median": 16.7,
+        "max": 23.5
+      },
+      "warmChildServiceTotal": {
+        "n": 12,
+        "min": 205.3,
+        "median": 278.7,
+        "max": 295.1
+      }
+    },
+    "handshakeLedger": {
+      "instances": [
+        {
+          "instance": "R-trace-real/child-11612.jsonl#0",
+          "quotes": 13,
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 13
+        }
+      ],
+      "totals": {
+        "quotes": 13,
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 13
+      }
+    },
+    "finmind": [
+      {
+        "clientTtfb": 2268.5,
+        "outboundMs": 182,
+        "status": 200
+      }
+    ],
+    "batch": {
+      "firstValidQuoteMs": 241.1,
+      "allValidQuotesFxMs": 1214.5,
+      "peak": 3,
+      "waves": [
+        {
+          "symbol": "USDTWD=X",
+          "queueWaitMs": 0.1,
+          "ttfbMs": 303.8,
+          "endMs": 304
+        },
+        {
+          "symbol": "2317.TW",
+          "queueWaitMs": 0.3,
+          "ttfbMs": 319.8,
+          "endMs": 320.2
+        },
+        {
+          "symbol": "2330.TW",
+          "queueWaitMs": 0.4,
+          "ttfbMs": 240.6,
+          "endMs": 241.1
+        },
+        {
+          "symbol": "2454.TW",
+          "queueWaitMs": 242.7,
+          "ttfbMs": 299.1,
+          "endMs": 541.9
+        },
+        {
+          "symbol": "2308.TW",
+          "queueWaitMs": 305.4,
+          "ttfbMs": 310.3,
+          "endMs": 615.8
+        },
+        {
+          "symbol": "0050.TW",
+          "queueWaitMs": 321.9,
+          "ttfbMs": 300.2,
+          "endMs": 622.2
+        },
+        {
+          "symbol": "AAPL",
+          "queueWaitMs": 543.2,
+          "ttfbMs": 225.7,
+          "endMs": 769.1
+        },
+        {
+          "symbol": "NVDA",
+          "queueWaitMs": 617.3,
+          "ttfbMs": 311.5,
+          "endMs": 928.9
+        },
+        {
+          "symbol": "MSFT",
+          "queueWaitMs": 623.5,
+          "ttfbMs": 302.6,
+          "endMs": 926.2
+        },
+        {
+          "symbol": "AMZN",
+          "queueWaitMs": 770.5,
+          "ttfbMs": 286,
+          "endMs": 1056.6
+        },
+        {
+          "symbol": "TSLA",
+          "queueWaitMs": 928.1,
+          "ttfbMs": 286.3,
+          "endMs": 1214.5
+        }
+      ]
+    }
+  },
+  "thresholdPass": null,
+  "problems": []
+}

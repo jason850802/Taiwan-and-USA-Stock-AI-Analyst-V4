@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T14:25:22.426Z",
+  "runId": "worker1-groundwork-v2",
+  "git": {
+    "head": "f6a98d2dcc96f53f6307372e35b0c040ee58eefe",
+    "branch": "codex/reacceptance-fixes-p1-s1",
+    "trackedChangedPaths": [
+      ".scratch/reacceptance-fixes/HANDOFF.md",
+      ".vercelignore",
+      "components/portfolio/useHoldingPrices.ts",
+      "services/yahoo.loading.test.ts",
+      "services/yahoo.ts",
+      "vite.config.ts"
+    ],
+    "untrackedPathCount": 5973,
+    "untrackedPathListSha256": "0e9b623ec6ba04bc7475f9700aaea46c8e29769d9e052ea1aa06e6140a372e54",
+    "untrackedByRoot": {
+      ".scratch": 5973
+    }
+  },
+  "sourceManifest": {
+    "file": "source-manifest.json",
+    "count": 173,
+    "differsFromDiagnosis": 5
+  },
+  "packageFiles": [
+    {
+      "path": "package.json",
+      "sha256": "6b61234e4e2459df4f8b936d1186921775e9ec267269c6500ec3294632c165b1"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "8e792bcb41a378104ce182ffa741ee7a235f47bfece9198f2858e6a12522d234"
+    }
+  ],
+  "packageDiffNames": [],
+  "runtime": {
+    "nodeVersion": "v26.4.0",
+    "nodeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+    "vercel": null,
+    "vercelNode": null,
+    "platform": "win32",
+    "arch": "x64",
+    "timezone": "Asia/Taipei"
+  },
+  "environment": {
+    "envFilePresent": true,
+    "variableNames": [
+      "ALLOWED_ORIGIN",
+      "CLAUDE_CLI_PATH",
+      "FINMIND_TOKEN",
+      "GEMINI_API_KEY",
+      "GEMINI_MODEL_FAST",
+      "GEMINI_MODEL_THINKING",
+      "LLM_PROVIDER"
+    ],
+    "note": "只保存變數名稱；不保存秘密值或秘密雜湊。"
+  },
+  "tools": {
+    "files": [
+      {
+        "path": ".scratch/performance-fix-20260922/tools/capture-baseline-identity.mjs",
+        "sha256": "c5a051c2809fe323286b95a8a843bc40a9a9f901fb069b26da642b9d4983187b"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/compare-options.mjs",
+        "sha256": "28982a08648589a8ec13dd3d661ac4a777478df1073a84ad3691254cb764ee45"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/holdings-name-blocking.html",
+        "sha256": "2290e24d36bdfcb9ce14ce016f7ce9322d32bc921ae466e36372ff39f7c70c06"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/holdings-name-blocking.jsx",
+        "sha256": "d33b46eb631c194e354f84e3287cbd18b9f0238d4ff0fef30a272a67f112e5b4"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/holdings-name-probe.html",
+        "sha256": "826d7ac09aa16bd61e1305046f213501ba36411370099d3e3294f5c06fec18b4"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/holdings-name-probe.jsx",
+        "sha256": "531b81d63e04312e7ee1cd91768d0263111acf25997d691c2b45d503e32445d9"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/self-test.mjs",
+        "sha256": "71052d2452433f3346ff706e800bb5724b2e930286515c4dde4847f6182fdf7f"
+      },
+      {
+        "path": ".scratch/performance-fix-20260922/tools/verify-holdings-name-blocking.mjs",
+        "sha256": "19ef6227a1d8781f1793c91a1a5fe2b98ac2eba89f1e11c7f24c771ed79e5f24"
+      }
+    ]
+  }
+}

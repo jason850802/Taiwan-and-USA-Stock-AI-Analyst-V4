@@ -1,0 +1,16 @@
+{
+  "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+  "command": [
+    "node",
+    ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+    "main03-life-20261001-r1"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "drift": [],
+  "envRemoved": true,
+  "noInstall": true,
+  "noDeployment": true,
+  "pass": false
+}

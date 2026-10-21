@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T18:00:44.935Z",
+  "baseUrl": "http://127.0.0.1:3020/",
+  "serviceStartId": "e0-v2-start-1",
+  "timeoutMs": 60000,
+  "warmPairs": 5,
+  "rows": [
+    {
+      "route": "/api/yahoo/chart",
+      "status": null,
+      "error": "AbortError: This operation was aborted",
+      "totalMs": 60018.5263,
+      "phase": "cold",
+      "serviceStartId": "e0-v2-start-1",
+      "pairId": null
+    }
+  ]
+}

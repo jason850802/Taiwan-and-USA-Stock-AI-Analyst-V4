@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":30.11,"pid":34780,"entry":"api/gemini-stream.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1890.041,"pid":34780,"seq":1}
+{"ev":"child.listening","t":1906.134,"pid":34780,"seq":1}
+{"ev":"child.listenCall","t":3800.16,"pid":34780,"seq":2}
+{"ev":"child.listening","t":3803.096,"pid":34780,"seq":2}
+{"ev":"child.ready","t":3804.056,"pid":34780}
+{"ev":"child.recv","t":3814.034,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"devProxy","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.recv","t":3827.862,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"handler","method":"POST","route":"/api/gemini-stream"}
+{"ev":"child.reqHeaders","t":3828.75,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4373","x-forwarded-host":"127.0.0.1:4373","x-forwarded-proto":"http","x-forwarded-port":"4373","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4373","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":3834.52,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"handler","status":500}
+{"ev":"child.finish","t":3836.914,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"handler"}
+{"ev":"child.writeHead","t":3845.421,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"devProxy","status":500}
+{"ev":"child.finish","t":3846.703,"pid":34780,"trace":"cancel03-red-20260924-r2-c-cancel","layer":"devProxy"}

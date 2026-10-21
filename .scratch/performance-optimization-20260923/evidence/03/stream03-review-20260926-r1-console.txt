@@ -1,0 +1,256 @@
+b1-desktop 01 open-app：PASS
+b1-desktop 02 search-tw-2317：FAIL（requests）
+b1-desktop 03 interval-tw-week：PASS
+b1-desktop 04 search-us-aapl：PASS
+b1-desktop 05 interval-us-day：PASS
+b1-desktop 06 ai-analysis-fake：PASS
+{"entry":"b1","viewportName":"desktop","errors":[],"streams":[{"requestId":"12252.134","startedAtMs":213412992.637,"method":"POST","route":"/api/gemini-stream","status":200,"failed":{"error":"net::ERR_ABORTED","canceled":true},"finishedAtMs":null,"failedAtMs":213418101.547,"terminalEvents":[{"event":"Network.loadingFailed","timestamp":213418.101547,"errorText":"net::ERR_ABORTED","canceled":true,"type":"Fetch"}],"initiator":{"type":"script","frames":["callGeminiApiStream@/services/gemini.ts:29","analyzeEntryWithGemini@/services/gemini.ts:170","handleRunAnalysis@/App.tsx:299","Button@/components/ui/Button.tsx:20","App@/App.tsx:546"]},"frozenOk":false,"kind":"串流完整送達後的傳輸層取消","ok":true}],"traceCounts":{"child.boot":18,"child.listenCall":36,"child.listening":36,"child.ready":18,"child.fetchStart":35,"child.fetchHeaders":35,"child.fetchBody":26,"child.fakeCli.spawn":1,"child.fakeCli.stdin":1,"child.fakeCli.delta":5,"child.fakeCli.done":1}}
+c-desktop 01 open-app：PASS
+c-desktop 02 search-tw-2317：FAIL（requests）
+c-desktop 03 interval-tw-week：PASS
+c-desktop 04 search-us-aapl：PASS
+c-desktop 05 interval-us-day：PASS
+c-desktop 06 ai-analysis-fake：PASS
+{"entry":"c","viewportName":"desktop","errors":[],"streams":[{"requestId":"28064.134","startedAtMs":213467235.394,"method":"POST","route":"/api/gemini-stream","status":200,"failed":{"error":"net::ERR_ABORTED","canceled":true},"finishedAtMs":null,"failedAtMs":213471337.906,"terminalEvents":[{"event":"Network.loadingFailed","timestamp":213471.337906,"errorText":"net::ERR_ABORTED","canceled":true,"type":"Fetch"}],"initiator":{"type":"script","frames":["callGeminiApiStream@/services/gemini.ts:29","analyzeEntryWithGemini@/services/gemini.ts:170","handleRunAnalysis@/App.tsx:299","Button@/components/ui/Button.tsx:20","App@/App.tsx:546"]},"frozenOk":false,"kind":"串流完整送達後的傳輸層取消","ok":true}],"traceCounts":{"child.boot":4,"child.listenCall":8,"child.listening":8,"child.ready":4,"child.fetchStart":21,"child.fetchHeaders":21,"child.fetchBody":19,"child.fakeCli.spawn":1,"child.fakeCli.stdin":1,"child.fakeCli.delta":5,"child.fakeCli.done":1}}
+c-narrow 01 open-app：PASS
+c-narrow 02 search-tw-2317：FAIL（requests）
+c-narrow 03 interval-tw-week：PASS
+c-narrow 04 search-us-aapl：PASS
+c-narrow 05 interval-us-day：PASS
+c-narrow 06 ai-analysis-fake：PASS
+{"entry":"c","viewportName":"narrow","errors":[],"streams":[{"requestId":"20840.134","startedAtMs":213516135.8,"method":"POST","route":"/api/gemini-stream","status":200,"failed":{"error":"net::ERR_ABORTED","canceled":true},"finishedAtMs":null,"failedAtMs":213520233.054,"terminalEvents":[{"event":"Network.loadingFailed","timestamp":213520.233054,"errorText":"net::ERR_ABORTED","canceled":true,"type":"Fetch"}],"initiator":{"type":"script","frames":["callGeminiApiStream@/services/gemini.ts:29","analyzeEntryWithGemini@/services/gemini.ts:170","handleRunAnalysis@/App.tsx:299","Button@/components/ui/Button.tsx:20","App@/App.tsx:546"]},"frozenOk":false,"kind":"串流完整送達後的傳輸層取消","ok":true}],"traceCounts":{"child.boot":4,"child.listenCall":8,"child.listening":8,"child.ready":4,"child.fetchStart":21,"child.fetchHeaders":21,"child.fetchBody":19,"child.fakeCli.spawn":1,"child.fakeCli.stdin":1,"child.fakeCli.delta":5,"child.fakeCli.done":1}}
+b1-narrow 01 open-app：PASS
+b1-narrow 02 search-tw-2317：FAIL（requests）
+b1-narrow 03 interval-tw-week：PASS
+b1-narrow 04 search-us-aapl：PASS
+b1-narrow 05 interval-us-day：PASS
+b1-narrow 06 ai-analysis-fake：PASS
+{"entry":"b1","viewportName":"narrow","errors":[],"streams":[{"requestId":"16156.134","startedAtMs":213579021.292,"method":"POST","route":"/api/gemini-stream","status":200,"failed":{"error":"net::ERR_ABORTED","canceled":true},"finishedAtMs":null,"failedAtMs":213582517.63,"terminalEvents":[{"event":"Network.loadingFailed","timestamp":213582.51763,"errorText":"net::ERR_ABORTED","canceled":true,"type":"Fetch"}],"initiator":{"type":"script","frames":["callGeminiApiStream@/services/gemini.ts:29","analyzeEntryWithGemini@/services/gemini.ts:170","handleRunAnalysis@/App.tsx:299","Button@/components/ui/Button.tsx:20","App@/App.tsx:546"]},"frozenOk":false,"kind":"串流完整送達後的傳輸層取消","ok":true}],"traceCounts":{"child.boot":18,"child.listenCall":36,"child.listening":36,"child.ready":18,"child.fakeCli.spawn":1,"child.fakeCli.stdin":1,"child.fakeCli.delta":5,"child.fakeCli.done":1,"child.fetchStart":35,"child.fetchHeaders":35,"child.fetchBody":26}}
+{
+  "runId": "stream03-review-20260926-r1",
+  "sourceStable": true,
+  "errors": [],
+  "leaks": 0,
+  "summary": [
+    {
+      "entry": "b1",
+      "viewport": "desktop",
+      "errors": [],
+      "streams": [
+        {
+          "op": "ai-analysis-fake",
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": [
+            {
+              "requestId": "12252.134",
+              "startedAtMs": 213412992.637,
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "status": 200,
+              "failed": {
+                "error": "net::ERR_ABORTED",
+                "canceled": true
+              },
+              "finishedAtMs": null,
+              "failedAtMs": 213418101.547,
+              "terminalEvents": [
+                {
+                  "event": "Network.loadingFailed",
+                  "timestamp": 213418.101547,
+                  "errorText": "net::ERR_ABORTED",
+                  "canceled": true,
+                  "type": "Fetch"
+                }
+              ],
+              "initiator": {
+                "type": "script",
+                "frames": [
+                  "callGeminiApiStream@/services/gemini.ts:29",
+                  "analyzeEntryWithGemini@/services/gemini.ts:170",
+                  "handleRunAnalysis@/App.tsx:299",
+                  "Button@/components/ui/Button.tsx:20",
+                  "App@/App.tsx:546"
+                ]
+              },
+              "frozenOk": false,
+              "kind": "串流完整送達後的傳輸層取消",
+              "ok": true
+            }
+          ]
+        }
+      ],
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "blocked": [],
+      "profileRemoved": true,
+      "closedCleanly": true
+    },
+    {
+      "entry": "c",
+      "viewport": "desktop",
+      "errors": [],
+      "streams": [
+        {
+          "op": "ai-analysis-fake",
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": [
+            {
+              "requestId": "28064.134",
+              "startedAtMs": 213467235.394,
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "status": 200,
+              "failed": {
+                "error": "net::ERR_ABORTED",
+                "canceled": true
+              },
+              "finishedAtMs": null,
+              "failedAtMs": 213471337.906,
+              "terminalEvents": [
+                {
+                  "event": "Network.loadingFailed",
+                  "timestamp": 213471.337906,
+                  "errorText": "net::ERR_ABORTED",
+                  "canceled": true,
+                  "type": "Fetch"
+                }
+              ],
+              "initiator": {
+                "type": "script",
+                "frames": [
+                  "callGeminiApiStream@/services/gemini.ts:29",
+                  "analyzeEntryWithGemini@/services/gemini.ts:170",
+                  "handleRunAnalysis@/App.tsx:299",
+                  "Button@/components/ui/Button.tsx:20",
+                  "App@/App.tsx:546"
+                ]
+              },
+              "frozenOk": false,
+              "kind": "串流完整送達後的傳輸層取消",
+              "ok": true
+            }
+          ]
+        }
+      ],
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "blocked": [],
+      "profileRemoved": true,
+      "closedCleanly": true
+    },
+    {
+      "entry": "c",
+      "viewport": "narrow",
+      "errors": [],
+      "streams": [
+        {
+          "op": "ai-analysis-fake",
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": [
+            {
+              "requestId": "20840.134",
+              "startedAtMs": 213516135.8,
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "status": 200,
+              "failed": {
+                "error": "net::ERR_ABORTED",
+                "canceled": true
+              },
+              "finishedAtMs": null,
+              "failedAtMs": 213520233.054,
+              "terminalEvents": [
+                {
+                  "event": "Network.loadingFailed",
+                  "timestamp": 213520.233054,
+                  "errorText": "net::ERR_ABORTED",
+                  "canceled": true,
+                  "type": "Fetch"
+                }
+              ],
+              "initiator": {
+                "type": "script",
+                "frames": [
+                  "callGeminiApiStream@/services/gemini.ts:29",
+                  "analyzeEntryWithGemini@/services/gemini.ts:170",
+                  "handleRunAnalysis@/App.tsx:299",
+                  "Button@/components/ui/Button.tsx:20",
+                  "App@/App.tsx:546"
+                ]
+              },
+              "frozenOk": false,
+              "kind": "串流完整送達後的傳輸層取消",
+              "ok": true
+            }
+          ]
+        }
+      ],
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "blocked": [],
+      "profileRemoved": true,
+      "closedCleanly": true
+    },
+    {
+      "entry": "b1",
+      "viewport": "narrow",
+      "errors": [],
+      "streams": [
+        {
+          "op": "ai-analysis-fake",
+          "ui": true,
+          "keys": true,
+          "console": true,
+          "requests": [
+            {
+              "requestId": "16156.134",
+              "startedAtMs": 213579021.292,
+              "method": "POST",
+              "route": "/api/gemini-stream",
+              "status": 200,
+              "failed": {
+                "error": "net::ERR_ABORTED",
+                "canceled": true
+              },
+              "finishedAtMs": null,
+              "failedAtMs": 213582517.63,
+              "terminalEvents": [
+                {
+                  "event": "Network.loadingFailed",
+                  "timestamp": 213582.51763,
+                  "errorText": "net::ERR_ABORTED",
+                  "canceled": true,
+                  "type": "Fetch"
+                }
+              ],
+              "initiator": {
+                "type": "script",
+                "frames": [
+                  "callGeminiApiStream@/services/gemini.ts:29",
+                  "analyzeEntryWithGemini@/services/gemini.ts:170",
+                  "handleRunAnalysis@/App.tsx:299",
+                  "Button@/components/ui/Button.tsx:20",
+                  "App@/App.tsx:546"
+                ]
+              },
+              "frozenOk": false,
+              "kind": "串流完整送達後的傳輸層取消",
+              "ok": true
+            }
+          ]
+        }
+      ],
+      "fakeCliSpawn": 1,
+      "fakeCliDone": 1,
+      "blocked": [],
+      "profileRemoved": true,
+      "closedCleanly": true
+    }
+  ]
+}

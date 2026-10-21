@@ -1,0 +1,3061 @@
+{
+  "head": "5c93216e74803c38a5602e995b384316621ed946",
+  "main": "1a9269fe781f4ae5e0d432d1c22b4c77d6cc3bcd",
+  "files": [
+    {
+      "path": ".planning/design/UI-REDESIGN-SPEC.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/design/fundamentals-tab-PLAN-v2.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/design/fundamentals-tab-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/BL-4AB-REPORT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/BL-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/BL-REVIEW.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PHASE-A-D-REPORT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PHASE-A-REVIEW.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PHASE-B-REVIEW.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PHASE-C-REVIEW.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PHASE-D-REVIEW.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/optimization/PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/05-ui-foundation/05-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/06-ui-dashboard/06-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/07-ui-portfolio/07-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/08-portfolio-lots/08-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/09-llm-latency/09-CONTEXT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/09-llm-latency/09-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/09-llm-latency/09-cli-stream-sample.jsonl",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/10-portfolio-history/10-CONTEXT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/10-portfolio-history/10-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/12-arch-deepening/12-CONTEXT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/12-arch-deepening/12-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/phases/12-arch-deepening/T7-FINDINGS.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/prompt-optimization/PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260602-0u1-services-yahoo-ts-k-close-null-regularma/260602-0u1-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260602-0u1-services-yahoo-ts-k-close-null-regularma/260602-0u1-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260602-13g-close-null-finmind-ohlc-k-finmind-regula/260602-13g-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260602-13g-close-null-finmind-ohlc-k-finmind-regula/260602-13g-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260612-pdz-fix-code-review-bugs-timezone-date-bug-h/260612-pdz-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260612-pdz-fix-code-review-bugs-timezone-date-bug-h/260612-pdz-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260612-wyt-calibrate-us-intraday-volume-weight-curv/260612-wyt-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260612-wyt-calibrate-us-intraday-volume-weight-curv/260612-wyt-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260613-3ab-stockchart-performance-refactor-memoize-/260613-3ab-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260613-3ab-stockchart-performance-refactor-memoize-/260613-3ab-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260613-if7-stockchart-drag-to-pan-history-scrolling/260613-if7-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260613-if7-stockchart-drag-to-pan-history-scrolling/260613-if7-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260710-wsq-bug-index-css/260710-wsq-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260710-wsq-bug-index-css/260710-wsq-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260711-unf-k-yahoo-ts/260711-unf-PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/quick/260711-unf-k-yahoo-ts/260711-unf-SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/research/ARCHITECTURE.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/research/FEATURES.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/research/PITFALLS.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/research/STACK.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/research/SUMMARY.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/todos/done/2026-07-08-add-tw-stock-fundamentals-tab.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/todos/pending/2026-07-09-fix-invalid-finmind-otc-dataset-names.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".planning/workspace-hygiene/PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-healthguard-narrow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/before-market-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/health-app.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-layout.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-desktop/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/stream-ui-narrow/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-manifest/verify-stream-ui.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/README.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/after-market-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-healthguard-narrow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/before-market-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/cleanup-stream.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/health-app.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-layout.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-desktop/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/stream-ui-narrow/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/precheck-stream-tag/verify-stream-ui.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-100-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-30-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/profile-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/queue-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/record-cleanup.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-ai-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-ai-return-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-ai-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-ai-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-cache-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-old-success-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-race.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-same-symbol-early-error.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-same-symbol-late-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/desktop-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-ai-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-ai-return-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-ai-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-ai-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-cache-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-old-success-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-race.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-same-symbol-early-error.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-same-symbol-late-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/narrow-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-02/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-green-failure-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-green-force-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-green-switch-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-green-tab-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/desktop-manual-market.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-green-failure-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-green-force-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-green-switch-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-green-tab-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/narrow-manual-market.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-03/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-app-overlap.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-cached-during-force.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-clear.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-force-force.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-force-general-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-force-general-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-form-without-us.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-failure-preserve.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-new-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-old-failure-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-old-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-fx-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-missing-fx-snapshot.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-price-new-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-price-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-price-old-failure-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-price-old-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-price-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-remove-readd.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-remove-tw.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-remove-us.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-snapshot-refresh.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/desktop-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/narrow-green-app-overlap.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-04/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-1-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-10-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/after-load-30-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-1-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-10-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/before-load-30-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/desktop-green-app-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-cache-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-duplicate-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-overlap-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-remove-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-retry-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/green-unmount-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/narrow-green-app-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/startup-before.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-05/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/replay-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/resume-verification.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/seal-results.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-layout.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-desktop/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-batch-supersede-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-cache-hit-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-empty-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-empty-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-health-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-health-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-health-unmount-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-market-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-partial-error-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-paused-frame-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-restart-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-single-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-slow-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-switch-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/app-view-cancel-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/stream-ui-narrow/layout-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/summarize-queue.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/types.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/unchanged.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-cache.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-health.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-replay-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-replay-04.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-replay-05.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-replays.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verified-stream-ui.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-cache.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-docs.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-health.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-keyboard.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-replays.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/verify-stream-ui.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/12/write-report.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/evidence/check.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/01-baseline.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/02-fundamentals-request.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/03-chart-revalidation.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/04-holdings-request.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/05-holdings-queue.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/06-yahoo-handshake.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/07-cache-profile.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/08-cache-bounds.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/09-stream-render.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/10-keyboard-accessibility.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/11-code-cleanup.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/issues/12-final-acceptance.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/optimization-followup/spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/candidate-after-04/identity.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/candidate-after-04/source-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/e0-correct/options.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/e0/launcher-pid.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/e0/options-finmind.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/e0/options.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/groundwork-20260922/identity.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/groundwork-20260922/source-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/groundwork-v2-20260922/identity.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/groundwork-v2-20260922/options-historical-direction.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/groundwork-v2-20260922/source-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/worker1-groundwork-v2/identity.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/worker1-groundwork-v2/source-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/worker1-groundwork/identity.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/01/worker1-groundwork/source-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/02/e1-correct/options.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/02/e1-vercel-only/options.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/02/e1/options-finmind.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/evidence/02/e1/options-yahoo.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/issues/04-decouple-holdings-name.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/capture-baseline-identity.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/holdings-name-blocking.html",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/holdings-name-blocking.jsx",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/holdings-name-probe.html",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/holdings-name-probe.jsx",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/performance-fix-20260922/tools/verify-holdings-name-blocking.mjs",
+      "sha256": "db86548f03c4592cf49cc209014f984bf3d77a901bf9994cc0e98fa80862ef55"
+    },
+    {
+      "path": ".scratch/portfolio-backup/issues/01-backup-download.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/portfolio-backup/issues/02-restore-overwrite.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/portfolio-backup/spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/quote-cache-and-health-retry/RECON.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/quote-cache-and-health-retry/issues/01-latest-price-cache.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/quote-cache-and-health-retry/issues/02-holdings-price-wiring.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/quote-cache-and-health-retry/issues/03-health-recheck.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/quote-cache-and-health-retry/spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/HANDOFF.md",
+      "sha256": "436a181389acb4d21b859c8ee21438ed49cc15582b91c6d718192ede2d9c9900"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/PLAN.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/RESULTS.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/SESSION-PROMPT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/acceptance.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/capture-protection.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/check-protection.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/PRECHECKS.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/artifacts-green-3bd5091a-80cd-40e0-8e8c-259d79dcba84/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/artifacts-red-9bd40403-3f8a-4c3a-905e-55192299406b/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/final-seal.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/queue-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-return-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-ai-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-cache-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-old-success-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-race.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-same-symbol-early-error.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-same-symbol-late-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/desktop-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-return-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-ai-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-cache-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-old-success-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-race.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-same-symbol-early-error.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-same-symbol-late-success.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/raw/narrow-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/02/6858a1b5-236f-45a9-81ce-3648ddcfe2f6/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/4b3aeb9d-224c-40a6-84d6-4050a11af5d4/raw/desktop-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/4b3aeb9d-224c-40a6-84d6-4050a11af5d4/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/4b3aeb9d-224c-40a6-84d6-4050a11af5d4/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-failure-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-force-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-switch-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-green-tab-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/raw/desktop-manual-market.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/53905abc-e488-478f-809c-f7dd76c71020/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-failure-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-force-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-switch-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-green-tab-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/desktop-manual-market.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-failure-retry.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-force-pending.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-stale-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-switch-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-green-tab-return.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/raw/narrow-manual-market.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/03/65fbbede-6874-43b4-943e-7e70e6f232bf/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/artifacts/holdings.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-app-overlap.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-cached-during-force.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-clear.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-force.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-general-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-force-general-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-form-without-us.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-failure-preserve.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-new-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-failure-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-fx-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-missing-fx-snapshot.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-new-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-new-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-failure-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-failure.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-price-old-first.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-readd.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-tw.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-remove-us.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-snapshot-refresh.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/desktop-green-unmount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/raw/narrow-green-app-overlap.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/04/c93f55fa-bd0f-4c62-9751-50af4f401b79/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/artifacts/holdings.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-1-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-10-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/after-load-30-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/desktop-green-app-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-cache-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-duplicate-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-overlap-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-remove-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-retry-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/green-unmount-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/raw/narrow-green-app-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-after/cb61b603-19f5-458f-b8c0-0ef6745af011/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/artifacts/holdings.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-1-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-10-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-0.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-3.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-4.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-5.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/raw/before-load-30-6.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/runs/05-before/9ba190b4-1516-48d5-ac9c-b12748a8ff3f/state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/verified-replays.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-linkage-final-timeline.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-linkage-final.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-linkage-timeline.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-linkage-verified.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-observation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/body-fix-verified.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/precheck-observation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/browser-negative/precheck-verified.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/03-native-start.stderr.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/03-native-start.stdout.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/after-baseline-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/after-review-freeze-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-bundle.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-bundle.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-mother-tests.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-failed-receipt.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-bundle.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-bundle.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-gate-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-final-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-http-artifact-04.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-http-artifact-05-after.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-http-artifact-05-before.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-p11-live-incomplete.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-select-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-select-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-select-04.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-select-05-after.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/body-fix-select-05-before.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/cleanup-after-review-freeze.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/codex-controls-freeze-manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/codex-keyboard-bridge.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/codex-resume-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-baseline-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-baseline-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-baseline-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-body-fix-baseline-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-body-fix-baseline-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/controls-freeze-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/http-artifact-04.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/linkage-final-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p08-failed-http-receipt.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p1-verify-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p11-live-complete-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p11-live-complete.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p11-live-incomplete.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/p11-live-missing-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-gate-blocked.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-gate.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-gate.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/provenance-baseline-summary.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/review-fix-protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/verified-02.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/viewport-response-bd87a5bd-1932-4ece-97f4-826cbcf3edfb.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/checks/viewport-response-e621be44-144d-4bb4-8797-7a2e4a92441a.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/README.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/inspect-source-bytes.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/reproduce-stale-replay.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/diagnosis.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/receipts/round-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/receipts/round-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/round-1-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/round-1-verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/round-2-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-090afddb-1313-4e6f-98e9-33d825aa7d4c/round-2-verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/diagnosis.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/receipts/round-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/receipts/round-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/round-1-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/round-1-verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/round-2-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-e2106667-918c-4b36-b737-d6cfc3edd8e2/round-2-verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/control-removed-residue.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/diagnosis.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/receipts/round-1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/receipts/round-2.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/round-1-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/round-1-verified-replay-03.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/round-2-execution.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/fingerprint-green-c49447c8-686e-4d6a-a785-bf87627fecb0/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/fingerprint-red-7a502f13-b170-437e-a1de-f7aa8f7cc165/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/implementation-handoff.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/protocol-check-0c1d776a-f8ba-47e1-aba9-509cf4bdbb31/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/raw-negative-89cd95d9-92b3-47a4-91fa-9b69f9619591/results.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-fix-freeze-8f3c3c94-c7ff-4d9b-9a72-6fe359e6c424/fingerprints.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-fix-freeze-8f3c3c94-c7ff-4d9b-9a72-6fe359e6c424/result.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-fix-handoff.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-spec-final.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-standards-final.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/review-standards.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/01/setup-b66e4aa6-3c48-461e-8975-ac8bcf48ca08/protection.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/README.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/checks/final-bundle-v1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/checks/final-bundle-v1.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/checks/final-gate-v1.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/checks/final-gate-v1.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/negative/308131bd-6b35-46a3-8997-ea7a4f884400/result/negative.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/review-spec-final.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/review-spec-precheck.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/review-standards-final.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/desktop.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/narrow.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/formal/e9ed50d9-46c5-4d7e-b4a7-8b66391aba61/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/chunk-FNHDBBPC.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/chunk-V5NGVNJA.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/host-DRJBRVRN.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/manifest.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s01-completed-change.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s02-inflight-change.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s03-cost-fallback.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s03-relevant-fields.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s04-lot-composition.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s05-irrelevant-changes.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s06-draft-and-same-value.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s07-market-updates.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s08-batch-partial-invalidation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s09-import-invalidation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s09-partial-preparation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s09-quote-invalidation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s10-aba-generation.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s11-batch-then-single.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s11-manual-rerun.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s11-single-then-batch.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s12-error-stale.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s12-ui-state.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-batch-error-readd.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-batch-readd-after.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-batch-readd-before.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-finished-readd.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-remaining-stock.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-retry-failed-subset.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-single-readd.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-strict-active-replay.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/s13-unmount-remount.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/runs/hook/ff4adbb5-1d8c-468e-8b68-041ad6e54421/startup.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/seals/79d7866b-3313-41ab-b69c-784166a8dd61/seal.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/formal-bootstrap.js",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/formal-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/health-input-cases.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/health-input-host.jsx",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/health-input-server.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/runs/red-completed-change.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/runs/red-inflight-change.json",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/s1-negative.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/s1-run.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/evidence/02/tools/s1-seal.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/issues/01-p1-replay-freshness.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/issues/02-s1-health-input-invalidation.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/manual-market.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/record-cli.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/run-check.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/summarize-gate.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/README.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/key-input-probe.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-adapter-preflight.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-batch.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-contract.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-fingerprint-regression.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-harness-adapter.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-raw-regression.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/replay-structural-regression.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/verify-browser-linkage.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/verify-failed-receipt.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/verify-http-artifact.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/tools/viewport-controls-regression.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/verify-browser-negative.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/reacceptance-fixes/viewport-controls.mjs",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/strict-backlog/findings.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/strict-backlog/issues/01-llm-ts18047.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/strict-backlog/issues/02-llm-cli-behavior-lock.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/strict-backlog/issues/03-eps-label-formatter-ts2322.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/strict-backlog/triage.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/MERGE_MSG.txt",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/REPORT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/RUNBOOK.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/findings.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/issues/01-tax-rate-day-trade.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/issues/02-sell-engine-assess.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/issues/03-sell-modal-ui.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/issues/04-ledger-badge-wrapup.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": ".scratch/tw-day-trade/spec.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/adr/0001-portfolio-backup-restore-overwrite.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/adr/0002-api-lib-test-colocation.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/adr/0003-day-trade-flag-on-sell-action.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/adr/0004-fractional-shares-epsilon.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/agents/issue-tracker.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/agents/triage-labels.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/claude-handoff-findings.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/codex-handoff-findings.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/gate-audit-findings.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/optimization-2026-09-20.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/optimization-current.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/optimization-final.md",
+      "sha256": "MISSING"
+    },
+    {
+      "path": "docs/skill-invocation.md",
+      "sha256": "MISSING"
+    }
+  ],
+  "drift": [],
+  "newUnrelatedPaths": [],
+  "pass": true
+}

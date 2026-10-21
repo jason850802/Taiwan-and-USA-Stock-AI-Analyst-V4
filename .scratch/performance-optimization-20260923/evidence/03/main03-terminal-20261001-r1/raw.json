@@ -1,0 +1,661 @@
+{
+  "runId": "main03-terminal-20261001-r1",
+  "head": "49654f3a1ad49b068c921fdba9545bc3f188e8b2",
+  "startedAt": "2026-10-01T07:53:20.184Z",
+  "tools": {
+    "terminal-03.mjs": "c173e9cf24bb0185b512e019837a8841047fbec3536d27d056baaa3d2c1df3d7",
+    "console-control-03.py": "7421f3b50980dae56bf3a965c9df08ac1a091d5cd5350a3b47bf15c165c0d95d",
+    "daily-dev.mjs": "e1d543a2840cc3d8993fa9819c79c48a7f45b59e4b466a640585f142d2da8d4f",
+    "port-guard-03.mjs": "a4a339ca071bbbccba6ec66b9819e09433f1999034fc585b0c23f68ad85b7742",
+    "service-kit.mjs": "a2df019a7b614ba7179cdd6f16b30a62f0cd44f9e5fb99ea67e57e5fcf46ca08"
+  },
+  "requests": "僅首頁 GET 與 OPTIONS，無 browser／帳本／行情／AI",
+  "scenarios": [
+    {
+      "mode": "ctrl-c",
+      "child": {
+        "pid": 33204,
+        "creationFileTime": "134353148083545562"
+      },
+      "tree": [
+        {
+          "pid": 33204,
+          "parentPid": 27056,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841208354)/"
+        },
+        {
+          "pid": 1284,
+          "parentPid": 33204,
+          "name": "conhost.exe",
+          "creationDate": "/Date(1790841208358)/"
+        },
+        {
+          "pid": 10248,
+          "parentPid": 33204,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841208898)/"
+        },
+        {
+          "pid": 24772,
+          "parentPid": 33204,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841209315)/"
+        },
+        {
+          "pid": 28324,
+          "parentPid": 24772,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841211606)/"
+        },
+        {
+          "pid": 10612,
+          "parentPid": 28324,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841211633)/"
+        },
+        {
+          "pid": 34764,
+          "parentPid": 10612,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790841211852)/"
+        },
+        {
+          "pid": 28352,
+          "parentPid": 24772,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841212689)/"
+        },
+        {
+          "pid": 6972,
+          "parentPid": 24772,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841212696)/"
+        },
+        {
+          "pid": 39084,
+          "parentPid": 24772,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841212701)/"
+        },
+        {
+          "pid": 25452,
+          "parentPid": 24772,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841212705)/"
+        },
+        {
+          "pid": 40664,
+          "parentPid": 24772,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841212710)/"
+        },
+        {
+          "pid": 11608,
+          "parentPid": 33204,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841215696)/"
+        },
+        {
+          "pid": 6324,
+          "parentPid": 11608,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790841215916)/"
+        }
+      ],
+      "http": {
+        "page": 200,
+        "hasRoot": true,
+        "options": 204
+      },
+      "signal": {
+        "event": "ctrl-c",
+        "pid": 33204,
+        "creationVerified": true,
+        "posted": true
+      },
+      "final": {
+        "stateRemoved": true,
+        "ports": [
+          [],
+          []
+        ],
+        "alive": []
+      },
+      "pass": true
+    },
+    {
+      "mode": "close-window",
+      "child": {
+        "pid": 33424,
+        "creationFileTime": "134353148221290331"
+      },
+      "tree": [
+        {
+          "pid": 33424,
+          "parentPid": 22556,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841222129)/"
+        },
+        {
+          "pid": 19780,
+          "parentPid": 33424,
+          "name": "conhost.exe",
+          "creationDate": "/Date(1790841222133)/"
+        },
+        {
+          "pid": 37184,
+          "parentPid": 33424,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841222681)/"
+        },
+        {
+          "pid": 34712,
+          "parentPid": 33424,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841223130)/"
+        },
+        {
+          "pid": 22900,
+          "parentPid": 34712,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841225490)/"
+        },
+        {
+          "pid": 29608,
+          "parentPid": 22900,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841225514)/"
+        },
+        {
+          "pid": 5244,
+          "parentPid": 29608,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790841225731)/"
+        },
+        {
+          "pid": 12264,
+          "parentPid": 34712,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841226514)/"
+        },
+        {
+          "pid": 34924,
+          "parentPid": 34712,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841226522)/"
+        },
+        {
+          "pid": 12784,
+          "parentPid": 34712,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841226527)/"
+        },
+        {
+          "pid": 37032,
+          "parentPid": 34712,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841226533)/"
+        },
+        {
+          "pid": 37960,
+          "parentPid": 34712,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841226537)/"
+        },
+        {
+          "pid": 25732,
+          "parentPid": 33424,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841229524)/"
+        },
+        {
+          "pid": 4720,
+          "parentPid": 25732,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790841229743)/"
+        }
+      ],
+      "http": {
+        "page": 200,
+        "hasRoot": true,
+        "options": 204
+      },
+      "signal": {
+        "event": "close-window",
+        "pid": 33424,
+        "creationVerified": true,
+        "posted": true
+      },
+      "final": {
+        "stateRemoved": true,
+        "ports": [
+          [],
+          []
+        ],
+        "alive": []
+      },
+      "pass": true
+    },
+    {
+      "mode": "rollback-b1",
+      "command": "powershell.exe -File scripts/start-dev.ps1 -Service backend/frontend",
+      "sourceSha256": "469f4bc14bc23f2f3a7aefe4c9ee1aad12885d34ade2593256332d2f28809171",
+      "b1": [
+        {
+          "pid": 568,
+          "creationFileTime": "134353148368385449"
+        },
+        {
+          "pid": 41600,
+          "creationFileTime": "134353148373937484"
+        }
+      ],
+      "tree": [
+        {
+          "pid": 568,
+          "parentPid": 33324,
+          "name": "powershell.exe",
+          "creationDate": "/Date(1790841236838)/"
+        },
+        {
+          "pid": 32376,
+          "parentPid": 568,
+          "name": "conhost.exe",
+          "creationDate": "/Date(1790841236846)/"
+        },
+        {
+          "pid": 25532,
+          "parentPid": 568,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841237178)/"
+        },
+        {
+          "pid": 6680,
+          "parentPid": 25532,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841237303)/"
+        },
+        {
+          "pid": 20468,
+          "parentPid": 6680,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841238128)/"
+        },
+        {
+          "pid": 20820,
+          "parentPid": 20468,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841238169)/"
+        },
+        {
+          "pid": 41600,
+          "parentPid": 27804,
+          "name": "powershell.exe",
+          "creationDate": "/Date(1790841237393)/"
+        },
+        {
+          "pid": 25140,
+          "parentPid": 41600,
+          "name": "conhost.exe",
+          "creationDate": "/Date(1790841237401)/"
+        },
+        {
+          "pid": 5488,
+          "parentPid": 41600,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841237644)/"
+        },
+        {
+          "pid": 2108,
+          "parentPid": 5488,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841237770)/"
+        },
+        {
+          "pid": 18716,
+          "parentPid": 2108,
+          "name": "cmd.exe",
+          "creationDate": "/Date(1790841237934)/"
+        },
+        {
+          "pid": 27460,
+          "parentPid": 18716,
+          "name": "node.exe",
+          "creationDate": "/Date(1790841237955)/"
+        },
+        {
+          "pid": 41356,
+          "parentPid": 27460,
+          "name": "esbuild.exe",
+          "creationDate": "/Date(1790841238176)/"
+        }
+      ],
+      "http": {
+        "page": 200,
+        "hasRoot": true,
+        "options": 204
+      },
+      "signals": [
+        {
+          "event": "ctrl-c",
+          "pid": 568,
+          "creationVerified": true,
+          "posted": true
+        },
+        {
+          "event": "ctrl-c",
+          "pid": 41600,
+          "creationVerified": true,
+          "posted": true
+        }
+      ],
+      "final": {
+        "stateRemoved": true,
+        "ports": [
+          [],
+          []
+        ],
+        "alive": []
+      },
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "sentinel": {
+    "port": 3000,
+    "durationMs": 8000,
+    "holdMs": 3000,
+    "ranMs": 8082,
+    "bound": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "bindErrors": [],
+    "events": [],
+    "visibleTabsNeutralized": 0
+  },
+  "monitor": {
+    "port": 3000,
+    "intervalMs": 300,
+    "checks": 99,
+    "foreign": [],
+    "allowedClientPids": [
+      29748
+    ]
+  },
+  "cleanup": {
+    "killed": [],
+    "stillAlive": [],
+    "known": [
+      {
+        "pid": 33204,
+        "parentPid": 27056,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841208354)/"
+      },
+      {
+        "pid": 1284,
+        "parentPid": 33204,
+        "name": "conhost.exe",
+        "creationDate": "/Date(1790841208358)/"
+      },
+      {
+        "pid": 10248,
+        "parentPid": 33204,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841208898)/"
+      },
+      {
+        "pid": 24772,
+        "parentPid": 33204,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841209315)/"
+      },
+      {
+        "pid": 28324,
+        "parentPid": 24772,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841211606)/"
+      },
+      {
+        "pid": 10612,
+        "parentPid": 28324,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841211633)/"
+      },
+      {
+        "pid": 34764,
+        "parentPid": 10612,
+        "name": "esbuild.exe",
+        "creationDate": "/Date(1790841211852)/"
+      },
+      {
+        "pid": 28352,
+        "parentPid": 24772,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841212689)/"
+      },
+      {
+        "pid": 6972,
+        "parentPid": 24772,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841212696)/"
+      },
+      {
+        "pid": 39084,
+        "parentPid": 24772,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841212701)/"
+      },
+      {
+        "pid": 25452,
+        "parentPid": 24772,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841212705)/"
+      },
+      {
+        "pid": 40664,
+        "parentPid": 24772,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841212710)/"
+      },
+      {
+        "pid": 11608,
+        "parentPid": 33204,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841215696)/"
+      },
+      {
+        "pid": 6324,
+        "parentPid": 11608,
+        "name": "esbuild.exe",
+        "creationDate": "/Date(1790841215916)/"
+      },
+      {
+        "pid": 33424,
+        "parentPid": 22556,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841222129)/"
+      },
+      {
+        "pid": 19780,
+        "parentPid": 33424,
+        "name": "conhost.exe",
+        "creationDate": "/Date(1790841222133)/"
+      },
+      {
+        "pid": 37184,
+        "parentPid": 33424,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841222681)/"
+      },
+      {
+        "pid": 34712,
+        "parentPid": 33424,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841223130)/"
+      },
+      {
+        "pid": 22900,
+        "parentPid": 34712,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841225490)/"
+      },
+      {
+        "pid": 29608,
+        "parentPid": 22900,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841225514)/"
+      },
+      {
+        "pid": 5244,
+        "parentPid": 29608,
+        "name": "esbuild.exe",
+        "creationDate": "/Date(1790841225731)/"
+      },
+      {
+        "pid": 12264,
+        "parentPid": 34712,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841226514)/"
+      },
+      {
+        "pid": 34924,
+        "parentPid": 34712,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841226522)/"
+      },
+      {
+        "pid": 12784,
+        "parentPid": 34712,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841226527)/"
+      },
+      {
+        "pid": 37032,
+        "parentPid": 34712,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841226533)/"
+      },
+      {
+        "pid": 37960,
+        "parentPid": 34712,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841226537)/"
+      },
+      {
+        "pid": 25732,
+        "parentPid": 33424,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841229524)/"
+      },
+      {
+        "pid": 4720,
+        "parentPid": 25732,
+        "name": "esbuild.exe",
+        "creationDate": "/Date(1790841229743)/"
+      },
+      {
+        "pid": 568,
+        "parentPid": 33324,
+        "name": "powershell.exe",
+        "creationDate": "/Date(1790841236838)/"
+      },
+      {
+        "pid": 32376,
+        "parentPid": 568,
+        "name": "conhost.exe",
+        "creationDate": "/Date(1790841236846)/"
+      },
+      {
+        "pid": 41600,
+        "parentPid": 27804,
+        "name": "powershell.exe",
+        "creationDate": "/Date(1790841237393)/"
+      },
+      {
+        "pid": 25140,
+        "parentPid": 41600,
+        "name": "conhost.exe",
+        "creationDate": "/Date(1790841237401)/"
+      },
+      {
+        "pid": 5488,
+        "parentPid": 41600,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841237644)/"
+      },
+      {
+        "pid": 32140,
+        "parentPid": 5488,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841237662)/"
+      },
+      {
+        "pid": 37140,
+        "parentPid": 32140,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841237677)/"
+      },
+      {
+        "pid": 25532,
+        "parentPid": 568,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841237178)/"
+      },
+      {
+        "pid": 6680,
+        "parentPid": 25532,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841237303)/"
+      },
+      {
+        "pid": 20468,
+        "parentPid": 6680,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841238128)/"
+      },
+      {
+        "pid": 20820,
+        "parentPid": 20468,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841238169)/"
+      },
+      {
+        "pid": 2108,
+        "parentPid": 5488,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841237770)/"
+      },
+      {
+        "pid": 18716,
+        "parentPid": 2108,
+        "name": "cmd.exe",
+        "creationDate": "/Date(1790841237934)/"
+      },
+      {
+        "pid": 27460,
+        "parentPid": 18716,
+        "name": "node.exe",
+        "creationDate": "/Date(1790841237955)/"
+      },
+      {
+        "pid": 41356,
+        "parentPid": 27460,
+        "name": "esbuild.exe",
+        "creationDate": "/Date(1790841238176)/"
+      }
+    ]
+  },
+  "final": {
+    "stateRemoved": true,
+    "ports": [
+      [],
+      []
+    ],
+    "alive": []
+  },
+  "finishedAt": "2026-10-01T07:54:01.472Z",
+  "pass": true
+}

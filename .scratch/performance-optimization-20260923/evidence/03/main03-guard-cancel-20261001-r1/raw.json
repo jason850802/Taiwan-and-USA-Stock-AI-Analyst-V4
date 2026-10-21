@@ -1,0 +1,455 @@
+{
+  "runId": "main03-guard-cancel-20261001-r1",
+  "portBase": 3420,
+  "createdAt": "2026-10-01T07:55:03.698Z",
+  "source": {
+    "runnerSha256": "a785a34dd3c817aabb04bc4862a1b2a3d47f182b4e21ecfd81f7f77e1c374c7f",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "handlers": {
+      "api/yahoo/chart.ts": "912fe2df238f49f7bf3e21889bc2488341bca5c5cd6bd2845796cffd6c8f4ff4",
+      "api/yahoo/search.ts": "0d92cece06a918f1d9f9301b416e29f1c97dc300084e01b410b6f706aab1ead4",
+      "api/finmind.ts": "3246a310d01dd67193f088685f8d7e156b719dc6a0e1859dac58a1e95da2914d",
+      "api/gemini.ts": "b14e5a14a70542d34df4e8aa9adf0afdacd679c3e95e0ab14b24996273a8b536",
+      "api/gemini-stream.ts": "16848fffd04d61fd414bfb3982ae58f93ce2c6e209f6a166eb66b0b4201dc966"
+    }
+  },
+  "cases": [
+    {
+      "name": "chart",
+      "port": 3420,
+      "reachedGuard": true,
+      "response": {
+        "trace": "main03-guard-cancel-20261001-r1-chart",
+        "method": "GET",
+        "route": "/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d",
+        "totalMs": 1855.1,
+        "status": 0,
+        "aborted": true,
+        "lines": []
+      },
+      "events": [
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.reqHeaders",
+          "kind": null,
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchStart",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.fetchHeaders",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchBody",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        }
+      ],
+      "errors": [],
+      "service": {
+        "ownedPid": 43076,
+        "listenerPid": 43076,
+        "stopped": true
+      },
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/yahoo/chart.ts",
+            "pid": 28300,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "retirements": 0,
+        "outsideForks": 0,
+        "orphans": []
+      },
+      "traceFiles": 2,
+      "pass": true
+    },
+    {
+      "name": "search",
+      "port": 3421,
+      "reachedGuard": true,
+      "response": {
+        "trace": "main03-guard-cancel-20261001-r1-search",
+        "method": "GET",
+        "route": "/api/yahoo/search?q=AAPL&quotesCount=5",
+        "totalMs": 1954,
+        "status": 0,
+        "aborted": true,
+        "lines": []
+      },
+      "events": [
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.reqHeaders",
+          "kind": null,
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchStart",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.fetchHeaders",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchBody",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        }
+      ],
+      "errors": [],
+      "service": {
+        "ownedPid": 43688,
+        "listenerPid": 43688,
+        "stopped": true
+      },
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/yahoo/search.ts",
+            "pid": 27284,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "retirements": 0,
+        "outsideForks": 0,
+        "orphans": []
+      },
+      "traceFiles": 2,
+      "pass": true
+    },
+    {
+      "name": "finmind",
+      "port": 3422,
+      "reachedGuard": true,
+      "response": {
+        "trace": "main03-guard-cancel-20261001-r1-finmind",
+        "method": "GET",
+        "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330&start_date=2026-09-01",
+        "totalMs": 1915.6,
+        "status": 0,
+        "aborted": true,
+        "lines": []
+      },
+      "events": [
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.reqHeaders",
+          "kind": null,
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchStart",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.fetchHeaders",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchBody",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        }
+      ],
+      "errors": [],
+      "service": {
+        "ownedPid": 29984,
+        "listenerPid": 29984,
+        "stopped": true
+      },
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/finmind.ts",
+            "pid": 33020,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "retirements": 0,
+        "outsideForks": 0,
+        "orphans": []
+      },
+      "traceFiles": 2,
+      "pass": true
+    },
+    {
+      "name": "gemini",
+      "port": 3423,
+      "reachedGuard": true,
+      "response": {
+        "trace": "main03-guard-cancel-20261001-r1-gemini",
+        "method": "POST",
+        "route": "/api/gemini",
+        "totalMs": 1980.1,
+        "status": 0,
+        "aborted": true,
+        "lines": []
+      },
+      "events": [
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.reqHeaders",
+          "kind": null,
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchStart",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.fetchHeaders",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchBody",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        }
+      ],
+      "errors": [],
+      "service": {
+        "ownedPid": 27796,
+        "listenerPid": 27796,
+        "stopped": true
+      },
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/gemini.ts",
+            "pid": 39844,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "retirements": 0,
+        "outsideForks": 0,
+        "orphans": []
+      },
+      "traceFiles": 2,
+      "pass": true
+    },
+    {
+      "name": "stream",
+      "port": 3424,
+      "reachedGuard": true,
+      "response": {
+        "trace": "main03-guard-cancel-20261001-r1-stream",
+        "method": "POST",
+        "route": "/api/gemini-stream",
+        "totalMs": 2015.4,
+        "status": 0,
+        "aborted": true,
+        "lines": []
+      },
+      "events": [
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.recv",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.reqHeaders",
+          "kind": null,
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchStart",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "devProxy",
+          "name": null
+        },
+        {
+          "ev": "child.aborted",
+          "kind": null,
+          "layer": "handler",
+          "name": null
+        },
+        {
+          "ev": "child.fetchHeaders",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        },
+        {
+          "ev": "child.fetchBody",
+          "kind": "ratelimit",
+          "layer": null,
+          "name": null
+        }
+      ],
+      "errors": [],
+      "service": {
+        "ownedPid": 37612,
+        "listenerPid": 37612,
+        "stopped": true
+      },
+      "persistent": {
+        "enabled": true,
+        "takenOver": true,
+        "spawns": [
+          {
+            "entrypoint": "api/gemini-stream.ts",
+            "pid": 32200,
+            "generation": 0
+          }
+        ],
+        "invalidations": 0,
+        "retirements": 0,
+        "outsideForks": 0,
+        "orphans": []
+      },
+      "traceFiles": 2,
+      "pass": true
+    }
+  ],
+  "finishedAt": "2026-10-01T07:55:57.834Z"
+}

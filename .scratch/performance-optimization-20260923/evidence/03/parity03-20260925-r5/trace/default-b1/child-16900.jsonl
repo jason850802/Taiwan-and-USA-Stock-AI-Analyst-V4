@@ -1,0 +1,13 @@
+{"ev":"child.boot","t":28.259,"pid":16900,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1996.68,"pid":16900,"seq":1}
+{"ev":"child.listening","t":2013.265,"pid":16900,"seq":1}
+{"ev":"child.listenCall","t":2077.273,"pid":16900,"seq":2}
+{"ev":"child.listening","t":2078.82,"pid":16900,"seq":2}
+{"ev":"child.ready","t":2079.163,"pid":16900}
+{"ev":"child.recv","t":2082.734,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"devProxy","method":"GET","route":"/api/finmind?dataset=NotADataset"}
+{"ev":"child.recv","t":2097.37,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"handler","method":"GET","route":"/api/finmind?dataset=NotADataset"}
+{"ev":"child.reqHeaders","t":2097.718,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4315","x-forwarded-host":"127.0.0.1:4315","x-forwarded-proto":"http","x-forwarded-port":"4315","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4315","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.writeHead","t":2099.678,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"handler","status":400}
+{"ev":"child.finish","t":2101.039,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"handler"}
+{"ev":"child.writeHead","t":2105.748,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"devProxy","status":400}
+{"ev":"child.finish","t":2106.34,"pid":16900,"trace":"parity03-20260925-r5-default-b1-get-finmind-bad-dataset","layer":"devProxy"}

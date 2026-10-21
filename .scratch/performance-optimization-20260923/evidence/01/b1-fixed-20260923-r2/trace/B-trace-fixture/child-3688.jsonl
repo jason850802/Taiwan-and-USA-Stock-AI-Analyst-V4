@@ -1,0 +1,12 @@
+{"ev":"child.boot","t":22.649,"pid":3688,"entry":"api/finmind.ts","fixture":true,"fixtureDelayMs":50,"ipc":true}
+{"ev":"child.listenCall","t":1707.475,"pid":3688,"seq":1}
+{"ev":"child.listening","t":1722.711,"pid":3688,"seq":1}
+{"ev":"child.listenCall","t":1778.002,"pid":3688,"seq":2}
+{"ev":"child.listening","t":1779.699,"pid":3688,"seq":2}
+{"ev":"child.ready","t":1780.068,"pid":3688}
+{"ev":"child.recv","t":1783.129,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"devProxy","method":"OPTIONS","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.recv","t":1788.97,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"handler","method":"OPTIONS","route":"/api/finmind?dataset=TaiwanStockInfo&data_id=2330"}
+{"ev":"child.writeHead","t":1791.698,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"handler","status":204}
+{"ev":"child.finish","t":1793.283,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"handler"}
+{"ev":"child.writeHead","t":1797.944,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"devProxy","status":204}
+{"ev":"child.finish","t":1798.426,"pid":3688,"trace":"b1-fixed-20260923-r2-B-trace-fixture-o8","layer":"devProxy"}

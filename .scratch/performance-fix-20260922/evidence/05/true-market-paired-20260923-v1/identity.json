@@ -1,0 +1,38 @@
+﻿{
+    "schemaVersion":  1,
+    "capturedAt":  "2026-09-23T01:21:57.5851955+08:00",
+    "head":  "e9fa1a200255d860e3166fad0e2636b49178b894",
+    "beforeCommit":  "444d6b1",
+    "afterSource":  "working-tree",
+    "node":  "v26.4.0",
+    "vite":  "vite/6.4.1 win32-x64 node-v26.4.0",
+    "timezone":  "Taipei Standard Time",
+    "plannedOrder":  [
+                         "before-1",
+                         "after-1",
+                         "before-2",
+                         "after-2",
+                         "before-3",
+                         "after-3"
+                     ],
+    "requestBudget":  {
+                          "perRun":  16,
+                          "plannedMaximum":  96,
+                          "actualBefore1":  11
+                      },
+    "origins":  {
+                    "backend":  "http://127.0.0.1:3001",
+                    "before":  "http://127.0.0.1:4196",
+                    "after":  "http://127.0.0.1:4197",
+                    "capture":  "http://127.0.0.1:4195"
+                },
+    "stopReason":  "before-1 local Vite proxy could not connect to 127.0.0.1:3001 (ECONNREFUSED) and returned HTTP 500 for FX plus all 10 Yahoo quote requests; PLAN stop rule applied before any after or remaining pair",
+    "environmentValuesSaved":  false,
+    "toolAndSourceSha256":  {
+                                "components/portfolio/useHoldingPrices.ts":  "4843287264a5d2a039a87cc121449066d8b5d9ee7b0cdbf03f422df0a1cb6681",
+                                ".scratch/performance-fix-20260922/tools/holdings-true-market-probe.jsx":  "ab787212fe077e8e4cafe8d4cbe82b8e3dd34b4f6ddf2f3dbd2d485f9d228c0d",
+                                ".scratch/performance-fix-20260922/tools/holdings-evidence-capture.mjs":  "d8c6da03d093a1ceec44a32c98f9dea59cb07693cc93040171d29a644615d892",
+                                "services/yahoo.ts":  "f1094fc6efca5fc117c4b6cb9e1f1c593a79c13303f5b8cb4a0af3be49d22de0",
+                                ".scratch/performance-fix-20260922/tools/holdings-true-market-vite.config.mjs":  "6a5b3477e08994e2458052e9b5b56a519bb01f77e1ea982f3f9534ed7c5307cf"
+                            }
+}

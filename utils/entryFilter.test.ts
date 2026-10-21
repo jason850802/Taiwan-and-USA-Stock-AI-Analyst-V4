@@ -109,3 +109,57 @@ describe('runEntryFilter — NO_GO（嚴格遞減序列，解析案例）', () =
     expect(result.confidence).toBeLessThanOrEqual(30);
   });
 });
+
+describe('runEntryFilter — ABC 回檔突破前高後沿 MA5 強攻（6278 類走勢回歸鎖）', () => {
+  // 模擬多頭波段：128 -> 168 -> 前底 154 -> 前高 210 -> ABC 回檔 (191.5 -> 202 -> 179.5，未破前底 154)
+  // 隨後突破 210 一路沿 MA5 噴至 314.5（收 298.5，當日小回檔收黑、MA20 乖離 > 18%）：
+  // 1. 趨勢應收斂 ABC 次級波並判為「多頭」（頭頭高 210→314.5 + 底底高 154→179.5），不可誤判為「盤整」。
+  // 2. 位置應優先警示「乖離過大/高檔」（戒律 8），而非「盤整區內等突破（戒律 6）」。
+  // 3. 決策應為「WAIT」（多頭高檔拉回等待買訊），而非因誤判盤整變成「NO_GO」。
+  const series = [
+    150, 145, 140, 135, 128,                      // 波段大底 128
+    136, 148, 160, 168, 160, 154,                 // 第一波高 168 -> 回檔前底 154
+    165, 180, 195, 210,                           // 第二波高 210
+    200, 191.5, 202, 188, 179.5,                  // ABC 回檔 (191.5 -> 202 -> 179.5)
+    188, 198, 212, 225, 240, 260, 285, 303, 298.5, // 突破 210 後沿 MA5 急行至 314.5 收 298.5
+  ];
+  const data = makeBars(series);
+  // 補上簡化 5 日均線讓 MA5 轉折波生效
+  for (let i = 4; i < data.length; i++) {
+    const sum5 = data.slice(i - 4, i + 1).reduce((s, b) => s + b.close, 0);
+    data[i].ma5 = +(sum5 / 5).toFixed(2);
+  }
+  const lastIdx = data.length - 1;
+  Object.assign(data[lastIdx], {
+    open: 303,
+    high: 314.5,
+    low: 292.5,
+    close: 298.5,
+    ma5: 285.6,
+    ma10: 259.75,
+    ma20: 232.0,
+    ma60: 194.06,
+    ma5Dir: 'up',
+    ma10Dir: 'up',
+    ma20Dir: 'up',
+    k: 84.83,
+    d: 86.19,
+    macdHist: 7.58,
+  });
+
+  const result = runEntryFilter('6278.TW', data);
+
+  it('日線趨勢判為「多頭」（收斂 ABC 次級波後頭頭高＋底底高），不誤判為盤整', () => {
+    expect(result.trend).toBe('多頭');
+    expect(result.trendReason).toContain('頭頭高');
+    expect(result.trendReason).toContain('底底高');
+    expect(result.preceptHits.some(p => p.no === 6)).toBe(false);
+  });
+
+  it('步驟2位置判為高檔乖離警戒，且決策為 WAIT（非 NO_GO）', () => {
+    expect(result.steps[1].status).toBe('warn');
+    expect(result.steps[1].verdict).toContain('高檔');
+    expect(result.decision).toBe('WAIT');
+  });
+});
+

@@ -1,0 +1,11 @@
+{
+  "createdAt": "2026-10-01T01:33:31.586Z",
+  "sealSha256": "61f4f2da51d626678b73b305b0ead2153d61ded29f462d375a6f17b90b25a995",
+  "files": 112,
+  "textFiles": 56,
+  "actualSecretValueCount": 3,
+  "secretHits": 0,
+  "brokenNewReportLinks": 0,
+  "sources": 187,
+  "sourceDrift": 0
+}

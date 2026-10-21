@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "startedAt": "2026-09-21T09:15:30.048Z",
+  "completedAt": "2026-09-21T09:16:35.452Z",
+  "node": "v26.4.0",
+  "command": [
+    "node",
+    "scripts/run-gate.mjs"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "log": ".scratch/reacceptance-fixes/evidence/01/checks/baseline-gate.txt",
+  "logSha256": "81c92a6aa33ab72b2c47c370cf794a44530eb75952dbe7de24fb541ebab964b8",
+  "tests": 3188,
+  "testFiles": 185,
+  "fullGate": true,
+  "secretScanDegraded": false
+}

@@ -1,0 +1,14 @@
+{"ev":"child.boot","t":121.426,"pid":28300,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1521.931,"pid":28300,"seq":1}
+{"ev":"child.listening","t":1538.738,"pid":28300,"seq":1}
+{"ev":"child.listenCall","t":1600.046,"pid":28300,"seq":2}
+{"ev":"child.listening","t":1601.77,"pid":28300,"seq":2}
+{"ev":"child.ready","t":1602.256,"pid":28300}
+{"ev":"child.recv","t":1610.515,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d"}
+{"ev":"child.recv","t":1617.263,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","layer":"handler","method":"GET","route":"/api/yahoo/chart?symbol=AMZN&interval=1d&range=5d"}
+{"ev":"child.reqHeaders","t":1617.611,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","names":["connection","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:3420","x-forwarded-host":"127.0.0.1:3420","x-forwarded-proto":"http","x-forwarded-port":"3420","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:3420","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":1619.272,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","seq":1,"kind":"ratelimit","pipeline":true}
+{"ev":"child.aborted","t":1745.58,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","layer":"devProxy"}
+{"ev":"child.aborted","t":1747.163,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","layer":"handler"}
+{"ev":"child.fetchHeaders","t":4621.672,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","seq":1,"kind":"ratelimit","pipeline":true,"status":200,"fixture":true,"fixtureWaitMs":3000.824,"scripted":true}
+{"ev":"child.fetchBody","t":4622.833,"pid":28300,"trace":"main03-guard-cancel-20261001-r1-chart","seq":1,"kind":"ratelimit","pipeline":true}

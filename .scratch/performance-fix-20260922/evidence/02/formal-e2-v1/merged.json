@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-22T16:25:28.690Z",
+  "inputs": [
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\evidence\\02\\formal-e2-v1\\start-1.json",
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\performance-fix-20260922\\evidence\\02\\formal-e2-v1\\start-2.json"
+  ],
+  "serviceStartIds": [
+    "e2-start-1",
+    "e2-start-2"
+  ],
+  "rows": [
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1275.1749,
+      "phase": "cold",
+      "serviceStartId": "e2-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1114.6783,
+      "phase": "cold",
+      "serviceStartId": "e2-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1108.3769000000002,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1142.1627000000003,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1101.4767000000002,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1138.3167999999996,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1137.6456000000007,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1123.393,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1120.6787999999997,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1164.1965999999993,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1118.1361000000015,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-5"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1139.8055000000004,
+      "phase": "warm",
+      "serviceStartId": "e2-start-1",
+      "pairId": "e2-start-1-warm-5"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1382.0158999999999,
+      "phase": "cold",
+      "serviceStartId": "e2-start-2",
+      "pairId": null
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1209.8455000000001,
+      "phase": "cold",
+      "serviceStartId": "e2-start-2",
+      "pairId": null
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1204.3261000000002,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1220.6829999999995,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1177.2508000000007,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1227.8235999999997,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1250.894400000001,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1229.6820000000007,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1134.6550000000007,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1216.6466999999993,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1168.339,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-5"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1220.6939999999995,
+      "phase": "warm",
+      "serviceStartId": "e2-start-2",
+      "pairId": "e2-start-2-warm-5"
+    }
+  ]
+}

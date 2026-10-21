@@ -1,0 +1,39 @@
+{
+  "reason": "額外靜態守衛誤要求候選存在 --settings；實際 before／after 均為零，與 rollback 無關。保留紅燈，不追認為通過。",
+  "originalCommands": "commands-stage3.json",
+  "candidateRestored": true,
+  "commands": [
+    {
+      "at": "2026-10-01T02:09:47.027Z",
+      "args": [
+        "revert",
+        "--no-edit",
+        "a66ca0e321d89ee4b0363befba58949ea51e464f",
+        "300301bab2ba81f8b13987e97cce41551d40fd2e"
+      ],
+      "exit": 0,
+      "stdout": "[detached HEAD 38e59a6] Revert \"演練：平台取消設定與 03 初始產品取消一併撤回\"\n Date: Thu Oct 1 10:09:45 2026 +0800\n 13 files changed, 482 insertions(+), 127 deletions(-)\n create mode 100644 api/_lib/clientAbort.ts\n create mode 100644 api/_lib/http.cancel.test.ts\n[detached HEAD 0a69502] Reapply \"Vercel 函式開啟請求取消，使用者離開時後端停止呼叫 AI 與行情\"\n Date: Thu Oct 1 10:09:46 2026 +0800\n 2 files changed, 76 insertions(+)\n create mode 100644 utils/vercelConfigGuard.test.ts\n create mode 100644 vercel.json\n",
+      "stderr": "warning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\n"
+    },
+    {
+      "at": "2026-10-01T02:09:47.060Z",
+      "args": [
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "stdout": "f4b8a2c2eff8b47b88c69a27a4b4a2f901be2ee0\n",
+      "stderr": ""
+    },
+    {
+      "at": "2026-10-01T02:09:47.155Z",
+      "args": [
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "warning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\nwarning: unable to access 'C:\\Users\\jason/.config/git/ignore': Permission denied\n"
+    }
+  ]
+}

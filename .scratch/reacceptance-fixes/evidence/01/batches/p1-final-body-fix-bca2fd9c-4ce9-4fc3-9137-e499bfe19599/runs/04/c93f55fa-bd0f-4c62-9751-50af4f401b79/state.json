@@ -1,0 +1,112 @@
+{
+  "schema": "p1-replay-v1",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "group": "04",
+  "runId": "c93f55fa-bd0f-4c62-9751-50af4f401b79",
+  "status": "complete",
+  "cases": {
+    "desktop-green-price-new-first.json": {
+      "sha256": "cf6c9be0d4e013a611cf75c6737fc2c5be9d3f6dc2acb6f1d5e094b0d0c21d48",
+      "passed": true
+    },
+    "desktop-green-price-old-first.json": {
+      "sha256": "16d4d18bfbb326607d64b6fb656f38d5828cf0461cfa829dd9e950759d2bef82",
+      "passed": true
+    },
+    "desktop-green-price-new-failure.json": {
+      "sha256": "afe9f3bbc38f259b4e12e5b405656f8c9812a558c9a12522b32caeed29552f7c",
+      "passed": true
+    },
+    "desktop-green-price-old-failure.json": {
+      "sha256": "b6dfcbfeb5672f14796e9baab395dc73321c314686f2f46e4ad39bc236235d13",
+      "passed": true
+    },
+    "desktop-green-price-old-failure-first.json": {
+      "sha256": "22043dec118af7f2a927b4055e7e314a15892a12f034d221177fe792edbf869c",
+      "passed": true
+    },
+    "desktop-green-force-general-old-first.json": {
+      "sha256": "a9d16022d7ada1f603e5e1ced91836078aa8b46af00ba199ffbcc2be6c7a5f7d",
+      "passed": true
+    },
+    "desktop-green-force-general-new-first.json": {
+      "sha256": "9cd2277402b48439015b7bdab31f02ed2c37edfb08a47059a318b2fb7886c3f4",
+      "passed": true
+    },
+    "desktop-green-fx-new-first.json": {
+      "sha256": "f8e1496f652aae95eec24a743e344906e9145b306a6f92238afb7edfde1bc37e",
+      "passed": true
+    },
+    "desktop-green-fx-old-first.json": {
+      "sha256": "9bd78f80291569327fc966ff2b6801feff083d86c74d55c15c0211cb1aae4aa3",
+      "passed": true
+    },
+    "desktop-green-fx-new-failure.json": {
+      "sha256": "090b12d5dfbda93b1b8a555d3b5a55aeff5a9cd7769b04fca096c28b2420bb02",
+      "passed": true
+    },
+    "desktop-green-fx-old-failure.json": {
+      "sha256": "29fc16e042a8109b0c4facb8cdd5ee26b054919d890de8635c6de10011002be5",
+      "passed": true
+    },
+    "desktop-green-fx-old-failure-first.json": {
+      "sha256": "408c652b8c87c07b7b9b9445e7273e3ce9dc22687a09c372a318372cbd2006d8",
+      "passed": true
+    },
+    "desktop-green-cached-during-force.json": {
+      "sha256": "9968f5ded7ebe3abbf9bd6062f297a0d97e5bc8118b40031cb0545eb90532491",
+      "passed": true
+    },
+    "desktop-green-force-force.json": {
+      "sha256": "f40167baa2d00da4139237ced95d32ab936e720eb5f0d0533f24e975fdad6456",
+      "passed": true
+    },
+    "desktop-green-remove-us.json": {
+      "sha256": "2bb5cadb4c16630e80b7ca86a6a955e1d115241ad6e460a5fe968c9804b84b92",
+      "passed": true
+    },
+    "desktop-green-remove-tw.json": {
+      "sha256": "dcf94174d8af0baa8d40fe2acd2927c769087193cdc3b638944b2393167d78dc",
+      "passed": true
+    },
+    "desktop-green-clear.json": {
+      "sha256": "f9117d2de8b83472a9a7488b43ca08468e0f14da14ace8e3c5d94be7d5c4eb1b",
+      "passed": true
+    },
+    "desktop-green-unmount.json": {
+      "sha256": "c8150cc3f166c932d2c4d401e92e2cd855bc8591304e0a3d1103d9015facae05",
+      "passed": true
+    },
+    "desktop-green-remove-readd.json": {
+      "sha256": "8290125c7f1b6b5fdc3eea5fd9723fde790d68004354392cbed06c1b209ce855",
+      "passed": true
+    },
+    "desktop-green-fx-failure-preserve.json": {
+      "sha256": "2530b46e228b8ca3485ca994a19e797d243599525459f2ea57e3dcd9cb4b041a",
+      "passed": true
+    },
+    "desktop-green-missing-fx-snapshot.json": {
+      "sha256": "8da2438556c52b53932f9e2f90814cfdf7f871730eb854860b321e74b0e4951e",
+      "passed": true
+    },
+    "desktop-green-form-without-us.json": {
+      "sha256": "ced7fd87fc2a30a110654dfde9b28d4c5ce51d03e9a809f2b2ca8e7814a45605",
+      "passed": true
+    },
+    "desktop-green-snapshot-refresh.json": {
+      "sha256": "6cf18df4228a474b9ddaf31f53a03b1f82fedc71c471dfe31b9cd59de8e0bbfb",
+      "passed": true
+    },
+    "desktop-green-app-overlap.json": {
+      "sha256": "c1ab7d455f77b2cf3db4754f7139e7a883cbbaada7a0b4825d62d25466b47e29",
+      "passed": true
+    },
+    "narrow-green-app-overlap.json": {
+      "sha256": "6259773894d9ca03b6c4aff6d57932788a05e1f2feb5da08bf29f44707eb028c",
+      "passed": true
+    }
+  },
+  "artifactHashes": {
+    "holdings.js": "ba12d8669da5008336585c8be45e10f9b28a0d9492809efd3a7cbb0cb5a9e851"
+  }
+}

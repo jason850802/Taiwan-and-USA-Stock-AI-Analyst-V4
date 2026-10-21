@@ -1,0 +1,1293 @@
+{
+  "runId": "parity03-20260925-r4",
+  "toolSha": "21c2cfe5e3256fa45ffc8d73760a6a91e86004eddc84a3b41f715559181dbe94",
+  "cases": 59,
+  "equal": 59,
+  "mismatches": [],
+  "knownDifferences": [
+    {
+      "config": "ratelimit",
+      "id": "rl-after-block",
+      "kind": "ephemeral-block",
+      "b1": {
+        "status": 200,
+        "ratelimitCalls": 1,
+        "outbound": 4
+      },
+      "c": {
+        "status": 429,
+        "ratelimitCalls": 0,
+        "outbound": 0
+      },
+      "observed": "blocked-locally"
+    }
+  ],
+  "cancel": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "b1": "provider-completed",
+      "c": "provider-killed-after-1",
+      "residual": null
+    }
+  ],
+  "streamTiming": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "b1": {
+        "firstLineMs": 2373.5,
+        "lastLineMs": 3925.9
+      },
+      "c": {
+        "firstLineMs": 360.6,
+        "lastLineMs": 1912.6
+      }
+    }
+  ],
+  "handshake": [
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "b1": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "b1": {
+        "cookie": 3,
+        "crumb": 3,
+        "chart": 3
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 3
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-concurrent-401",
+      "b1": {
+        "cookie": 6,
+        "crumb": 6,
+        "chart": 6
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 6
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-stale-generation-401",
+      "b1": {
+        "cookie": 5,
+        "crumb": 5,
+        "chart": 5
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 5
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    }
+  ],
+  "results": [
+    {
+      "config": "default",
+      "id": "options-chart-allowed",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-chart-evil-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-finmind",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-gemini-stream",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-referer-allowed",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-no-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-origin",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-referer",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-bad-range",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-missing-symbol",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-repeated-symbol",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-encoded-fx",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-lowercase",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-chart",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-not-found",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-ok",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-dataset",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-date",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-limit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-500",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-search-ok",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "unknown-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "private-lib-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "ts-extension-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "trailing-slash-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-gemini",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-body",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-json",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-fake-cli",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-is-error",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "streamTiming": {
+        "b1": {
+          "firstLineMs": 2373.5,
+          "lastLineMs": 3925.9
+        },
+        "c": {
+          "firstLineMs": 360.6,
+          "lastLineMs": 1912.6
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-mid",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-is-error-first",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-auth-error",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-no-result",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-spawn-error",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "cancel": {
+        "b1": "provider-completed",
+        "c": "provider-killed-after-1"
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-large-body",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "concurrent-isolation",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-concurrent-401",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 6,
+          "crumb": 6,
+          "chart": 6
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 6
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-stale-generation-401",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 5,
+          "crumb": 5,
+          "chart": 5
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 5
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      },
+      "residual": {
+        "b1": 1,
+        "c": 0
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-missing",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-wrong",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-correct",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-options-short-circuit",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-under",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-ai-under",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-unavailable",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-over",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "ratelimit",
+      "id": "rl-after-block",
+      "equal": true,
+      "diffs": [],
+      "handshake": null,
+      "knownDifference": {
+        "kind": "ephemeral-block",
+        "b1": {
+          "status": 200,
+          "ratelimitCalls": 1,
+          "outbound": 4
+        },
+        "c": {
+          "status": 429,
+          "ratelimitCalls": 0,
+          "outbound": 0
+        },
+        "observed": "blocked-locally"
+      }
+    }
+  ],
+  "problems": [
+    "run 期間 HEAD 改變",
+    "run 期間產品樹改變"
+  ]
+}

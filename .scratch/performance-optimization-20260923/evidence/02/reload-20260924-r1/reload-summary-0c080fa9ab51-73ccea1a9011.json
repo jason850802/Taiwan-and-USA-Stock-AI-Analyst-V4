@@ -1,0 +1,225 @@
+{
+  "runId": "reload-20260924-r1",
+  "steps": [
+    {
+      "step": "baseline",
+      "invalidated": null,
+      "expect": null,
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        },
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 200,
+          "c": 200,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "edit-lib-message",
+      "invalidated": true,
+      "expect": {
+        "newMessageInB1": true,
+        "newMessageInC": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 400,
+          "c": 400,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "syntax-error",
+      "invalidated": true,
+      "expect": {
+        "b1Failed": true,
+        "cFailed": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 500,
+          "c": 500,
+          "same": true
+        }
+      ]
+    },
+    {
+      "step": "restore-syntax",
+      "invalidated": false,
+      "expect": {
+        "b1Ok": false,
+        "cOk": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 0,
+          "c": 200,
+          "same": false
+        }
+      ]
+    },
+    {
+      "step": "env-add-secret",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 0,
+        "cStatus": 403
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 0,
+          "c": 403,
+          "same": false
+        }
+      ]
+    },
+    {
+      "step": "env-restore",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 0,
+        "cStatus": 200
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d",
+          "b1": 0,
+          "c": 200,
+          "same": false
+        }
+      ]
+    },
+    {
+      "step": "delete-route",
+      "invalidated": true,
+      "expect": {
+        "b1Status": 0,
+        "cStatus": 404
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 0,
+          "c": 404,
+          "same": false
+        }
+      ]
+    },
+    {
+      "step": "restore-route",
+      "invalidated": false,
+      "expect": {
+        "b1Ok": false,
+        "cOk": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/search?q=2330",
+          "b1": 0,
+          "c": 200,
+          "same": false
+        }
+      ]
+    },
+    {
+      "step": "restore-lib",
+      "invalidated": true,
+      "expect": {
+        "markerGoneB1": true,
+        "markerGoneC": true
+      },
+      "probes": [
+        {
+          "route": "/api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y",
+          "b1": 0,
+          "c": 400,
+          "same": false
+        }
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 31284,
+      "generation": 1
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 10600,
+      "generation": 1
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 19652,
+      "generation": 2
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 16336,
+      "generation": 3
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 21960,
+      "generation": 4
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 15964,
+      "generation": 5
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 25672,
+      "generation": 6
+    },
+    {
+      "entrypoint": "api/yahoo/search.ts",
+      "pid": 28940,
+      "generation": 8
+    },
+    {
+      "entrypoint": "api/yahoo/chart.ts",
+      "pid": 18052,
+      "generation": 9
+    }
+  ],
+  "invalidations": 6,
+  "cleanup": {
+    "restored": true,
+    "apiStatusClean": true,
+    "envRemoved": true,
+    "vercelLinkRemoved": true
+  },
+  "diffs": [
+    "restore-syntax：候選沒有偵測到變更",
+    "restore-syntax /api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d：B1 0 ≠ 候選 200",
+    "restore-syntax：還原後兩邊恢復 不成立",
+    "env-add-secret /api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d：B1 0 ≠ 候選 403",
+    "env-restore /api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d：B1 0 ≠ 候選 200",
+    "delete-route /api/yahoo/search?q=2330：B1 0 ≠ 候選 404",
+    "restore-route：候選沒有偵測到變更",
+    "restore-route /api/yahoo/search?q=2330：B1 0 ≠ 候選 200",
+    "restore-route：路由還原後兩邊恢復 不成立",
+    "restore-lib /api/yahoo/chart?symbol=2330.TW&interval=1d&range=1y：B1 0 ≠ 候選 400"
+  ],
+  "problems": []
+}

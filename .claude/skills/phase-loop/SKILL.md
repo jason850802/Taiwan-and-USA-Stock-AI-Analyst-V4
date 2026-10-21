@@ -11,7 +11,7 @@ description: 本專案的三角開發迴圈playbook：Fable/主模型寫 phase �
 
 ## 階段 1：規劃（寫 CONTEXT + PLAN）
 
-產物：`.planning/phases/NN-slug/NN-CONTEXT.md`（設計決策）＋ `NN-PLAN.md`（執行計畫）。
+產物：`.scratch/<feature>/spec.md`（設計決策）＋ `.scratch/<feature>/issues/NN-<slug>.md`（執行票，內含下列 PLAN 必備結構）。`.planning/` 是唯讀歷史檔案庫，不寫入。
 規劃前先派 Sonnet subagent 偵查現況（讀 code/需求/研究檔，只收「事實＋檔案:行號」），
 規劃者只做決策不下場讀大量檔案。
 
@@ -41,7 +41,7 @@ PLAN.md 的必備結構（7 輪實戰驗證過的格式，勿省略）：
 ```
 【任務】執行 <phase 名稱>。
 1. 確認在 git 分支 phase/<slug>。
-2. 完整讀 .planning/phases/NN-slug/NN-PLAN.md，「給冷啟動執行者的前提」逐條遵守，特別是：
+2. 完整讀 .scratch/<feature>/issues/NN-<slug>.md（及 spec.md），「給冷啟動執行者的前提」逐條遵守，特別是：
    - <本期 2-4 條最要命的鐵則，如雷區 diff 形狀、邏輯零變化、token 不進前端>
 3. Task 1→N 一任務一 commit，只動各任務 <files>；每步 npx.cmd tsc --noEmit 0 錯誤。
 4. 做到 Task <human-verify> 停下回報：commit hash＋tsc/build 結果＋<本期特定回報項>。

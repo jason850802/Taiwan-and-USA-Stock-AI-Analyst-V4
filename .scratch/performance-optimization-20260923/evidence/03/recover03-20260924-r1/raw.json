@@ -1,0 +1,23 @@
+{
+  "runId": "recover03-20260924-r1",
+  "createdAt": "2026-09-24T10:26:12.429Z",
+  "port": 4670,
+  "source": {
+    "head": "93cd7ad262bd654c9ec68f1124c160df77a71f87",
+    "runnerSha256": "348e86e4919ebfc14c1ba53ebb337e7d83b13334fb363d0bb152dea8a77af27c",
+    "dailySha256": "ad0dec93e48594e2db296bec4a2a55f087ad433acaf11563a426e7e4c980e245",
+    "versions": {
+      "node": "v26.4.0",
+      "vercel": "55.0.0",
+      "vercelNode": "5.8.23",
+      "tsx": "4.21.0",
+      "vite": "6.4.1"
+    }
+  },
+  "owned": null,
+  "reusedPid": null,
+  "errors": [
+    "本工具 listener 身分不成立"
+  ],
+  "finishedAt": "2026-09-24T10:26:13.920Z"
+}

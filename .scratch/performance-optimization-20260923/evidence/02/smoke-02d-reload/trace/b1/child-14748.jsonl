@@ -1,0 +1,5 @@
+{"ev":"child.boot","t":25.232,"pid":14748,"entry":"api/yahoo/chart.ts","fixture":true,"fixtureDelayMs":10,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1751.711,"pid":14748,"seq":1}
+{"ev":"child.listening","t":1768.544,"pid":14748,"seq":1}
+{"ev":"child.ready","t":1830.041,"pid":14748}
+{"ev":"child.recv","t":1833.26,"pid":14748,"trace":"smoke-02d-reload-b1-5","layer":"devProxy","method":"GET","route":"/api/yahoo/chart?symbol=2330.TW&interval=1d&range=5d"}

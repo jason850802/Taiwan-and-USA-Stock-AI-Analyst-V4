@@ -1,0 +1,107 @@
+{
+  "runId": "route03-gemini-20260924-r2",
+  "routeKind": "gemini",
+  "port": 4513,
+  "createdAt": "2026-09-24T05:29:03.189Z",
+  "source": {
+    "runnerSha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "files": {
+      "api/gemini.ts": "bb99ba36e92deeec6cacde7cb6c90a823811d8cebc9331847e076ab0b74e3552",
+      "api/_lib/llm.ts": "6a872672cc5815e179fdabfc85d67fd6e18ef0e3854d06b59d151e3fde24e400",
+      "api/_lib/http.ts": "e2f6e703de46cd0af46ae7e15f5d4e1b23c673c730c51a0054eb2ddd78bab203"
+    }
+  },
+  "reachedTarget": true,
+  "response": {
+    "trace": "route03-gemini-20260924-r2-cancel",
+    "method": "POST",
+    "route": "/api/gemini",
+    "totalMs": 2186.6,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.spawn",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.stdin",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fakeCli.kill",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": 0
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 31576,
+    "listenerPid": 31576,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/gemini.ts",
+        "pid": 37512,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T05:29:12.986Z"
+}

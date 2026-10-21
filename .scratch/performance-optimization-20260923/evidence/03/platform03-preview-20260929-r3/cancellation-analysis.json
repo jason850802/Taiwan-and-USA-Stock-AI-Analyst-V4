@@ -1,0 +1,94 @@
+{
+  "requestRows": 12,
+  "eventCount": 74,
+  "cancelEvents": [
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "event": "handler-start",
+      "atMs": 31782.315015
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "streaming": true,
+      "deltas": 5,
+      "intervalMs": 600,
+      "mode": "success",
+      "event": "child.fakeCli.spawn",
+      "atMs": 31782.95514
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "promptBytes": 12,
+      "event": "child.fakeCli.stdin",
+      "atMs": 31783.156651
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "index": 1,
+      "event": "child.fakeCli.delta",
+      "atMs": 32383.810655
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "index": 2,
+      "event": "child.fakeCli.delta",
+      "atMs": 32984.522138
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "index": 3,
+      "event": "child.fakeCli.delta",
+      "atMs": 33585.683054
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "index": 4,
+      "event": "child.fakeCli.delta",
+      "atMs": 34185.911493
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "index": 5,
+      "event": "child.fakeCli.delta",
+      "atMs": 34786.023635
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "emitted": 5,
+      "mode": "success",
+      "event": "child.fakeCli.done",
+      "atMs": 35386.473593
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "event": "handler-return",
+      "atMs": 35387.222697
+    },
+    {
+      "marker": "perf03-platform",
+      "trace": "platform03-preview-20260929-r3-11",
+      "event": "response-finish",
+      "atMs": 35387.435595
+    },
+    {
+      "marker": "perf03-platform",
+      "finished": true,
+      "trace": "platform03-preview-20260929-r3-11",
+      "event": "response-close",
+      "atMs": 35387.64667
+    }
+  ],
+  "clientCanceledAfterFirstDelta": true,
+  "serverKillObserved": false,
+  "verdict": "取消傳遞未通過；同 trace 仍完成五段與 done。僅此 Preview 注入配置的觀察，不推定真上游或所有平台。"
+}

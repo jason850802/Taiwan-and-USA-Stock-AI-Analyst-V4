@@ -1,0 +1,27 @@
+{
+  "schema": "reacceptance-cli-check-v1",
+  "startedAt": "2026-09-21T16:42:30.996Z",
+  "completedAt": "2026-09-21T16:42:31.760Z",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    ".scratch/reacceptance-fixes/tools/replay-batch.mjs",
+    "select",
+    "--manifest",
+    ".scratch/reacceptance-fixes/evidence/01/batches/p1-final-body-fix-bca2fd9c-4ce9-4fc3-9137-e499bfe19599/manifest.json",
+    "--group",
+    "05-before",
+    "--run",
+    "9ba190b4-1516-48d5-ac9c-b12748a8ff3f"
+  ],
+  "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\",
+  "node": "v26.4.0",
+  "runnerSha256": "b43c3c0175a372a068dca910064cfcfe14cbaadda1d6083c3d8c6f5210b4c531",
+  "entrypointSha256": "84130004a7d37d681cf5d5d815db8c910f15ecd8165d94bda5052ef81bc96563",
+  "expected": "zero",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "{\"group\":\"05-before\",\"runId\":\"9ba190b4-1516-48d5-ac9c-b12748a8ff3f\",\"revision\":3}\n",
+  "stderr": "",
+  "passed": true
+}

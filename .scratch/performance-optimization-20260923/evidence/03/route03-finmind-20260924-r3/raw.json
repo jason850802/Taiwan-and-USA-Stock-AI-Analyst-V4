@@ -1,0 +1,98 @@
+{
+  "runId": "route03-finmind-20260924-r3",
+  "routeKind": "finmind",
+  "port": 4570,
+  "createdAt": "2026-09-24T06:00:52.918Z",
+  "source": {
+    "runnerSha256": "be17a7f6526975c59035f096a842fe22647d690b8f2f1dab8128f808fd43be88",
+    "persistentSha256": "e977901356f4f26e9021217bc12db71b653d3decf4bf909081aa2a17bb502d70",
+    "preloadSha256": "f1500a56cb58e72e410d570826850a4d02e8ebfc653c3b676f940ae6990ce78a",
+    "files": {
+      "api/finmind.ts": "b22a2c517ee48515c9e692e7298a9631765111da3b46bcb9846345e5ca45c7b5"
+    }
+  },
+  "reachedTarget": true,
+  "response": {
+    "trace": "route03-finmind-20260924-r3-cancel",
+    "method": "GET",
+    "route": "/api/finmind?dataset=TaiwanStockPrice&data_id=2330&start_date=2026-09-01",
+    "totalMs": 2331.1,
+    "status": 0,
+    "aborted": true,
+    "lines": []
+  },
+  "events": [
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.recv",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.reqHeaders",
+      "kind": null,
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchStart",
+      "kind": "finmind",
+      "name": null,
+      "layer": null,
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "devProxy",
+      "emitted": null
+    },
+    {
+      "ev": "child.aborted",
+      "kind": null,
+      "name": null,
+      "layer": "handler",
+      "emitted": null
+    },
+    {
+      "ev": "child.fetchError",
+      "kind": "finmind",
+      "name": "AbortError",
+      "layer": null,
+      "emitted": null
+    }
+  ],
+  "errors": [],
+  "service": {
+    "ownedPid": 13692,
+    "listenerPid": 13692,
+    "stopped": true
+  },
+  "traceFiles": 2,
+  "persistent": {
+    "enabled": true,
+    "takenOver": true,
+    "spawns": [
+      {
+        "entrypoint": "api/finmind.ts",
+        "pid": 35132,
+        "generation": 0
+      }
+    ],
+    "invalidations": 0,
+    "retirements": 0,
+    "outsideForks": 0,
+    "orphans": []
+  },
+  "finishedAt": "2026-09-24T06:01:02.337Z"
+}

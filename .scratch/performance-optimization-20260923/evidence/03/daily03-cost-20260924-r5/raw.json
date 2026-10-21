@@ -1,0 +1,251 @@
+{
+  "runId": "daily03-cost-20260924-r5",
+  "createdAt": "2026-09-24T05:51:52.223Z",
+  "origin": "http://127.0.0.1:4561",
+  "source": {
+    "runnerSha256": "13f78d6baaee95d30b8c4f4996935303b12fa39e2db82845792e42a1293d1424",
+    "launcherSha256": "f46d3a992311fdd5cc08a73e279b97a6783bd35e7e20a38e2492329ddbe197e9",
+    "proxySha256": "d196fb891f4ad627fc067a6df906d8c35f92f9f23aa156ab0bceacb9ebc99953",
+    "chartSha256": "a71de04c8c92a4b924d5526049d965a560c070a9b91d4240692f37eb1a828424"
+  },
+  "launcher": {
+    "frontPort": 4561,
+    "apiPort": 4562,
+    "supervisorPid": 24736,
+    "children": [
+      {
+        "pid": 11964,
+        "creationDate": "/Date(1790229092096)/"
+      },
+      {
+        "pid": 19220,
+        "creationDate": "/Date(1790229099128)/"
+      }
+    ],
+    "sameStateBeforeAfter": true
+  },
+  "cases": [
+    {
+      "name": "OPTIONS",
+      "method": "OPTIONS",
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+      "expected": 204,
+      "samples": [
+        {
+          "index": 1,
+          "status": 204,
+          "ms": 1.902
+        },
+        {
+          "index": 2,
+          "status": 204,
+          "ms": 18.168
+        },
+        {
+          "index": 3,
+          "status": 204,
+          "ms": 3.549
+        },
+        {
+          "index": 4,
+          "status": 204,
+          "ms": 11.307
+        },
+        {
+          "index": 5,
+          "status": 204,
+          "ms": 15.241
+        },
+        {
+          "index": 6,
+          "status": 204,
+          "ms": 15.61
+        },
+        {
+          "index": 7,
+          "status": 204,
+          "ms": 16.615
+        },
+        {
+          "index": 8,
+          "status": 204,
+          "ms": 14.436
+        },
+        {
+          "index": 9,
+          "status": 204,
+          "ms": 16.183
+        },
+        {
+          "index": 10,
+          "status": 204,
+          "ms": 15.135
+        },
+        {
+          "index": 11,
+          "status": 204,
+          "ms": 14.756
+        },
+        {
+          "index": 12,
+          "status": 204,
+          "ms": 16.692
+        },
+        {
+          "index": 13,
+          "status": 204,
+          "ms": 16.216
+        },
+        {
+          "index": 14,
+          "status": 204,
+          "ms": 14.313
+        },
+        {
+          "index": 15,
+          "status": 204,
+          "ms": 1.203
+        },
+        {
+          "index": 16,
+          "status": 204,
+          "ms": 14.343
+        },
+        {
+          "index": 17,
+          "status": 204,
+          "ms": 15.486
+        },
+        {
+          "index": 18,
+          "status": 204,
+          "ms": 15.932
+        },
+        {
+          "index": 19,
+          "status": 204,
+          "ms": 15.779
+        },
+        {
+          "index": 20,
+          "status": 204,
+          "ms": 16.856
+        }
+      ],
+      "medianMs": 15.3635,
+      "maxMs": 18.168
+    },
+    {
+      "name": "固定 GET",
+      "method": "GET",
+      "route": "/api/yahoo/chart?symbol=AAPL&interval=1d&range=5d",
+      "expected": 200,
+      "samples": [
+        {
+          "index": 1,
+          "status": 200,
+          "ms": 81.295
+        },
+        {
+          "index": 2,
+          "status": 200,
+          "ms": 61.767
+        },
+        {
+          "index": 3,
+          "status": 200,
+          "ms": 61.746
+        },
+        {
+          "index": 4,
+          "status": 200,
+          "ms": 61.583
+        },
+        {
+          "index": 5,
+          "status": 200,
+          "ms": 77.097
+        },
+        {
+          "index": 6,
+          "status": 200,
+          "ms": 75.904
+        },
+        {
+          "index": 7,
+          "status": 200,
+          "ms": 51.194
+        },
+        {
+          "index": 8,
+          "status": 200,
+          "ms": 72.929
+        },
+        {
+          "index": 9,
+          "status": 200,
+          "ms": 47.389
+        },
+        {
+          "index": 10,
+          "status": 200,
+          "ms": 61.655
+        },
+        {
+          "index": 11,
+          "status": 200,
+          "ms": 61.404
+        },
+        {
+          "index": 12,
+          "status": 200,
+          "ms": 76.601
+        },
+        {
+          "index": 13,
+          "status": 200,
+          "ms": 46.249
+        },
+        {
+          "index": 14,
+          "status": 200,
+          "ms": 62.959
+        },
+        {
+          "index": 15,
+          "status": 200,
+          "ms": 60.034
+        },
+        {
+          "index": 16,
+          "status": 200,
+          "ms": 62.42
+        },
+        {
+          "index": 17,
+          "status": 200,
+          "ms": 62.388
+        },
+        {
+          "index": 18,
+          "status": 200,
+          "ms": 61.765
+        },
+        {
+          "index": 19,
+          "status": 200,
+          "ms": 61.119
+        },
+        {
+          "index": 20,
+          "status": 200,
+          "ms": 62.885
+        }
+      ],
+      "medianMs": 61.766000000000005,
+      "maxMs": 81.295
+    }
+  ],
+  "errors": [],
+  "finishedAt": "2026-09-24T05:51:53.920Z"
+}

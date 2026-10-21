@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-21T16:22:04.602Z",
+  "sourceSha256": "474d6961e76ebdaf078b622cd9dedc43e32146ae493b9d5ef1131c53d2b0e2b7",
+  "rows": [
+    {
+      "scenario": "success",
+      "passed": false,
+      "error": "TypeError: Body is unusable: Body has already been read\n    at consumeBody (node:internal/deps/undici/undici:6943:31)\n    at Response.json (node:internal/deps/undici/undici:6871:18)\n    at captureAcceptedRaw (eval at <anonymous> (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/viewport-controls-regression.mjs:13:16), <anonymous>:7:30)\n    at async file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/viewport-controls-regression.mjs:21:50"
+    },
+    {
+      "scenario": "http-failure",
+      "passed": true
+    }
+  ],
+  "passed": false
+}

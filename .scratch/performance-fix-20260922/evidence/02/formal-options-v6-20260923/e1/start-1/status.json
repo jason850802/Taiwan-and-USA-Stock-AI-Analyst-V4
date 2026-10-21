@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:15:14.364Z",
+  "startedAt": "2026-09-23T07:14:42.998Z",
+  "variant": "e1",
+  "serviceStartId": "e1-formal-options-v6-20260923-start-1",
+  "success": true,
+  "failure": null,
+  "probeExitCode": 0,
+  "rawExists": true,
+  "identityExists": true,
+  "stopped": {
+    "vercel": {
+      "pid": 33712,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 2028 (PID �� 376 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 376 (PID �� 26836 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 16732 (PID �� 33712 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 26836 (PID �� 33712 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 33712 (PID �� 21876 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    },
+    "vite": {
+      "pid": 27880,
+      "exitCode": 0,
+      "stdout": "���\\: PID �� 12748 (PID �� 27880 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 33040 (PID �� 27880 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C\r\n���\\: PID �� 27880 (PID �� 21876 ���l�B�z�{��) ���B�z�{�Ǥw�פ�C",
+      "stderr": ""
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "round": 2,
+  "executable": "C:\\Program Files\\nodejs\\node.exe",
+  "arguments": [
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-ffea605a-70fa-47d9-8371-76ccf2468daa\\snapshot\\.scratch\\optimization-followup\\evidence\\12\\verify-replays.mjs",
+    "03"
+  ],
+  "cwd": "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-ffea605a-70fa-47d9-8371-76ccf2468daa\\snapshot",
+  "commandFromRepo": "node .scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/snapshot/.scratch/optimization-followup/evidence/12/verify-replays.mjs 03",
+  "exitCode": 1,
+  "elapsedMs": 101.687,
+  "stdout": "",
+  "stderr": "node:fs:697\r\n  return binding.open(\r\n                 ^\r\n\r\nError: ENOENT: no such file or directory, open 'E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\evidence\\01\\diagnosis\\run-ffea605a-70fa-47d9-8371-76ccf2468daa\\snapshot\\.scratch\\optimization-followup\\evidence\\12\\replay-03\\desktop-green-stale-return.json'\r\n    at Object.openSync (node:fs:697:18)\r\n    at readFileSync (node:fs:543:35)\r\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/evidence/01/diagnosis/run-ffea605a-70fa-47d9-8371-76ccf2468daa/snapshot/.scratch/optimization-followup/evidence/12/verify-replays.mjs:33:17\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\r\n    at async node:internal/modules/esm/loader:646:26\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  errno: -4058,\r\n  code: 'ENOENT',\r\n  syscall: 'open',\r\n  path: 'E:\\\\My Project\\\\Taiwan-and-USA-Stock-AI-Analyst-V4\\\\.scratch\\\\reacceptance-fixes\\\\evidence\\\\01\\\\diagnosis\\\\run-ffea605a-70fa-47d9-8371-76ccf2468daa\\\\snapshot\\\\.scratch\\\\optimization-followup\\\\evidence\\\\12\\\\replay-03\\\\desktop-green-stale-return.json'\r\n}\r\n\r\nNode.js v26.4.0\r\n"
+}

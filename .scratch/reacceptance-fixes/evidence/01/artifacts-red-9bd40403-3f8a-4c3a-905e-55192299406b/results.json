@@ -1,0 +1,127 @@
+{
+  "schema": "p1-artifact-regression-v1",
+  "phase": "red",
+  "at": "2026-09-21T09:57:02.764Z",
+  "rows": [
+    {
+      "name": "各組明確列實際產物集合",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:38:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:37:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "正確產物集合可重算：02",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:42:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:41:44\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "正確產物集合可重算：03",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:42:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:41:44\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "正確產物集合可重算：04",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:42:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:41:44\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "正確產物集合可重算：05-before",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:42:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:41:44\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "正確產物集合可重算：05-after",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:42:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:41:44\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "04/missing-hash拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "04/missing-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "04/drift拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "04/extra-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-before/missing-hash拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-before/missing-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-before/drift拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-before/extra-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-after/missing-hash拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-after/missing-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-after/drift拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "05-after/extra-file拒絕",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:48:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:47:130\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "初載binding保存該run精確產物hash",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ undefined\n- {\n-   'holdings.js': 'a650a08010e16a257f2c1721beb0a0730c94b8ce01915e8f18875c8a9005390e'\n- }\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:54:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:52:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "重複保存不得覆寫第一次編譯的bytes",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:59:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:56:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "原04build分支移到啟站前且仍只有一次build",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:69:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:68:36\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    {
+      "name": "原05build分支移到啟站前且仍只有一次build",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'undefined'\n- 'function'\n\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:69:10\n    at check (file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:19:54)\n    at file:///E:/My%20Project/Taiwan-and-USA-Stock-AI-Analyst-V4/.scratch/reacceptance-fixes/tools/replay-artifact-regression.mjs:68:36\n    at ModuleJob.run (node:internal/modules/esm/module_job:447:25)\n    at async node:internal/modules/esm/loader:646:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\My Project\\Taiwan-and-USA-Stock-AI-Analyst-V4\\.scratch\\reacceptance-fixes\\tools\\replay-artifact-regression.mjs",
+    "--phase",
+    "red"
+  ],
+  "checks": 22,
+  "failed": 22,
+  "contractSha256": "51d5af41ad7bf0e63d2aee8643208009c74b5e16b0c538663e95713c731d63a3",
+  "scope": "合成單元產物與原build分支轉接語法；沒有listen、真gate或browser PASS；HTTP真正servedbytes由prime新run另驗。"
+}

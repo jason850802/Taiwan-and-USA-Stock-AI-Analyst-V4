@@ -1,0 +1,21 @@
+{
+  "sourceHead": "8f7a8a3bf20ab5719be6028b25ac248afdbbc1de",
+  "commits": [
+    "5997b92968135fb0c06a64e5f63e246a4528beb4",
+    "5a44fd58f32b978d27228efc635d50f618092cbd"
+  ],
+  "exit": 1,
+  "conflicts": [
+    ".scratch/performance-optimization-20260923/PLAN.md",
+    ".scratch/performance-optimization-20260923/evidence/03/ACCEPTANCE-20260925.md",
+    ".scratch/performance-optimization-20260923/evidence/03/README.md",
+    ".scratch/performance-optimization-20260923/issues/03-daily-dev-entry.md",
+    ".scratch/performance-optimization-20260923/spec.md",
+    ".scratch/performance-optimization-20260923/tools/app-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/daily-dev.mjs",
+    ".scratch/performance-optimization-20260923/tools/lifecycle-03.mjs",
+    ".scratch/performance-optimization-20260923/tools/port-guard-03.mjs"
+  ],
+  "aborted": true,
+  "candidateRestored": true
+}

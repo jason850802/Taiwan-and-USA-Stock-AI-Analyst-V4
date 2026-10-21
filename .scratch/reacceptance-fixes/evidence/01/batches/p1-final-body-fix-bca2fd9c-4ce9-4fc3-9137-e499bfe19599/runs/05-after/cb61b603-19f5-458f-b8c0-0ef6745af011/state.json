@@ -1,0 +1,128 @@
+{
+  "schema": "p1-replay-v1",
+  "batchId": "bca2fd9c-4ce9-4fc3-9137-e499bfe19599",
+  "group": "05-after",
+  "runId": "cb61b603-19f5-458f-b8c0-0ef6745af011",
+  "status": "complete",
+  "cases": {
+    "after-load-1-0.json": {
+      "sha256": "2e640cee32fa83b80d05cc590353eff6933228ce700a54a1d76019af35623b1d",
+      "passed": true
+    },
+    "after-load-1-1.json": {
+      "sha256": "69717c4b691663b7ff56035207c9b38b93b346f36de96dc61d0f4893c3f662ac",
+      "passed": true
+    },
+    "after-load-1-2.json": {
+      "sha256": "54127b72f6296387eed7dddce99cbd415d74ca272d0d63984cc0842ea0db6ce5",
+      "passed": true
+    },
+    "after-load-1-3.json": {
+      "sha256": "fd31b651a83441ff88f7c6255b319d987c41a55fd43189d8740a9e21e9db83c4",
+      "passed": true
+    },
+    "after-load-1-4.json": {
+      "sha256": "d50e62986d90b7e9ee2019d305f9f61f15e0082f92ff61935758866954915108",
+      "passed": true
+    },
+    "after-load-1-5.json": {
+      "sha256": "748fe5453a02dea320129fec878abc0a4e257baa993e5191ea5df3b05266263e",
+      "passed": true
+    },
+    "after-load-1-6.json": {
+      "sha256": "6671e467f223bfa01f2f12598754f5eb65d408cea66afcade31a41dd3e662093",
+      "passed": true
+    },
+    "after-load-10-0.json": {
+      "sha256": "db7f6abfc7216b6b136d405a4e1d78260a1ad9af328240b4e1a5eecb0d6e479f",
+      "passed": true
+    },
+    "after-load-10-1.json": {
+      "sha256": "1379e6980f333b9f78cacf48712b73e57e97d1cd88fc9c38e385055b188ed9f9",
+      "passed": true
+    },
+    "after-load-10-2.json": {
+      "sha256": "cca1209e5b0a0b541a169fe0a23f68f68b843412cd980093fa12f4803d6e889a",
+      "passed": true
+    },
+    "after-load-10-3.json": {
+      "sha256": "161515e97337d2c4824f3089b55607c12774f8f9fe63b9222c07528129f3e14b",
+      "passed": true
+    },
+    "after-load-10-4.json": {
+      "sha256": "226e7cd455224de8316fd2bdc95fd055250eeb986bb8c1368214cd398bb407ca",
+      "passed": true
+    },
+    "after-load-10-5.json": {
+      "sha256": "804a5b46794dd78b013a765e5b9a264e8646340e4bb88d3fe53e9c60fa9fe19b",
+      "passed": true
+    },
+    "after-load-10-6.json": {
+      "sha256": "4bb1a6d7d3de14bf6739434de42835e9c361c6f9f53dd5c6e3ba6c1fa795b846",
+      "passed": true
+    },
+    "after-load-30-0.json": {
+      "sha256": "3723f6a36e2d09e00e0624f4268e4bb6231ae7947c73c91cdd58be7e8c1f393e",
+      "passed": true
+    },
+    "after-load-30-1.json": {
+      "sha256": "70193f991fee1b1edd01cc396e87aef84478a2a8b3270dddcf5edb83c70f0c81",
+      "passed": true
+    },
+    "after-load-30-2.json": {
+      "sha256": "28fb8d96e8cc88ea5e5ba8c0e27c13acc590cea29eea12921d6ab5fa3e95f31d",
+      "passed": true
+    },
+    "after-load-30-3.json": {
+      "sha256": "532ccc8c3b841a50d87a96dffac00fe9f7f42be70970f13988dcc984cb831dad",
+      "passed": true
+    },
+    "after-load-30-4.json": {
+      "sha256": "48fe6133f062998527cf1dbcf6c153111895ca57fb1e21ac9327b605785f848d",
+      "passed": true
+    },
+    "after-load-30-5.json": {
+      "sha256": "ffd85428c7a597a62aa0b71bd52142b9cd4308942a6f5980446acb24fa94131f",
+      "passed": true
+    },
+    "after-load-30-6.json": {
+      "sha256": "7150b268738c9c4c0ea901c01941b9e7eb5f9c48d5cc276b2cfc63850d23d3b8",
+      "passed": true
+    },
+    "green-overlap-30-0.json": {
+      "sha256": "a3bfee47e624a97099d8fdd0f081cf808efa3d03beae1fd280273c34449aee2c",
+      "passed": true
+    },
+    "green-remove-30-0.json": {
+      "sha256": "d5da10c477193d5950004df58784918a04fbb781dbb12215ccaf456f64c2c021",
+      "passed": true
+    },
+    "green-unmount-30-0.json": {
+      "sha256": "3f64e594f28c6337dee54dd21591cac89047714f06ade0cf329a0c0946287332",
+      "passed": true
+    },
+    "green-cache-30-0.json": {
+      "sha256": "dbdf49e5ff5b434cc1f5bda315ec84e8ef936e4a79131219dace0ebbdac7e99b",
+      "passed": true
+    },
+    "green-duplicate-30-0.json": {
+      "sha256": "5310359bae92e27b9a3311d77aeb04a02e05281493d35f1a5cbaa03e9402df82",
+      "passed": true
+    },
+    "green-retry-30-0.json": {
+      "sha256": "66dd3bcfba146533ad8a1f75808e00de4591d63b08e865281ac21490d4808dec",
+      "passed": true
+    },
+    "desktop-green-app-30-0.json": {
+      "sha256": "47b75d701749d93d775e8a8e111624308551a83654cfb07e665051c31e6f6754",
+      "passed": true
+    },
+    "narrow-green-app-30-0.json": {
+      "sha256": "0ee415784cb7fdf92392cd148fc9371b83dfc752abc9784d7ebb61cc3a7e44b2",
+      "passed": true
+    }
+  },
+  "artifactHashes": {
+    "holdings.js": "358b4091089c147b6a2f07036a4e6aa944ed4e2fb44e217f95ec4b1d076c7edc"
+  }
+}

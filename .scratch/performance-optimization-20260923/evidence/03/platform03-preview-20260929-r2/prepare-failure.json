@@ -1,0 +1,8 @@
+{
+  "runId": "platform03-preview-20260929-r2",
+  "head": "4a2c383",
+  "stage": "prepare",
+  "deployed": false,
+  "reason": "公開 GEMINI_MODEL_FAST/THINKING 預設名稱命中環境值掃描",
+  "source": "本任務 exec 原始錯誤的事後摘錄；非平台 raw"
+}

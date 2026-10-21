@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-23T07:15:39.950Z",
+  "baseUrl": "http://127.0.0.1:3033/",
+  "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+  "timeoutMs": 60000,
+  "warmPairs": 5,
+  "rows": [
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1964.3548,
+      "phase": "cold",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1876.6504,
+      "phase": "cold",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": null
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1804.4645999999998,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1814.2639,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-1"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1812.6897,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1814.1098999999995,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-2"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1771.4385999999995,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1751.7250999999997,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-3"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1928.1558999999997,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1930.946,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-4"
+    },
+    {
+      "route": "/api/yahoo/chart",
+      "status": 204,
+      "error": null,
+      "totalMs": 1896.2983999999997,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-5"
+    },
+    {
+      "route": "/api/finmind",
+      "status": 204,
+      "error": null,
+      "totalMs": 1784.844799999999,
+      "phase": "warm",
+      "serviceStartId": "e2-formal-options-v6-20260923-start-1",
+      "pairId": "e2-formal-options-v6-20260923-start-1-warm-5"
+    }
+  ]
+}

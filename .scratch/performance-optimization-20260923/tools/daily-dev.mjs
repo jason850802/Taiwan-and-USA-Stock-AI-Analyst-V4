@@ -130,7 +130,7 @@ export async function killTree(tree, { readTable = processTable, terminate = ite
   const killed = [];
   while (true) {
     const table = await readTable();
-    if (!table) return { killed, left: known, known, error: '無法讀取程序表' };
+    if (!table) return { killed, left: known, error: '無法讀取程序表' };
     const live = aliveIn(known, table);
     known = mergeTree(known, ...live.map(item => descendantsOf(table, item.pid)));
     const item = aliveIn(known, table).find(row => !attempted.has(`${row.pid}|${row.creationDate}`));
@@ -146,17 +146,7 @@ export async function killTree(tree, { readTable = processTable, terminate = ite
     const current = await readTable();
     if (current) left = aliveIn(left, current);
   }
-  return { killed, left, known, error: null };
-}
-
-// 清理失敗時保留所有已核對身分（含停止當下新增的子孫），供 recover 接續；不動別人的 token。
-export function cleanupState(previous, token, tree, cleanup) {
-  const failed = Boolean(cleanup.error || cleanup.left.length);
-  if (previous?.token !== token) return { exitCode: failed ? 1 : 0, state: undefined };
-  return { exitCode: failed ? 1 : 0, state: failed ? {
-    ...previous, tree: mergeTree(previous.tree ?? [], tree, cleanup.known ?? [], cleanup.left),
-    cleanupError: cleanup.error || '仍有已核對的程序未結束',
-  } : null };
+  return { killed, left, error: null };
 }
 
 // ── 看門程序：監督程序消失而沒送出停止訊息時，清掉整棵樹 ──
@@ -185,7 +175,7 @@ async function runWatchdog([supervisorPidText, supervisorCreationDate, logFile])
     const { killed, left, error } = await killTree(tree);
     log(`${reason}：程序樹 ${tree.length} 個，清理存活 ${killed.length} 個`
       + `（${killed.map(item => `${item.name}#${item.pid}`).join('、') || '無'}），剩餘 ${left.length}${error ? `；${error}` : ''}`);
-    process.exit(left.length || error ? 1 : 0);
+    process.exit(left.length ? 1 : 0);
   };
   let buffer = '';
   process.stdin.setEncoding('utf8');
@@ -298,16 +288,13 @@ async function prewarmFunctions(port) {
 }
 
 async function stopOwned(records) {
-  const known = [];
   for (const record of [...records].reverse()) {
     if (!record.child.pid || record.exited) continue;
     const current = processIdentity(record.child.pid);
     if (!record.identity?.CreationDate || !current?.CommandLine?.includes(record.script)) continue;
     if (current.CreationDate !== record.identity.CreationDate) continue;
-    const cleanup = await killTree([{ pid: record.child.pid, creationDate: current.CreationDate }]);
-    known.push(...cleanup.known);
+    await killTree([{ pid: record.child.pid, creationDate: current.CreationDate }]);
   }
-  return { known: mergeTree(known) };
 }
 
 function commandArgs() {
@@ -387,10 +374,6 @@ async function main() {
     if (action === 'stop') {
       const started = Date.now();
       while (Date.now() - started < 30_000) {
-        const current = readState();
-        if (current?.token === previous.token && current.cleanupError) {
-          throw new Error(`清理未完成，身分紀錄保留，請使用 recover：${current.cleanupError}`);
-        }
         if (!fs.existsSync(stateFile) && !listenerPids(previous.frontPort).length
           && !listenerPids(previous.apiPort).length) {
           console.log(JSON.stringify({ ...answer, running: false, stopped: true }, null, 2));
@@ -434,51 +417,31 @@ async function main() {
   let watchdog = null;
   let watchdogRecord = null;
   let watchdogExited = false;
-  let watchdogExitCode = null;
-  let watchdogFailed = false;
   const stopWatchdog = async () => {
-    if (!watchdog) return;
-    const failedExit = () => watchdogFailed
-      ? { left: [], error: `看門程序清理失敗（exit ${watchdogExitCode}）` } : null;
-    if (watchdogExited) return failedExit();
+    if (!watchdog || watchdogExited) return;
     try { watchdog.stdin.end(`${JSON.stringify({ type: 'stop' })}\n`); } catch { /* 看門程序已結束 */ }
     const started = Date.now();
     while (!watchdogExited && Date.now() - started < 15_000) await delay(100);
     if (!watchdogExited && watchdogRecord && matchesIdentity(processIdentity(watchdog.pid), watchdogRecord)) {
-      return killTree([watchdogRecord]);
+      await killTree([watchdogRecord]);
     }
-    return failedExit();
   };
   const shutdown = async () => {
     if (stopping) return;
     stopping = true;
     // 仍在的子孫先補記，再與就緒時的樹合併：子程序已崩潰時，逃出 job 的孫程序只能從就緒時的樹找回。
     const table = processTable();
-    tree = mergeTree(tree, records.filter(record => record.identity?.CreationDate).map(record => ({
-      pid: record.child.pid, creationDate: record.identity.CreationDate, name: record.name,
-    })));
     if (table) tree = mergeTree(tree, descendantsOf(table, process.pid, [watchdog?.pid].filter(Boolean)));
-    const ownedCleanup = await stopOwned(records);
-    tree = mergeTree(tree, ownedCleanup?.known ?? []);
+    await stopOwned(records);
     const cleanup = await killTree(tree);
     if (cleanup.left.length || cleanup.error) {
       console.error(`仍有程序未能確認結束：${cleanup.left.map(item => `${item.name}#${item.pid}`).join('、')}${cleanup.error ? `（${cleanup.error}）` : ''}`);
     }
-    const watchdogCleanup = await stopWatchdog();
-    if (watchdogCleanup?.left.length || watchdogCleanup?.error) {
-      cleanup.left = mergeTree(cleanup.left, watchdogCleanup.left);
-      cleanup.error ||= watchdogCleanup.error;
-    }
+    await stopWatchdog();
     await new Promise(resolve => server?.close(resolve) ?? resolve());
     const state = readState();
-    const outcome = cleanupState(state ?? {
-      token, pipe, supervisorPid: process.pid, supervisorCreationDate, frontPort, apiPort,
-      children: records.map(record => ({ pid: record.child.pid, script: record.script,
-        creationDate: record.identity?.CreationDate })), watchdog: watchdogRecord, tree,
-    }, token, tree, cleanup);
-    if (outcome.state === null && state?.token === token) fs.rmSync(stateFile);
-    else if (outcome.state) fs.writeFileSync(stateFile, `${JSON.stringify(outcome.state)}\n`);
-    process.exitCode = outcome.exitCode;
+    if (state?.token === token) fs.rmSync(stateFile);
+    process.exitCode = 0;
   };
   process.on('SIGINT', () => { void shutdown(); });
   process.on('SIGTERM', () => { void shutdown(); });
@@ -491,8 +454,8 @@ async function main() {
       cwd: root, detached: true, stdio: ['pipe', watchdogFd, watchdogFd], windowsHide: true,
     });
     fs.closeSync(watchdogFd);
-    watchdog.once('exit', code => { watchdogExited = true; watchdogExitCode = code; watchdogFailed = code !== 0; });
-    watchdog.once('error', () => { watchdogExited = true; watchdogFailed = true; });
+    watchdog.once('exit', () => { watchdogExited = true; });
+    watchdog.once('error', () => { watchdogExited = true; });
     watchdog.stdin.on('error', () => { /* 看門程序已結束時寫入失敗，由 exit 事件處理 */ });
     const watchdogIdentity = watchdog.pid ? processIdentity(watchdog.pid) : null;
     if (!watchdogIdentity?.CommandLine?.includes(WATCHDOG_MODE)) throw new Error('看門程序未能啟動，拒絕啟動日常入口。');

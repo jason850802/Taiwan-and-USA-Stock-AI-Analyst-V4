@@ -118,4 +118,16 @@ describe('formatHealthCheckData 版面鎖', () => {
     expect(out).toContain('外資:');
     expect(formatHealthCheckData([US_ITEM])).not.toContain('外資:');
   });
+
+  it('台股籌碼來源不可用時明示不可用，不把缺值偽裝成 0 張', () => {
+    const recentData = TW_ITEM.recentData.map(row => ({
+      ...row,
+      foreignBuySell: undefined,
+      investmentTrustBuySell: undefined,
+    }));
+    const out = formatHealthCheckData([{ ...TW_ITEM, recentData, chipDataUnavailable: true }]);
+    expect(out).toContain('近5日籌碼：資料暫時不可用');
+    expect(out).not.toContain('近5日外資合計：0張');
+    expect(out).not.toContain('近5日投信合計：0張');
+  });
 });

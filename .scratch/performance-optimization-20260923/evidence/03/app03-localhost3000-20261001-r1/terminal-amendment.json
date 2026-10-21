@@ -1,0 +1,66 @@
+{
+  "createdAt": "2026-10-01T00:32:52.088Z",
+  "kind": "舊raw的不可覆寫終態增補，非新工具正式run",
+  "rawSha256": "15b33cd177bee34cf8ba37c2a816d05a64b37bbfdc4e255a6030afd0f7b95276",
+  "views": [
+    {
+      "viewport": "desktop",
+      "total": 14,
+      "accepted": 14,
+      "frozenAtStep": 11,
+      "frozenFinal": 10
+    },
+    {
+      "viewport": "narrow",
+      "total": 14,
+      "accepted": 14,
+      "frozenAtStep": 11,
+      "frozenFinal": 10
+    }
+  ],
+  "changes": [
+    {
+      "viewport": "desktop",
+      "op": "add-tw-2330",
+      "requestId": "24724.175",
+      "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+      "snapshotFailed": null,
+      "terminalEvent": {
+        "event": "Network.loadingFailed",
+        "timestamp": 643216.479244,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "type": "Other"
+      },
+      "priorScript200": {
+        "requestId": "24724.108",
+        "finishedAtMs": 643166248.206
+      },
+      "accepted": true,
+      "frozenFinal": false
+    },
+    {
+      "viewport": "narrow",
+      "op": "add-tw-2330",
+      "requestId": "10064.175",
+      "route": "/api/finmind?dataset=TaiwanStockInfo&data_id=2330",
+      "snapshotFailed": null,
+      "terminalEvent": {
+        "event": "Network.loadingFailed",
+        "timestamp": 643294.99994,
+        "errorText": "net::ERR_ABORTED",
+        "canceled": true,
+        "type": "Other"
+      },
+      "priorScript200": {
+        "requestId": "10064.108",
+        "finishedAtMs": 643244760.073
+      },
+      "accepted": true,
+      "frozenFinal": false
+    }
+  ],
+  "accepted": 28,
+  "frozenAtStep": 22,
+  "frozenFinal": 20
+}

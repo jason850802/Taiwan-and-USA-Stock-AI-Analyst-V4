@@ -194,6 +194,12 @@ function getClaudeCliEffort(mode: GeminiRequest['mode']): string {
   return (process.env.CLAUDE_CLI_EFFORT_FAST ?? '').trim() || 'medium';
 }
 
+// 隔離使用者層 MCP／外掛：--tools '' 只關內建工具，其餘仍會載入（實測一個極小請求讀 23.6 萬 token）；登入憑證不在設定檔內，不受影響。
+const CLAUDE_CLI_ISOLATION_ARGS = [
+  '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}',
+  '--setting-sources', 'project',
+];
+
 /**
  * CLI 認證失敗的特徵字串。除了「從未登入」，訂閱 OAuth 的 refresh token 也會到期
  * （實測約 4 週），過期後 CLI 回 "Failed to authenticate: OAuth session expired and
@@ -257,6 +263,7 @@ function callClaudeCli(req: GeminiRequest, signal?: AbortSignal): Promise<{ text
     '--tools', '',
     '--no-session-persistence',
     '--disable-slash-commands',
+    ...CLAUDE_CLI_ISOLATION_ARGS,
     '--model', model,
     '--effort', effort,
     '--system-prompt', req.systemInstruction,
@@ -407,6 +414,7 @@ function callClaudeCliStream(
     '--tools', '',
     '--no-session-persistence',
     '--disable-slash-commands',
+    ...CLAUDE_CLI_ISOLATION_ARGS,
     '--model', model,
     '--effort', effort,
     '--system-prompt', req.systemInstruction,

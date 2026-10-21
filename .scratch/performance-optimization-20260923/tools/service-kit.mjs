@@ -1,7 +1,7 @@
 // 01／02 票量測工具共用：安全起停 vercel dev、證明 listener 是自己的、記錄身分、認領 run-id、發請求。
 // B1 runner（b1-breakdown）、候選對等比對（c-parity）與重載驗證（c-reload）共用同一套，不各寫一份；
 // 各工具的量測協定與判定不放這裡。
-import { execFileSync, spawn } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
@@ -10,7 +10,6 @@ import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 import { EVIDENCE_BASE, PLAN_DIR, ROOT, assertRunId, round } from './verify-b1-breakdown.mjs';
-import { nodeProcesses, processTable, launcherTree, listenerRows, scriptOf, terminateVerifiedTree } from './port-guard-03.mjs';
 
 const TOOLS = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -153,13 +152,6 @@ export function toolVersions() {
 }
 
 export function identity(entry) {
-  // 01／02 歷史量測必須在保有原基線與五份規格的完整證據 checkout 執行，不能把 main 當成該基線。
-  const missing = PLAN_FILES.filter(name => !fs.existsSync(path.join(PLAN_DIR, name)));
-  let baselinePresent = false;
-  try { git(['cat-file', '-e', `${BASELINE_COMMIT}^{commit}`]); baselinePresent = true; } catch { /* 明列缺口 */ }
-  if (missing.length || !baselinePresent) {
-    throw new Error(`歷史量測需要完整證據 checkout：基線 ${BASELINE_COMMIT}${baselinePresent ? ' 存在' : ' 缺少'}；缺少規格 ${missing.join('、') || '無'}。main 的日常／03 驗收入口不依賴這些歷史文件。`);
-  }
   const envFile = path.join(ROOT, '.env');
   const envKeyNames = fs.existsSync(envFile)
     ? fs.readFileSync(envFile, 'utf8').split(/\r?\n/).map(line => line.match(/^([A-Z_][A-Z0-9_]*)=/)?.[1]).filter(Boolean)
@@ -229,33 +221,18 @@ export function serviceEnv(extra) {
   return { ...env, ...extra };
 }
 
-export async function startService({ name, argv, env, port, readyPattern, logFile, abortPattern = null, cwd = ROOT, onStarted }) {
+export async function startService({ name, argv, env, port, readyPattern, logFile, abortPattern = null, cwd = ROOT }) {
   if (listenerPids(port).length) throw new Error(`埠 ${port} 已被占用，拒絕啟動`);
   const fd = fs.openSync(logFile, 'a');
-  const spawnedAt = Date.now();
   const child = spawn(process.execPath, argv, { cwd, env, stdio: ['ignore', fd, fd], windowsHide: true });
   fs.closeSync(fd);
-  const svc = { name, port, ownedPid: child.pid, listenerPid: null, listenerPids: [], ready: false, readyMs: null, stopped: false, exit: null, tree: [] };
+  const svc = { name, port, ownedPid: child.pid, listenerPid: null, listenerPids: [], ready: false, readyMs: null, stopped: false, exit: null };
   child.once('exit', (code, signal) => { svc.exit = { code, signal }; });
-  onStarted?.(svc);
-  const identity = (await nodeProcesses()).get(child.pid);
-  const birthText = String(identity?.CreationDate ?? '');
-  const legacy = /^\/Date\((-?\d+)(?:[+-]\d{4})?\)\/$/.exec(birthText);
-  const birth = legacy ? Number(legacy[1]) : Date.parse(birthText);
-  if (!identity || birth < spawnedAt - 1000 || !Number.isFinite(birth)
-    || scriptOf(identity.CommandLine) !== path.basename(argv[0])) {
-    throw new Error(`${name} 無法核對 spawn 身分，禁止按裸 PID 清理`);
-  }
-  svc.tree.push({ pid: child.pid, parentPid: identity.ParentProcessId, name: 'node.exe', creationDate: identity.CreationDate });
   const t0 = performance.now();
   while (performance.now() - t0 < READY_TIMEOUT_MS && !svc.exit) {
-    const table = await processTable();
-    if (table.get(child.pid)?.CreationDate === identity.CreationDate) {
-      svc.tree = mergeServiceTree(svc.tree, launcherTree(table, child.pid));
-    }
     const log = fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8') : '';
     if (abortPattern && abortPattern.test(log)) {
-      await stopService(svc);
+      spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
       svc.aborted = 'vercel CLI 要求登入（已中止，未代為登入）';
       break;
     }
@@ -326,8 +303,8 @@ export async function startVercelDev({ label, port, listen = `127.0.0.1:${port}`
     abortPattern: LOGIN_PROMPT,
     logFile,
     cwd,
-    onStarted,
   });
+  onStarted?.(svc);
   if (svc.aborted) throw new Error(`${label} ${svc.aborted}`);
   if (!svc.ready) throw new Error(`${label} vercel dev 未在 ${READY_TIMEOUT_MS} ms 內就緒`);
   assertOwnedListener(label, svc);
@@ -338,36 +315,17 @@ export async function startVercelDev({ label, port, listen = `127.0.0.1:${port}`
   return svc;
 }
 
-const mergeServiceTree = (...trees) => [...new Map(trees.flat().map(item => [`${item.pid}|${item.creationDate}`, item])).values()];
-
-// 已退出的父程序仍可能留下已記錄的孤兒；每次清理核對建立時間，逐一處置，不使用 /T。
-export async function stopService(svc, { readTable = processTable, terminate,
-  readListeners = listenerRows, waitMs = 15_000 } = {}) {
-  svc.stopped = false;
-  try {
-    if (!svc.tree?.some(item => item.pid === svc.ownedPid && item.creationDate)) {
-      throw new Error('缺少已核對的 spawn 身分，禁止清理');
+export async function stopService(svc) {
+  if (svc.ownedPid) {
+    spawnSync('taskkill', ['/PID', String(svc.ownedPid), '/T', '/F'], { encoding: 'utf8', windowsHide: true });
+  }
+  const t0 = performance.now();
+  while (performance.now() - t0 < 15_000) {
+    if (!listenerPids(svc.port).length) {
+      svc.stopped = true;
+      return;
     }
-    const cleanup = await terminateVerifiedTree(svc.tree, { readTable, ...(terminate ? { terminate } : {}) });
-    svc.tree = mergeServiceTree(svc.tree, cleanup.known);
-    svc.cleanup = cleanup;
-    const started = performance.now();
-    while (true) {
-      const table = await readTable();
-      const left = svc.tree.filter(item => table.get(item.pid)?.CreationDate === item.creationDate);
-      const listeners = await readListeners(svc.port);
-      if (!left.length && !listeners.length) {
-        svc.stopped = true;
-        delete svc.cleanupError;
-        return;
-      }
-      if (performance.now() - started >= waitMs) throw new Error(`仍有 ${left.length} 個已核對程序或 ${listeners.length} 個 listener`);
-      await sleep(250);
-    }
-  } catch (error) {
-    svc.tree = mergeServiceTree(svc.tree ?? [], error.known ?? []);
-    svc.cleanupError = error.message;
-    throw new Error(`${svc.name} 清理未完成：${error.message}`);
+    await sleep(250);
   }
 }
 

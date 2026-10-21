@@ -1,0 +1,14 @@
+{"ev":"child.boot","t":138.146,"pid":34536,"entry":"api/gemini.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1664.284,"pid":34536,"seq":1}
+{"ev":"child.listening","t":1681.026,"pid":34536,"seq":1}
+{"ev":"child.listenCall","t":2816.234,"pid":34536,"seq":2}
+{"ev":"child.listening","t":2817.782,"pid":34536,"seq":2}
+{"ev":"child.ready","t":2818.196,"pid":34536}
+{"ev":"child.recv","t":2824.801,"pid":34536,"trace":"guard03-20260924-r2-gemini","layer":"devProxy","method":"POST","route":"/api/gemini"}
+{"ev":"child.recv","t":2835.551,"pid":34536,"trace":"guard03-20260924-r2-gemini","layer":"handler","method":"POST","route":"/api/gemini"}
+{"ev":"child.reqHeaders","t":2836.284,"pid":34536,"trace":"guard03-20260924-r2-gemini","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4567","x-forwarded-host":"127.0.0.1:4567","x-forwarded-proto":"http","x-forwarded-port":"4567","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4567","content-type":"application/json","content-length":"95","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fetchStart","t":2838.407,"pid":34536,"trace":"guard03-20260924-r2-gemini","seq":1,"kind":"ratelimit","pipeline":true}
+{"ev":"child.aborted","t":2951.664,"pid":34536,"trace":"guard03-20260924-r2-gemini","layer":"devProxy"}
+{"ev":"child.aborted","t":2954.178,"pid":34536,"trace":"guard03-20260924-r2-gemini","layer":"handler"}
+{"ev":"child.fetchHeaders","t":5841.106,"pid":34536,"trace":"guard03-20260924-r2-gemini","seq":1,"kind":"ratelimit","pipeline":true,"status":200,"fixture":true,"fixtureWaitMs":3001.073,"scripted":true}
+{"ev":"child.fetchBody","t":5842.156,"pid":34536,"trace":"guard03-20260924-r2-gemini","seq":1,"kind":"ratelimit","pipeline":true}

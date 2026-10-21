@@ -1,0 +1,22 @@
+﻿{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+    "url": "https://taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app",
+    "inspectorUrl": "https://vercel.com/chuan0802/taiwan-and-usa-stock-ai-analyst-v4/FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx",
+    "readyState": "READY",
+    "target": null,
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_FzbxAMKRgK7Bvfz4CCvQdRTqc6Tx"
+  },
+  "message": "Deployment taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel inspect taiwan-and-usa-stock-ai-analyst-v4-4tt4nfqax-chuan0802.vercel.app --cwd C:\\Users\\jason\\AppData\\Local\\Temp\\claude\\E--My-Project-Taiwan-and-USA-Stock-AI-Analyst-V4\\81478648-630c-4b7d-89c4-6e9944046399\\scratchpad\\diag03-preview",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --cwd C:\\Users\\jason\\AppData\\Local\\Temp\\claude\\E--My-Project-Taiwan-and-USA-Stock-AI-Analyst-V4\\81478648-630c-4b7d-89c4-6e9944046399\\scratchpad\\diag03-preview",
+      "when": "Promote to production"
+    }
+  ]
+}

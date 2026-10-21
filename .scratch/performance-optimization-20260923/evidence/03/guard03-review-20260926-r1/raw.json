@@ -1,0 +1,234 @@
+{
+  "runId": "guard03-review-20260926-r1",
+  "at": "2026-09-25T16:42:33.080Z",
+  "kind": "純假資料守衛檢查",
+  "realProcessKills": 0,
+  "tools": {
+    "guard-review-03.mjs": "1aa342a6a78fc0ffbec846d2edec0b3aa2d165ec2d44366cb876641ff5919848",
+    "daily-dev.mjs": "5619618b8bbdb6279dd31bfdeab3a488aaccbe7b1f414c6f5734d5783a238d81",
+    "port-guard-03.mjs": "b5eda1a5a1f254c543f50e7afdf6ea3dc7a2efb32448c920d3bb97435e7a1a7b",
+    "app-03.mjs": "957cf8e7f01ae6fec5da6c739c1d4782b46c4529d612bc92cf541a86b3bc1c7f"
+  },
+  "results": [
+    {
+      "label": "啟動器：舊子程序與其子孫不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "label": "驗收端：舊子程序與其子孫不列入",
+      "pass": true,
+      "detail": {
+        "included": [
+          4,
+          5
+        ],
+        "excluded": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "label": "啟動器：根 PID 重用時不擴展、不終止",
+      "pass": true,
+      "detail": {
+        "killed": [],
+        "left": [],
+        "error": null
+      }
+    },
+    {
+      "label": "啟動器：每次結束重列、保留孤兒、略過已重用成員",
+      "pass": true,
+      "detail": {
+        "killed": [
+          1,
+          4,
+          5
+        ],
+        "untouched": [
+          2,
+          7
+        ],
+        "result": {
+          "killed": [
+            {
+              "pid": 1,
+              "creationDate": "/Date(200)/",
+              "status": 0
+            },
+            {
+              "pid": 4,
+              "parentPid": 1,
+              "name": "fake.exe",
+              "creationDate": "/Date(201)/",
+              "status": 0
+            },
+            {
+              "pid": 5,
+              "parentPid": 4,
+              "name": "fake.exe",
+              "creationDate": "/Date(203)/",
+              "status": 0
+            }
+          ],
+          "left": [],
+          "error": null
+        }
+      }
+    },
+    {
+      "label": "啟動器：缺建立時間不得終止",
+      "pass": true,
+      "detail": {
+        "kills": 0
+      }
+    },
+    {
+      "label": "驗收端：根 PID 重用時不擴展、不終止",
+      "pass": true,
+      "detail": {
+        "killed": [],
+        "stillAlive": []
+      }
+    },
+    {
+      "label": "驗收端：每次結束重列、保留孤兒、略過已重用成員",
+      "pass": true,
+      "detail": {
+        "killed": [
+          1,
+          4,
+          5
+        ],
+        "untouched": [
+          2,
+          7
+        ],
+        "result": {
+          "killed": [
+            {
+              "pid": 1,
+              "name": null,
+              "creationDate": "/Date(200)/",
+              "status": 0
+            },
+            {
+              "pid": 4,
+              "name": "fake.exe",
+              "creationDate": "/Date(201)/",
+              "status": 0
+            },
+            {
+              "pid": 5,
+              "name": "fake.exe",
+              "creationDate": "/Date(203)/",
+              "status": 0
+            }
+          ],
+          "stillAlive": []
+        }
+      }
+    },
+    {
+      "label": "驗收端：缺建立時間不得終止",
+      "pass": true,
+      "detail": {
+        "kills": 0
+      }
+    },
+    {
+      "label": "S2：身分只輸出既定欄位，缺 PID 明列",
+      "pass": true,
+      "detail": [
+        {
+          "pid": 1,
+          "parentPid": 0,
+          "creationDate": "/Date(200)/",
+          "script": "daily-dev.mjs"
+        },
+        {
+          "pid": 2,
+          "missing": true
+        }
+      ]
+    },
+    {
+      "label": "P2：先有同網址腳本 200",
+      "pass": true,
+      "detail": {
+        "kind": "瀏覽器自發・已取消",
+        "ok": true,
+        "priorScript200": {
+          "requestId": "prior",
+          "route": "/api/finmind?dataset=TaiwanStockInfo",
+          "finishedAtMs": 10
+        }
+      }
+    },
+    {
+      "label": "P2：沒有先前成功",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：網址不同",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：成功發生在本筆開始之後",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：先前 200 後仍取消",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：先前 200 非腳本",
+      "pass": true,
+      "detail": {
+        "kind": "HTTP 失敗或無回應",
+        "ok": false
+      }
+    },
+    {
+      "label": "P2：本筆 HTTP 500",
+      "pass": true,
+      "detail": {
+        "kind": "瀏覽器自發・已取消",
+        "ok": false,
+        "priorScript200": {
+          "requestId": "prior",
+          "route": "/api/finmind?dataset=TaiwanStockInfo",
+          "finishedAtMs": 10
+        }
+      }
+    }
+  ],
+  "pass": true
+}

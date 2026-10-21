@@ -1,0 +1,13 @@
+abc8d9b AI 報告的 <sub> 小字改為真正元素，<br> 改在語法樹層統一處理
+6d5ad2e 思考預設 effort 改 xhigh，並更正 .env.example 的過時建議
+ebea305 快取世代代號 e1→e2，並把 claude-cli 設定納入 bump 規則
+40682b4 快捷版 WAIT／NO_GO 指令補上五情境定義，避免模型編造情境編號
+752837c AI 報告的 <br> 改為真正換行，不再原樣顯示成文字
+8d91972 claude-cli 呼叫隔離使用者層 MCP 與設定，避免每次讀入約 23.6 萬 token
+67c81ec 依提示詞審查修正買點語彙漂移與 skill 衝突，vitest 排除 .scratch
+5a44fd5 perf(03): 補日常入口同源與取消證據，維持待驗
+6eee87e fix(chart): FinMind 價量失敗改短快取，籌碼缺值不再當 0 張
+2bd91f4 perf(portfolio): 匯率先入列以取得首批三槽
+e9fa1a2 perf(portfolio): publish quotes before Taiwan names
+c92dfa1 perf(dev): exclude scratch evidence from local runtime
+f6a98d2 fix: 持股輸入變更後使健檢失效

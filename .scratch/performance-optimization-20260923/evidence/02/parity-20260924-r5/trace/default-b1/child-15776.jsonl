@@ -1,0 +1,16 @@
+{"ev":"child.boot","t":25.229,"pid":15776,"entry":"api/gemini.ts","fixture":true,"fixtureDelayMs":20,"control":true,"ipc":true}
+{"ev":"child.listenCall","t":1776.538,"pid":15776,"seq":1}
+{"ev":"child.listening","t":1792.532,"pid":15776,"seq":1}
+{"ev":"child.listenCall","t":2007.465,"pid":15776,"seq":2}
+{"ev":"child.listening","t":2008.857,"pid":15776,"seq":2}
+{"ev":"child.ready","t":2009.161,"pid":15776}
+{"ev":"child.recv","t":2012.551,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"devProxy","method":"POST","route":"/api/gemini"}
+{"ev":"child.recv","t":2034.431,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"handler","method":"POST","route":"/api/gemini"}
+{"ev":"child.reqHeaders","t":2036.818,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","names":["connection","content-length","content-type","host","x-forwarded-for","x-forwarded-host","x-forwarded-port","x-forwarded-proto","x-perf01-trace","x-real-ip","x-vercel-deployment-url","x-vercel-forwarded-for","x-vercel-id"],"values":{"host":"127.0.0.1:4921","x-forwarded-host":"127.0.0.1:4921","x-forwarded-proto":"http","x-forwarded-port":"4921","x-forwarded-for":"127.0.0.1","x-real-ip":"127.0.0.1","x-vercel-forwarded-for":"127.0.0.1","x-vercel-deployment-url":"127.0.0.1:4921","content-type":"application/json","content-length":"5242954","connection":"close"},"sensitivePresent":[]}
+{"ev":"child.fakeCli.spawn","t":2054.26,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","streaming":false,"deltas":5,"intervalMs":300,"mode":"success"}
+{"ev":"child.fakeCli.stdin","t":2056.275,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","promptBytes":5242880}
+{"ev":"child.fakeCli.done","t":3569.262,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","emitted":0,"mode":"success"}
+{"ev":"child.writeHead","t":3571.065,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"handler","status":200}
+{"ev":"child.finish","t":3572.368,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"handler"}
+{"ev":"child.writeHead","t":3576.754,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"devProxy","status":200}
+{"ev":"child.finish","t":3577.377,"pid":15776,"trace":"parity-20260924-r5-default-b1-post-gemini-large-body","layer":"devProxy"}

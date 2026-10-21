@@ -1,0 +1,13 @@
+{
+  "schema": "p1-keyboard-bridge-precheck-v1",
+  "purpose": "實際CUA原生事件預檢，不是正式App案例",
+  "origin": "http://127.0.0.1:4183",
+  "pid": 16896,
+  "observations": [
+    { "action": "pressKey(Control_L+a), BackSpace", "keys": ["Control", "a", "Backspace"], "allTrusted": true, "inputAfter": "" },
+    { "action": "reload; click(input, clickCount=3), BackSpace", "keys": ["Backspace"], "allTrusted": true, "inputAfter": "" },
+    { "action": "pressKey(A), pressKey(a)", "additionalKeys": ["A", "a"], "allTrusted": true, "inputAfter": "Aa" }
+  ],
+  "adaptation": "正式03第一次全選使用原生滑鼠三連點再Backspace，第二次維持Control+A與Backspace。其他輸入不變，總17個trusted keydown，原audit與原斷言不變。",
+  "limits": "此檔轉存真工具DOM觀測；正式兩尺寸仍須分別實跑。"
+}

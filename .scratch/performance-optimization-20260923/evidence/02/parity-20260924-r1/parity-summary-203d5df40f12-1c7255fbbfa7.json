@@ -1,0 +1,1418 @@
+{
+  "runId": "parity-20260924-r1",
+  "toolSha": "203d5df40f1234efcee1b0a2fcea9225cc1ab4080cd9672677613170528c178d",
+  "cases": 46,
+  "equal": 2,
+  "mismatches": [
+    {
+      "config": "default",
+      "id": "options-chart-allowed",
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "options-chart-evil-origin",
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "options-finmind",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "options-gemini-stream",
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-referer-allowed",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://localhost:3000/\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://localhost:3000/\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-no-origin",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-origin",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-referer",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://evil.example/page\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://evil.example/page\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-bad-range",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-missing-symbol",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-repeated-symbol",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-encoded-fx",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-lowercase",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-chart",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-not-found",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-ok",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-dataset",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-date",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-limit",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-500",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-search-ok",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "ts-extension-route",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "trailing-slash-route",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "get-gemini",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-body",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-json",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"9\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"9\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-fake-cli",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-large-body",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"5242954\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"5242954\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "concurrent-isolation",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "取消後殘留工作多於 B1：B1 0、候選 1"
+      ]
+    },
+    {
+      "config": "secret",
+      "id": "secret-missing",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    },
+    {
+      "config": "secret",
+      "id": "secret-wrong",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]}"
+      ]
+    },
+    {
+      "config": "secret",
+      "id": "secret-correct",
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]}"
+      ]
+    },
+    {
+      "config": "secret",
+      "id": "secret-options-short-circuit",
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ]
+    }
+  ],
+  "cancel": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "b1": "provider-completed",
+      "c": "provider-completed"
+    }
+  ],
+  "streamTiming": [
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "b1": {
+        "firstLineMs": 2277.1,
+        "lastLineMs": 3827.1
+      },
+      "c": {
+        "firstLineMs": 339.7,
+        "lastLineMs": 1888
+      }
+    }
+  ],
+  "handshake": [
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "b1": {
+        "cookie": 2,
+        "crumb": 2,
+        "chart": 2
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "b1": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      },
+      "c": {
+        "cookie": 2,
+        "crumb": 0,
+        "chart": 0
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "b1": {
+        "cookie": 3,
+        "crumb": 3,
+        "chart": 3
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 3
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 0,
+        "crumb": 0,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "b1": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 1
+      },
+      "c": {
+        "cookie": 1,
+        "crumb": 1,
+        "chart": 2
+      }
+    }
+  ],
+  "results": [
+    {
+      "config": "default",
+      "id": "options-chart-allowed",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-chart-evil-origin",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-finmind",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "options-gemini-stream",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-referer-allowed",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://localhost:3000/\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://localhost:3000/\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-no-origin",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-origin",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://evil.example\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-evil-referer",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://evil.example/page\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"referer\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"referer\":\"http://evil.example/page\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-bad-range",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-missing-symbol",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-repeated-symbol",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-encoded-fx",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-lowercase",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-chart",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-401-once",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-429-twice",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 2,
+          "chart": 2
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-upstream-500",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-not-found",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-cookie-missing",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 2,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-chart-timeout",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-ok",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-dataset",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-bad-date",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-limit",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-finmind-500",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-search-ok",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "unknown-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "private-lib-route",
+      "equal": true,
+      "diffs": [],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "ts-extension-route",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "trailing-slash-route",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "get-gemini",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-body",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"2\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-bad-json",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"9\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"9\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-fake-cli",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-fake-cli",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "streamTiming": {
+        "b1": {
+          "firstLineMs": 2277.1,
+          "lastLineMs": 3827.1
+        },
+        "c": {
+          "firstLineMs": 339.7,
+          "lastLineMs": 1888
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-stream-cancel",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"95\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      },
+      "cancel": {
+        "b1": "provider-completed",
+        "c": "provider-completed"
+      }
+    },
+    {
+      "config": "default",
+      "id": "post-gemini-large-body",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"5242954\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"content-length\",\"content-type\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"content-type\":\"application/json\",\"content-length\":\"5242954\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "concurrent-isolation",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-pending-join",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 3,
+          "crumb": 3,
+          "chart": 3
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 3
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-hot-hit",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-ttl-expiry",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "default",
+      "id": "hs-cancel-isolation",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}",
+        "取消後殘留工作多於 B1：B1 0、候選 1"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 2
+        }
+      },
+      "residual": {
+        "b1": 0,
+        "c": 1
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-missing",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-wrong",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-correct",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]} ≠ {\"names\":[\"connection\",\"host\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-proxy-secret\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"connection\":\"close\"},\"sensitivePresent\":[\"x-proxy-secret\"]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        },
+        "c": {
+          "cookie": 1,
+          "crumb": 1,
+          "chart": 1
+        }
+      }
+    },
+    {
+      "config": "secret",
+      "id": "secret-options-short-circuit",
+      "equal": false,
+      "diffs": [
+        "handler headers {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"::ffff:127.0.0.1\",\"x-real-ip\":\"::ffff:127.0.0.1\",\"x-vercel-forwarded-for\":\"::ffff:127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]} ≠ {\"names\":[\"access-control-request-method\",\"connection\",\"host\",\"origin\",\"x-forwarded-for\",\"x-forwarded-host\",\"x-forwarded-port\",\"x-forwarded-proto\",\"x-perf01-trace\",\"x-real-ip\",\"x-vercel-deployment-url\",\"x-vercel-forwarded-for\",\"x-vercel-id\"],\"values\":{\"host\":\"127.0.0.1:<port>\",\"x-forwarded-host\":\"127.0.0.1:<port>\",\"x-forwarded-proto\":\"http\",\"x-forwarded-port\":\"<port>\",\"x-forwarded-for\":\"127.0.0.1\",\"x-real-ip\":\"127.0.0.1\",\"x-vercel-forwarded-for\":\"127.0.0.1\",\"x-vercel-deployment-url\":\"127.0.0.1:<port>\",\"origin\":\"http://localhost:3000\",\"connection\":\"close\"},\"sensitivePresent\":[]}"
+      ],
+      "handshake": {
+        "b1": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        },
+        "c": {
+          "cookie": 0,
+          "crumb": 0,
+          "chart": 0
+        }
+      }
+    }
+  ],
+  "problems": [
+    "default/b1 未確認停止",
+    "default/c 未確認停止",
+    "secret/b1 未確認停止",
+    "secret/c 未確認停止"
+  ]
+}

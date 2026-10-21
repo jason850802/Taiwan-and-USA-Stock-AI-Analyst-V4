@@ -1,0 +1,5 @@
+# 四份 PowerShell 原始輸出保留 UTF-8 BOM／CRLF，禁止 Git 換行過濾；不影響其他路徑。
+cleanup-red.json -text
+cleanup-green.json -text
+cleanup-green-r2.json -text
+cleanup-green-r3.json -text

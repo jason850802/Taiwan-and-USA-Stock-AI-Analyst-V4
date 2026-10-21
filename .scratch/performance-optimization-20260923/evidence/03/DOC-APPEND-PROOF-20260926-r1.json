@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-09-25T21:49:56.197Z",
+  "records": [
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/REVIEW-20260925.md",
+      "oldBytes": 10048,
+      "oldSha256": "70704a73c61c991ef08a0f8247067426cbb4d4fb81e2b36a5f54685af70367ef",
+      "prefixUnchanged": true
+    },
+    {
+      "path": ".scratch/performance-optimization-20260923/evidence/03/REPORT.md",
+      "oldBytes": 9600,
+      "oldSha256": "b0a8cd4f415fbdaff71db80a36cd7858ac604431d3a48fcbce79e73e75350254",
+      "prefixUnchanged": true
+    }
+  ]
+}
